@@ -1,0 +1,55 @@
+ ----
+ ${project.name}
+ ----
+
+${project.name}
+
+* ${project.description}
+
+ The Cyc APIs present a suite of Java APIs for Cyc.
+
+ They include:
+
+[images/default/api_stack.png]
+
+	* {{{./baseAPI}Base API}}
+	 
+	 The Base API defines the basic functionality for connecting to a Cyc server and 
+	 handling HL data. It is the foundational API upon which the other Cyc APIs are built. 
+	 Although the Base API is versatile, it is generally recommended that users employ
+	 the higher-level APIs (such as the KB API and the Query API) when possible.
+	 
+	 The reference implementation of the Base API (com.cyc.base.*) is the Base Client 
+	 (com.cyc.baseclient.*) These supercede the OpenCyc API, which is deprecated, and many 
+	 of the Base API's interfaces resemble OpenCyc API classes.
+	
+	* {{{./KBAPI}KB API}}
+	
+	Provides basic functionality for manipulating CycL-based java objects. 
+	The API extracts the main Predicate Logic constructs in the Cyc KB as Java classes. 
+	A set of factory methods allow finding and creation of terms and assertions. These 
+	can be used to build sentences, to create new assertions or to build queries.
+	
+	* {{{./QueryAPI}Query API}}
+	
+	The Query API provides classes and methods for requesting and dealing with answers to 
+	arbitrarily complex questions from a Cyc server. Query objects specify such requests 
+	and store the answers, and can be constructed by specifying a query sentence with zero 
+	or more open variables, an optional microtheory, and other parameters to guide and control 
+	the inference process. Alternatively, predefined query specifications can be loaded from a 
+	Cyc KB, or natural language questions can be parsed or mined (with varying degrees of success 
+	depending on the topic) to produce Query objects that can then be modified or combined prior 
+	to being run. Inference answers can be inspected, with representations of variable bindings 
+	in CycL and NL, and complete CycL sentences for each answer. They can also be iterated over 
+	using a SQL-style result set, and can be exported in CSV or XML formats.
+
+~~ Commented out:
+~~*--------------+---------------------+
+~~|| API ||      |   || Functionality ||
+~~*--------------+---------------------+
+~~{{{./baseAPI}Base API}} | Connectivity, Configuration, HL representation
+~~{{{./KBAPI}KB API}} | Provides basic functionality for manipulating CycL-based java objects. The API extracts the main Predicate Logic constructs in the Cyc KB as Java classes. A set of factory methods allow finding and creation of terms and assertions. These can be used to build sentences, to create new assertions or to build queries.
+~~{{{./QueryAPI}Query API}} | Query API
+~~*--------------+--------------+
+
+
