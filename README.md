@@ -30,23 +30,8 @@ Requirements
 Getting Started
 ---------------
 
-In addition to this project, you will need to clone the following projects:
-
-* [SessionAPI](https://github.com/cycorp/SessionAPI)
-* [BaseClient](https://github.com/cycorp/BaseClient)
-* [KBAPI](https://github.com/cycorp/KBAPI)
-* [QueryAPI](https://github.com/cycorp/QueryAPI)
-
-All five projects should reside at the same level, e.g.:
-
-* [some dir]
-    * BaseClient
-    * CycCoreAPI
-    * KBAPI
-    * QueryAPI
-    * SessionAPI
-
-**Note:** It is _strongly recommended_ to only run the API test suites against a 
+**Note:** Installing this project will run all of the API test suites. It is
+_strongly recommended_ to only run the API test suites against a 
 _fresh Cyc server instance_ dedicated to that purpose. The API tests may alter
 a Cyc server's KB contents.
 
@@ -70,19 +55,23 @@ Alternately, if you wish to install without running unit tests:
     mvn install -DskipTests=true 
 
 Installing the `CycCoreAPI` project will install all of its sub-projects. Once 
-you have done so, you can then re-build/re-install any sub-projects 
+you have done so, you can then re-build or re-install any sub-projects 
 independently. See each project's `README.md` for details.
 
 Further Documentation
 ---------------------
 
-For the latest API documentation and news, or to ask questions or report issues,
-visit the [Cyc Developer Center](http://dev.cyc.com/). Code samples may be
-downloaded from the [CoreAPIUseCases](https://github.com/cycorp/CoreAPIUseCases)
+For the latest API documentation and news, or to ask questions, visit the 
+[Cyc Developer Center](http://dev.cyc.com/). 
+
+Code samples may be downloaded from the [CoreAPIUseCases](https://github.com/cycorp/CoreAPIUseCases)
 project.
 
 Contact
 -------
 
-For questions about the APIs or issues with using them, please visit the
-[Cyc Dev Center issues page](http://dev.cyc.com/cyc-api/issues.html).
+Issues may be reported via this project's
+[GitHub issue tracker](https://github.com/cycorp/CycCoreAPI/issues).
+
+For questions about the APIs or general issues with using them, please visit the
+[Cyc Dev Center](http://dev.cyc.com/cyc-api/issues.html).
