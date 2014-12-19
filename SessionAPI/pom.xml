@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.cyc</groupId>
+    <artifactId>cyc-core-api</artifactId>
+    <version>1.0.0-rc1</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <groupId>com.cyc</groupId>
+  <artifactId>cyc-session</artifactId>
+  <version>1.0.0-rc1</version>
+  <packaging>jar</packaging>
+  
+  <name>Session API</name>
+  <description>Java API for managing configurations and connections to Cyc servers.</description>
+  <url>http://dev.cyc.com/cyc-api/</url>
+
+  <scm>
+    <connection>scm:git:git@github.com:cycorp/SessionAPI.git</connection>
+    <developerConnection>scm:git:git@github.com:cycorp/SessionAPI.git</developerConnection>
+    <url>https://github.com/cycorp/SessionAPI</url>
+  </scm>
+  
+  <issueManagement>
+    <url>https://github.com/cycorp/SessionAPI/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  
+  <organization>
+    <name>Cycorp, Inc.</name>
+    <url>http://www.cyc.com</url>
+  </organization>
+  
+  <developers>
+    <developer>
+      <name>Cycorp API Team</name>
+      <email>api-devs@cyc.com</email>
+      <organization>Cycorp, Inc.</organization>
+      <organizationUrl>http://www.cyc.com</organizationUrl>
+    </developer>
+  </developers>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId> 
+        <artifactId>license-maven-plugin</artifactId> 
+      </plugin>
+      <plugin>
+        <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+        <artifactId>serviceloader-maven-plugin</artifactId>
+        <version>1.0.2</version>
+        <configuration>
+          <services>
+            <param>com.cyc.session.SessionConfigurationLoader</param>
+            <!--
+            <param>com.cyc.session.connection.SessionFactory</param>
+            -->
+          </services>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
