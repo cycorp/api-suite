@@ -58,10 +58,10 @@
   </properties>
     
   <modules>
-    <module>../SessionAPI</module>
-    <module>../BaseClient</module>
-    <module>../KBAPI</module>
-    <module>../QueryAPI</module>
+    <module>SessionAPI</module>
+    <module>BaseClient</module>
+    <module>KBAPI</module>
+    <module>QueryAPI</module>
   </modules>
   
   <profiles>
