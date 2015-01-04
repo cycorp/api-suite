@@ -164,6 +164,12 @@
           <artifactId>maven-source-plugin</artifactId>
           <version>2.3</version>
           <executions>
+	    <execution>
+              <id>attach-sources</id>
+              <goals>
+		<goal>jar-no-fork</goal>
+              </goals>
+            </execution>
             <execution>
               <id>bundle-sources</id>
               <phase>package</phase>
@@ -199,6 +205,118 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+	  <!--
+          <execution>
+            <id>bundle-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+          -->
+        </executions>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-source-plugin</artifactId>
+	<version>2.2.1</version>
+	<executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+	</executions>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-javadoc-plugin</artifactId>
+	<configuration>
+          <detectOfflineLinks>false</detectOfflineLinks>
+          <tags>
+            <tag>
+              <name>date</name>
+              <!-- The value X makes javadoc ignore the tag -->
+              <placement>X</placement>
+            </tag>
+            <tag>
+              <name>note</name>
+              <placement>X</placement>
+            </tag>
+            <tag>
+              <name>owner</name>
+              <placement>X</placement>
+            </tag>
+            <tag>
+              <name>privacy</name>
+              <placement>X</placement>
+            </tag>                        
+            <tag>
+              <name>obsolete</name>
+              <placement>X</placement>
+            </tag>
+          </tags>
+          <author>false</author>
+          <version>false</version>
+        </configuration>
+	<executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+	  <!--
+	  <execution>
+            <id>default-cli</id>
+            <phase>site</phase>
+            <goals>
+              <goal>aggregate</goal>
+            </goals>
+            <configuration>
+              <subpackages>
+                com.cyc:org.opencyc
+              </subpackages>
+              <!- - switch on dependency-driven aggregation - ->
+              <includeDependencySources>true</includeDependencySources>
+              <sourceFileExcludes>
+                <exclude>**/generated-sources/**/package-info.java</exclude>
+              </sourceFileExcludes>
+              <dependencySourceExcludes>
+                <dependencySourceExclude>com.google.code.findbugs:jsr305</dependencySourceExclude>
+                <dependencySourceExclude>commons-lang:commons-lang</dependencySourceExclude>
+              </dependencySourceExcludes>
+              <author>false</author>
+            </configuration>
+          </execution>
+          <execution>
+            <id>resource-bundles</id>
+            <phase>package</phase>
+            <goals>
+              <!- - produce source artifact for main project sources - ->
+              <goal>resource-bundle</goal>
+            </goals>
+            <configuration>
+              <detectOfflineLinks>false</detectOfflineLinks>
+            </configuration>
+          </execution>
+	  -->
+	</executions>
+      </plugin>
+
+      <!--
       <plugin> 
         <groupId>org.apache.maven.plugins</groupId> 
         <artifactId>maven-assembly-plugin</artifactId> 
@@ -213,9 +331,9 @@
           <descriptorRefs> 
             <descriptorRefs>jar-with-dependencies</descriptorRefs> 
           </descriptorRefs> 
-          <!--descriptors>
+          <!- -descriptors>
               <descriptor>src/main/assembly/all-jar.xml</descriptor>
-          </descriptors-->
+          </descriptors- ->
         </configuration> 
         <executions>
           <execution>
@@ -240,100 +358,9 @@
             </manifest> 
           </archive> 
         </configuration> 
-      </plugin> 
-            
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.3</version>
-        <executions>
-          <execution>
-            <id>bundle-sources</id>
-            <phase>package</phase>
-            <goals>
-              <!-- produce source artifact for main project sources -->
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.1</version>
-        <configuration>
-          <detectOfflineLinks>false</detectOfflineLinks>
-          <tags>
-            <tag>
-              <name>date</name>
-              <!-- The value X makes javadoc ignoring the tag -->
-              <placement>X</placement>
-            </tag>
-            <tag>
-              <name>note</name>
-              <placement>X</placement>
-            </tag>
-            <tag>
-              <name>owner</name>
-              <placement>X</placement>
-            </tag>
-            <tag>
-              <name>privacy</name>
-              <placement>X</placement>
-            </tag>                        
-            <tag>
-              <name>obsolete</name>
-              <placement>X</placement>
-            </tag>
-            <!-- KEEP WARNING @todo tags, till we decide how to export them
-            to JIRA  -->
-            <!--
-                              <tag>
-                                  <name>todo</name>
-                                  <placement>a</placement>
-                                  <head>To Do Something: </head>
-                              </tag>
-            -->
-          </tags>
-          <author>false</author>
-          <version>false</version>
-        </configuration>
-        <executions>
-          <execution>
-            <id>default-cli</id>
-            <phase>site</phase>
-            <goals>
-              <goal>aggregate</goal>
-            </goals>
-            <configuration>
-              <subpackages>
-                com.cyc:org.opencyc
-              </subpackages>
-              <!-- switch on dependency-driven aggregation -->
-              <includeDependencySources>true</includeDependencySources>
-              <sourceFileExcludes>
-                <exclude>**/generated-sources/**/package-info.java</exclude>
-              </sourceFileExcludes>
-              <dependencySourceExcludes>
-                <dependencySourceExclude>com.google.code.findbugs:jsr305</dependencySourceExclude>
-                <dependencySourceExclude>commons-lang:commons-lang</dependencySourceExclude>
-              </dependencySourceExcludes>
-              <author>false</author>
-            </configuration>
-          </execution>
-          <execution>
-            <id>resource-bundles</id>
-            <phase>package</phase>
-            <goals>
-              <!-- produce source artifact for main project sources -->
-              <goal>resource-bundle</goal>
-
-            </goals>
-            <configuration>
-              <detectOfflineLinks>false</detectOfflineLinks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+      -->
+      
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
