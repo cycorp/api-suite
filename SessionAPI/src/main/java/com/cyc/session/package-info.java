@@ -19,7 +19,7 @@ package com.cyc.session;
  * File: package-info.java
  * Project: Session API
  * %%
- * Copyright (C) 2013 - 2014 Cycorp, Inc.
+ * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
