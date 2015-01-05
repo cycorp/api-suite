@@ -3,8 +3,8 @@ Cyc Core API Suite CHANGELOG
 
 For more information, visit the [Cyc Developer Center](http://dev.cyc.com/).
 
-1.0.0-rc1
----------
+1.0.0-rc1 - 2015-01-04
+----------------------
 * First public release candidate!
 * Updates the **KB API** (`1.0.0-rc1`), which streamlines the manipulation of 
   CycL-based Java objects.
@@ -18,8 +18,8 @@ For more information, visit the [Cyc Developer Center](http://dev.cyc.com/).
   supported for external developers._
 * 1.0.0-rc1 is _not backwards-compatible_ with the 1.0.0-Preview release.
 
-1.0.0-Preview
--------------
+1.0.0-Preview - 2014-07-09
+--------------------------
 * Initial limited preview release! This is a new Java API suite to manipulate 
   and query the Cyc KB.
 * Introduces the **KB API**, which streamlines the manipulation of CycL-based Java
