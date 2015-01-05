@@ -19,9 +19,9 @@
   <url>http://dev.cyc.com/cyc-api/</url>
   
   <scm>
-    <connection>scm:git:git@github.com:cycorp/QueryAPI.git</connection>
-    <developerConnection>scm:git:git@github.com:cycorp/QueryAPI.git</developerConnection>
-    <url>https://github.com/cycorp/QueryAPI</url>
+    <connection>scm:git:git@github.com:cycorp/CycCoreAPI.git</connection>
+    <developerConnection>scm:git:git@github.com:cycorp/CycCoreAPI.git</developerConnection>
+    <url>https://github.com/cycorp/CycCoreAPI</url>
   </scm>
   
   <issueManagement>
