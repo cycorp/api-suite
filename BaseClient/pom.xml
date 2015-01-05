@@ -5,13 +5,13 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api</artifactId>
-    <version>1.0.0-rc1</version>
+    <version>1.0.0-rc2-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-base-client</artifactId>
-  <version>1.0.0-rc1</version>
+  <version>1.0.0-rc2-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>Base Client</name>
