@@ -1,4 +1,4 @@
-/* $Id: QueryListener.java 155477 2014-12-10 21:49:37Z nwinant $
+/* $Id: QueryListener.java 155705 2015-01-05 23:29:37Z nwinant $
  */
 package com.cyc.query;
 
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see Query
  * @author tbrussea, zelal
- * @version $Id: QueryListener.java 155477 2014-12-10 21:49:37Z nwinant $
+ * @version $Id: QueryListener.java 155705 2015-01-05 23:29:37Z nwinant $
  */
 public abstract class QueryListener implements EventListener {
 

@@ -508,7 +508,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
    *
    * @param id the Cyc term
    * @param indexicals A map of substitutions to be made.
-   * @return
+   * @return the Query specified by <code>id</code>
    * @throws Exception
    * <p/>
    * <b>Note:</b> {@link QueryConstructionException} is thrown if the specified
@@ -1420,7 +1420,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
 
     /**
      *
-     * @return
+     * @return the name of this query.
      */
     public String getName() {
       return name;
@@ -1828,7 +1828,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
 
   /**
    *
-   * @return
+   * @return the number of queries that were closed.
    */
   public static synchronized int closeAllUnclosedQueries() {
     int count = 0;

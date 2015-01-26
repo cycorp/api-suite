@@ -725,7 +725,7 @@ public class KBInferenceResultSet {
    * the name of a <code>Variable</code> in the original query. Returns
    * <code>null</code> if no value is set for the current row and given column.
    *
-   * @note Fails on dates that are not CycNauts using #$YearFn (i.e. it will not
+   * This method fails on dates that do not use #$YearFn (i.e. it will not
    * work on skolemized dates, or other forms of dates that don't use the
    * #$YearFn vocabulary).
    *
@@ -751,7 +751,7 @@ public class KBInferenceResultSet {
    * row for variable. Returns <code>null</code> if no value is set for the
    * current row and given variable.
    *
-   * @note Fails on dates that are not CycNauts using #$YearFn (i.e. it will not
+   * This method fails on dates that do not use #$YearFn (i.e. it will not
    * work on skolemized dates, or other forms of dates that don't use the
    * #$YearFn vocabulary).
    *
