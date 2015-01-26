@@ -26,7 +26,6 @@ import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
-import com.cyc.session.CycServer;
 import com.cyc.base.cycobject.CycList;
 import java.util.*;
 import com.cyc.baseclient.CycObjectFactory;
@@ -36,10 +35,10 @@ import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.inference.InferenceAnswerLanguage;
 import com.cyc.base.inference.InferenceParameterValue;
 import com.cyc.base.inference.InferenceParameters;
-import com.cyc.baseclient.CycClientManager;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import static com.cyc.baseclient.inference.params.InferenceParametersSymbols.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <P>
@@ -134,16 +133,21 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
       }
     }
   }
-  private static Map<String, CycList> paramCache = new HashMap<String, CycList>();
+  private static Map<String, CycList> paramCache = new ConcurrentHashMap<String, CycList>();
 
   private static CycList getParams(CycAccess cyc, String params) throws CycConnectionException {
+    final CycList value;
     if (paramCache.containsKey(params)) {
-      return paramCache.get(params);
+      value = paramCache.get(params);
     } else {
       CycList paramList = cyc.converse().converseList("'(" + params + ")");
       paramCache.put(params, paramList);
-      return paramList;
+      value = paramList;
     }
+    if (value != null) {
+      return (CycList) value.clone();
+    }
+    return value;
   }
 
   public static DefaultInferenceParameters fromSpecifiedInferenceParameters(
