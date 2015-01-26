@@ -58,7 +58,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <svnRevisionNumberPluginVersion>1.13</svnRevisionNumberPluginVersion>
     <!-- maven.build.timestamp doesn't make it through to the filtering mechanism,
          so we need to store it in another property. Details: 
          http://java.dzone.com/tips/stamping-version-number-and
@@ -67,7 +66,7 @@
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     <project.root>${project.parent.basedir}</project.root>
   </properties>
-    
+  
   <modules>
     <module>SessionAPI</module>
     <module>BaseClient</module>
@@ -212,7 +211,7 @@
       </build>
     </profile>
   </profiles>
-
+  
   <build>
     <pluginManagement>
       <plugins>
