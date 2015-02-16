@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>com.cyc</groupId>
-  <artifactId>cyc-core-api</artifactId>
+  <artifactId>cyc-core-parent</artifactId>
   <version>1.0.0-rc2-SNAPSHOT</version>
   <packaging>pom</packaging>
   
-  <name>Cyc Core API Suite</name>
+  <name>Cyc Core API Parent</name>
   <description>The core Java APIs for interacting with the Cyc inference engine and knowledge base.</description>
   <url>http://dev.cyc.com/cyc-api/</url>
   
@@ -216,6 +216,18 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
+          <artifactId>svn-revision-number-maven-plugin</artifactId>
+          <version>1.13</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.tmatesoft.svnkit</groupId>
+              <artifactId>svnkit</artifactId>
+              <version>1.8.5</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
           <version>1.7</version>
@@ -276,6 +288,17 @@
             <version>2.0</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
+        <artifactId>svn-revision-number-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <!--
       <plugin> 
