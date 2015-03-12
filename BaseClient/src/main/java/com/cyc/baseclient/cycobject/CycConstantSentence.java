@@ -31,7 +31,7 @@ import com.cyc.base.cycobject.CycSentence;
  * are single terms (the only known instance of this is #$False.
  *
  * @author daves, March 3, 2011, 10:05:43 AM
- * @version $Id: CycConstantSentence.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycConstantSentence.java 155703 2015-01-05 23:15:30Z nwinant $
  *
  */
 public class CycConstantSentence extends CycConstantImpl implements CycSentence {

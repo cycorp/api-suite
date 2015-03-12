@@ -47,7 +47,7 @@ import com.cyc.baseclient.cycobject.GuidImpl;
  * <P>PasswordManager is designed to handle password encryption, authentication ,etc.
  *
  * @author baxter, Jul 27, 2009, 3:10:59 PM
- * @version $Id: PasswordManager.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: PasswordManager.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class PasswordManager {
 

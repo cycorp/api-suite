@@ -39,7 +39,7 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author zelal
  * @date August 9, 2005, 9:09 PM
- * @version $Id: DefaultBooleanInferenceParameter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultBooleanInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultBooleanInferenceParameter extends AbstractInferenceParameter implements BooleanInferenceParameter {
 

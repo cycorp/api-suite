@@ -42,7 +42,7 @@ import com.cyc.baseclient.api.CycConnection;
  </CODE></PRE>
  *
  * @author tbrussea, May 7, 2013, 12:19:20 PM
- * @version $Id: SocketComm.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: SocketComm.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class SocketComm extends AbstractComm implements Comm {
 

@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
  Collaborates with the <tt>CycConnection</tt> class which manages the api connections.
  * </p>
  *
- * @version $Id: CycClient.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycClient.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {

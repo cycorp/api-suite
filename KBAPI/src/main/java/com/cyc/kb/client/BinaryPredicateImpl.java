@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: BinaryPredicateImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -52,7 +52,7 @@ import com.cyc.kb.exception.KBTypeException;
  * So we have a class to support strongly typing such predicates. 
  * 
  * @author Vijay Raj
- * @version $Id: BinaryPredicateImpl.java 155051 2014-11-18 21:06:04Z baxter $
+ * @version $Id: BinaryPredicateImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class BinaryPredicateImpl extends KBPredicateImpl implements BinaryPredicate {
 

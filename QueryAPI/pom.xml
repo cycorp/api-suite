@@ -4,9 +4,8 @@
    
   <parent>
     <groupId>com.cyc</groupId>
-    <artifactId>cyc-core-api</artifactId>
+    <artifactId>cyc-core-parent</artifactId>
     <version>1.0.0-rc2-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
@@ -14,7 +13,7 @@
   <version>1.0.0-rc2-SNAPSHOT</version>
   <packaging>jar</packaging>
   
-  <name>Query API</name>
+  <name>Query API Implementation</name>
   <description>Java API for requesting and handling answers to arbitrarily complex questions posed to a Cyc server.</description>
   <url>http://dev.cyc.com/cyc-api/</url>
   
@@ -44,7 +43,7 @@
   <developers>
     <developer>
       <name>Cycorp API Team</name>
-      <email>api-devs@cyc.com</email>
+      <email>dev-team@cyc.com</email>
       <organization>Cycorp, Inc.</organization>
       <organizationUrl>http://www.cyc.com</organizationUrl>
     </developer>

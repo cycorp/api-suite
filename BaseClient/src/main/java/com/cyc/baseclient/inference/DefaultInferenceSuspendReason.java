@@ -40,7 +40,7 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
  *
  * @author bklimt
  * @date October 31, 2005, 10:29 AM
- * @version $Id: DefaultInferenceSuspendReason.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultInferenceSuspendReason.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public final class DefaultInferenceSuspendReason implements InferenceSuspendReason {
 

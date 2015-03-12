@@ -3,7 +3,7 @@ package com.cyc.km.query.construction;
 /*
  * #%L
  * File: QuerySearch.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%

@@ -36,7 +36,7 @@ import java.util.Set;
  * LRUCache is designed to...
  * 
  * @author tbrussea,  Feb 28, 2010, 3:27:51 PM
- * @version $Id: LRUCache.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: LRUCache.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class LRUCache<K, V> implements Map<K, V> {
 

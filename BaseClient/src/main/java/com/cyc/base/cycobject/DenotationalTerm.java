@@ -25,7 +25,7 @@ package com.cyc.base.cycobject;
  * <P>DenotationalTerm is designed to...
  *
  * @author baxter, Jul 6, 2009, 10:28:22 AM
- * @version $Id: DenotationalTerm.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DenotationalTerm.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface DenotationalTerm extends CycObject {
 

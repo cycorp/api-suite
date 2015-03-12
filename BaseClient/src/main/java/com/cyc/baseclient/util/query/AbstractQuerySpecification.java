@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @author mreimers
  * @date August 11, 2004, 1:56 PM
- * @version $Id: AbstractQuerySpecification.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: AbstractQuerySpecification.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class AbstractQuerySpecification implements QuerySpecification {
   protected Set constraints;

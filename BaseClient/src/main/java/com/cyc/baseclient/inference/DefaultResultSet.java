@@ -89,7 +89,7 @@ import com.cyc.baseclient.cycobject.CycVariableImpl;
  * <p>
  * @author tbrussea
  * @date Mar 22, 2010, 11:55 AM
- * @version $Id: DefaultResultSet.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultResultSet.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 @SuppressWarnings("deprecation")
 public final class DefaultResultSet extends AbstractResultSet {

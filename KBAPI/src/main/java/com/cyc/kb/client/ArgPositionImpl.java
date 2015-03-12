@@ -5,7 +5,7 @@ import com.cyc.kb.ArgPosition;
 /*
  * #%L
  * File: ArgPositionImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -29,18 +29,18 @@ import com.cyc.kb.ArgPosition;
  */
 public class ArgPositionImpl extends com.cyc.baseclient.cycobject.ArgPositionImpl implements com.cyc.kb.ArgPosition {
 
-  ArgPositionImpl(com.cyc.base.cycobject.ArgPosition pos) {
+  ArgPositionImpl(ArgPosition pos) {
     super(pos.getPath());
   }
 
   @Override
   public ArgPosition extend(ArgPosition otherArgPos) {
-    return (ArgPosition)super.extend(otherArgPos);
+    return (ArgPosition)super.extend((ArgPositionImpl) otherArgPos);
   }
 
   @Override
   public ArgPosition toParent() {
-    return (ArgPosition)super.toParent();
+    return super.toParent();
   }
 
 }

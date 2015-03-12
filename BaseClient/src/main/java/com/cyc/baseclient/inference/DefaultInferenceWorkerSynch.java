@@ -57,7 +57,7 @@ import com.cyc.baseclient.parser.CycLParserUtil;
  <p>
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:55 AM
- * @version $Id: DefaultInferenceWorkerSynch.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultInferenceWorkerSynch.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultInferenceWorkerSynch extends DefaultInferenceWorker implements InferenceWorkerSynch {
   

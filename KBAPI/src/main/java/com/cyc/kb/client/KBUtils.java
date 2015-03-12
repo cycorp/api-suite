@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBUtils.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -69,7 +69,7 @@ public class KBUtils {
       } else {
         typedVal = val;
       }
-      kboToCoMap.put(key.getCore(), typedVal);
+      kboToCoMap.put(KBObjectImpl.getCore(key), typedVal);
     }
     return kboToCoMap;
   }
@@ -137,7 +137,7 @@ public class KBUtils {
   public static KBCollection minCol(Collection<KBCollection> cols, Context ctx) {
     try {
       CycList l = KBUtils.listKBObjectToCycList(cols);
-      Fort cycCol = getStaticAccess().getLookupTool().getMinCol(l, ctx.asELMt());
+      Fort cycCol = getStaticAccess().getLookupTool().getMinCol(l, ContextImpl.asELMt(ctx));
       return KBCollectionImpl.get(cycCol);
     } catch (Exception e) {
       // This is truely exceptional. The input collections will always result
@@ -188,7 +188,7 @@ public class KBUtils {
   public static Collection<KBCollection> minCols(Collection<KBCollection> cols, Context ctx) {
     try {
       CycList l = KBUtils.listKBObjectToCycList(cols);
-      CycList cycCols = getStaticAccess().getLookupTool().getMinCols(l,  ctx.asELMt());
+      CycList cycCols = getStaticAccess().getLookupTool().getMinCols(l,  ContextImpl.asELMt(ctx));
       return KBUtils.<KBCollection>cycListToKBObjectList(cycCols);
     } catch (Exception e) {
       throw new KBApiRuntimeException(e.getMessage(), e);
@@ -234,7 +234,7 @@ public class KBUtils {
   public static Collection<KBCollection> maxCols(Collection<KBCollection> cols, Context ctx) {
     try {
       CycList l = KBUtils.listKBObjectToCycList(cols);
-      CycList cycCols = getStaticAccess().getLookupTool().getMaxCols(l,  ctx.asELMt());
+      CycList cycCols = getStaticAccess().getLookupTool().getMaxCols(l,  ContextImpl.asELMt(ctx));
       return KBUtils.<KBCollection>cycListToKBObjectList(cycCols);
     } catch (Exception e) {
       throw new KBApiRuntimeException(e.getMessage(), e);

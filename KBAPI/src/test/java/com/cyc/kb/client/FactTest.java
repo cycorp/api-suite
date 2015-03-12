@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: FactTest.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -150,7 +150,7 @@ public class FactTest {
     System.out.println("Testing that only GAFs can be Fact");
     try {
       @SuppressWarnings("deprecation")
-      Fact f = FactImpl.get(TestConstants.flyingRule.getCore());
+      Fact f = FactImpl.get(KBObjectImpl.getCore(TestConstants.flyingRule));
     } catch (KBObjectNotFoundException kboe){
       System.out.println("Got Exception: " + kboe.toString());
     }
@@ -163,7 +163,7 @@ public class FactTest {
     SentenceImpl s = new SentenceImpl(TestConstants.kbapitc.endingDate, flight, d);
     Assertion a = AssertionImpl.get(s, airlineLogMt);
     @SuppressWarnings("deprecation")
-    Fact flDate = FactImpl.get(a.getCore());
+    Fact flDate = FactImpl.get(KBObjectImpl.getCore(a));
 
     System.out.println("Testing HLID Factory");
     String hlid = a.getId();

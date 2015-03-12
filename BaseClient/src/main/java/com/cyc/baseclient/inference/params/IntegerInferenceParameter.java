@@ -32,7 +32,7 @@ package com.cyc.baseclient.inference.params;
  *
  * @author tbrussea
  * @date August 2, 2005, 10:25 AM
- * @version $Id: IntegerInferenceParameter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: IntegerInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface IntegerInferenceParameter extends InferenceParameter {
   long getMinValue();

@@ -34,7 +34,7 @@ package com.cyc.baseclient.util;
  *
  * @author tbrussea, zelal
  * @date October 10, 2005, 4:03 PM
- * @version $Id: Cancelable.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Cancelable.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface Cancelable {
   void cancelTask();

@@ -72,7 +72,7 @@ import com.cyc.session.SessionConfigurationException;
 
  Created on : May 1, 2009, 11:13:55 AM Author : tbrussea
  *
- * @version $Id: APIExamples.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: APIExamples.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class APIExamples {
 

@@ -36,7 +36,7 @@ import com.cyc.base.cycobject.CycList;
  *
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:40 AM
- * @version $Id: InferenceWorker.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: InferenceWorker.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface InferenceWorker extends Worker {
 

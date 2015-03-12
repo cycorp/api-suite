@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author zelal
  * @date August 14, 2005, 12:51 PM
- * @version $Id: DefaultInferenceParameterValueDescription.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultInferenceParameterValueDescription.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultInferenceParameterValueDescription 
 implements InferenceParameterValueDescription {

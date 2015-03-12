@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBObjectImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -31,14 +31,18 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.cycobject.Formula;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Guid;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
+import com.cyc.base.cycobject.NonAtomicTerm;
+import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
@@ -65,6 +69,8 @@ import com.cyc.kb.exception.KBApiServerSideException;
 import com.cyc.kb.exception.KBTypeException;
 import com.cyc.kb.exception.StaleKBObjectException;
 import com.cyc.kb.quant.QuantifiedInstanceRestrictedVariable;
+import com.cyc.kb.quant.QuantifiedRestrictedVariable;
+import com.cyc.kb.quant.RestrictedVariable;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionManager;
 import com.cyc.session.SessionApiException;
@@ -77,7 +83,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,10 +96,10 @@ import org.slf4j.LoggerFactory;
  * <p>
  *
  * @author Vijay Raj
- * @version "$Id: KBObjectImpl.java 155043 2014-11-18 18:40:24Z baxter $"
+ * @version "$Id: KBObjectImpl.java 157022 2015-03-11 16:19:37Z nwinant $"
  */
 public class KBObjectImpl implements KBObject {
-
+  
   /**
    * The CORE object wrapped by all KBObjects. The type of object wrapped by
    * each subclass of KBObject will be a subclass of CycObject class.
@@ -541,7 +549,7 @@ public class KBObjectImpl implements KBObject {
   @Override
   public boolean isInstanceOf(KBCollection col, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isa(this.getCore(), col.getCore(), ctx.getCore());
+      return getAccess().getInspectorTool().isa(this.getCore(), getCore(col), getCore(ctx));
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e.getMessage(), e);
     }
@@ -581,7 +589,7 @@ public class KBObjectImpl implements KBObject {
   @Override
   public boolean isQuotedInstanceOf(KBCollection col, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isQuotedIsa(this.getCore(), col.getCore(), ctx.getCore());
+      return getAccess().getInspectorTool().isQuotedIsa(this.getCore(), getCore(col), getCore(ctx));
     } catch (CycConnectionException ioe) {
       throw new KBApiRuntimeException(ioe.getMessage(), ioe);
     }
@@ -758,7 +766,92 @@ public class KBObjectImpl implements KBObject {
 
     return (O) KBObjectImpl.checkAndCastObject(o);
   }
-
+    
+  /**
+   * Attempts to return a CycObject (or a Java primitive object) based on the 
+   * KBObject (or a Java primitive object). 
+   * 
+   * A CycObject or a subclass of it, is the primary representation of the BaseClient.
+   * It represents the same concept in the KB as the KBObject. The CycObject is
+   * useful when the user has to do something the KB API does not support. 
+   * 
+   * @param arg the inputs KBObject that will be converted to a CycObject
+   * 
+   * @return the CycObject representation of the input ARG
+   */
+  public static Object convertKBObjectToCycObject(Object arg) {
+    if (arg instanceof KBObject) {
+      return ((KBObject) arg).getCore();
+    } else if (arg instanceof List) {
+      if (((List) arg).isEmpty()) {
+        return THE_EMPTY_LIST;
+      } else {
+        CycList cl = new CycArrayList();
+        for (Object listElem : (List)arg) {
+          cl.add(convertKBObjectToCycObject(listElem));
+        }
+        Naut cn = new NautImpl(THE_LIST, cl.toArray());
+        return cn;
+      }
+    } else if (arg instanceof Set) {
+      if (((Set)arg).isEmpty()) {
+        return THE_EMPTY_SET;
+      } else {
+        CycList cl = new CycArrayList();
+        for (Object setElem : (Set)arg) {
+          cl.add(convertKBObjectToCycObject(setElem));
+        }
+        Naut cn = new NautImpl(THE_SET, cl.toArray());
+        return cn;
+      }
+    } else if (arg instanceof Date) {
+      DateConverter.getInstance();
+      CycObject co = DateConverter.toCycDate((Date) arg);
+      return co;
+    } else {
+      return arg;
+    }
+  }
+  
+  /**
+   * Replace non-destructively a set of objects with another set of objects, in a
+   * Non-Atomic Term or a Sentence. Replacement is not supported within Assertions,
+   * Atomic Terms, Variables and Symbols. Although, set of objects replaced can 
+   * be any KBObject or Java primitive object. 
+   * 
+   * @param <K> type of object to be replaced
+   * @param <V> type of object replaced with
+   * @param substituations  the replacement mapping
+   * 
+   * @return  A new object with the substitutions made in the original object
+   * 
+   * @throws KBTypeException
+   * @throws CreateException 
+   */
+  public <K extends Object, V extends Object> KBObject replaceTerms(Map<K, V> substituations) throws KBTypeException, CreateException {
+    Map<Object, Object> substitutionsBase = new HashMap<Object, Object>();
+    for (Map.Entry<K, V> e : substituations.entrySet()) {
+      Object key = KBObjectImpl.convertKBObjectToCycObject(e.getKey());
+      Object value = KBObjectImpl.convertKBObjectToCycObject(e.getValue());
+      substitutionsBase.put(key, value);  
+    }
+    
+    if (this.getCore() instanceof NonAtomicTerm) {
+      NonAtomicTerm nat = (NonAtomicTerm) this.getCore();
+      Formula natFormulaMod = nat.getFormula().applySubstitutionsNonDestructive(substitutionsBase);
+      NonAtomicTerm natMod = new NautImpl(natFormulaMod.getArgs());
+      return KBTermImpl.findOrCreate(natMod);
+    } else if (this.getCore() instanceof FormulaSentence) {
+      FormulaSentence f = (FormulaSentence) this.getCore();
+      FormulaSentence fMod = (FormulaSentence) f.applySubstitutionsNonDestructive(substitutionsBase);
+      return new SentenceImpl(fMod);
+    } else {
+      // Anything else, we won't replace, including, Atomic terms
+      // Assertions, Variables, Symbols etc.
+      return this;
+    }
+  }
+  
   /**
    * Attempts to return an Object (expected to be of type T) for the input
    * Object <code>o</code>.
@@ -785,7 +878,8 @@ public class KBObjectImpl implements KBObject {
   static private final CycConstant THE_LIST = new CycConstantImpl("TheList", new Guid("bdcc9f7c-9c29-11b1-9dad-c379636f7270"));
   static private final CycConstant THE_EMPTY_LIST = new CycConstantImpl("TheEmptyList", new Guid("bd79c885-9c29-11b1-9dad-c379636f7270"));
   static private final CycConstant THE_SET = new CycConstantImpl("TheSet", new Guid("bd58e476-9c29-11b1-9dad-c379636f7270"));
-
+  static private final CycConstant THE_EMPTY_SET = new CycConstantImpl("TheEmptySet", new Guid("bdf8edae-9c29-11b1-9dad-c379636f7270"));
+  
   static private Object convertCycObject(CycObject cyco) throws CreateException {
     // First try converting to a Set, List, or Date:
     if (cyco instanceof CycArrayList) {
@@ -812,6 +906,8 @@ public class KBObjectImpl implements KBObject {
       final CycConstant c = (CycConstant) cyco;
       if (c.equals(THE_EMPTY_LIST)) {
         return new ArrayList<Object>();
+      } else if (c.equals(THE_EMPTY_SET)) {
+        return new HashSet<Object>();
       }
     }
 
@@ -1033,6 +1129,19 @@ public class KBObjectImpl implements KBObject {
   public CycObject getCore() {
     return core;
   }
+  
+  @Deprecated
+  public static KBObjectImpl from(KBObject obj) {
+    return (KBObjectImpl) obj;
+  }
+  
+  @Deprecated
+  public static CycObject getCore(Object obj) {
+    if (obj instanceof KBObjectImpl) {
+      return KBObjectImpl.from((KBObject) obj).getCore();
+    }
+    return (CycObject) obj;
+  }
 
   /* (non-Javadoc)
    * @see com.cyc.kb.KBObject#stringApiValue()
@@ -1127,10 +1236,14 @@ public class KBObjectImpl implements KBObject {
    * @see com.cyc.kb.KBObject#toNLString()
    */
   @Override
-  public String toNLString() throws CycConnectionException {
+  public String toNLString() throws SessionApiException {
     Paraphraser p = Paraphraser
             .getInstance(Paraphraser.ParaphrasableType.KBOBJECT);
-    return p.paraphrase(core).getString();
+    try {
+      return p.paraphrase(core).getString();
+    } catch (CycConnectionException ex) {
+      throw new SessionApiException(ex);
+    }
   }
 
   /* (non-Javadoc)

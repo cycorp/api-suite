@@ -29,7 +29,7 @@ import com.cyc.baseclient.CycObjectFactory;
  * Provides the container for the ELMt CycConstantImpl (Epistemlogical Level Microtheory
  Constant).<p>
  *
- * @version $Id: ELMtConstant.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: ELMtConstant.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Tony Brusseau
  */
 public class ELMtConstant extends CycConstantImpl implements ELMt {

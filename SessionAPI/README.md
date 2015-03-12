@@ -31,7 +31,7 @@ This will run the test suite, which will pop up a GUI panel asking for a Cyc
 server address. If you are running in a headless environment, or wish to 
 specify the server at the command line, use the following instead:
 
-    mvn install -Dcyc.session.server=[SOME_HOST_NAME]:[SOME_BASE_PORT]
+    mvn install -Dcyc.session.server=[HOST_NAME]:[BASE_PORT]
 
 For example:
 

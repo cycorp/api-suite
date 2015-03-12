@@ -51,7 +51,7 @@ import com.cyc.baseclient.CycClientManager;
  *
  * @author reed
  date June 27, 2005, 10:20 AM
- * @version $Id: CycLeaseManager.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycLeaseManager.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class CycLeaseManager extends Thread implements LeaseManager {
 

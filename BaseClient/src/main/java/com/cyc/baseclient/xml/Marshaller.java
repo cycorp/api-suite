@@ -33,7 +33,7 @@ import java.io.*;
 /**
  * Provides the behavior of a CYC-ML marshaller.<p>
  *
- * @version $Id: Marshaller.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Marshaller.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 

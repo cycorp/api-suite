@@ -31,7 +31,7 @@ import  org.w3c.dom.DOMException;
  * Implements static methods for computing Xpath strings
  * (www.w3.org/TR/xpath) for DOM Nodes (www.w3.org/DOM/)<p>
  *
- * @version $Id: XpathComputer.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: XpathComputer.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stefano Bertolo
  */
 

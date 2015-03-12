@@ -17,15 +17,24 @@ For more information, visit the [Cyc Developer Center](http://dev.cyc.com/).
 Requirements
 ------------
 
+### Java
+
 * `JDK 1.7` or greater to build; code can be run on Java 6.
-* An EnterpriseCyc or ResearchCyc server running at least system `10.152303`. 
-  The current version of the Cyc API suite is _not_ compatible with the latest 
-  4.0 OpenCyc release. For inquiries about obtaining a suitable version of
-  EnterpriseCyc or ResearchCyc, visit the 
-  [Cyc Dev Center download page](http://dev.cyc.com/cyc-api/download.html).
 * [Apache Maven](http://maven.apache.org/), version `3.2` or
   higher. If you are new to Maven, you may wish to view the
   [quick start](http://maven.apache.org/run-maven/index.html).
+
+### Cyc Server
+
+The following Cyc server releases are supported:
+
+* **ResearchCyc 4.0q** or higher.
+* **EnterpriseCyc 1.7-preview** or higher.
+
+The Core API Suite is _not_ presently compatible with any current release of **OpenCyc.**
+
+For inquiries about obtaining a suitable version of ResearchCyc or EnterpriseCyc, please visit the
+[Cyc Dev Center download page](http://dev.cyc.com/cyc-api/download.html).
 
 Getting Started
 ---------------
@@ -44,7 +53,7 @@ GUI panel asking for a Cyc server address. If you are running in a headless
 environment, or wish to specify the server at the command line, use the 
 following instead:
 
-    mvn install -Dcyc.session.server=[SOME_HOST_NAME]:[SOME_BASE_PORT]
+    mvn install -Dcyc.session.server=[HOST_NAME]:[BASE_PORT]
 
 For example:
 

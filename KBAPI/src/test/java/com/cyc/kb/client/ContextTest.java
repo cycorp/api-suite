@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: ContextTest.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -225,7 +225,7 @@ public class ContextTest {
     @Test
     public void testGetTimeInterval() throws Exception {
         System.out.println("getTimeInterval");
-        assertEquals(ContinuousTimeInterval.ALWAYS, baseKB.getTimeInterval());
+        assertEquals(ContinuousTimeInterval.ALWAYS, ContextImpl.from(baseKB).getTimeInterval());
         testOneGetTimeInterval(tenToTwentyKInclExcl);
         testOneGetTimeInterval(tenToTwentyKInclIncl);
         testOneGetTimeInterval(tenToTwentyKExclExcl);
@@ -236,7 +236,7 @@ public class ContextTest {
 
   private void testOneGetTimeInterval(final TimeInterval timeInterval) throws KBApiException, KBTypeException, CreateException {
     final Context hlmt = ContextImpl.get(baseKB, timeInterval);
-    assertEquals(timeInterval, hlmt.getTimeInterval());
+    assertEquals(timeInterval, ContextImpl.from(hlmt).getTimeInterval());
   }
 
     /**
@@ -252,8 +252,8 @@ public class ContextTest {
     }
 
   private void testOneSetTimeInterval(final TimeInterval timeInterval) throws KBApiException, KBTypeException, CreateException {
-    final Context hlmt = ContextImpl.get(baseKB.getCore(),timeInterval);
-    assertEquals(timeInterval, hlmt.getTimeInterval());
+    final Context hlmt = ContextImpl.get(ContextImpl.getCore(baseKB),timeInterval);
+    assertEquals(timeInterval, ContextImpl.from(hlmt).getTimeInterval());
   }
 
     /**
@@ -262,7 +262,7 @@ public class ContextTest {
     @Test
     public void testAsELMt() throws Exception {
         System.out.println("asELMt");
-        assertEquals(baseKB.getCore(), baseKB.asELMt());
+        assertEquals(baseKB.getCore(), ContextImpl.asELMt(baseKB));
     }
 
 

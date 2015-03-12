@@ -22,7 +22,7 @@ package com.cyc.baseclient.util.query;
  */
 
 /**
- * @version $Id: SourceConstraint.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: SourceConstraint.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author  mreimers
  */
 public interface SourceConstraint extends QueryConstraint {

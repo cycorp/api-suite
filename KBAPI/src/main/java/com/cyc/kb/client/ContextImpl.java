@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: ContextImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * Each Assertion has to be explicitly stated to be true in at least one context.
  *
  * @author Vijay Raj
- * @version $Id: ContextImpl.java 155051 2014-11-18 21:06:04Z baxter $
+ * @version $Id: ContextImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class ContextImpl extends KBIndividualImpl implements Context {
 
@@ -248,7 +248,7 @@ public class ContextImpl extends KBIndividualImpl implements Context {
    * @throws CreateException 
    */
   public static Context get(Context monad, TimeInterval time) throws KBTypeException, CreateException {
-    return ContextImpl.get(monad.getCore(), time);
+    return ContextImpl.get(ContextImpl.from(monad).getCore(), time);
   }
 
   /**
@@ -569,7 +569,7 @@ public class ContextImpl extends KBIndividualImpl implements Context {
       final FormulaSentence sentence = getAccess().getObjectTool().makeCycSentence("( " + Constants.mtMonad().stringApiValue() + " "
               + stringApiValue() + " " + var.toCanonicalString() + ")");
       final CycList<Object> result = getAccess().getInferenceTool().queryVariable(var, sentence,
-              Constants.uvMt().asELMt());
+              ContextImpl.asELMt(Constants.uvMt()));
       if (!result.isEmpty()) {
     	  // @todo: What if it has multiple Monads??
         return ContextImpl.get((CycObject)result.get(0));
@@ -584,17 +584,21 @@ public class ContextImpl extends KBIndividualImpl implements Context {
     } 
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#getTimeInterval()
+  /**
+   * Gets the time interval of this context.
+   *
+   * The time interval during which the assertions in the context are true
+   * unless specified otherwise.
+   *
+   * @return the time interval of this context.
    */
-  @Override
   public TimeInterval getTimeInterval() {
     try {
       final CycVariable var = CycObjectFactory.makeCycVariable("INT");
       final FormulaSentence sentence = getAccess().getObjectTool().makeCycSentence("(" + Constants.mtTimeIndex().stringApiValue() + " "
               + core.cyclify() + " " + var.toCanonicalString() + ")");
       final CycList<Object> result = getAccess().getInferenceTool().queryVariable(var, sentence,
-          Constants.uvMt().asELMt());
+          ContextImpl.asELMt(Constants.uvMt()));
       if (!result.isEmpty()) {
         return TimeIntervalConverter.parseCycInterval((CycObject) result.get(0));
       }
@@ -608,10 +612,11 @@ public class ContextImpl extends KBIndividualImpl implements Context {
     } 
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#asELMt()
+  /**
+   * Returns this context as an <code>ELMt</code>.
+   *
+   * @return this context as an ELMt
    */
-  @Override
   @Deprecated
   public ELMt asELMt() {
     try {
@@ -619,6 +624,16 @@ public class ContextImpl extends KBIndividualImpl implements Context {
     } catch (CycConnectionException e){
       throw new KBApiRuntimeException(e.getMessage(), e);
     }
+  }
+  
+  @Deprecated
+  public static ContextImpl from(Context ctx) {
+    return (ContextImpl) ctx;
+  }
+  
+  @Deprecated
+  public static ELMt asELMt(Context ctx) {
+    return ContextImpl.from(ctx).asELMt();
   }
 
   /**

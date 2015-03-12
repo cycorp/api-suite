@@ -7,7 +7,7 @@ package com.cyc.km.query.export;
 /*
  * #%L
  * File: CycXMLQueryResultExporter.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%

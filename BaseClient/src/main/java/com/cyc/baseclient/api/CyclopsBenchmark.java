@@ -29,7 +29,7 @@ import java.io.*;
 
 /**
  * Loads and executes the Cyclops (Cyc Logical Operations) benchmark.<p>
- * @version $Id: CyclopsBenchmark.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CyclopsBenchmark.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 public class CyclopsBenchmark {

@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: PropertiesConfigurationLoaderTest.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -21,6 +21,10 @@ package com.cyc.session.internal;
  * #L%
  */
 
+import com.cyc.session.CycServer;
+import com.cyc.session.SessionConfigurationException;
+import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.EnvironmentConfiguration;
 import com.cyc.session.*;
 import com.cyc.session.SessionConfigurationProperties;
 import java.util.Properties;

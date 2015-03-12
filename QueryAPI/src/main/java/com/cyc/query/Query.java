@@ -3,7 +3,7 @@ package com.cyc.query;
 /*
  * #%L
  * File: Query.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -24,7 +24,7 @@ import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.cycobject.ArgPosition;
+import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
@@ -651,7 +651,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
       final DenotationalTerm idCycTerm = (DenotationalTerm) getCycAccess().getLookupTool().getKnownFortByName(
               getId().stringApiValue());
       final String command = SubLAPIHelper.makeSubLStmt(fn, idCycTerm,
-              getQuerySentenceCyc(), getContext().asELMt(), params);
+              getQuerySentenceCyc(), ContextImpl.asELMt(getContext()), params);
       getCycAccess().converse().converseVoid(command);
     } catch (Exception e) {
       throw new QueryApiRuntimeException("Exception thrown while saving query.", e);
@@ -912,7 +912,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
     final Set<Collection<FormulaSentence>> clausePairs = new HashSet<Collection<FormulaSentence>>();
     for (final Object obj : getCycAccess().converse().converseList(SubLAPIHelper.makeSubLStmt(
             "find-redundant-literals",
-            querySentence, ctx.asELMt()))) {
+            querySentence, ContextImpl.asELMt(ctx)))) {
       final CycList dottedPair = (CycList) obj;
       final FormulaSentence sentence1 = new CycFormulaSentence(
               (CycList) dottedPair.first());
@@ -989,8 +989,8 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
   public Query merge(Query otherQuery) throws QueryConstructionException,
           CycConnectionException {
     final String command = SubLAPIHelper.makeSubLStmt("combine-queries",
-            querySentence, ctx.asELMt(), params, otherQuery.querySentence,
-            otherQuery.ctx.asELMt(), otherQuery.params);
+            querySentence, ContextImpl.asELMt(ctx), params, otherQuery.querySentence,
+            ContextImpl.asELMt(otherQuery.ctx), otherQuery.params);
     final CycList newStuff = getCycAccess().converse().converseList(command);
     final Object paramsObj = newStuff.third();
     final List paramsList = CycObjectFactory.nil.equals(paramsObj) ? Collections.emptyList() : (List) paramsObj;
@@ -2025,7 +2025,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
         createInferenceWorker().executeQuery();
       } else {
         final InferenceResultSet inferenceResultSet = getCycAccess().getInferenceTool().executeQuery(getQuerySentenceCyc(),
-                getContext().asELMt(), getInferenceParameters());
+                ContextImpl.asELMt(getContext()), getInferenceParameters());
         this.setResultSet(new QueryResultSet(inferenceResultSet));
         hasBeenStarted = true;
         this.inferenceStatus = DefaultInferenceStatus.SUSPENDED;
@@ -2061,7 +2061,7 @@ public class Query implements Closeable, InferenceParameterSetter, InferencePara
 
     private QueryWorker createInferenceWorker() {
 
-      final ELMt elmt = ctx.asELMt();
+      final ELMt elmt = ContextImpl.asELMt(ctx);
       worker = new QueryWorker(elmt, getCycAccess());
       // We get to be the first listener, so we can be sure we're up to date
       // when other listeners are called.

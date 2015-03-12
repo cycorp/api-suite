@@ -75,7 +75,7 @@ import java.util.concurrent.BlockingQueue;
  * @see com.cyc.base.conn.WorkerListener
  * @author tbrussea
  * @date March 17, 2004, 11:26 AM
- * @version $Id: Worker.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Worker.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface Worker extends Cancelable {
   

@@ -41,7 +41,7 @@ import com.cyc.base.CycTimeOutException;
  * <p>
  * @deprecated There should be no such class as this. It should be broken up.
  * @author  tbrussea
- * @version $Id: CycUtils.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycUtils.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 @Deprecated
 public class CycUtils {

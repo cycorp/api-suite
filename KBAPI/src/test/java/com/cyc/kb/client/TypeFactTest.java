@@ -7,7 +7,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: TypeFactTest.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -80,7 +80,7 @@ public class TypeFactTest {
     CycAccess cyc = CycAccessManager.getCurrentAccess();
     FormulaSentence cfs = CycFormulaSentence.makeCycSentence(cyc, "(relationAllExists inputsDestroyed BoilingWater (LiquidFn Water))");
                     
-    CycAssertion ca = new CycAssertionImpl(cfs, Constants.uvMt().getCore());
+    CycAssertion ca = new CycAssertionImpl(cfs, KBObjectImpl.getCore(Constants.uvMt()));
     System.out.println("CycAssertion: " + ca);
     
     // TODO make this work

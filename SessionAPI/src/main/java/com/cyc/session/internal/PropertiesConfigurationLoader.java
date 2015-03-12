@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: PropertiesConfigurationLoader.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%

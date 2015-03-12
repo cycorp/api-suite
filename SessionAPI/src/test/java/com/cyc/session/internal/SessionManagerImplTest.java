@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: SessionManagerImplTest.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -21,6 +21,8 @@ package com.cyc.session.internal;
  * #L%
  */
 
+import com.cyc.session.SessionServiceException;
+import com.cyc.session.SessionManager;
 import com.cyc.session.*;
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.connection.SessionFactory;

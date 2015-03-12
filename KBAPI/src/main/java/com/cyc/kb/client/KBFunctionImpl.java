@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBFunctionImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -25,6 +25,7 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Guid;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.baseclient.cycobject.CycArrayList;
@@ -70,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * Cyc Knowledge Base. A future version of the API will support un-reifiable functions.
  *
  * @author Vijay Raj
- * @version	$Id: KBFunctionImpl.java 155051 2014-11-18 21:06:04Z baxter $
+ * @version	$Id: KBFunctionImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
   // @TODO: Add examples
 public class KBFunctionImpl extends RelationImpl implements KBFunction {
@@ -458,29 +459,9 @@ public class KBFunctionImpl extends RelationImpl implements KBFunction {
     try {
       CycList<Object> natArgs = new CycArrayList<Object>();
       natArgs.add(this.getCore());
-//      final StringBuilder fortStringBuilder = new StringBuilder("(");
-//      fortStringBuilder.append(this.stringApiValue());
-      // TODO replace this with Sentence.convertKBObjectArrayToCycFormulaSentence
-      // it handles all the types of arguments we can supply, like java.util.List and java.util.Set
-      for (Object aArg : args) {
-        if (aArg instanceof KBObject) {
-          natArgs.add(((KBObject) aArg).getCore());
-          log.trace("Arg: {}", aArg.toString());
-        } else if (aArg instanceof String) {
-          natArgs.add(aArg);
-          log.trace("Arg: {}", aArg.toString());
-        } else if (aArg instanceof Date) {
-          DateConverter.getInstance();
-          CycObject co = DateConverter.toCycDate((Date) aArg);
-          natArgs.add(co);
-        } else {
-          natArgs.add(aArg);
-        }
-      }
 
-//      LOG.fine("Fort String: " + fortString);
-//      String cyclifiedStr = cyc.cyclifyString(fortString);
-//      LOG.fine("Cyclified Fort String: " + cyclifiedStr);
+      FormulaSentence fs = SentenceImpl.convertKBObjectArrayToCycFormulaSentence(args);
+      natArgs.addAll(fs.getArgs());
 
       CycObject co = null;
       if (this.isInstanceOf(Constants.getInstance().REIFIABLE_FUNC, Constants.uvMt())) {
@@ -491,40 +472,6 @@ public class KBFunctionImpl extends RelationImpl implements KBFunction {
       }
 
       return KBObjectImpl.<O>checkAndCastObject(co);
-      
-      /*
-      O ret = null;
-      if (retType.isInstance(ContextImpl.class)) {
-        ret = retType.cast(ContextImpl.findOrCreate((CycObject) co));
-      } else if (retType.isAssignableFrom(KBPredicateImpl.class)) {
-        ret = retType.cast(KBPredicateImpl.findOrCreate((CycObject) co));
-      } else if (retType.isAssignableFrom(KBFunctionImpl.class)) {
-        ret = retType.cast(KBFunctionImpl.findOrCreate((CycObject) co));
-      } // Have the check for KBIndividual after all its subclasses.
-      // Context, Relation are subclasses of KBIndividual.
-      else if (retType.isAssignableFrom(KBIndividualImpl.class)) {
-        ret = retType.cast(KBIndividualImpl.findOrCreate((CycObject) co)); //@todo this should probably by "get", but that currently fails on NAUTs like ((USDollarFn 2012) 5)
-      } // We currently don't have a direct relation between KBIndividual and
-      // KBCollection, but to be consistent, KBCollection always comes after
-      // KBIndividual, since (isa KBIndividual KBCollection) and (genls KBCollection
-      // KBCollection) KBCollection is reflexive
-      else if (retType.isAssignableFrom(FirstOrderCollectionImpl.class)) {
-        ret = retType.cast(FirstOrderCollectionImpl.findOrCreate((CycObject) co));
-      } else if (retType.isAssignableFrom(SecondOrderCollectionImpl.class)) {
-        ret = retType.cast(SecondOrderCollectionImpl.findOrCreate((CycObject) co));
-      } else if (retType.isAssignableFrom(KBCollectionImpl.class)) {
-        ret = retType.cast(KBCollectionImpl.findOrCreate((CycObject) co));
-      } else if (retType.isAssignableFrom(KBTermImpl.class)) {
-        ret = retType.cast(KBTermImpl.get((CycObject) co));
-      } else if (retType.isAssignableFrom(KBObjectImpl.class)) {
-        ret = retType.cast(KBObjectImpl.get((CycObject) co));
-      } else {
-        // Should we throw InvalidArgumentException?
-        throw new UnsupportedOperationException("Casting of type " + retType + " not supported");
-      }
-
-      return ret;
-      */
     } catch (CycConnectionException ex) {
       throw new KBApiRuntimeException(ex.getMessage(), ex);
     } 

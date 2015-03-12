@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: FactImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * is used to create and remove arbitrary assertions from Cyc.
  * 
  * @author Vijay Raj
- * @version $Id: FactImpl.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: FactImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  * @since 1.0
  */
 
@@ -217,7 +217,7 @@ public class FactImpl extends AssertionImpl implements Fact {
       // one...
       log.trace("fact Sentence: {}", factSentence);
 
-      CycAssertion ca = findAssertion(factSentence, ctx.asELMt());
+      CycAssertion ca = findAssertion(factSentence, ContextImpl.asELMt(ctx));
 
       if (ca != null) {
         core = ca;
@@ -257,7 +257,7 @@ public class FactImpl extends AssertionImpl implements Fact {
       log.trace("fact Sentence: {}", factSentence);
 
       CycAssertion ca = findAssertion(
-          (FormulaSentence) factSentence.getCore(), ctx.asELMt());
+          (FormulaSentence) factSentence.getCore(), ContextImpl.asELMt(ctx));
 
       if (ca != null) {
         core = ca;
@@ -402,7 +402,7 @@ public static FactImpl get(SentenceImpl formula, Context ctx) throws KBTypeExcep
     // same KBObject.       
     // A separate KBObjectFactory method that takes the ist sentence of formula and mt,
     // could also eliminate the lookup step.
-    ca = findAssertion(FormulaSentence.class.cast(formula.getCore()), ctx.asELMt());
+    ca = findAssertion(FormulaSentence.class.cast(formula.getCore()), ContextImpl.asELMt(ctx));
           
     if (ca == null){
       String msg = "Could not find the assertion: " + formula + " in context: " + ctx;

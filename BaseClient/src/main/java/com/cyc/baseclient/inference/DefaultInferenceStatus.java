@@ -38,7 +38,7 @@ import java.util.*;
  *
  * @author zelal, tbrussea
  * @date July 27, 2005, 12:23 PM
- * @version $Id: DefaultInferenceStatus.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultInferenceStatus.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public final class DefaultInferenceStatus extends CycSymbolImpl implements InferenceStatus {
 

@@ -30,7 +30,7 @@ import com.cyc.baseclient.cycobject.CycConstantImpl;
 /**
  * <P>Provides 
  *
- * @version $Id: UnsupportedVocabularyException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: UnsupportedVocabularyException.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Tony Brusseau
  */
 public class UnsupportedVocabularyException extends BaseClientException {

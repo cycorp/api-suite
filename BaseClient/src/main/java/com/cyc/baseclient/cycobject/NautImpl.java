@@ -38,7 +38,7 @@ import com.cyc.baseclient.datatype.DateConverter;
  * <P>NautImpl is designed to...
  * 
  * @author baxter, Jul 6, 2009, 10:05:20 AM
- * @version $Id: NautImpl.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: NautImpl.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class NautImpl extends FormulaImpl implements NonAtomicTerm, DenotationalTerm, Naut {
 

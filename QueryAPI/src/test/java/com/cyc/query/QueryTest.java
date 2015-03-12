@@ -3,7 +3,7 @@ package com.cyc.query;
 /*
  * #%L
  * File: QueryTest.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -39,6 +39,7 @@ import com.cyc.kb.KBObject;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.KBIndividualImpl;
+import com.cyc.kb.client.KBObjectImpl;
 import com.cyc.kb.client.SentenceImpl;
 import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.exception.KBApiException;
@@ -331,7 +332,7 @@ public class QueryTest {
 
     try {
       Map<CycObject, Object> indexicals = new HashMap<CycObject, Object>();
-      indexicals.put(testConstants().theAnimal.getCore(),
+      indexicals.put(KBObjectImpl.getCore(testConstants().theAnimal),
               CycObjectFactory.makeCycVariable("X"));
 
       Query query = Query.loadCycObjectMap(KBIndividualImpl.get("TestKBQueryIndexical-2012-01-16"),

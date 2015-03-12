@@ -3,7 +3,7 @@ package com.cyc.query;
 /*
  * #%L
  * File: KBInferenceResultSetTest.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -471,7 +471,8 @@ public class KBInferenceResultSetTest {
   @Test
   public void testGetDate_String() throws Exception {
     System.out.println("getDate");
-    KBInferenceResultSet resultSet = new Query("(#$equals ?NOW (#$IndexicalReferentFn #$Now-Indexical))").getResultSet();
+    //KBInferenceResultSet resultSet = new Query("(#$equals ?NOW (#$IndexicalReferentFn #$Now-Indexical))").getResultSet();
+    KBInferenceResultSet resultSet = new Query("(#$indexicalReferent #$Now-Indexical ?NOW)").getResultSet();
     try {
       resultSet.next();
       assertTrue(resultSet.getDate("?NOW") instanceof Date);

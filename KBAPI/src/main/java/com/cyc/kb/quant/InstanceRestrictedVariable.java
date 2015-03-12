@@ -7,7 +7,7 @@ package com.cyc.kb.quant;
 /*
  * #%L
  * File: InstanceRestrictedVariable.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%

@@ -38,7 +38,7 @@ import com.cyc.baseclient.util.Base64Url;
  * @see com.cyc.baseclient.cycobject.DefaultCycObject#toCompactExternalId(Object, CycAccess) 
  * @see com.cyc.baseclient.cycobject.DefaultCycObject#fromCompactExternalId(String, CycAccess) 
  * 
- * @version $Id: CompactHLIDConverter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CompactHLIDConverter.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author daves
  * @todo add support for new, terser GUID serialization
  */

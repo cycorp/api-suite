@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>com.cyc</groupId>
+    <artifactId>cyc-core-parent</artifactId>
+    <version>1.0.0-rc2-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>com.cyc</groupId>
+  <artifactId>cyc-core-suite</artifactId>
+  <version>1.0.0-rc2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  
+  <name>Core API Suite Bundle</name>
+  <description>Packages the Cyc Core API Suite, including APIs and implementation classes.</description>
+  <url>http://dev.cyc.com/cyc-api/</url>
+  
+  <scm>
+    <connection>scm:git:git@github.com:cycorp/CycCoreAPI.git</connection>
+    <developerConnection>scm:git:git@github.com:cycorp/CycCoreAPI.git</developerConnection>
+    <url>https://github.com/cycorp/CycCoreAPI</url>
+  </scm>
+  
+  <issueManagement>
+    <url>https://github.com/cycorp/CycCoreAPI/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  
+  <organization>
+    <name>Cycorp, Inc</name>
+    <url>http://www.cyc.com</url>
+  </organization>
+  
+  <developers>
+    <developer>
+      <name>Cycorp API Team</name>
+      <email>dev-team@cyc.com</email>
+      <organization>Cycorp, Inc.</organization>
+      <organizationUrl>http://www.cyc.com</organizationUrl>
+    </developer>
+  </developers>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-core-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-session</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-base-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-kb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-query</artifactId>
+    </dependency>
+  </dependencies>
+  
+</project>

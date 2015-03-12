@@ -40,7 +40,7 @@ import java.util.Currency;
  * @todo Improve serialization
  *
  * @author nwinant, May 24, 2010, 4:30:39 PM
- * @version $Id: Money.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Money.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class Money implements Serializable, Comparable<Money> {
 

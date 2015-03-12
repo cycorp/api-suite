@@ -27,7 +27,7 @@ import com.cyc.base.BaseClientRuntimeException;
  * Class CycKBContentException indicates that there is some problem with
  * the knowledge currently stored in the KB.
  *
- * @version $Id: CycKBContentException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycKBContentException.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 

@@ -29,7 +29,7 @@ package com.cyc.baseclient.util;
  * <P>CachedValue is designed to...
  *
  * @author tbrussea, Apr 1, 2010, 3:32:56 PM
- * @version $Id: CachedValue.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CachedValue.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class CachedValue<V> {
 

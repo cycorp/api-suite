@@ -29,7 +29,7 @@ import  org.w3c.dom.Node;
  * Provides a implementation of org.w3c.dom.traversal.NodeFilter that allows a TreeWalker
  * to select nodes of a DOM tree based on their tag name.<p>
  *
- * @version $Id: NameNodeFilter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: NameNodeFilter.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stefano Bertolo
  */
 public class NameNodeFilter

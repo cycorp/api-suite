@@ -27,7 +27,7 @@ import com.cyc.base.BaseClientException;
  * <P>ParseException is designed to...
  *
  * @author nwinant, May 24, 2010, 10:37:18 AM
- * @version $Id: ParseException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: ParseException.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class ParseException extends BaseClientException {
 

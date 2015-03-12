@@ -3,7 +3,7 @@ package com.cyc.session;
 /*
  * #%L
  * File: CycSessionManager.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -21,6 +21,14 @@ package com.cyc.session;
  * #L%
  */
 
+import com.cyc.session.CycSession;
+import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.SessionApiException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.SessionConfigurationException;
+import com.cyc.session.SessionInitializationException;
+import com.cyc.session.SessionManager;
+import com.cyc.session.SessionServiceException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;

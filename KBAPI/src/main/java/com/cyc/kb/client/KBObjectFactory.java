@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBObjectFactory.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * The class and the methods of this class are not part of the KB API.
  *  
  * @author David Baxter
- * @version $Id: KBObjectFactory.java 155043 2014-11-18 18:40:24Z baxter $ 
+ * @version $Id: KBObjectFactory.java 157022 2015-03-11 16:19:37Z nwinant $ 
  */
 
 public class KBObjectFactory {
@@ -129,7 +129,7 @@ public class KBObjectFactory {
               bestClass = subclass;
             }
           } catch (Exception ex) {
-            KBApiRuntimeException.rethrowIfCycConnectionException(ex);
+            KBApiExceptionHandler.rethrowIfCycConnectionException(ex);
             
             // Guess it's not one of those.
             
@@ -177,7 +177,7 @@ public class KBObjectFactory {
       kbObj = cacheKBObject(kbObj, nameOrId, c);
       log.trace("Found " + kbObj + " and cached it");
     } catch (InvocationTargetException ex) {
-      KBApiRuntimeException.rethrowIfCycConnectionException(ex.getCause());
+      KBApiExceptionHandler.rethrowIfCycConnectionException(ex.getCause());
       if (ex.getCause() instanceof KBTypeException) {
         throw (KBTypeException) ex.getCause();
       } else if (ex.getCause() instanceof CreateException) {

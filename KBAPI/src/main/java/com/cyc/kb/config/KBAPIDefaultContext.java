@@ -3,7 +3,7 @@ package com.cyc.kb.config;
 /*
  * #%L
  * File: KBAPIDefaultContext.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -23,6 +23,8 @@ package com.cyc.kb.config;
 
 import com.cyc.kb.Context;
 import com.cyc.kb.client.ContextImpl;
+import com.cyc.kb.config.DefaultContext;
+import com.cyc.kb.config.DefaultContext;
 
 public class KBAPIDefaultContext implements DefaultContext {
 	

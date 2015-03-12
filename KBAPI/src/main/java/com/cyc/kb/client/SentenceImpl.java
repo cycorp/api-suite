@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: SentenceImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -20,6 +20,14 @@ package com.cyc.kb.client;
  * limitations under the License.
  * #L%
  */
+import com.cyc.kb.Relation;
+import com.cyc.kb.ArgPosition;
+import com.cyc.kb.Quantifier;
+import com.cyc.kb.Assertion;
+import com.cyc.kb.KBTerm;
+import com.cyc.kb.KBObject;
+import com.cyc.kb.Sentence;
+import com.cyc.kb.Context;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
@@ -67,7 +75,7 @@ import org.slf4j.LoggerFactory;
  * and understood by the server, and are used extensively to perform queries or make assertions.
  *
  * @author Vijay Raj
- * @version $Id: SentenceImpl.java 155325 2014-12-03 19:44:38Z daves $
+ * @version $Id: SentenceImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  * @since 1.0
  */
 public class SentenceImpl extends StandardKBObject implements Sentence {
@@ -181,7 +189,7 @@ public class SentenceImpl extends StandardKBObject implements Sentence {
    *
    * @return a CycFormulaSentence corresponding to the arguments <code>args</code>.
    */
-  private static FormulaSentence convertKBObjectArrayToCycFormulaSentence(Object... args) {
+  public static FormulaSentence convertKBObjectArrayToCycFormulaSentence(Object... args) {
     List<Object> outargs = new ArrayList<Object>();
     List<Object> tempoutargs = new ArrayList<Object>();
     try {
@@ -320,13 +328,13 @@ public class SentenceImpl extends StandardKBObject implements Sentence {
 
   @Override
   public boolean isAssertible(Context ctx) {
-    return !((CycFormulaSentence) core).hasWffConstraintViolations(getAccess(), ctx.asELMt());
+    return !((CycFormulaSentence) core).hasWffConstraintViolations(getAccess(), ContextImpl.asELMt(ctx));
   }
 
   @Override
   public String notAssertibleExplanation(Context ctx) {
     try {
-      return ((CycFormulaSentence) core).getNonWffAssertExplanation(getAccess(), ctx.asELMt());
+      return ((CycFormulaSentence) core).getNonWffAssertExplanation(getAccess(), ContextImpl.asELMt(ctx));
     } catch (Exception e) {
       log.error(e.getMessage());
       log.error(Arrays.toString(e.getStackTrace()));
@@ -413,8 +421,8 @@ public class SentenceImpl extends StandardKBObject implements Sentence {
       term = ((KBObject)term).getCore();
     }
     if (getCore() instanceof CycFormulaSentence) {
-      Set<com.cyc.base.cycobject.ArgPosition> result =  ((CycFormulaSentence)getCore()).getArgPositionsForTerm(term);
-      for (com.cyc.base.cycobject.ArgPosition pos : result) {
+      Set<com.cyc.kb.ArgPosition> result =  ((CycFormulaSentence)getCore()).getArgPositionsForTerm(term);
+      for (com.cyc.kb.ArgPosition pos : result) {
         returnResult.add(new ArgPositionImpl(pos));
       }
     }

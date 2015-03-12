@@ -7,7 +7,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: SentenceTest.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -96,7 +96,7 @@ public class SentenceTest {
     System.out.println("Sentence (Object[] args)");
 
     KBCollection c = KBCollectionImpl.get("#$Dog");
-    RestrictedVariable rv = c.toInstanceRestrictedVariable();
+    RestrictedVariable rv = KBCollectionImpl.from(c).toInstanceRestrictedVariable();
 
     KBPredicate p = KBPredicateImpl.get("#$owns");
     //Variable v = new Variable ("?PER");
@@ -117,10 +117,10 @@ public class SentenceTest {
     System.out.println("Sentence (Object[] args)");
 
     KBCollection c = KBCollectionImpl.get("#$Dog");
-    RestrictedVariable rv1 = c.toInstanceRestrictedVariable();
+    RestrictedVariable rv1 = KBCollectionImpl.from(c).toInstanceRestrictedVariable();
     KBPredicate p = KBPredicateImpl.get("#$owns");
     KBCollection c2 = KBCollectionImpl.get("#$Person");
-    RestrictedVariable rv2 = c2.toInstanceRestrictedVariable();
+    RestrictedVariable rv2 = KBCollectionImpl.from(c2).toInstanceRestrictedVariable();
 
     List<Object> ol = new ArrayList();
     ol.add(p);

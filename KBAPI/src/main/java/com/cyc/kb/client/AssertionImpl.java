@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: AssertionImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: AssertionImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  * @since 1.0
  */
 public class AssertionImpl extends StandardKBObject implements Assertion {
@@ -246,7 +246,7 @@ public static Assertion get(String formulaStr, String ctxStr) throws KBTypeExcep
     // same KBObject.       
     // A separate KBObjectFactory method that takes the ist sentence of formula and mt,
     // could also eliminate the lookup step.
-    ca = findAssertion(FormulaSentence.class.cast(formula.getCore()), ctx.asELMt());
+    ca = findAssertion(FormulaSentence.class.cast(formula.getCore()), ContextImpl.asELMt(ctx));
     
     if (ca == null){
       String msg = "Could not find the assertion: " + formula + " in context: " + ctx;
@@ -723,7 +723,7 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
   @SuppressWarnings("deprecation")
 static CycAssertion assertSentence(FormulaSentence factSentence, Context ctx, Strength s, Direction d) {
 	  try {
-      CycAssertion ca = findAssertion(factSentence, ctx.asELMt());
+      CycAssertion ca = findAssertion(factSentence, ContextImpl.asELMt(ctx));
       if (d == null || d.equals(Direction.AUTO)){
     	  d = Direction.FORWARD;
       }
@@ -736,7 +736,7 @@ static CycAssertion assertSentence(FormulaSentence factSentence, Context ctx, St
             factSentence.stringApiValue(), 
             getStaticAccess().getObjectTool().makeELMt(ctx.getCore()),
         		":"+s.name(), ":"+d.name(), true, KBAPIConfiguration.getShouldTranscriptOperations());
-        ca = findAssertion(factSentence, ctx.asELMt());
+        ca = findAssertion(factSentence, ContextImpl.asELMt(ctx));
       }
       return ca;
     } catch (CycConnectionException ex) {

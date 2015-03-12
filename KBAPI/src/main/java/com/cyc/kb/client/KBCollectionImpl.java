@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBCollectionImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * of a #$Collection is context dependent. 
  *
  * @author Vijay Raj
- * @version $Id: KBCollectionImpl.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: KBCollectionImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class KBCollectionImpl extends KBTermImpl implements KBCollection {
 
@@ -475,7 +475,7 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
     try {
       CycList<CycObject> cl = new CycArrayList<CycObject>();
       for (KBCollection col : cols) {
-        cl.add(col.getCore());
+        cl.add(KBObjectImpl.getCore(col));
       }
       CycObject co = getStaticAccess().converse().converseCycObject("(with-all-mts (min-col " + cl.stringApiValue()
               + "))");
@@ -809,7 +809,7 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
   @Override
   public boolean isGeneralizationOf(KBCollection moreSpecific, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isGenlOf(core, moreSpecific.getCore(), ctx.getCore());
+      return getAccess().getInspectorTool().isGenlOf(core, getCore(moreSpecific), getCore(ctx));
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e);
     }
@@ -835,7 +835,7 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
   @Override
   public boolean isGeneralizationOf(KBCollection moreSpecific) {
     try {
-      return getAccess().getInspectorTool().isGenlOf(core, moreSpecific.getCore());
+      return getAccess().getInspectorTool().isGenlOf(core, getCore(moreSpecific));
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e);
     }
@@ -875,10 +875,12 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
     return "#$Collection";
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#toSentence()
+  /**
+   * This not part of the public, supported KB API
+   *
+   * @return FormulaSentence
+   * @throws KBApiException
    */
-  @Override
   public FormulaSentence toSentence() throws KBApiException {
     FormulaSentence cfs = null;
     Variable v = this.getVariable();
@@ -943,35 +945,52 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
     }
     return kbo.toString().replaceAll("\\W+", "") + "-" + sb.toString();
   }
+  
+  @Deprecated
+  public static KBCollectionImpl from(KBCollection col) {
+    return (KBCollectionImpl) col;
+  }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#toInstanceRestrictedVariable(com.cyc.kb.ContextImpl)
+  /**
+   * This not part of the public, supported KB API
+   *
+   * @param ctx the context
+   * @return InstanceRestrictedVariable
+   * @throws KBApiException
    */
-  @Override
   public InstanceRestrictedVariable toInstanceRestrictedVariable(Context ctx) throws KBApiException {
     return new InstanceRestrictedVariable(ctx, this);
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#toInstanceRestrictedVariable()
-   */  
-  @Override
+  /**
+   * This not part of the public, supported KB API
+   *
+   * @return InstanceRestrictedVariable
+   * @throws KBApiException
+   */
   public InstanceRestrictedVariable toInstanceRestrictedVariable() throws KBApiException {
     return toInstanceRestrictedVariable((Context) null);
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#toInstanceRestrictedVariable(com.cyc.kb.VariableImpl)
-   */  
-  @Override
+  /**
+   * This not part of the public, supported KB API
+   *
+   * @param var the variable
+   * @return InstanceRestrictedVariable
+   * @throws KBApiException
+   */
   public InstanceRestrictedVariable toInstanceRestrictedVariable(Variable var) throws KBApiException {
     return toInstanceRestrictedVariable(null, var);
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#toInstanceRestrictedVariable(com.cyc.kb.ContextImpl, com.cyc.kb.VariableImpl)
-   */ 
-  @Override
+  /**
+   * This not part of the public, supported KB API
+   *
+   * @param ctx the context
+   * @param var the variable
+   * @return InstanceRestrictedVariable
+   * @throws KBApiException
+   */
   public InstanceRestrictedVariable toInstanceRestrictedVariable(Context ctx, Variable var) throws KBApiException {
     return new InstanceRestrictedVariable(ctx, this, var);
   }

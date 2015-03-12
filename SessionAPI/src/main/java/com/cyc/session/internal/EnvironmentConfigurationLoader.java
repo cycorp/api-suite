@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: EnvironmentConfigurationLoader.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -43,6 +43,8 @@ public class EnvironmentConfigurationLoader implements SessionConfigurationLoade
   private static final Logger LOGGER = LoggerFactory.getLogger(EnvironmentConfigurationLoader.class);
   final private PropertiesReader reader = new PropertiesReader();
 
+  protected static final String INCLUDE_GUI_ELEMENT_TESTS_PROPERTY = "cyc.test.includeGuiElementTests";
+  
   
   // Public
   
@@ -82,6 +84,10 @@ public class EnvironmentConfigurationLoader implements SessionConfigurationLoade
       }
     }
     return true;
+  }
+  
+  static public boolean isTestingGuiElements() {
+    return Boolean.parseBoolean(System.getProperty(INCLUDE_GUI_ELEMENT_TESTS_PROPERTY));
   }
   
   public static boolean isEnvironmentEmpty() {

@@ -24,7 +24,7 @@ package com.cyc.baseclient.util.query;
 import java.util.Set;
 
 /**
- * @version $Id: QuerySpecification.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: QuerySpecification.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author  mreimers
  */
 public interface QuerySpecification {

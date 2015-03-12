@@ -7,7 +7,7 @@ package com.cyc.query;
 /*
  * #%L
  * File: AsynchronousQueryTest.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -30,7 +30,7 @@ import static com.cyc.query.TestUtils.*;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.CycTimeOutException;
-import com.cyc.base.cycobject.ArgPosition;
+import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.inference.InferenceParameters;
 import com.cyc.base.inference.InferenceStatus;

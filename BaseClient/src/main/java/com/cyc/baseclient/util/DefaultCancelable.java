@@ -36,7 +36,7 @@ package com.cyc.baseclient.util;
  *
  * @author zelal
  * @date October 14, 2005, 2:29 PM
- * @version $Id: DefaultCancelable.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultCancelable.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultCancelable implements Cancelable {
   

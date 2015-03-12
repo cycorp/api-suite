@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBObjectCache.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -59,7 +59,7 @@ public class KBObjectCache {
   synchronized public KBObject put(KBObject kbobj, String[] names) {
     final String[] processedNames = processNames(kbobj, names);
     final Class clazz = kbobj.getClass();
-    cache.store(kbobj.getCore(), clazz, kbobj);
+    cache.store(KBObjectImpl.getCore(kbobj), clazz, kbobj);
     for (String name : processedNames) {
       cache.store(name, clazz, kbobj);
     }

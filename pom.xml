@@ -7,8 +7,12 @@
   <version>1.0.0-rc2-SNAPSHOT</version>
   <packaging>pom</packaging>
   
-  <name>Cyc Core API Parent</name>
-  <description>The core Java APIs for interacting with the Cyc inference engine and knowledge base.</description>
+  <name>Core API Parent</name>
+  <description>
+    The parent project which manages the configuration and build of the projects within 
+    Cyc Core API Suite: the core Java APIs for interacting with the Cyc inference engine and 
+    knowledge base.
+  </description>
   <url>http://dev.cyc.com/cyc-api/</url>
   
   <scm>
@@ -39,7 +43,7 @@
   <developers>
     <developer>
       <name>Cycorp API Team</name>
-      <email>api-devs@cyc.com</email>
+      <email>dev-team@cyc.com</email>
       <organization>Cycorp, Inc.</organization>
       <organizationUrl>http://www.cyc.com</organizationUrl>
     </developer>
@@ -68,10 +72,12 @@
   </properties>
   
   <modules>
+    <module>CoreAPISpec</module>
     <module>SessionAPI</module>
     <module>BaseClient</module>
     <module>KBAPI</module>
     <module>QueryAPI</module>
+    <module>CoreAPIBundle</module>
   </modules>
   
   <profiles>
@@ -403,6 +409,11 @@
     <dependencies>
       <dependency>
         <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-api</artifactId>
+        <version>1.0.0-rc2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
         <artifactId>cyc-session</artifactId>
         <version>1.0.0-rc2-SNAPSHOT</version>
       </dependency>
@@ -424,7 +435,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>[4.10,)</version>
+        <version>4.12</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -451,6 +462,10 @@
   </dependencyManagement>
   
   <dependencies>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-core-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

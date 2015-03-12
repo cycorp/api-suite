@@ -31,7 +31,7 @@ import com.cyc.base.BaseClientRuntimeException;
  * Class CfaslInputStreamClosedException indicates that the peer (usually the Cyc server)
  * closed the socket connection.
  *
- * @version $Id: CfaslInputStreamClosedException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CfaslInputStreamClosedException.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 public class CfaslInputStreamClosedException extends BaseClientRuntimeException {

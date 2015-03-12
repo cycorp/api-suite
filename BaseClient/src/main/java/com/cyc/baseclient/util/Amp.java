@@ -25,7 +25,7 @@ package  com.cyc.baseclient.util;
  * Provides the behavior and attributes of the Agent Manager Protocol - an agent
  * communication language (ACL) for Base Client.<p>
  *
- * @version $Id: Amp.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Amp.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 

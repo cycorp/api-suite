@@ -30,7 +30,7 @@ package com.cyc.baseclient.datatype;
  * to allow comparisons of different kinds of numbers (floats, ints, etc.)
  *
  * @author nwinant, Jun 7, 2010, 4:26:56 PM
- * @version $Id: ComparableNumber.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: ComparableNumber.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class ComparableNumber extends Number implements Comparable<ComparableNumber> {
 

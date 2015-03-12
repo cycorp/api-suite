@@ -59,7 +59,7 @@ import com.cyc.baseclient.util.Log;
  * interface are created using thier readObject() method.  Other CYC objects, such as
  * binding-lists and formulas, must be explicitly coerced using their static constructors.
  * 
- * @version $Id: CfaslInputStream.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CfaslInputStream.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed <p><p><p><p><p>
  */
 public class CfaslInputStream extends BufferedInputStream {

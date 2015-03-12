@@ -9,7 +9,7 @@ package com.cyc.session;
 /*
  * #%L
  * File: CycServerTest.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%

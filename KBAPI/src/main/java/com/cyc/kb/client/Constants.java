@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: Constants.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -38,7 +38,7 @@ import com.cyc.kb.exception.KBApiRuntimeException;
  * to use this class in application making use of the KB API.
  * 
  * @author Vijay Raj
- * @version $Id: Constants.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: Constants.java 157022 2015-03-11 16:19:37Z nwinant $
  * @since 1.0
  */
 @CycObjectLibrary(accessor="getInstance")
@@ -191,7 +191,7 @@ public class Constants {
       return instance;
     } catch (KBApiException e) {
       throw new KBApiRuntimeException(
-          "Once of the private final fields in com.cyc.kb.Constants could not be instantiated, can not proceed further.",
+          "One of the private final fields in com.cyc.kb.Constants could not be instantiated, can not proceed further.",
           e);
     }
   }

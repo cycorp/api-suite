@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBObjectTest.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -21,15 +21,26 @@ package com.cyc.kb.client;
  * #L%
  */
 
+import com.cyc.kb.KBIndividual;
+import com.cyc.kb.FirstOrderCollection;
+import com.cyc.kb.KBPredicate;
+import com.cyc.kb.Sentence;
+import com.cyc.kb.KBCollection;
+import com.cyc.kb.Fact;
+import com.cyc.kb.Quantifier;
+import com.cyc.kb.Relation;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
+import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.FormulaImpl;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
@@ -457,5 +468,44 @@ public class KBObjectTest {
     System.out.println("Object class: " + o.getClass());
     assertTrue(o instanceof List);
     assertTrue(((List)o).isEmpty());
+  }
+  
+  //@Test
+  public void testReplaceTerms () throws Exception {
+    
+    // This test is disabled until it can be rewritten to use vocabulary present in all Cyc releases. - nwinant, 2015-03-09
+
+    // A list of random terms 
+    FormulaSentence fs =  TestConstants.cyc.getObjectTool().makeCyclifiedSentence("(TheList BarackObama BillClinton 1 \n" +
+"  (TheTermBindingFn \n" +
+"    (TheNthFn EnclosedMathExpression 2) \n" +
+"    (ParenthesizedMathFn \n" +
+"      (MathQuantFn 1))))");
+    
+    // Since TheList is a NAUT, build one
+    Naut n = new NautImpl(fs.getArgs());
+    KBTermImpl listTerm = KBTermImpl.get(n);
+    System.out.println ("Term: " + listTerm);
+    
+    // Replace a term in the NAUT
+    Map<Object, Object> subsInList = new HashMap<Object, Object>();
+    subsInList.put(KBFunctionImpl.get("MathQuantFn"), KBFunctionImpl.get("SimplifyMathExpressionFn"));
+    KBObject modListTerm = listTerm.replaceTerms(subsInList);
+    System.out.println("Modified term: " + modListTerm);
+
+    // Build a sentence with the modified NAUT
+    SentenceImpl s = new SentenceImpl(modListTerm);
+    Object firstArg = s.getArgument(0);
+    // The modListTerm will come out as a list
+    assertEquals(KBIndividualImpl.get("BarackObama"), ((List)firstArg).get(0));
+    System.out.println("First term of sentence: " + firstArg);
+    
+    // Replace the NAUT in the sentence with a number
+    Map<Object, Object> subsInSent = new HashMap<Object, Object>();
+    subsInSent.put(firstArg, 1);
+    KBObject smod = s.replaceTerms(subsInSent);
+    
+    System.out.println("Modified Sentence: " + smod);
+    assertEquals(smod.getArgument(0), 1);
   }
 }

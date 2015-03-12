@@ -30,7 +30,7 @@ import com.cyc.base.cycobject.CycList;
  * <P>InferenceAnswerIdentifierI is designed to...
  *
  * @author jmoszko, May 13, 2014, 5:54:59 PM
- * @version $Id: InferenceAnswerIdentifier.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: InferenceAnswerIdentifier.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface InferenceAnswerIdentifier {
 

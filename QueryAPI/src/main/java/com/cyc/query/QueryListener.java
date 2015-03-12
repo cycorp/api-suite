@@ -1,11 +1,11 @@
-/* $Id: QueryListener.java 155705 2015-01-05 23:29:37Z nwinant $
+/* $Id: QueryListener.java 157021 2015-03-11 16:19:11Z nwinant $
  */
 package com.cyc.query;
 
 /*
  * #%L
  * File: QueryListener.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see Query
  * @author tbrussea, zelal
- * @version $Id: QueryListener.java 155705 2015-01-05 23:29:37Z nwinant $
+ * @version $Id: QueryListener.java 157021 2015-03-11 16:19:11Z nwinant $
  */
 public abstract class QueryListener implements EventListener {
 

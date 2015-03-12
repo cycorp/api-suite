@@ -7,7 +7,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: SymbolImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -44,7 +44,7 @@ import com.cyc.kb.exception.KBTypeException;
  * rare, but the API supports it for completeness. 
  * 
  * @author Vijay Raj
- * @version $Id: SymbolImpl.java 155043 2014-11-18 18:40:24Z baxter $  
+ * @version $Id: SymbolImpl.java 157022 2015-03-11 16:19:37Z nwinant $  
  */
 public class SymbolImpl extends StandardKBObject implements Symbol {
 

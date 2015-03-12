@@ -28,7 +28,7 @@ import com.cyc.base.cycobject.Naut;
  * Represents a quantity or range with a Fort unit of measure, a minimum numeric
  value, and a maximum numeric value.
  *
- * @version $Id: CycQuantity.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycQuantity.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author David Baxter
  */
 public class CycQuantity implements Comparable<CycQuantity> {

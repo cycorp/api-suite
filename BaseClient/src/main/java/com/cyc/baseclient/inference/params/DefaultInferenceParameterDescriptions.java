@@ -61,7 +61,7 @@ import java.util.Map;
  *
  * @author zelal
  * @date August 9, 2005, 9:30 PM
- * @version $Id: DefaultInferenceParameterDescriptions.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultInferenceParameterDescriptions.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultInferenceParameterDescriptions extends HashMap<CycSymbol, InferenceParameter>
         implements InferenceParameterDescriptions {

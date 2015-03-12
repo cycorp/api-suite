@@ -21,6 +21,7 @@ package com.cyc.base.cycobject;
  * #L%
  */
 
+import com.cyc.kb.ArgPosition;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

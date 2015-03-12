@@ -34,7 +34,7 @@ import java.io.*;
  * The ByteArray object can only be used in the OpenCyc binary api because it does not
  * have a string representation in either SubL or java.
  *
- * @version $Id: ByteArray.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: ByteArray.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Bjorn Aldag
  */
 public class ByteArray extends DefaultCycObject implements Serializable {

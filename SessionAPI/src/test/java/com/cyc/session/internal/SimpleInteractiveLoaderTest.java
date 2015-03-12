@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: SimpleInteractiveLoaderTest.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -21,7 +21,9 @@ package com.cyc.session.internal;
  * #L%
  */
 
-import com.cyc.session.*;
+import com.cyc.session.SessionConfigurationException;
+import com.cyc.session.CycSessionConfiguration;
+import static com.cyc.session.internal.EnvironmentConfigurationLoader.INCLUDE_GUI_ELEMENT_TESTS_PROPERTY;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -50,12 +52,15 @@ public class SimpleInteractiveLoaderTest extends TestCase {
   
   @Test
   public void testEmptyProperties() throws SessionConfigurationException {
-    if (EnvironmentConfigurationLoader.isHeadlessEnvironment()) {
+    if (!EnvironmentConfigurationLoader.isTestingGuiElements()) {
       // TODO: is there a better way of handling this?
-      String msg = "Test cannot succeed, as it is being executed in a headless environment.";
-      System.out.println(msg);
+      explainNoGuiTests();
+    } else if (EnvironmentConfigurationLoader.isHeadlessEnvironment()) {
+      // TODO: is there a better way of handling this?
+      System.out.println("Test cannot succeed, as it is being executed in a headless environment.");
       assertTrue(true);
     } else {
+      System.out.println("* * * NOTE: This test of the '" + CycServerPanel.TITLE + "' panel is very simple. ANY NON-EMPTY VALUES are acceptable. * * *");
       SimpleInteractiveLoader loader = new SimpleInteractiveLoader();
       loader.setEnvironment(envloader.getConfiguration());
       CycSessionConfiguration config = loader.getConfiguration();
@@ -65,4 +70,11 @@ public class SimpleInteractiveLoaderTest extends TestCase {
     }
   }
   
+  public void explainNoGuiTests() {
+    System.out.println("  ... Test won't be run."
+            + " System property " + INCLUDE_GUI_ELEMENT_TESTS_PROPERTY
+            + "=" + System.getProperty(INCLUDE_GUI_ELEMENT_TESTS_PROPERTY) + "."
+            + " Must be set to true; e.g. -D" + INCLUDE_GUI_ELEMENT_TESTS_PROPERTY + "=true.");
+    assertTrue(true);
+  }
 }

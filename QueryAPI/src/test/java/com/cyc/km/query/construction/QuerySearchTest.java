@@ -7,7 +7,7 @@ package com.cyc.km.query.construction;
 /*
  * #%L
  * File: QuerySearchTest.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -123,8 +123,12 @@ public class QuerySearchTest {
 
   /**
    * Test of getQueries method, of class QuerySearch.
+   * 
+   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
+   * all Cyc releases.
    */
-  @Test
+  @Deprecated
+  //@Test
   public void testGetQueries() {
     System.out.println("getQueries");
     Collection<Query> result = Collections.emptyList();
@@ -139,8 +143,12 @@ public class QuerySearchTest {
 
   /**
    * Test of getQueryLocations method, of class QuerySearch.
+   * 
+   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
+   * all Cyc releases.
    */
-  @Test
+  @Deprecated
+  //@Test
   public void testGetQueryLocations() throws KBApiException {
     System.out.println("getQueryLocations");
     final Collection<Query> queries = querySearch.getQueries();
@@ -162,8 +170,12 @@ public class QuerySearchTest {
 
   /**
    * Test of getSituatedQueries method, of class QuerySearch.
+   * 
+   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
+   * all Cyc releases.
    */
-  @Test
+  @Deprecated
+  //@Test
   public void testGetSituatedQueries() throws KBApiException {
     System.out.println("getSituatedQueries");
     final Collection<Query> queries = querySearch.getQueries();

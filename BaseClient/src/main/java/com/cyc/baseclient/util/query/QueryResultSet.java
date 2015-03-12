@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
- * @version $Id: QueryResultSet.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: QueryResultSet.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author  mreimers
  */
 public interface QueryResultSet {

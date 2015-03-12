@@ -8,7 +8,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: RuleImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * variables.
  *
  * @author vijay
- * @version $Id: RuleImpl.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: RuleImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  * @since 1.0
  */
 public class RuleImpl extends AssertionImpl implements Rule {
@@ -212,7 +212,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
     // same KBObject.       
     // A separate KBObjectFactory method that takes the ist sentence of formula and mt,
     // could also eliminate the lookup step.
-    ca = findAssertion(FormulaSentence.class.cast(formula.getCore()), ctx.asELMt());
+    ca = findAssertion(FormulaSentence.class.cast(formula.getCore()), ContextImpl.asELMt(ctx));
 
     if (ca == null) {
       String msg = "Could not find the assertion: " + formula + " in context: " + ctx;

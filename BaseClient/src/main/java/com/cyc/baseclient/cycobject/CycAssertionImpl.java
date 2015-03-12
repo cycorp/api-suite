@@ -47,7 +47,7 @@ import com.cyc.baseclient.xml.XMLWriter;
  * The associated formula, microtheory, truth-value, direction, and remaining attributes are
  * is fetched later.
  *
- * @version $Id: CycAssertionImpl.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycAssertionImpl.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  * @author Dan Lipofsky
  */

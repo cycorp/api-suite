@@ -29,7 +29,7 @@ import com.cyc.base.CycApiException;
  * detected on the Java client, then a CycApiException is thrown 
  * instead.
  *
- * @version $Id: CycApiServerSideException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycApiServerSideException.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author tbrussea
  */
 

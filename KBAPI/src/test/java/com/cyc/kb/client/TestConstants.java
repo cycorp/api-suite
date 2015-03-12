@@ -7,7 +7,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: TestConstants.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -112,6 +112,7 @@ public class TestConstants {
     flying1Fun.addArgGenl(1, KBCollectionImpl.get("PhysicalDevice"), Constants.uvMt());
     flying1Fun.addResultGenl(flying1Col, Constants.uvMt());
     flying1Fun.addResultIsa(flyingType, Constants.uvMt());
+    flying1Fun.addResultIsa((KBCollection)FirstOrderCollectionImpl.getClassType(), Constants.uvMt());
     flying1Fun.setArity(1);
     
     KBTerm flyingAPlaneTemp = flying1Fun.findOrCreateFunctionalTerm(KBTermImpl.class, cPlane);

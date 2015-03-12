@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @see InferenceWorker
  * @author tbrussea, zelal
- * @version $Id: InferenceWorkerListener.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: InferenceWorkerListener.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface InferenceWorkerListener extends EventListener {
   

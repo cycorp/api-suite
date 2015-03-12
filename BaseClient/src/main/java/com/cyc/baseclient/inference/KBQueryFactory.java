@@ -47,7 +47,7 @@ import com.cyc.base.inference.InferenceParameters;
  *
  * @author rck
  * @date 2010-07-08
- * @version $Id: KBQueryFactory.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: KBQueryFactory.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class KBQueryFactory {
 

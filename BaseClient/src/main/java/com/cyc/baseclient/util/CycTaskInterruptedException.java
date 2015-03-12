@@ -28,7 +28,7 @@ import com.cyc.base.BaseClientRuntimeException;
  * communication has timed out. When this is thrown, the outstanding
  * task on the Cyc server is aborted.
  *
- * @version $Id: CycTaskInterruptedException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycTaskInterruptedException.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Eric E. Allen<br>
  */
 public class CycTaskInterruptedException extends BaseClientRuntimeException {

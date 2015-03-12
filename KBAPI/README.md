@@ -14,8 +14,7 @@ For more information, visit the [Cyc Developer Center](http://dev.cyc.com/).
 Requirements and Getting Started
 --------------------------------
 
-This project is one of severalFor more information, visit the [Cyc Developer Center](http://dev.cyc.com/cyc-api/).
- APIs which are intended to be built in 
+This project is one of several libraries which are intended to be built in 
 conjunction. See the [CycCoreAPI](https://github.com/cycorp/CycCoreAPI) project 
 to get started.
 
@@ -33,7 +32,7 @@ This will run the test suite, which will pop up a GUI panel asking for a Cyc
 server address. If you are running in a headless environment, or wish to 
 specify the server at the command line, use the following instead:
 
-    mvn install -Dcyc.session.server=[SOME_HOST_NAME]:[SOME_BASE_PORT]
+    mvn install -Dcyc.session.server=[HOST_NAME]:[BASE_PORT]
 
 For example:
 

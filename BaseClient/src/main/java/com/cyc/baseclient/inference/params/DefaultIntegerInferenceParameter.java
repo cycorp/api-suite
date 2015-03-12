@@ -41,7 +41,7 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
  *
  * @author zelal
  * @date August 9, 2005, 9:09 PM
- * @version $Id: DefaultIntegerInferenceParameter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultIntegerInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultIntegerInferenceParameter extends AbstractInferenceParameter
         implements IntegerInferenceParameter {

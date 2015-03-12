@@ -32,7 +32,7 @@ import java.net.URL;
  * <P>InformationSource is designed to...
  * 
  * @author jmoszko, May 13, 2014, 5:43:38 PM
- * @version $Id: InformationSource.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: InformationSource.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface InformationSource {
 

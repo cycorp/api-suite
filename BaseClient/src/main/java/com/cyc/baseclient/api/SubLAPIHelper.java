@@ -46,7 +46,7 @@ import com.cyc.baseclient.cycobject.GuidImpl;
  * <P>SubLAPIHelper is designed to...
  *
  * @author tbrussea, Nov 4, 2010, 11:33:24 AM
- * @version $Id: SubLAPIHelper.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: SubLAPIHelper.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class SubLAPIHelper {
 

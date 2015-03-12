@@ -30,7 +30,7 @@ import java.util.Date;
  * <P>TimeGranularity is designed to...
  *
  * @author baxter, May 27, 2010, 1:27:34 PM
- * @version $Id: TimeGranularity.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: TimeGranularity.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public enum TimeGranularity {
 

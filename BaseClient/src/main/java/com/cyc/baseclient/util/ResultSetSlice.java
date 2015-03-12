@@ -31,7 +31,7 @@ import java.sql.*;
  * A Cfaslable slice of a java.sql.ResultSet, used to send SubL portions of
  * a result set.
  * 
- * @version $Id: ResultSetSlice.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: ResultSetSlice.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author
  *      Bjorn Aldag<BR>
  *      Copyright &copy; 2003 - 2006 Cycorp, Inc.  All rights reserved.

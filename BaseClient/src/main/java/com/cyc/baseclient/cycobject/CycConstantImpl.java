@@ -37,7 +37,7 @@ import com.cyc.baseclient.xml.XMLWriter;
 /**
  * Provides the behavior and attributes of a Base Client Constant.
  *
- * @version $Id: CycConstantImpl.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycConstantImpl.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stefano Bertolo
  * @author Stephen L. Reed
  */

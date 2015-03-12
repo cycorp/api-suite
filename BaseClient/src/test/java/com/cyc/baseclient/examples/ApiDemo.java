@@ -45,7 +45,7 @@ import com.cyc.baseclient.util.Log;
 /**
  * Provides a simple demo of the Base Client.<p>
  *
- * @version $Id: ApiDemo.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: ApiDemo.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 

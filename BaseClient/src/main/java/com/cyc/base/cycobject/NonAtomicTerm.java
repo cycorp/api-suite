@@ -27,7 +27,7 @@ import java.util.List;
  * <P>NonAtomicTerm is designed to...
  * 
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: NonAtomicTerm.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: NonAtomicTerm.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface NonAtomicTerm extends DenotationalTerm {
   

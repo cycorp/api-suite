@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: VariableImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -40,7 +40,7 @@ import com.cyc.kb.exception.KBTypeException;
  * characters. This is used to represent a variable in a sentence. 
  * 
  * @author Vijay Raj
- * @version $Id: VariableImpl.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: VariableImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 // @todo DaveS review documentation
 public class VariableImpl extends StandardKBObject implements Variable {

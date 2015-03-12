@@ -72,7 +72,7 @@ import com.cyc.session.internal.GenericServerAddress;
  api responses received from Cyc.
  </p>
  *
- * @version $Id: CycConnection.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycConnection.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed <p><p><p><p><p>
  */
 public class CycConnection implements CycConnectionInterface {

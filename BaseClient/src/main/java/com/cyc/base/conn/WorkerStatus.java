@@ -31,7 +31,7 @@ package com.cyc.base.conn;
  *
  * @author tbrussea
  * @date March 26, 2004, 10:40 AM
- * @version $Id: WorkerStatus.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: WorkerStatus.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class WorkerStatus {
   

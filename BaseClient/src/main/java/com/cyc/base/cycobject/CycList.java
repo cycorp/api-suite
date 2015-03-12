@@ -21,6 +21,7 @@ package com.cyc.base.cycobject;
  * #L%
  */
 
+import com.cyc.kb.ArgPosition;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Enumeration;

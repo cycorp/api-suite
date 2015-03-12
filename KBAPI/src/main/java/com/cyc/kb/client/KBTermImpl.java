@@ -7,7 +7,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBTermImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -54,7 +54,7 @@ import java.util.List;
  * API its purpose is to create terms that are only known to be #$Thing. 
  *    
  * @author Dave Schneider
- * @version $Id: KBTermImpl.java 154990 2014-11-14 22:46:51Z nwinant $
+ * @version $Id: KBTermImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class KBTermImpl extends StandardKBObject implements KBTerm {
 
@@ -407,7 +407,7 @@ public class KBTermImpl extends StandardKBObject implements KBTerm {
   @Override
   public boolean provablyNotInstanceOf(KBCollection col, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isa(this.getCore(), col.getCore(), ctx.getCore());
+      return getAccess().getInspectorTool().isa(this.getCore(), KBObjectImpl.getCore(col), KBObjectImpl.getCore(ctx));
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e.getMessage(), e);
     }

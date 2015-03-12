@@ -35,7 +35,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * <P>Copyright (c) 2008 Cycorp, Inc.  (Copyright is assigned to the United States Government under DFARS 252.227-7020).
  *
  * @author baxter
- * @version $Id: CycWorkerQueue.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycWorkerQueue.java 155703 2015-01-05 23:15:30Z nwinant $
  * @date March 27, 2008, 12:19 PM
  */
 public class CycWorkerQueue {

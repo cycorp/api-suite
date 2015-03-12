@@ -26,7 +26,7 @@ import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.cycobject.CycSentence;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.cycobject.ArgPosition;
+import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.CycList;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import com.cyc.baseclient.CommonConstants;
  a truth function and a list of arguments
  *
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: CycFormulaSentence.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycFormulaSentence.java 156120 2015-01-27 00:50:31Z nwinant $
  *
  * @todo make it implement CycLFormula, or get rid of CycLFormula, as
  * appropriate

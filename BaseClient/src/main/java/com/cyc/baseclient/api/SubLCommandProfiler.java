@@ -49,7 +49,7 @@ import com.cyc.baseclient.cycobject.CycArrayList;
  * <P>Use is subject to license terms.
  * @author reed
   date September 2, 2005, 7:37 AM
- * @version $Id: SubLCommandProfiler.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: SubLCommandProfiler.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class SubLCommandProfiler implements WorkerListener {
   

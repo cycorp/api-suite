@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: FirstOrderCollectionImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -55,7 +55,7 @@ import com.cyc.kb.exception.KBTypeException;
  * So we have a class to support strongly typing such collections. 
  * 
  * @author Vijay Raj
- * @version $Id: FirstOrderCollectionImpl.java 155043 2014-11-18 18:40:24Z baxter $
+ * @version $Id: FirstOrderCollectionImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class FirstOrderCollectionImpl extends KBCollectionImpl implements FirstOrderCollection {
   private static final DenotationalTerm TYPE_CORE =

@@ -34,7 +34,7 @@ package com.cyc.baseclient.util;
  *
  * @author mreimers
  * @date August 11, 2004, 1:00 PM
- * @version $Id: Entry.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Entry.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface Entry {
   

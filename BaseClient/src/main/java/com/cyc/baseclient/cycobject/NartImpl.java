@@ -45,7 +45,7 @@ import com.cyc.baseclient.xml.XMLWriter;
  * This class implements the behavior and attributes of a
  * a Base Client NART (Non Atomic Reified Term).
  *
- * @version $Id: NartImpl.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: NartImpl.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stefano Bertolo
  * @author Stephen L. Reed
  */

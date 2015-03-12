@@ -37,7 +37,7 @@ import com.cyc.base.CycTimeOutException;
  * <P>SubLInteractor is designed to...
  *
  * @author baxter, Oct 8, 2008, 1:19:31 PM
- * @version $Id: SubLInteractor.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: SubLInteractor.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class SubLInteractor {
 

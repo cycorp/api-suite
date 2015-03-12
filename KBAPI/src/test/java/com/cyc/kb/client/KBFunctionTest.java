@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBFunctionTest.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -29,14 +29,17 @@ import com.cyc.kb.KBFunction;
 import com.cyc.kb.KBIndividual;
 import com.cyc.kb.KBPredicate;
 import com.cyc.kb.KBTerm;
+import com.cyc.kb.Variable;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBApiRuntimeException;
 import com.cyc.kb.exception.KBTypeException;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
@@ -219,9 +222,11 @@ public class KBFunctionTest {
     }
   }
   
-  @Test 
+  //@Test 
   public void testFunctionCreateKBTerm() throws Exception {
   
+  // This test is disabled until it can be rewritten to use vocabulary present in all Cyc releases. - nwinant, 2015-03-09
+    
   //KBFunctionImpl fin = KBFunctionImpl.get("FindObjectByCompactHLExternalIDStringFn");
   KBFunctionImpl phys = KBFunctionImpl.get("ThePhysicalFieldValueFn");
   
@@ -240,5 +245,21 @@ public class KBFunctionTest {
   
   //(TheLogicalFieldValueFn DreamStore-EVIDENCE-LS Set-Mathematical 1)
   lsf.findOrCreateFunctionalTerm(KBTermImpl.class, ls, KBCollectionImpl.get("Set-Mathematical"), 1);
+  
+  KBFunction elIBF = KBFunctionImpl.get("ELInferenceBindingFn");
+  Variable v = new VariableImpl ("?X");
+  List<Object> nestedlist = new ArrayList<Object>();
+  
+  KBFunction paren = KBFunctionImpl.get("ParenthesizedMathFn");
+  KBFunction mathQ = KBFunctionImpl.get("MathQuantFn");
+  KBIndividual mathQ1 = mathQ.findOrCreateFunctionalTerm(KBIndividual.class, 1);
+  KBIndividual paren1 = paren.findOrCreateFunctionalTerm(KBIndividual.class, mathQ1);
+  nestedlist.add(mathQ1);
+  nestedlist.add(paren1);
+  
+  
+  KBIndividual elibf1 = elIBF.findOrCreateFunctionalTerm(KBIndividual.class, v, nestedlist);
+  KBIndividual expected = KBIndividualImpl.get("(ELInferenceBindingFn ?X (TheList (MathQuantFn 1) (ParenthesizedMathFn (MathQuantFn 1))))");
+  assertEquals(expected, elibf1);
   }
 }

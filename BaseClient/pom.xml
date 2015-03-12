@@ -4,9 +4,8 @@
   
   <parent>
     <groupId>com.cyc</groupId>
-    <artifactId>cyc-core-api</artifactId>
+    <artifactId>cyc-core-parent</artifactId>
     <version>1.0.0-rc2-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
@@ -44,7 +43,7 @@
   <developers>
     <developer>
       <name>Cycorp API Team</name>
-      <email>api-devs@cyc.com</email>
+      <email>dev-team@cyc.com</email>
       <organization>Cycorp, Inc.</organization>
       <organizationUrl>http://www.cyc.com</organizationUrl>
     </developer>

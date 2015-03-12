@@ -27,7 +27,7 @@ import java.util.List;
  * This interface marks an object as being a
  * CycL object.
  *
- * @version $Id: CycObject.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycObject.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author  tbrussea
  */
 public interface CycObject extends Comparable<Object> {

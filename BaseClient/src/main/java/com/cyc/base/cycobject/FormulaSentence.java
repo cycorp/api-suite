@@ -24,6 +24,7 @@ package com.cyc.base.cycobject;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
+import com.cyc.kb.ArgPosition;
 import java.util.List;
 import java.util.Map;
 

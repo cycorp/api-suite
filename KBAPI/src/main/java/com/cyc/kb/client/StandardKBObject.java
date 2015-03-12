@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: StandardKBObject.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -376,7 +376,7 @@ abstract class StandardKBObject extends KBObjectImpl {
    */
   final void setCore (KBObject kbObject){
     //if (kbObject.getClass().isAssignableFrom(this.getClass())){
-      core = kbObject.getCore();
+      core = KBObjectImpl.getCore(kbObject);
     //} else {
     //  throw new KBApiRuntimeException ("Incompatible types in copy constructor.");
     //}

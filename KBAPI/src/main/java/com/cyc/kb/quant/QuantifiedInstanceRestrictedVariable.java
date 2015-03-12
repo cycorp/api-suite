@@ -3,7 +3,7 @@ package com.cyc.kb.quant;
 /*
  * #%L
  * File: QuantifiedInstanceRestrictedVariable.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -23,7 +23,7 @@ package com.cyc.kb.quant;
 
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.kb.KBCollection;
-import com.cyc.kb.client.ContextImpl;
+import com.cyc.kb.client.KBCollectionImpl;
 import com.cyc.kb.client.QuantifierImpl;
 import com.cyc.kb.exception.KBApiException;
 
@@ -48,7 +48,7 @@ public class QuantifiedInstanceRestrictedVariable extends QuantifiedRestrictedVa
    * @param col
    */
   public QuantifiedInstanceRestrictedVariable (QuantifierImpl q, KBCollection col) throws KBApiException {
-    super(q, col.toInstanceRestrictedVariable());
+    super(q, KBCollectionImpl.from(col).toInstanceRestrictedVariable());
     this.setCollection(col);
   }
 

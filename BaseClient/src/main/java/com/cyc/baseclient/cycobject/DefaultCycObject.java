@@ -41,7 +41,7 @@ import com.cyc.baseclient.datatype.StringUtils;
 /**
  * This is the default implementation of a CycL object.
  *
- * @version $Id: DefaultCycObject.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultCycObject.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author  tbrussea
  *
  */

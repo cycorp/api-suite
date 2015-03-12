@@ -37,7 +37,7 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author baxter
  * @date August 9, 2005, 8:49 PM
- * @version $Id: OpenCycInferenceParameterEnum.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: OpenCycInferenceParameterEnum.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public enum OpenCycInferenceParameterEnum {
 

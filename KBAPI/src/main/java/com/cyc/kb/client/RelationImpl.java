@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: RelationImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -64,7 +64,7 @@ import java.util.Map;
  * should be used in virtually all cases.
  * 
  * @author Vijay Raj
- * @version $Id: RelationImpl.java 155051 2014-11-18 21:06:04Z baxter $
+ * @version $Id: RelationImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class RelationImpl extends KBIndividualImpl implements Relation {
 

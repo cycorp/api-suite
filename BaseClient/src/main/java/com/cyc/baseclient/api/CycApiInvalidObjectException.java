@@ -27,7 +27,7 @@ package com.cyc.baseclient.api;
  * server. If an error is detected on the Java client, then a CycApiException
  * is thrown instead.
  *
- * @version $Id: CycApiInvalidObjectException.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycApiInvalidObjectException.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author daves
  */
 

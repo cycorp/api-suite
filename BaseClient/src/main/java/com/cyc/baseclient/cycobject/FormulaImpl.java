@@ -22,7 +22,7 @@ package com.cyc.baseclient.cycobject;
  */
 //// External Imports
 import com.cyc.base.BaseClientRuntimeException;
-import com.cyc.base.cycobject.ArgPosition;
+import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;

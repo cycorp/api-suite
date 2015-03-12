@@ -8,7 +8,7 @@ package com.cyc.session.connection;
 /*
  * #%L
  * File: package-info.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%

@@ -30,7 +30,7 @@ import  java.util.Date;
  * before it times out, and can be checked for the time elapsed since the start
  * or time remaining until the timeout.<p>
  *
- * @version $Id: Timer.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Timer.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Eric E. Allen<br>
  * @author Bjorn Aldag<br>
  */

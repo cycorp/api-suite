@@ -33,7 +33,7 @@ import com.cyc.base.conn.CycConnectionInterface;
  * can be used across all Comm implementations.
  *
  * @author tbrussea, May 7, 2013, 12:19:20 PM
- * @version $Id: AbstractComm.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: AbstractComm.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public abstract class AbstractComm implements Comm {
 

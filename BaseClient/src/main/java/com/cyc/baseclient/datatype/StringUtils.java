@@ -37,7 +37,7 @@ import com.cyc.baseclient.cycobject.NautImpl;
  * Provides <tt>String</tt> utilities not otherwise provided by Violin Strings.
  * All methods are static. There is no need to instantiate this class.<p>
  *
- * @version $Id: StringUtils.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: StringUtils.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 public class StringUtils {

@@ -35,7 +35,7 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author zelal
  * @date August 14, 2005, 2:41 PM
- * @version $Id: InferenceParametersSymbols.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: InferenceParametersSymbols.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class InferenceParametersSymbols  {
 

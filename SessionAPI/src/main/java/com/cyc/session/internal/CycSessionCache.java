@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: CycSessionCache.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -26,6 +26,7 @@ import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,8 +44,27 @@ public class CycSessionCache<T extends CycSession> {
   // Fields
   
   private static final Logger LOGGER = LoggerFactory.getLogger(CycSessionCache.class);
-  private final ConcurrentHashMap<CycServer, T> cachedSessions = new ConcurrentHashMap();
   
+  /**
+   * Keep this field defined as a Map for Java 8 compatibility.
+   * 
+   * In Java 8, ConcurrentHashMap.keySet() changed from returning Set<K> to returning 
+   * ConcurrentHashMap.KeySetView<K,V>. This can cause exceptions like the following:
+   * 
+   * java.lang.NoSuchMethodError: java.util.concurrent.ConcurrentHashMap.keySet()Ljava/util/concurrent/ConcurrentHashMap$KeySetView;
+   * 
+   * Using the Map interface sidesteps coupling to the Java 8 KeySetView return type and allows the
+   * code to be compiled with Java 8 and run on Java 7.
+   * 
+   * - nwinant, 2015-03-04
+   * 
+   * See:
+   * - https://gist.github.com/nwinant/3508d0160c0d8b06a34d (via https://gist.github.com/AlainODea/1375759b8720a3f9f094)
+   * - https://bz.apache.org/bugzilla/show_bug.cgi?id=55554
+   * - http://stackoverflow.com/questions/25705259/undefined-reference-concurrenthashmap-keyset-when-building-in-java-8
+   */
+  private final Map<CycServer, T> cachedSessions = new ConcurrentHashMap();
+
   
   // Public
   

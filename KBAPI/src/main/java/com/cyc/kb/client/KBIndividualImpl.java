@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBIndividualImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * elements or subsets.
  * 
  * @author Vijay Raj
- * @version $Id: KBIndividualImpl.java 155043 2014-11-18 18:40:24Z baxter $
+ * @version $Id: KBIndividualImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 
 public class KBIndividualImpl extends KBTermImpl implements KBIndividual {

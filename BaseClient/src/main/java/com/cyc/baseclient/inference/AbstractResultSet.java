@@ -97,7 +97,7 @@ import java.util.Collections;
  *
  * @author tbrussea
  * @date Mar 22, 2010, 11:55 AM
- * @version $Id: AbstractResultSet.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: AbstractResultSet.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public abstract class AbstractResultSet implements ResultSet, InferenceResultSet {
 

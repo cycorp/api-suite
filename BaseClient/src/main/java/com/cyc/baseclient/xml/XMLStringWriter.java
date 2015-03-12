@@ -27,7 +27,7 @@ import  java.io.*;
  * Implements an XMLStringWriter with facilities for surrounding data
  * elements with tags appropriately named and indented.<p>
  *
- * @version $Id: XMLStringWriter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: XMLStringWriter.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen Reed
  */
 public class XMLStringWriter extends XMLWriter {

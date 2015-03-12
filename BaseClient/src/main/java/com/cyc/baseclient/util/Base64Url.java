@@ -29,7 +29,7 @@ package com.cyc.baseclient.util;
  * <P>Base64Url is designed to...
  *
  * @author daves, May 14, 2010, 2:00:10 PM
- * @version $Id: Base64Url.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: Base64Url.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 final public class Base64Url extends Base64 {
 

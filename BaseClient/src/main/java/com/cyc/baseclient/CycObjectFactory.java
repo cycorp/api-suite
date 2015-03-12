@@ -65,7 +65,7 @@ import org.xml.sax.SAXException;
  *
  * Collaborates with the <tt>CycConnection</tt> class which manages the api connections.
  *
- * @version $Id: CycObjectFactory.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CycObjectFactory.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stephen L. Reed
  */
 public class CycObjectFactory {

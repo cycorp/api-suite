@@ -57,7 +57,7 @@ import com.cyc.baseclient.datatype.StringUtils;
  * objects, such as binding-lists and formulas, should be explicitly coerced before being sent,
  * unless they inherit from a class which can be translated automatically.
  * 
- * @version $Id: CfaslOutputStream.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CfaslOutputStream.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Christopher
  * @author Dan Lipofsky <p><p><p><p><p>
  *

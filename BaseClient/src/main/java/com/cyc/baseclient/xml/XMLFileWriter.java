@@ -28,7 +28,7 @@ import  java.io.FileWriter;
  * Implements an XMLFileWriter with facilities for surrounding data
  * elements with tags appropriately named and indented.<p>
  *
- * @version $Id: XMLFileWriter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: XMLFileWriter.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Stefano Bertolo
  */
 public class XMLFileWriter extends XMLWriter {

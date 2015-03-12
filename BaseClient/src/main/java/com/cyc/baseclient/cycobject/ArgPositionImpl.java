@@ -21,7 +21,7 @@ package com.cyc.baseclient.cycobject;
  * #L%
  */
 
-import com.cyc.base.cycobject.ArgPosition;
+import com.cyc.kb.ArgPosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

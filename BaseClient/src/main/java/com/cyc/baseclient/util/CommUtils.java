@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * <p>
  * @author tbrussea
  * @date Tue Aug  7 15:50:28 CDT 2007
- * @version $Id: CommUtils.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: CommUtils.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public final class CommUtils {
   

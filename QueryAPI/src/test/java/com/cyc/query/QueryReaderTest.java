@@ -3,7 +3,7 @@ package com.cyc.query;
 /*
  * #%L
  * File: QueryReaderTest.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -55,7 +55,7 @@ public class QueryReaderTest {
   public void tearDown() {
   }
 
-  //@Test
+  @Test
   public void testLoadIstQuery() throws Exception {
     System.out.println("testLoadIstQuery");
     final Query q1 = new Query(

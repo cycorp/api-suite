@@ -20,7 +20,7 @@ import com.cyc.session.SessionApiException;
 /*
  * #%L
  * File: QueryApiConstants.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%

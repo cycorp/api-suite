@@ -37,7 +37,7 @@ import com.cyc.baseclient.util.ParseException;
  * versa.
  *
  * @author nwinant, May 21, 2010, 4:01:30 PM
- * @version $Id: DataTypeConverter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DataTypeConverter.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 abstract public class DataTypeConverter<E> {
   

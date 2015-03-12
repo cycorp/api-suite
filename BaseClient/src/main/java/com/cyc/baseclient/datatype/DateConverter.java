@@ -48,7 +48,7 @@ import com.cyc.baseclient.cycobject.NautImpl;
  *
  * @author baxter
  * @date January 15, 2008, 5:33 PM
- * @version $Id: DateConverter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DateConverter.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 @CycObjectLibrary
 public class DateConverter extends DataTypeConverter<Date> {

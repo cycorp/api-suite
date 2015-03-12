@@ -33,7 +33,7 @@ import java.util.*;
  *
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:40 AM
- * @version $Id: InferenceWorkerSynch.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: InferenceWorkerSynch.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface InferenceWorkerSynch extends InferenceWorker {
 

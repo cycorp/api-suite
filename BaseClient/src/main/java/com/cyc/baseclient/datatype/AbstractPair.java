@@ -28,7 +28,7 @@ import  java.io.Serializable;
 /**
  * Implements an ordered pair, two associated <code>Object</code>s.<p>
  *
- * @version $Id: AbstractPair.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: AbstractPair.java 155703 2015-01-05 23:15:30Z nwinant $
  * @author Bjorn Aldag
  */
 public abstract class AbstractPair

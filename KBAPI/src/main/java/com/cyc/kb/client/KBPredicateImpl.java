@@ -3,7 +3,7 @@ package com.cyc.kb.client;
 /*
  * #%L
  * File: KBPredicateImpl.java
- * Project: KB API
+ * Project: KB API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc
  * %%
@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * closed sentences can either be true or false.
  *
  * @author Vijay Raj
- * @version $Id: KBPredicateImpl.java 155051 2014-11-18 21:06:04Z baxter $
+ * @version $Id: KBPredicateImpl.java 157022 2015-03-11 16:19:37Z nwinant $
  */
 public class KBPredicateImpl extends RelationImpl implements KBPredicate {
 
@@ -539,7 +539,7 @@ public class KBPredicateImpl extends RelationImpl implements KBPredicate {
   @Override
   public boolean isGeneralizationOf(KBPredicate moreSpecific, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isGenlPredOf((Fort) core, (Fort) moreSpecific.getCore(), ctx.getCore());
+      return getAccess().getInspectorTool().isGenlPredOf((Fort) core, (Fort) moreSpecific.getCore(), getCore(ctx));
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e);
     }
@@ -554,7 +554,7 @@ public class KBPredicateImpl extends RelationImpl implements KBPredicate {
   public List<Fact> getExtent(Context ctx) {
     List<Fact> kbFacts = new ArrayList<Fact>();
     try {
-      CycList assertions = getAccess().getLookupTool().getPredExtent(this.getCore(), (ctx != null ? ctx.getCore() : null));
+      CycList assertions = getAccess().getLookupTool().getPredExtent(this.getCore(), (ctx != null ? getCore(ctx) : null));
       for (Object o : assertions) {
         if (o instanceof CycAssertion) {
           try {

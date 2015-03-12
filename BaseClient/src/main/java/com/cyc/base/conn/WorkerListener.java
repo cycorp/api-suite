@@ -30,7 +30,7 @@ import java.util.EventListener;
  *
  * @see DefaultSubLWorker
  * @author tbrussea
- * @version $Id: WorkerListener.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: WorkerListener.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public interface WorkerListener extends EventListener {
 

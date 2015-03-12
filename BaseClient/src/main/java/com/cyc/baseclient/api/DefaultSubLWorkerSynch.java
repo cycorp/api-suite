@@ -66,7 +66,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * @author tbrussea
  * @date March 25, 2004, 2:01 PM
- * @version $Id: DefaultSubLWorkerSynch.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: DefaultSubLWorkerSynch.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class DefaultSubLWorkerSynch
     extends DefaultSubLWorker

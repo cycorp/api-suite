@@ -38,7 +38,7 @@ import com.cyc.baseclient.util.ParseException;
  * @todo Add more currencies. Currently only supports USD.
  *
  * @author nwinant, May 21, 2010, 2:03:06 PM
- * @version $Id: MoneyConverter.java 155483 2014-12-10 21:56:51Z nwinant $
+ * @version $Id: MoneyConverter.java 155703 2015-01-05 23:15:30Z nwinant $
  */
 public class MoneyConverter extends DataTypeConverter<Money> {
 

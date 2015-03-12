@@ -3,7 +3,7 @@ package com.cyc.session.internal;
 /*
  * #%L
  * File: CycServerPanel.java
- * Project: Session API
+ * Project: Session API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
@@ -93,7 +93,7 @@ public class CycServerPanel extends JPanel {
   
   final private JTextField hostField;
   final private JComboBox portField;
-
+  protected static final String TITLE="Set Cyc Connection";
   
   // Static
   
@@ -106,7 +106,7 @@ public class CycServerPanel extends JPanel {
    */
   private static CycServer wrapInJOptionPane(CycServerPanel panel) {
     final Object[] options = { "OK", "Cancel" };
-    int result = JOptionPane.showOptionDialog(null, panel, "Set Cyc Connection",
+    int result = JOptionPane.showOptionDialog(null, panel, TITLE,
               JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
     if (result == JOptionPane.OK_OPTION) {
       return panel.getCycServer();

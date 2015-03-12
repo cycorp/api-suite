@@ -9,7 +9,7 @@ package com.cyc.xml.query;
 /*
  * #%L
  * File: ValidatingCyclQueryUnmarshaller.java
- * Project: Query API
+ * Project: Query API Implementation
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
  * %%
