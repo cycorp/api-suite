@@ -42,8 +42,6 @@ public class EnvironmentConfigurationLoader implements SessionConfigurationLoade
   public static final String NAME = "environment";
   private static final Logger LOGGER = LoggerFactory.getLogger(EnvironmentConfigurationLoader.class);
   final private PropertiesReader reader = new PropertiesReader();
-
-  protected static final String INCLUDE_GUI_ELEMENT_TESTS_PROPERTY = "cyc.test.includeGuiElementTests";
   
   
   // Public
@@ -84,10 +82,6 @@ public class EnvironmentConfigurationLoader implements SessionConfigurationLoade
       }
     }
     return true;
-  }
-  
-  static public boolean isTestingGuiElements() {
-    return Boolean.parseBoolean(System.getProperty(INCLUDE_GUI_ELEMENT_TESTS_PROPERTY));
   }
   
   public static boolean isEnvironmentEmpty() {

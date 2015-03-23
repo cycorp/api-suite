@@ -434,7 +434,7 @@ public class KBObjectTest {
   //@Test(expected = ClassCastException.class)
   public void testClassCast () throws Exception {
     System.out.println("testClassCast");
-    Naut n = TestConstants.cyc.getObjectTool().makeCycNaut("(#$MinuteFn 20 \n" +
+    Naut n = TestConstants.getCyc().getObjectTool().makeCycNaut("(#$MinuteFn 20 \n" +
       "  (#$HourFn 10 \n" +
       "    (#$DayFn 15 \n" +
       "      (#$MonthFn #$March \n" +
@@ -470,13 +470,41 @@ public class KBObjectTest {
     assertTrue(((List)o).isEmpty());
   }
   
-  //@Test
-  public void testReplaceTerms () throws Exception {
+  /**
+   * Tests how KBObjectImpl#getAccess behaves when its underlying CycAccess has been closed.
+   * See KBAPI-126.
+   * 
+   * @throws KBTypeException
+   * @throws CreateException 
+   */
+  @Test
+  public void testReestablishCycAccess () throws KBTypeException, CreateException {
+    System.out.println("KBObjectTest#testReestablishCycAccess");
+    String name = "RonaldReagan";
+    KBObjectImpl k1 = KBObjectFactory.get(name, KBObjectImpl.class);
+    assertEquals(name, k1.toString());
     
-    // This test is disabled until it can be rewritten to use vocabulary present in all Cyc releases. - nwinant, 2015-03-09
-
+    k1.getAccess().close();
+    
+    // Call to #getComments is pretty arbitrary; just need to make the KBObject try to talk to Cyc.
+    final Collection<String> comments = k1.getComments();
+    for (String comment : comments) {
+      System.out.println("Comment: " + comment);
+    }
+    assertFalse(comments.isEmpty());
+  }
+  
+  /**
+   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
+   * all Cyc releases.
+   * 
+   * @throws Exception 
+   */
+  @Deprecated
+  //@Test 
+  public void testReplaceTerms () throws Exception {
     // A list of random terms 
-    FormulaSentence fs =  TestConstants.cyc.getObjectTool().makeCyclifiedSentence("(TheList BarackObama BillClinton 1 \n" +
+    FormulaSentence fs =  TestConstants.getCyc().getObjectTool().makeCyclifiedSentence("(TheList BarackObama BillClinton 1 \n" +
 "  (TheTermBindingFn \n" +
 "    (TheNthFn EnclosedMathExpression 2) \n" +
 "    (ParenthesizedMathFn \n" +

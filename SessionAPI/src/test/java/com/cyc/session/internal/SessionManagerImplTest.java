@@ -23,7 +23,6 @@ package com.cyc.session.internal;
 
 import com.cyc.session.SessionServiceException;
 import com.cyc.session.SessionManager;
-import com.cyc.session.*;
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.connection.SessionFactory;
 import java.util.List;
@@ -58,23 +57,57 @@ public class SessionManagerImplTest extends TestCase {
   @Test
   public void testLoadAllSessionManagers() throws SessionConfigurationException {
     final List<SessionFactory> factories = SessionManagerImpl.loadAllSessionFactories();
-    assertTrue(factories.isEmpty());
+    System.out.println("SessionFactories found: " + factories.size());
+    for (SessionFactory factory : factories) {
+      System.out.println(" - " + factory);
+    }
+    if (TestEnvironmentProperties.get().isConnectionFactoryExpectedOnClassPath()) {
+      assertFalse(factories.isEmpty());
+    } else {
+      assertTrue(factories.isEmpty());
+    }
+  }
+  
+  /**
+   * Test whether the SessionManagerImpl can successfully instantiate.
+   * 
+   * @throws com.cyc.session.SessionConfigurationException
+   */
+  @Test
+  public void testInstantiationBehavior() throws SessionServiceException, SessionConfigurationException {
+    System.out.println("TestEnvProperties.get().isConnectionFactoryExpectedOnClassPath()=" 
+            + TestEnvironmentProperties.get().isConnectionFactoryExpectedOnClassPath());
+    if (TestEnvironmentProperties.get().isConnectionFactoryExpectedOnClassPath()) {
+      runCanInstantiateTest();
+    } else {
+      runCannotInstantiateTest();
+    }
+  }
+  
+  /**
+   * A SessionConnectionFactory implementation is expected on the
+   * classpath, so the SessionManagerImpl constructor should be able
+   * to find one.
+   */
+  protected void runCanInstantiateTest() throws SessionServiceException, SessionConfigurationException {
+    SessionManager sessionMgr = new SessionManagerImpl();
+    System.out.println("Found SessionManager: " + sessionMgr);
+    assertNotNull(sessionMgr);
   }
   
   /**
    * No SessionConnectionFactory implementation should be available within this
    * project, so the SessionManagerImpl constructor should throw a
    * SessionServiceException.
-   * @throws com.cyc.session.SessionConfigurationException
    */
-  @Test
-  public void testInstantiate() throws SessionConfigurationException {
+  protected void runCannotInstantiateTest() throws SessionConfigurationException {
     SessionManager sessionMgr = null;
     try {
       sessionMgr = new SessionManagerImpl();
       fail("Should have thrown an exception, but did not.");
     } catch (SessionServiceException ex) {
       System.out.println("Good news! Test captured an expected exception: " + ex.getMessage());
+      assertNotNull(ex);
       assertEquals(SessionFactory.class, ex.getInterfaceClass());
     }
     assertNull(sessionMgr);

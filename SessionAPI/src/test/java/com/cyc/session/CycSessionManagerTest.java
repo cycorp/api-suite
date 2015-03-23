@@ -22,8 +22,7 @@ package com.cyc.session;
  */
 
 import com.cyc.session.CycSessionManager.CycSessionManagerInitializationError;
-import com.cyc.session.connection.SessionFactory;
-import java.util.List;
+import com.cyc.session.internal.TestEnvironmentProperties;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -53,16 +52,46 @@ public class CycSessionManagerTest extends TestCase {
    * CycSessionManagerInitializationError.
    */
   @Test
-  public void testInstantiateCycSessionManager() {
-    SessionManager mgr = null;
+  public void testInstantiateCycSessionManager() throws SessionServiceException, SessionConfigurationException {
+    System.out.println("TestEnvProperties.get().isConnectionFactoryExpectedOnClassPath()=" 
+            + TestEnvironmentProperties.get().isConnectionFactoryExpectedOnClassPath());
+    if (TestEnvironmentProperties.get().isConnectionFactoryExpectedOnClassPath()) {
+      runCanInstantiateTest();
+    } else {
+      runCannotInstantiateTest();
+    }
+  }
+  
+  /**
+   * A SessionConnectionFactory implementation is expected on the
+   * classpath, so the SessionManagerImpl constructor should be able
+   * to find one.
+   * @throws com.cyc.session.CycSessionManagerInitializationError
+   * @throws com.cyc.session.SessionConfigurationException
+   */
+  protected void runCanInstantiateTest() throws CycSessionManagerInitializationError, SessionConfigurationException {
+    SessionManager sessionMgr = CycSessionManager.get();
+    System.out.println("Found SessionManager: " + sessionMgr);
+    assertNotNull(sessionMgr);
+  }
+  
+  /**
+   * No SessionConnectionFactory implementation should be available within this
+   * project, so the SessionManagerImpl constructor should throw a
+   * SessionServiceException.
+   * @throws com.cyc.session.SessionConfigurationException
+   */
+  protected void runCannotInstantiateTest() throws SessionConfigurationException {
+    SessionManager sessionMgr = null;
     try {
-      mgr = CycSessionManager.get();
+      sessionMgr = CycSessionManager.get();
       fail("Should have thrown an exception, but did not.");
     } catch (CycSessionManagerInitializationError ex) {
       System.out.println("Good news! Test captured an expected exception: " + ex.getMessage());
-      ex.printStackTrace();
+      ex.printStackTrace(System.err);
       assertEquals(SessionServiceException.class, ex.getException().getClass());
     }
-    assertNull(mgr);
+    assertNull(sessionMgr);
   }
+  
 }

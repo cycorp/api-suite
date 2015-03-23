@@ -10,7 +10,7 @@ the interfaces which define the Core API Suite.
 * _KB API_ interfaces moved into CoreAPISpec.
 * _Session API_ interfaces moved into CoreAPISpec.
 
-Adds **Core API Suite Bundle** module (`cyc-core-suite` in CoreAPIBundle) which packages all API 
+Adds **Core API Suite Bundle** module (`cyc-core-suite` in `CoreAPISuite`) which packages all API 
 interfaces and implementation classes.
 * Produces a single `cyc-core-suite` artifact which can be specified instead of individually 
   specifying cyc-session, cyc-kb, etc.

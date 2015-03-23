@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
  Collaborates with the <tt>CycConnection</tt> class which manages the api connections.
  * </p>
  *
- * @version $Id: CycClient.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycClient.java 157233 2015-03-19 19:38:38Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {
@@ -1051,6 +1051,9 @@ public class CycClient implements CycAccess {
           throws CycConnectionException, CycApiException {
     Log.current.println(
             "Trying to re-establish a closed Cyc connection to " + this);
+    
+    //new Throwable().printStackTrace(System.err); // Uncomment this to get a stack trace.
+    
     previousAccessedMilliseconds = System.currentTimeMillis();
     cycConnection.close();
     

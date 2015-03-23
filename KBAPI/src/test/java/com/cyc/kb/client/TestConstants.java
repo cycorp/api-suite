@@ -43,6 +43,8 @@ import com.cyc.kb.Variable;
 import com.cyc.kb.config.KBAPIConfiguration;
 import com.cyc.kb.config.KBAPIDefaultContext;
 import com.cyc.kb.exception.KBApiException;
+import com.cyc.kb.exception.KBApiRuntimeException;
+import com.cyc.session.SessionApiException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +61,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TestConstants {
 
-  public static CycAccess cyc = null;
   public static Context baseKB;
   public static Context universalVocabularyMt;
   public static Assertion flyingRule;
@@ -67,10 +68,17 @@ public class TestConstants {
 
   private static Logger log = LoggerFactory.getLogger(TestConstants.class.getName());
   
+  public static CycAccess getCyc() {
+    try {
+      return CycAccessManager.getCurrentAccess();
+    } catch (SessionApiException ex) {
+      throw new KBApiRuntimeException(ex.getMessage(), ex);
+    }
+  }
+  
   public static void ensureInitialized() throws Exception {
     log.info("Setting up...");
     if (TestConstants.baseKB == null) {
-      TestConstants.cyc = CycAccessManager.getCurrentAccess();
       KBAPIConfiguration.setShouldTranscriptOperations(false);
       // Example usage of KBAPIConfiguration methods
       //KBAPIConfiguration.setCurrentCyclist("(#$UserOfProgramFn #$OWLImporter-Cyc #$ChrisDeaton)");

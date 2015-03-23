@@ -62,8 +62,8 @@ public class KBIndividualTest {
 
   @AfterClass
   public static void tearDownClass() throws Exception {
-    if(TestConstants.cyc.getLookupTool().find("NewConstantNotInKB") != null) {
-      TestConstants.cyc.getUnassertTool().kill(TestConstants.cyc.getLookupTool().getKnownConstantByName("NewConstantNotInKB"));
+    if(TestConstants.getCyc().getLookupTool().find("NewConstantNotInKB") != null) {
+      TestConstants.getCyc().getUnassertTool().kill(TestConstants.getCyc().getLookupTool().getKnownConstantByName("NewConstantNotInKB"));
     }
   }
   
@@ -89,13 +89,13 @@ public class KBIndividualTest {
     String nameOrId1 = "AlbertEinstein";
     KBIndividualImpl kbi1 = KBIndividualImpl.get(nameOrId1);
     assertEquals(KBIndividualImpl.class, kbi1.getClass());
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
     
     String nameOrId2 = "(GenericInstanceFn Dog)";
     KBIndividualImpl kbi2 = KBIndividualImpl.get(nameOrId2);
-    String expResult2 = TestConstants.cyc.cyclifyString(nameOrId2);
+    String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = kbi2.getCore().cyclify();
     assertEquals(expResult2, result2);
   }
@@ -108,18 +108,18 @@ public class KBIndividualTest {
   public void testGet_CycObject() throws Exception {
     System.out.println("get");
     String nameOrId1 = "AlbertEinstein";
-    CycObject object1 = TestConstants.cyc.getLookupTool().getKnownConstantByName(nameOrId1);
+    CycObject object1 = TestConstants.getCyc().getLookupTool().getKnownConstantByName(nameOrId1);
     KBIndividualImpl kbi1 = KBIndividualImpl.get(object1);
     assertEquals(KBIndividualImpl.class, kbi1.getClass());
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
     
-    Fort object2_functor = TestConstants.cyc.getLookupTool().getKnownFortByName("GenericInstanceFn");
-    CycConstant object2_arg = TestConstants.cyc.getLookupTool().getKnownConstantByName("Dog");
+    Fort object2_functor = TestConstants.getCyc().getLookupTool().getKnownFortByName("GenericInstanceFn");
+    CycConstant object2_arg = TestConstants.getCyc().getLookupTool().getKnownConstantByName("Dog");
     CycObject object2 = new NartImpl(object2_functor, object2_arg);
     KBIndividualImpl kbi2 = KBIndividualImpl.get(object2);
-    String expResult2 = TestConstants.cyc.cyclifyString("(GenericInstanceFn Dog)");
+    String expResult2 = TestConstants.getCyc().cyclifyString("(GenericInstanceFn Dog)");
     String result2 = kbi2.getCore().cyclify();
     assertEquals(expResult2, result2);
   }
@@ -135,14 +135,14 @@ public class KBIndividualTest {
     String nameOrId1 = "AlbertEinstein";
     KBIndividualImpl kbi1 = KBIndividualImpl.findOrCreate(nameOrId1);
     assertEquals(KBIndividualImpl.class, kbi1.getClass());
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
 
     // Test for create
     String nameOrId2 = "NewConstantNotInKB";
     KBIndividualImpl kbi2 = KBIndividualImpl.findOrCreate(nameOrId2);
-    String expResult2 = TestConstants.cyc.cyclifyString(nameOrId2);
+    String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KBIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
     
@@ -158,10 +158,10 @@ public class KBIndividualTest {
     System.out.println("findOrCreate");
     // Test for find
     String nameOrId1 = "AlbertEinstein";
-    CycObject object1 = TestConstants.cyc.getLookupTool().getKnownConstantByName(nameOrId1);
+    CycObject object1 = TestConstants.getCyc().getLookupTool().getKnownConstantByName(nameOrId1);
     KBIndividualImpl kbi1 = KBIndividualImpl.findOrCreate(object1);
     assertEquals(KBIndividualImpl.class, kbi1.getClass());
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
     
@@ -170,7 +170,7 @@ public class KBIndividualTest {
                the corresponding term already exists in the KB. 
     CycObject object2 = "ThisIsANewKBIndividualForTestingCreation";
     KBIndividual kbi2 = KBIndividual.findOrCreate(nameOrId2);
-    String expResult2 = TestConstants.cyc.cyclifyString("ThisIsANewKBIndividualForTestingCreation");
+    String expResult2 = TestConstants.getCyc().cyclifyString("ThisIsANewKBIndividualForTestingCreation");
     String result2 = kbi2.getCore().cyclify();
     assertEquals(expResult2, result2);
     */
@@ -187,7 +187,7 @@ public class KBIndividualTest {
     String nameOrId1 = "AlbertEinstein";
     KBCollection col1 = KBCollectionImpl.get("Scientist");
     KBIndividualImpl kbi1 = KBIndividualImpl.findOrCreate(nameOrId1, col1);
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
 
@@ -195,7 +195,7 @@ public class KBIndividualTest {
     String nameOrId2 = "NewConstantNotInKB";
     KBCollection col2 = KBCollectionImpl.get("Nonsense");
     KBIndividualImpl kbi2 = KBIndividualImpl.findOrCreate(nameOrId2, col2);
-    String expResult2 = TestConstants.cyc.cyclifyString(nameOrId2);
+    String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KBIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
     
@@ -212,14 +212,14 @@ public class KBIndividualTest {
     // Test for find
     String nameOrId1 = "AlbertEinstein";
     KBIndividualImpl kbi1 = KBIndividualImpl.findOrCreate(nameOrId1, "Scientist");
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
 
     // Test for create
     String nameOrId2 = "NewConstantNotInKB";
     KBIndividualImpl kbi2 = KBIndividualImpl.findOrCreate(nameOrId2, "Nonsense");
-    String expResult2 = TestConstants.cyc.cyclifyString(nameOrId2);
+    String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KBIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
     
@@ -238,7 +238,7 @@ public class KBIndividualTest {
     KBCollection col1 = KBCollectionImpl.get("Scientist");
     ContextImpl ctx1 = ContextImpl.findOrCreate("WebSearchDataMt");
     KBIndividualImpl.findOrCreate(nameOrId1, col1, ctx1);
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = KBIndividualImpl.get(nameOrId1).getCore().cyclify();
     assertEquals(expResult1, result1);
 
@@ -246,7 +246,7 @@ public class KBIndividualTest {
     String nameOrId2 = "NewConstantNotInKB";
     KBCollection col2 = KBCollectionImpl.get("Nonsense");
     KBIndividualImpl kbi2 = KBIndividualImpl.findOrCreate(nameOrId2, col2, TestConstants.baseKB);
-    String expResult2 = TestConstants.cyc.cyclifyString(nameOrId2);
+    String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KBIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
     
@@ -265,14 +265,14 @@ public class KBIndividualTest {
     ContextImpl.findOrCreate("WebSearchDataMt"); // We are using this context as a string
     // This will fail if WebSearchDataMt or Scientist is not found
     KBIndividualImpl.findOrCreate(nameOrId1, "Scientist", "WebSearchDataMt");
-    String expResult1 = TestConstants.cyc.cyclifyString(nameOrId1);
+    String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = KBIndividualImpl.get(nameOrId1).getCore().cyclify();
     assertEquals(expResult1, result1);
 
     // Test for create
     String nameOrId2 = "NewConstantNotInKB";
     KBIndividualImpl.findOrCreate(nameOrId2, "Nonsense", "BaseKB");
-    String expResult2 = TestConstants.cyc.cyclifyString(nameOrId2);
+    String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     KBIndividualImpl kbi2 = KBIndividualImpl.get(nameOrId2);
     String result2 = kbi2.getCore().cyclify();
     assertEquals(expResult2, result2);
@@ -308,13 +308,13 @@ public class KBIndividualTest {
   public void testExistsAsType_CycObject() throws Exception {
     System.out.println("existsAsType");
     String nameOrId1 = "AlbertEinstein";
-    CycObject object1 = TestConstants.cyc.getLookupTool().getKnownConstantByName(nameOrId1);
+    CycObject object1 = TestConstants.getCyc().getLookupTool().getKnownConstantByName(nameOrId1);
     boolean expResult1 = true;
     boolean result1 = KBIndividualImpl.existsAsType(object1);
     assertEquals(expResult1, result1);
 
     String nameOrId2 = "Scientist";
-    CycObject object2 = TestConstants.cyc.getLookupTool().getKnownConstantByName(nameOrId2);
+    CycObject object2 = TestConstants.getCyc().getLookupTool().getKnownConstantByName(nameOrId2);
     boolean expResult2 = false;
     boolean result2 = KBIndividualImpl.existsAsType(object2);
     assertEquals(expResult2, result2);

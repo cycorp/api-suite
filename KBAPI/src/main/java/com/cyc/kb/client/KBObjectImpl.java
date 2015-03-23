@@ -38,11 +38,9 @@ import com.cyc.base.cycobject.Guid;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.base.cycobject.NonAtomicTerm;
-import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
@@ -83,9 +81,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +92,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  *
  * @author Vijay Raj
- * @version "$Id: KBObjectImpl.java 157022 2015-03-11 16:19:37Z nwinant $"
+ * @version "$Id: KBObjectImpl.java 157225 2015-03-19 18:04:07Z nwinant $"
  */
 public class KBObjectImpl implements KBObject {
   
@@ -115,8 +111,6 @@ public class KBObjectImpl implements KBObject {
    */
   List<Object> quantification = new ArrayList<Object>();
   private static final Logger log = LoggerFactory.getLogger(KBObjectImpl.class.getCanonicalName());
-  private final CycSession session;
-  private final CycAccess access;
   
   /**
    * Set the flag to false after API provide delete operation.
@@ -127,18 +121,8 @@ public class KBObjectImpl implements KBObject {
   /**
    * Not part of the KB API. This default constructor only has the effect of
    * ensuring that there is access to a Cyc server.
-   * <p>
-   *
-   * @throws KBApiRuntimeException if there is a problem connecting to Cyc
    */
-  KBObjectImpl() {
-    try {
-      this.session = CycSessionManager.getCurrentSession();
-      this.access = CycAccessManager.getAccessManager().fromSession(session);
-    } catch (Exception ex) {
-      throw new KBApiRuntimeException("Encountered a problem with the current CycSession.", ex);
-    }
-  }
+  KBObjectImpl() {}
 
   /**
    * Not part of the KB API. Base class constructor currently used only for unit
@@ -156,12 +140,34 @@ public class KBObjectImpl implements KBObject {
     core = co;
   }
   
+  /**
+   * Retrieves the current CycSession.
+   * 
+   * @return CycSession
+   * 
+   * @throws KBApiRuntimeException if there is a problem retrieving the current CycSession.
+   */
   protected CycSession getSession() {
-    return this.session;
+    try {
+      return CycSessionManager.getCurrentSession();
+    } catch (Exception ex) {
+      throw new KBApiRuntimeException("Encountered a problem with the current CycSession.", ex);
+    }
   }
   
+  /**
+   * Retrieves the current CycAccess.
+   * 
+   * @return CycAccess
+   * 
+   * @throws KBApiRuntimeException if there is a problem connecting to Cyc.
+   */
   protected CycAccess getAccess() {
-    return this.access;
+    try {
+      return CycAccessManager.getAccessManager().fromSession(getSession());
+    } catch (Exception ex) {
+      throw new KBApiRuntimeException("Encountered a problem with the current CycAccess.", ex);
+    }
   }
   
   static protected CycAccess getStaticAccess() {

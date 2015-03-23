@@ -177,11 +177,11 @@ public class SentenceTest {
   @Test
   public void testNegatedSentenceFromString() throws KBApiException, CycApiException, CycConnectionException {
     System.out.println("testNegatedSentenceFromString");
-    Sentence instance = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.cyc, "(#$not (#$isa #$Thing #$Predicate))"));
+    Sentence instance = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.getCyc(), "(#$not (#$isa #$Thing #$Predicate))"));
     System.out.println("Sentence: " + instance);
     assertTrue(instance instanceof Sentence);
 
-    Sentence expSent = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.cyc, "(#$isa #$Thing #$Predicate)"));
+    Sentence expSent = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.getCyc(), "(#$isa #$Thing #$Predicate)"));
     Sentence subSent = instance.getArgument(1);
     assertEquals(expSent, subSent);
 
@@ -192,7 +192,7 @@ public class SentenceTest {
   public void testNegatedSentence() throws KBApiException, CycApiException, IOException, CycConnectionException {
     System.out.println("testNegatedSentence");
     System.out.println("testNegatedSentenceFromString");
-    Sentence base = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.cyc, "(#$isa #$Thing #$Predicate)"));
+    Sentence base = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.getCyc(), "(#$isa #$Thing #$Predicate)"));
     Sentence instance = new SentenceImpl(KBTermImpl.get("not"), base);
     System.out.println("Sentence: " + instance);
     assertTrue(instance instanceof Sentence);
@@ -241,7 +241,7 @@ public class SentenceTest {
   @Test
   public void testSentenceArgs6() throws KBTypeException, CycApiException, CycConnectionException, CreateException {
     System.out.println("Testing args from CycSentence");
-    assertNotNull(new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.cyc, "(#$isa #$Thing #$Predicate)")).getArgument(2));
+    assertNotNull(new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.getCyc(), "(#$isa #$Thing #$Predicate)")).getArgument(2));
   }
 
   /**

@@ -222,11 +222,15 @@ public class KBFunctionTest {
     }
   }
   
+  /**
+   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
+   * all Cyc releases.
+   * 
+   * @throws Exception 
+   */
+  @Deprecated
   //@Test 
   public void testFunctionCreateKBTerm() throws Exception {
-  
-  // This test is disabled until it can be rewritten to use vocabulary present in all Cyc releases. - nwinant, 2015-03-09
-    
   //KBFunctionImpl fin = KBFunctionImpl.get("FindObjectByCompactHLExternalIDStringFn");
   KBFunctionImpl phys = KBFunctionImpl.get("ThePhysicalFieldValueFn");
   

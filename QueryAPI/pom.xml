@@ -63,7 +63,7 @@
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.6</version>
       </plugin>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -79,7 +79,7 @@
             com.cyc.answer.justification,com.cyc.xml,com.cyc.xml.query
           </excludePackageNames>
           <sourceFileExcludes>
-            <!-- we don't want to inlcude QueryExamples or QuerySearchExamples, and one of these is supposed to stop it-->
+            <!-- we don't want to include QueryExamples or QuerySearchExamples, and one of these is supposed to stop it-->
             <exclude>**/QuerySearchExamples.java</exclude>
             <exclude>QueryExamples.java</exclude>
             <exclude>com/cyc/query/QueryExamples.java</exclude>
@@ -120,6 +120,20 @@
           <generateDirectory>${project.build.directory}/generated-sources/xjc</generateDirectory>
           <verbose>true</verbose>
         </configuration>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>test-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

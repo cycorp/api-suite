@@ -23,7 +23,7 @@ package com.cyc.session.internal;
 
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.CycSessionConfiguration;
-import static com.cyc.session.internal.EnvironmentConfigurationLoader.INCLUDE_GUI_ELEMENT_TESTS_PROPERTY;
+import static com.cyc.session.internal.TestEnvironmentProperties.INCLUDE_GUI_ELEMENT_TESTS_PROPERTY;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public class SimpleInteractiveLoaderTest extends TestCase {
   
   @Test
   public void testEmptyProperties() throws SessionConfigurationException {
-    if (!EnvironmentConfigurationLoader.isTestingGuiElements()) {
+    if (!TestEnvironmentProperties.get().isTestingGuiElements()) {
       // TODO: is there a better way of handling this?
       explainNoGuiTests();
     } else if (EnvironmentConfigurationLoader.isHeadlessEnvironment()) {
