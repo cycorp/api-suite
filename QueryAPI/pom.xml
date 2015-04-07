@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-parent</artifactId>
-    <version>1.0.0-rc2-SNAPSHOT</version>
+    <version>1.0.0-rc2</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-query</artifactId>
-  <version>1.0.0-rc2-SNAPSHOT</version>
+  <version>1.0.0-rc2</version>
   <packaging>jar</packaging>
   
   <name>Query API Implementation</name>

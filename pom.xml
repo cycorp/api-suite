@@ -4,7 +4,7 @@
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-parent</artifactId>
-  <version>1.0.0-rc2-SNAPSHOT</version>
+  <version>1.0.0-rc2</version>
   <packaging>pom</packaging>
   
   <name>Core API Parent</name>
@@ -441,27 +441,27 @@
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-core-api</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-session</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-base-client</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-kb</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-query</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

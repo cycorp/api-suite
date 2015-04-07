@@ -3,8 +3,8 @@ Cyc Core API Suite CHANGELOG
 
 For more information, visit the [Cyc Developer Center](http://dev.cyc.com/).
 
-1.0.0-rc2-SNAPSHOT (Currently under development)
-------------------
+1.0.0-rc2
+---------
 Adds **Core API Specification** module (`cyc-core-api` in CoreAPISpec) to consolidate and clarify 
 the interfaces which define the Core API Suite.
 * _KB API_ interfaces moved into CoreAPISpec.
