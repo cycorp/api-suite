@@ -120,16 +120,18 @@ public class KBTermTest {
     @Test
     public void testFactoryFindOrCreateOnlyCreatesOneObject() throws KBApiException {
 
-        KBTermImpl c1 = KBTermImpl.findOrCreate("Emu234");
-        KBTermImpl c2 = KBTermImpl.findOrCreate("Emu234");
-        assertTrue("Two different Emu234s are actually different objects!", c2 == c1);
-        assertTrue("Two different Emu234s are not equals()!", c2.equals(c1));
+        KBTermImpl c1 = KBTermImpl.findOrCreate("EmuTheTermThing");
+        KBTermImpl c2 = KBTermImpl.findOrCreate("EmuTheTermThing");
+        assertTrue("Two different EmuTheTermThings are actually different objects!", c2 == c1);
+        assertTrue("Two different EmuTheTermThings are not equals()!", c2.equals(c1));
 
         c2 = KBTermImpl.findOrCreate(c1.getCore());
-        assertTrue("CycObject-based Emu234 and string-based version differ!", c1 == c2);
+        assertTrue("CycObject-based EmuTheTermThing and string-based version differ!", c1 == c2);
 
         c2 = KBTermImpl.findOrCreate(c1.getId());
         assertTrue("HLID-based BaseKB234 and string-based version differ!", c1 == c2);
+        
+        c1.delete();
     }
 
 

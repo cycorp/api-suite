@@ -311,16 +311,19 @@ public class KBCollectionTest {
   @Test
   public void testContextFactoryFindOrCreateCreatesOnlyOneObject() throws KBApiException {
 
-    final KBCollectionImpl c1 = KBCollectionImpl.findOrCreate("Emu234");
-    KBCollectionImpl c2 = KBCollectionImpl.findOrCreate("Emu234");
-    assertTrue("Two different Emu234s are actually different objects!", c2 == c1);
-    assertTrue("Two different Emu234s are not equals()!", c2.equals(c1));
-
+    final KBCollectionImpl c1 = KBCollectionImpl.findOrCreate("EmuTheTestCollection");
+    KBCollectionImpl c2 = KBCollectionImpl.findOrCreate("EmuTheTestCollection");
+    assertTrue("Two different EmuTheTestCollections are actually different objects!", c2 == c1);
+    assertTrue("Two different EmuTheTestCollections are not equals()!", c2.equals(c1));
+    
     c2 = KBCollectionImpl.findOrCreate(c1.getCore());
-    assertTrue("CycObject-based Emu234 and string-based version differ!", c1 == c2);
-
+    assertTrue("CycObject-based EmuTheTestCollection and string-based version differ!", c1 == c2);
+    
     c2 = KBCollectionImpl.findOrCreate(c1.getId());
-    assertTrue("HLID-based Emu234 and string-based version differ!", c1 == c2);
+    
+    assertTrue("HLID-based EmuTheTestCollection and string-based version differ!", c1 == c2);
+    
+    c1.delete();
   }
 
   @Test(expected = KBTypeConflictException.class)
@@ -337,7 +340,7 @@ public class KBCollectionTest {
   @Test
   public void testCollectionFactoryGetStatus() throws KBApiException {
     KBIndividual i1 = null;
-    String testIndName = "TestIndividualForTypeConflict";
+    String testIndName = "TestIndividualForTypeConflict1";
     try {
       assertTrue("Emu isn't a collection!", KBCollectionImpl.getStatus("Emu").equals(KBStatus.EXISTS_AS_TYPE));
       assertTrue("isa isn't in type-conflict with collection!", KBCollectionImpl.getStatus("isa").equals(KBStatus.EXISTS_WITH_TYPE_CONFLICT));
