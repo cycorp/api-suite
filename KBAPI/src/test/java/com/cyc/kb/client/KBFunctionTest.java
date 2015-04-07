@@ -22,6 +22,7 @@ package com.cyc.kb.client;
  */
 
 import com.cyc.base.cycobject.Naut;
+import com.cyc.baseclient.xml.cycml.Constant;
 import com.cyc.kb.Context;
 import com.cyc.kb.Fact;
 import com.cyc.kb.KBCollection;
@@ -180,7 +181,12 @@ public class KBFunctionTest {
     Context c = f4.<Context>findOrCreateFunctionalTerm(Context.class, p, new Date());
     System.out.println("Context : " + c);
 
-    KBFunctionImpl dollars = KBFunctionImpl.findOrCreate("(USDollarFn 2012)");
+    KBFunction usd = KBFunctionImpl.findOrCreate("USDollarFn");
+    KBFunction dollars = usd.findOrCreateFunctionalTerm(KBFunction.class, 2012);
+    System.out.println("Creating functional term 2012 Dollars: " + dollars);
+    dollars.addResultIsa(KBCollectionImpl.get("MonetaryValue"), Constants.uvMt());
+    Fact f = FactImpl.findOrCreate(new SentenceImpl(KBPredicateImpl.get("argsIsa"), dollars, KBCollectionImpl.get("NumericInterval")), Constants.uvMt());
+    
     KBIndividual m1 = dollars.findOrCreateFunctionalTerm(KBIndividualImpl.class, 5);
     System.out.println("Ind 1: " + m1);
 
