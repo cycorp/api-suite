@@ -27,7 +27,7 @@ Requirements
   new to Maven, you may wish to view the [quick start](http://maven.apache.org/run-maven/index.html).
 
 The APIs may be used without Maven via the `cyc-core-suite-1.0.0-rc2-jar-with-dependencies.jar`.
-See [Standalone Bundle](#Standalone Bundle), below.
+See [Standalone Bundle](#standalone-bundle), below.
 
 ### Cyc Server
 
