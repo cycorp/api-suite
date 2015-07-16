@@ -68,7 +68,6 @@ logging implementation. E.g., for [Log4J](http://logging.apache.org/log4j/1.2/):
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
     </dependency>
-  </dependencies>
 
 ### Standalone Bundle
 
