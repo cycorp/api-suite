@@ -11,7 +11,7 @@ The third release candidate of Cycorp's new Java API suite. 1.0.0-rc3 is _not ba
 with earlier releases. Note that _ResearchCyc 4.0q_ and _EnterpriseCyc 1.7-preview_ require 
 [server code patching](server-patching.md) for compatibility with the 1.0.0-rc3 release.
 
-#### New: OpenCyc support
+#### New: Support for upcoming OpenCyc
 
 Adds support for the planned upcoming release of **OpenCyc 5.0-preview**. Note that the OpenCyc 
 server will not have support for some advanced features; see the 
