@@ -4,6 +4,38 @@ Cyc Core API Suite CHANGELOG
 For more information, view the [README](README.md) bundled with this release or visit the
 [Cyc Developer Center](http://dev.cyc.com/api/core/). 
 
+1.0.0-rc3 - 2015-08-14
+----------------------
+
+The third release candidate of Cycorp's new Java API suite. 1.0.0-rc3 is _not backwards-compatible_
+with earlier releases. Note that _ResearchCyc 4.0q_ and _EnterpriseCyc 1.7-preview_ require 
+[server code patching](server-patching.md) for compatibility with the 1.0.0-rc3 release.
+
+#### New: OpenCyc compatibility
+
+Adds support for the planned upcoming release of **OpenCyc 5.0-preview**. Note that the OpenCyc 
+server will not have support for some advanced features; see the 
+[README's Requirements section](README.md#requirements) for details. There are no plans to support
+previous versions of OpenCyc.
+
+#### Improved: Core API Specification
+
+* _Query API_ interfaces moved into CoreAPISpec.
+* Adds the QueryFactory (`com.cyc.query.QueryFactory`) to facilitate query construction.
+* Compatibility with Cyc servers is now better-documented via the `UnsupportedCycOperationException`
+  and `OpenCycUnsupportedFeatureException` exceptions.
+
+#### Other changes
+
+* Speeds up KB API conversion of terms to KBObjects, which in turn speeds up
+  `Query#getResultSet()#getKBObject()`. This resolves
+  [issue 2](https://github.com/cycorp/CycCoreAPI/issues/2).
+* Core API Suite can detect and apply missing SubL code patches to a Cyc server. This behavior is
+  disabled by default, but is easily enabled via System properties. See
+  [server-patching.md](server-patching.md) for details.
+* Links to [Cyc Dev Center](http://dev.cyc.com/) have been modified to reflect improved URL scheme.
+* Assorted bug fixes.
+
 
 1.0.0-rc2 - 2015-04-07
 ----------------------
