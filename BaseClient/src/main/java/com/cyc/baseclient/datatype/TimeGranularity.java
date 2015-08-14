@@ -30,7 +30,7 @@ import java.util.Date;
  * <P>TimeGranularity is designed to...
  *
  * @author baxter, May 27, 2010, 1:27:34 PM
- * @version $Id: TimeGranularity.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: TimeGranularity.java 159296 2015-06-24 22:44:04Z nwinant $
  */
 public enum TimeGranularity {
 
@@ -53,7 +53,47 @@ public enum TimeGranularity {
   public int intValue() {
     return intValue;
   }
-
+  
+  /**
+   * Returns whether this TimeGranularity is greater than a java.util.Calendar field 
+   * (e.g., Calendar.HOUR, Calendar.YEAR).
+   * 
+   * @see java.util.Calendar
+   * @param calendarFieldNum int value of a java.util.Calendar field
+   * @return whether this field is greater
+   */
+  public boolean isGreaterThan(int calendarFieldNum) {
+    return this.intValue() > calendarFieldNum;
+  }
+  
+  /**
+   * Returns whether this TimeGranularity is less than a java.util.Calendar field 
+   * (e.g., Calendar.HOUR, Calendar.YEAR).
+   * 
+   * @see java.util.Calendar
+   * @param calendarFieldNum int value of a java.util.Calendar field
+   * @return whether this field is less
+   */
+  public boolean isLessThan(int calendarFieldNum) {
+    return this.intValue() < calendarFieldNum;
+  }
+  
+  public boolean isGreaterThan(TimeGranularity otherGranularity) {
+    return isGreaterThan(otherGranularity.intValue());
+  }
+  
+  public boolean isLessThan(TimeGranularity otherGranularity) {
+    return isLessThan(otherGranularity.intValue());
+  }
+  
+  public int getCalendarValue(Calendar calendar) {
+    return calendar.get(intValue());
+  }
+  
+  public void setCalendarValue(Calendar calendar, int value) {
+    calendar.set(intValue(), value);
+  }
+  
   public static TimeGranularity guessGranularity(final Date date) {
     return guessGranularity(date.getTime());
   }

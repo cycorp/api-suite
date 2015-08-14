@@ -74,7 +74,7 @@ public interface KBCollection extends KBTerm {
   /**
    * Finds the asserted specializations of <code>this</code>
    * <code>KBCollection</code>, from the default context specified by
-   * {@link KBAPIDefaultContext#forQuery()}.
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    *
    * @return	the <code>KBCollection</code>s that are specializations of
    * <code>this</code> <code>KBCollection</code>.
@@ -219,7 +219,7 @@ public interface KBCollection extends KBTerm {
   /**
    * Finds the asserted generalizations of <code>this</code>
    * <code>KBCollection</code>, from the default context specified by
-   * {@link KBAPIDefaultContext#forQuery()}.
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    *
    * @return	the <code>KBCollection</code>s that are generalizations of
    * <code>this</code> <code>KBCollection</code>
@@ -337,7 +337,7 @@ public interface KBCollection extends KBTerm {
   /**
    * Finds the asserted instances of <code>this</code> <code>KBCollection</code>
    * from the default context specified by
-   * {@link KBAPIDefaultContext#forQuery()}. For <code>KBCollection</code>s that
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}. For <code>KBCollection</code>s that
    * are instances of <code>#$FirstOrderCollection</code>, this can only return
    * Individuals. For other collections, it can only return
    * <code>KBCollection</code>s or its subclasses.
@@ -383,7 +383,7 @@ public interface KBCollection extends KBTerm {
   /**
    * Finds the asserted types <code>this</code> <code>KBCollection</code>
    * belongs to, from the default context specified by
-   * {@link KBAPIDefaultContext#forQuery()}. In other words, this returns the
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}. In other words, this returns the
    * asserted values of <code>?X</code> in <code>(#$isa this ?X)</code>
    *
    * @return	Collections (Second Order or higher) <code>this</code>

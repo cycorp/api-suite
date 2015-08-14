@@ -27,13 +27,13 @@ package com.cyc.baseclient.inference.params;
  */
 
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.inference.DisjunctionFreeELVarsPolicy;
-import com.cyc.base.inference.InferenceAnswerLanguage;
-import com.cyc.base.inference.InferenceParameters;
-import com.cyc.base.inference.ProblemReusePolicy;
-import com.cyc.base.inference.ProofValidationMode;
-import com.cyc.base.inference.ResultUniqueness;
-import com.cyc.base.inference.TransitiveClosureMode;
+import com.cyc.query.DisjunctionFreeELVarsPolicy;
+import com.cyc.query.InferenceAnswerLanguage;
+import com.cyc.query.InferenceParameters;
+import com.cyc.query.ProblemReusePolicy;
+import com.cyc.query.ProofValidationMode;
+import com.cyc.query.ResultUniqueness;
+import com.cyc.query.TransitiveClosureMode;
 import com.cyc.baseclient.testing.TestUtils;
 import com.cyc.session.SessionApiException;
 import org.junit.After;

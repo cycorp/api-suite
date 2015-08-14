@@ -23,6 +23,7 @@ package com.cyc.session;
 
 import com.cyc.session.CycSessionManager.CycSessionManagerInitializationError;
 import com.cyc.session.internal.TestEnvironmentProperties;
+import java.util.ServiceConfigurationError;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -89,7 +90,7 @@ public class CycSessionManagerTest extends TestCase {
     } catch (CycSessionManagerInitializationError ex) {
       System.out.println("Good news! Test captured an expected exception: " + ex.getMessage());
       ex.printStackTrace(System.err);
-      assertEquals(SessionServiceException.class, ex.getException().getClass());
+      assertEquals(ServiceConfigurationError.class, ex.getException().getClass());
     }
     assertNull(sessionMgr);
   }

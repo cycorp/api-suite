@@ -173,12 +173,11 @@ public class KBCollectionTest {
 
     java.util.Collection<KBCollection> ags = c.allGeneralizations();
     log.fine("All Generalizations: " + ags);
-    KBCollectionImpl[] expectedArray = {KBCollectionImpl.get("(CollectionUnionFn (TheSet DurableGood ServiceEvent Product))"),
+    KBCollectionImpl[] expectedArray = {
       KBCollectionImpl.get("TemporallyExistingThing"),
       KBCollectionImpl.get("Location-Underspecified"),
       KBCollectionImpl.get("Trajector-Underspecified"),
       KBCollectionImpl.get("Individual"),
-      KBCollectionImpl.get("(CollectionUnionFn (TheSet TemporalThing Collection))"),
       KBCollectionImpl.get("Thing"),
       KBCollectionImpl.get("TemporalThing"),
       KBCollectionImpl.get("Product"),
@@ -222,7 +221,7 @@ public class KBCollectionTest {
   }
 
   /*
-   * @Test public void testDelete() { try { KBCollection c = new
+     @Test public void testDelete() { try { KBCollection c = new
    * KBCollection("iProduct"); c.delete();
    *
    * new KBCollection("IPhone-APITest").delete(); new KBCollection("IPad-APITest").delete(); new

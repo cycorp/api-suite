@@ -32,7 +32,13 @@ import static org.junit.Assert.*;
 
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.ELMt;
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KBApiException;
 import com.cyc.query.QueryAnswer;
+import static com.cyc.query.TestUtils.assumeNotOpenCyc;
+import com.cyc.query.exception.QueryConstructionException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import com.cyc.xml.query.Utils;
 
 import static com.cyc.xml.query.Utils.*;
@@ -48,12 +54,13 @@ public class ProofViewJustificationTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
+    assumeNotOpenCyc();
     Utils.setup();
   }
   static ProofViewJustification instance;
 
   @AfterClass
-  public static void tearDownClass() throws Exception {
+  public static void tearDownClass() {
     Utils.teardown();
   }
 
@@ -82,14 +89,16 @@ public class ProofViewJustificationTest {
    * Test of populate method, of class ProofViewJustification.
    */
   @Test
-  public void testPopulate() {
+  public void testPopulate() throws OpenCycUnsupportedFeatureException {
     System.out.println("populate");
+    assumeNotOpenCyc();
     instance.populate();
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testPopulateTwice() {
+  public void testPopulateTwice() throws OpenCycUnsupportedFeatureException {
     System.out.println("populate");
+    assumeNotOpenCyc();
     instance.populate();
     instance.populate();
   }
@@ -98,8 +107,9 @@ public class ProofViewJustificationTest {
    * Test of getDomainMt method, of class ProofViewJustification.
    */
   @Test
-  public void testGetDomainMt() throws Exception {
+  public void testGetDomainMt() throws SessionCommunicationException, CycConnectionException, OpenCycUnsupportedFeatureException {
     System.out.println("getDomainMt");
+    assumeNotOpenCyc();
     ELMt result = instance.getDomainMt();
     assertNotNull("Domain mt was null", result);
     instance.setDomainMt(domainMt);
@@ -112,13 +122,14 @@ public class ProofViewJustificationTest {
    * Test of setDomainMt method, of class ProofViewJustification.
    */
   @Test
-  public void testSetDomainMt() throws Exception {
+  public void testSetDomainMt() throws CycConnectionException {
     System.out.println("setDomainMt");
     instance.setDomainMt(domainMt);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetDomainMtException() throws CycConnectionException {
+  public void testSetDomainMtException() throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setDomainMt(domainMt);
   }
@@ -127,8 +138,9 @@ public class ProofViewJustificationTest {
    * Test of isIncludeDetails method, of class ProofViewJustification.
    */
   @Test
-  public void testIsIncludeDetails() throws Exception {
+  public void testIsIncludeDetails() throws SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("isIncludeDetails");
+    assumeNotOpenCyc();
     instance.isIncludeDetails();
     instance.setIncludeDetails(true);
     assertEquals(true, instance.isIncludeDetails());
@@ -142,13 +154,14 @@ public class ProofViewJustificationTest {
    * Test of setIncludeDetails method, of class ProofViewJustification.
    */
   @Test
-  public void testSetIncludeDetails() throws Exception {
+  public void testSetIncludeDetails() throws SessionCommunicationException {
     System.out.println("setIncludeDetails");
     instance.setIncludeDetails(false);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetIncludeDetailsException() throws CycConnectionException {
+  public void testSetIncludeDetailsException() throws OpenCycUnsupportedFeatureException, SessionCommunicationException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setIncludeDetails(false);
   }
@@ -157,8 +170,9 @@ public class ProofViewJustificationTest {
    * Test of isIncludeLinear method, of class ProofViewJustification.
    */
   @Test
-  public void testIsIncludeLinear() throws Exception {
+  public void testIsIncludeLinear() throws SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("isIncludeLinear");
+    assumeNotOpenCyc();
     instance.isIncludeLinear();
     instance.setIncludeLinear(true);
     assertEquals(true, instance.isIncludeLinear());
@@ -172,13 +186,14 @@ public class ProofViewJustificationTest {
    * Test of setIncludeLinear method, of class ProofViewJustification.
    */
   @Test
-  public void testSetIncludeLinear() throws Exception {
+  public void testSetIncludeLinear() throws SessionCommunicationException {
     System.out.println("setIncludeLinear");
     instance.setIncludeLinear(false);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetIncludeLinearException() throws CycConnectionException {
+  public void testSetIncludeLinearException() throws OpenCycUnsupportedFeatureException, SessionCommunicationException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setIncludeLinear(false);
   }
@@ -187,8 +202,9 @@ public class ProofViewJustificationTest {
    * Test of isIncludeSummary method, of class ProofViewJustification.
    */
   @Test
-  public void testIsIncludeSummary() throws Exception {
+  public void testIsIncludeSummary() throws SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("isIncludeSummary");
+    assumeNotOpenCyc();
     instance.isIncludeSummary();
     instance.setIncludeSummary(true);
     assertEquals(true, instance.isIncludeSummary());
@@ -202,13 +218,14 @@ public class ProofViewJustificationTest {
    * Test of setIncludeSummary method, of class ProofViewJustification.
    */
   @Test
-  public void testSetIncludeSummary() throws Exception {
+  public void testSetIncludeSummary() throws SessionCommunicationException {
     System.out.println("setIncludeSummary");
     instance.setIncludeSummary(false);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetIncludeSummaryException() throws CycConnectionException {
+  public void testSetIncludeSummaryException() throws OpenCycUnsupportedFeatureException, SessionCommunicationException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setIncludeSummary(false);
   }
@@ -217,8 +234,9 @@ public class ProofViewJustificationTest {
    * Test of getLanguageMt method, of class ProofViewJustification.
    */
   @Test
-  public void testGetLanguageMt() throws Exception {
+  public void testGetLanguageMt() throws SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("getLanguageMt");
+    assumeNotOpenCyc();
     ELMt result = instance.getLanguageMt();
     assertNotNull("Language mt was null", result);
     instance.setLanguageMt(languageMt);
@@ -231,7 +249,7 @@ public class ProofViewJustificationTest {
    * Test of setLanguageMt method, of class ProofViewJustification.
    */
   @Test
-  public void testSetLanguageMt() throws Exception {
+  public void testSetLanguageMt() throws SessionCommunicationException {
     System.out.println("setLanguageMt");
     instance.setLanguageMt(languageMt);
   }
@@ -240,13 +258,14 @@ public class ProofViewJustificationTest {
    * Test of setRichCycLContent method, of class ProofViewJustification.
    */
   @Test
-  public void testSetRichCycLContent() throws Exception {
+  public void testSetRichCycLContent() throws SessionCommunicationException {
     System.out.println("setRichCycLContent");
     instance.setRichCycLContent(false);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetRichCycLContentException() throws CycConnectionException {
+  public void testSetRichCycLContentException() throws OpenCycUnsupportedFeatureException, SessionCommunicationException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setRichCycLContent(false);
   }
@@ -255,8 +274,9 @@ public class ProofViewJustificationTest {
    * Test of getRoot method, of class ProofViewJustification.
    */
   @Test
-  public void testGetRoot() {
+  public void testGetRoot() throws OpenCycUnsupportedFeatureException {
     System.out.println("getRoot");
+    assumeNotOpenCyc();
     instance.populate();
     assertNotNull(instance.getRoot());
   }
@@ -265,8 +285,9 @@ public class ProofViewJustificationTest {
    * Test of isSuppressAssertionBookkeeping method, of class ProofViewJustification.
    */
   @Test
-  public void testIsSuppressAssertionBookkeeping() throws Exception {
+  public void testIsSuppressAssertionBookkeeping() throws SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("isSuppressAssertionBookkeeping");
+    assumeNotOpenCyc();
     instance.isSuppressAssertionBookkeeping();
     instance.setSuppressAssertionBookkeeping(true);
     assertEquals(true, instance.isSuppressAssertionBookkeeping());
@@ -280,13 +301,14 @@ public class ProofViewJustificationTest {
    * Test of setSuppressAssertionBookkeeping method, of class ProofViewJustification.
    */
   @Test
-  public void testSetSuppressAssertionBookkeeping() throws Exception {
+  public void testSetSuppressAssertionBookkeeping() throws SessionCommunicationException {
     System.out.println("setSuppressAssertionBookkeeping");
     instance.setSuppressAssertionBookkeeping(false);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetSuppressAssertionBookkeepingException() throws CycConnectionException {
+  public void testSetSuppressAssertionBookkeepingException() throws OpenCycUnsupportedFeatureException, SessionCommunicationException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setSuppressAssertionBookkeeping(false);
   }
@@ -295,8 +317,9 @@ public class ProofViewJustificationTest {
    * Test of isSuppressAssertionCyclists method, of class ProofViewJustification.
    */
   @Test
-  public void testIsSuppressAssertionCyclists() throws Exception {
+  public void testIsSuppressAssertionCyclists() throws SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("isSuppressAssertionCyclists");
+    assumeNotOpenCyc();
     instance.isSuppressAssertionCyclists();
     instance.setSuppressAssertionCyclists(true);
     assertEquals(true, instance.isSuppressAssertionCyclists());
@@ -310,13 +333,14 @@ public class ProofViewJustificationTest {
    * Test of setSuppressAssertionCyclists method, of class ProofViewJustification.
    */
   @Test
-  public void testSetSuppressAssertionCyclists() throws Exception {
+  public void testSetSuppressAssertionCyclists() throws SessionCommunicationException {
     System.out.println("setSuppressAssertionCyclists");
     instance.setSuppressAssertionCyclists(false);
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testSetSuppressAssertionCyclistsException() throws CycConnectionException {
+  public void testSetSuppressAssertionCyclistsException() throws OpenCycUnsupportedFeatureException, SessionCommunicationException {
+    assumeNotOpenCyc();
     instance.populate();
     instance.setSuppressAssertionCyclists(false);
   }

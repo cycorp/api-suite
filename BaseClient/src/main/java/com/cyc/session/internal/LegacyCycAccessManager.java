@@ -32,7 +32,7 @@ import com.cyc.session.SessionInitializationException;
  * Provides backwards-compatible hooks for older code not fully migrated to the Session API.
  * 
  * @param <T>
- * @deprecated This class will be removed in 1.0.0-rc2
+ * @deprecated This class will be removed before final 1.0.0 release
  * @author nwinant
  */
 @Deprecated

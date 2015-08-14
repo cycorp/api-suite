@@ -28,6 +28,7 @@ import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.ELMtConstant;
 import com.cyc.baseclient.cycobject.ELMtCycNaut;
 import static com.cyc.baseclient.testing.TestConstants.CONTEXT_OF_PCW_FN;
 import java.util.HashSet;
@@ -80,12 +81,23 @@ public class KBPopulator {
     makeSentence(
             "'(#$backchainRequired #$keRequirement)",
             CommonConstants.BASE_KB, cyc);
-    makeSentence(
-            "'(#$percentOfTerritoryIs #$Algeria #$Field-Agricultural (#$Percent 0))",
-            "#$CIAWorldFactbook1995Mt", cyc);
+    
+    if (!cyc.isOpenCyc()) {
+      makeSentence(
+              "'(#$percentOfTerritoryIs #$Algeria #$Field-Agricultural (#$Percent 0))",
+              "#$CIAWorldFactbook1995Mt", cyc);
+    }
+    
     makeSentence(
             "'(#$capitalCity #$France #$CityOfParisFrance)",
             "#$WorldGeographyMt", cyc);
+    makeSentence(
+            "  '(#$implies " +
+            "   (#$and " +
+            "    (#$isa ?EVENT #$WorkingEvent) " +
+            "    (#$performedBy ?EVENT ?AGENT)) " +
+            "   (#$subjectivelyEvaluates ?AGENT ?EVENT #$Challenging))",
+            ELMtConstant.makeELMtConstant(TestConstants.HUMAN_ACTIVITIES_MT), cyc);
     makeSentence(
             "'(#$salientAssertions #$performedBy " +
                     " (#$ist #$HumanActivitiesMt " +

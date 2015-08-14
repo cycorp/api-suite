@@ -22,6 +22,7 @@ package com.cyc.baseclient.inference.params;
  */
 
 //// External Imports
+import com.cyc.query.InferenceParameter;
 import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
@@ -32,9 +33,9 @@ import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceAnswerLanguage;
-import com.cyc.base.inference.InferenceParameterValue;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceAnswerLanguage;
+import com.cyc.query.InferenceParameterValue;
+import com.cyc.query.InferenceParameters;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import static com.cyc.baseclient.inference.params.InferenceParametersSymbols.*;
@@ -60,6 +61,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
   //// Constructors
   /**
    * Creates a new instance of DefaultInferenceParameters.
+   * @param cycAccess
    */
   public DefaultInferenceParameters(CycAccess cycAccess) {
     this.cycAccess = cycAccess;
@@ -67,20 +69,16 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
 
   /**
    * Creates a new instance of DefaultInferenceParameters.
+   * @param cycAccess
+   * @param shouldReturnAnswersInHL
    */
   public DefaultInferenceParameters(CycAccess cycAccess,
           boolean shouldReturnAnswersInHL) {
     this.cycAccess = cycAccess;
-    try {
-      if (!cycAccess.isOpenCyc()) {
-        if (shouldReturnAnswersInHL) {
-          getAnswersInHL();
-        } else {
-          getAnswersInEL();
-        }
-      }
-    } catch (CycConnectionException ex) {
-      throw new BaseClientRuntimeException("Unable to reach Cyc image " + cycAccess, ex);
+    if (shouldReturnAnswersInHL) {
+      getAnswersInHL();
+    } else {
+      getAnswersInEL();
     }
   }
 
@@ -89,7 +87,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
     DefaultInferenceParameters combinedQueryInferenceParams = new DefaultInferenceParameters(
             cycAccess);
     for (final Iterator<Object> plistIterator = plist.iterator(); plistIterator.hasNext();) {
-      CycSymbol key = (CycSymbol) plistIterator.next();
+      String key = ((CycSymbol) plistIterator.next()).cyclify().toUpperCase();
       Object value = plistIterator.next();
       combinedQueryInferenceParams.put(key, value);
     }
@@ -126,7 +124,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
       Object key = paramIter.next();
       Object value = paramIter.next();
       if (key instanceof CycSymbol) {
-        put((CycSymbol) key, value);
+        put(key.toString(), value);
       } else {
         throw new BaseClientRuntimeException(
                 "'" + key + "' is not a valid inference parameter name.");
@@ -188,13 +186,14 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
     put(PROBLEM_STORE, problemStoreForm);
   }
 
-  private boolean getBoolean(CycSymbol paramName) {
+  private boolean getBoolean(String paramName) {
+    paramName = paramName.toUpperCase();
     Object rawValue = get(paramName);
     if (rawValue instanceof Boolean) {
       return (Boolean) rawValue;
     } else {
-      rawValue = getDefaultInferenceParameterDescriptions().getDefaultInferenceParameters().get(
-              paramName);
+      rawValue = getDefaultInferenceParameterDescriptions().getDefaultInferenceParameters()
+              .get(paramName);
       return (rawValue instanceof Boolean) ? (Boolean) rawValue : false;
     }
   }
@@ -234,13 +233,14 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
   }
 
   @Override
-  public Object put(CycSymbol parameterName, Object value) {
+  public Object put(String parameterName, Object value) {
     // @Hack if the value is :UNKNOWN the parameter will not be set and it is assumed that 
     // Cyc uses its own default for that particular parameter
+    parameterName = parameterName.toUpperCase();
     if (value instanceof CycSymbol && ((CycSymbol) value).toString().equals(
             ":UNKNOWN")) {
       return null;
-    } else if (":PROBLEM-STORE".equals(parameterName.toString())) {
+    } else if (":PROBLEM-STORE".equals(parameterName)) {
       if (value instanceof CycArrayList || value instanceof CycSymbol || value instanceof Integer) {
         return map.put(parameterName, value);
       } else if (CycObjectFactory.nil.equals(value)) {
@@ -266,9 +266,9 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
       return CycObjectFactory.nil.stringApiValue();
     }
     StringBuilder buf = new StringBuilder("(LIST ");
-    for (Iterator<CycSymbol> iter = keySet().iterator(); iter.hasNext();) {
-      CycSymbol key = iter.next();
-      buf.append(DefaultCycObject.stringApiValue(key));
+    for (Iterator<String> iter = keySet().iterator(); iter.hasNext();) {
+      String key = iter.next();
+      buf.append(new CycSymbolImpl(key).toString());
       buf.append(" ");
       final Object val = get(key);
       buf.append(parameterValueStringApiValue(key, val));
@@ -286,9 +286,9 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
       return CycArrayList.EMPTY_CYC_LIST;
     }
     CycArrayList<Object> cycList = new CycArrayList<Object>();
-    for (Iterator<CycSymbol> iter = keySet().iterator(); iter.hasNext();) {
-      CycSymbol key = iter.next();
-      cycList.add(key);
+    for (Iterator<String> iter = keySet().iterator(); iter.hasNext();) {
+      String key = iter.next();
+      cycList.add(new CycSymbolImpl(key));
       final Object val = get(key);
       cycList.add(parameterValueCycListApiValue(key, val));
     }
@@ -297,7 +297,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
 
   /* @return the CycArrayList API value for val qua value for key. */
   @Override
-  public Object parameterValueCycListApiValue(final CycSymbol key,
+  public Object parameterValueCycListApiValue(final String key,
           final Object val) {
     final InferenceParameter param = getInferenceParameter(key);
     return param.parameterValueCycListApiValue(val);
@@ -306,9 +306,9 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
   @Override
   public Object clone() {
     DefaultInferenceParameters copy = new DefaultInferenceParameters(cycAccess);
-    Iterator<CycSymbol> iterator = this.keySet().iterator();
+    Iterator<String> iterator = this.keySet().iterator();
     while (iterator.hasNext()) {
-      CycSymbol key = iterator.next();
+      String key = iterator.next();
       Object value = this.get(key); // note: this might should be cloned
       copy.put(key, value);
     }
@@ -321,9 +321,9 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
       return this;
     } else {
       DefaultInferenceParameters copy = new DefaultInferenceParameters(cycAccess);
-      Iterator<CycSymbol> iterator = this.keySet().iterator();
+      Iterator<String> iterator = this.keySet().iterator();
       while (iterator.hasNext()) {
-        CycSymbol key = iterator.next();
+        String key = iterator.next();
         Object value = this.get(key); // note: this might should be cloned
         copy.put(key, value);
       }
@@ -358,7 +358,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
                     cycAccess);
   }
 
-  private InferenceParameter getInferenceParameter(CycSymbol parameterName) throws BaseClientRuntimeException {
+  private InferenceParameter getInferenceParameter(String parameterName) throws BaseClientRuntimeException {
     InferenceParameterDescriptions descriptions = getDefaultInferenceParameterDescriptions();
     if (descriptions == null) {
       throw new BaseClientRuntimeException("Cannot find inference parameter descriptions");
@@ -371,17 +371,17 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
     return param;
   }
 
-  private static boolean isProblemStoreSpecification(final CycSymbol key,
+  private static boolean isProblemStoreSpecification(final String key,
           final Object val) {
-    return (":PROBLEM-STORE".equals(key.toString())) && (val instanceof List);
+    return (":PROBLEM-STORE".equals(key)) && (val instanceof List);
   }
 
   /* @return the string API value for val qua value for key. */
-  private String parameterValueStringApiValue(final CycSymbol key,
+  private String parameterValueStringApiValue(final String key,
           final Object val) {
     final Object cycListApiValue = parameterValueCycListApiValue(key, val);
     if (val instanceof InferenceParameterValue) {
-      return ((InferenceParameterValue) val).stringApiValue();
+      return DefaultCycObject.cyclify(val);
     } else if (isProblemStoreSpecification(key, cycListApiValue)) {
       return problemStoreStringApiValue((List) cycListApiValue);
     } else if (cycListApiValue instanceof CycObject) {
@@ -454,31 +454,30 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
       System.out.println("Starting...");
       CycAccess cycAccess = CycAccessManager.getAccess();
       InferenceParameters parameters = new DefaultInferenceParameters(cycAccess);
-      parameters.put(new CycSymbolImpl(":MAX-NUMBER"), new Integer(10));
-      parameters.put(new CycSymbolImpl(":PROBABLY-APPROXIMATELY-DONE"), new Double(
+      parameters.put(":MAX-NUMBER", new Integer(10));
+      parameters.put(":PROBABLY-APPROXIMATELY-DONE", new Double(
               0.5));
-      parameters.put(new CycSymbolImpl(":ABDUCTION-ALLOWED?"), Boolean.TRUE);
-      parameters.put(new CycSymbolImpl(":EQUALITY-REASONING-METHOD"), new CycSymbolImpl(
+      parameters.put(":ABDUCTION-ALLOWED?", Boolean.TRUE);
+      parameters.put(":EQUALITY-REASONING-METHOD", new CycSymbolImpl(
               ":CZER-EQUAL"));
       try {
-        parameters.put(new CycSymbolImpl(":MAX-NUMBER"), new CycSymbolImpl(":BINDINGS"));
+        parameters.put(":MAX-NUMBER", new CycSymbolImpl(":BINDINGS"));
         System.out.println("Failed to catch exception.");
       } catch (Exception e) {
       } // ignore
       try {
-        parameters.put(new CycSymbolImpl(":PROBABLY-APPROXIMATELY-DONE"),
-                new CycSymbolImpl(":BINDINGS"));
+        parameters.put(":PROBABLY-APPROXIMATELY-DONE", new CycSymbolImpl(":BINDINGS"));
         System.out.println("Failed to catch exception.");
       } catch (Exception e) {
       } // ignore
       try {
-        parameters.put(new CycSymbolImpl(":ABDUCTION-ALLOWED?"), new CycSymbolImpl(
+        parameters.put(":ABDUCTION-ALLOWED?", new CycSymbolImpl(
                 ":BINDINGS"));
         System.out.println("Failed to catch exception.");
       } catch (Exception e) {
       } // ignore
       try {
-        parameters.put(new CycSymbolImpl(":EQUALITY-REASONING-METHOD"), new Double(
+        parameters.put(":EQUALITY-REASONING-METHOD", new Double(
                 0.5));
         System.out.println("Failed to catch exception.");
       } catch (Exception e) {

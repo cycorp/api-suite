@@ -25,7 +25,7 @@ package com.cyc.baseclient.inference.params;
 import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceParameterValueDescription;
+import com.cyc.query.InferenceParameterValueDescription;
 
 //// External Imports
 import java.util.*;
@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author zelal
  * @date August 14, 2005, 12:51 PM
- * @version $Id: DefaultInferenceParameterValueDescription.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultInferenceParameterValueDescription.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class DefaultInferenceParameterValueDescription 
 implements InferenceParameterValueDescription {
@@ -121,7 +121,7 @@ implements InferenceParameterValueDescription {
   
   //// Protected Area
  
-  static Object verifyObjectType(Map<CycSymbol, Object> propertyMap, CycSymbol property, Class expectedType) {  
+  static Object verifyObjectType(Map<String, Object> propertyMap, String property, Class expectedType) {  
     Object propertyValueObj = propertyMap.get(property);
     if (!expectedType.isInstance(propertyValueObj)) {
       throw new BaseClientRuntimeException("Expected a " + expectedType + " for " + property + "; got " + propertyValueObj);
@@ -144,8 +144,8 @@ implements InferenceParameterValueDescription {
   private String shortDescription;
   private String longDescription;
   
-  private final static CycSymbol VALUE_SYMBOL = new CycSymbolImpl(":VALUE");
-  private final static CycSymbol[] REQUIRED_SYMBOLS = 
+  private final static String VALUE_SYMBOL = ":VALUE";
+  private final static String[] REQUIRED_SYMBOLS = 
    { VALUE_SYMBOL, 
      AbstractInferenceParameter.SHORT_DESC_SYMBOL, 
      AbstractInferenceParameter.LONG_DESC_SYMBOL };

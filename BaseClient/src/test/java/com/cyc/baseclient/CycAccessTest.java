@@ -29,7 +29,7 @@ import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
 import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import com.cyc.base.inference.InferenceResultSet;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -82,7 +82,9 @@ public class CycAccessTest  {
     assertNull(access.getOptions().getCyclistName());
     assertNull(access.getOptions().getKePurposeName());
     
-    access.getOptions().clear();
+    // TODO: expand to include get/setShouldTranscriptOperations and get/setDefaultContext
+    
+    access.getOptions().reset();
     assertNull(access.getOptions().getCyclistName());
     assertNull(access.getOptions().getKePurposeName());
   }

@@ -31,7 +31,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import com.cyc.base.inference.InferenceResultSet;
 import com.cyc.base.kbtool.InferenceTool;
 import java.io.IOException;
@@ -61,6 +61,7 @@ import com.cyc.baseclient.inference.params.DefaultInferenceParameterDescriptions
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.inference.params.InferenceParameterDescriptions;
 import com.cyc.baseclient.util.LRUCache;
+import java.net.UnknownHostException;
 
 /**
  * Tools for performing inferences over the Cyc KB. To lookup
@@ -93,10 +94,11 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
           final InferenceParameters queryProperties) {
     final InferenceParameters tempQueryProperties = (queryProperties == null) ? getHLQueryProperties() : queryProperties;
     final CycArrayList parameterList = new CycArrayList();
-    for (final Iterator<Map.Entry<CycSymbol, Object>> iter = tempQueryProperties.entrySet().iterator(); iter.hasNext();) {
-      Map.Entry<CycSymbol, Object> mapEntry = iter.next();
-      CycSymbol queryParameterKeyword = mapEntry.getKey();
-      parameterList.add(queryParameterKeyword);
+    for (final Iterator<Map.Entry<String, Object>> iter = tempQueryProperties.entrySet().iterator(); iter.hasNext();) {
+      Map.Entry<String, Object> mapEntry = iter.next();
+      String queryParameterKeyword = mapEntry.getKey();
+      CycSymbol queryParameterKeywordSymbol = new CycSymbolImpl(queryParameterKeyword);
+      parameterList.add(queryParameterKeywordSymbol);
       final Object rawValue = mapEntry.getValue();
       parameterList.add(tempQueryProperties.parameterValueCycListApiValue(
               queryParameterKeyword, rawValue));
@@ -628,7 +630,7 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
               "inferenceProblemStoreName must not be an empty list");
     }
     final InferenceParameters tempQueryProperties = (queryProperties == null) ? getHLQueryProperties() : queryProperties;
-    tempQueryProperties.put(makeCycSymbol(":problem-store"), makeCycSymbol(
+    tempQueryProperties.put(":problem-store", makeCycSymbol(
             "problem-store", false));
     final String script =
             "(clet ((problem-store (find-problem-store-by-name \"" + inferenceProblemStoreName + "\")))"
@@ -1130,7 +1132,7 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
               "inferenceProblemStoreName must not be an empty list");
     }
     final InferenceParameters tempQueryProperties = (queryProperties == null) ? getHLQueryProperties() : queryProperties;
-    tempQueryProperties.put(makeCycSymbol(":problem-store"), makeCycSymbol(
+    tempQueryProperties.put(":problem-store", makeCycSymbol(
             "problem-store", false));
     final String script =
             "(clet ((problem-store (find-problem-store-by-name \"" + inferenceProblemStoreName + "\")))"
@@ -1181,8 +1183,7 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
       return false; //timeouts require subl workers.
     } else if (queryProperties == null) {
       return true; //default properties are okay.
-    } else if (queryProperties.containsKey(CycObjectFactory.makeCycSymbol(
-            ":RETURN"))) {
+    } else if (queryProperties.containsKey(":RETURN")) {
       return false; //we rely on the standard return format.
     } else {
       return true;
@@ -1193,59 +1194,42 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
    * Initializes the query properties. 
    */
   private void initializeQueryProperties() {
-    defaultQueryProperties.put(makeCycSymbol(":allowed-rules"), makeCycSymbol(
+    defaultQueryProperties.put(":allowed-rules", makeCycSymbol(
             ":all"));
-    defaultQueryProperties.put(makeCycSymbol(":result-uniqueness"),
+    defaultQueryProperties.put(":result-uniqueness",
             makeCycSymbol(":bindings"));
-    defaultQueryProperties.put(makeCycSymbol(
-            ":allow-hl-predicate-transformation?"), false);
-    defaultQueryProperties.put(makeCycSymbol(
-            ":allow-unbound-predicate-transformation?"), false);
-    defaultQueryProperties.put(makeCycSymbol(
-            ":allow-evaluatable-predicate-transformation?"), false);
-    defaultQueryProperties.put(makeCycSymbol(
-            ":intermediate-step-validation-level"), makeCycSymbol(":all"));
-    defaultQueryProperties.put(makeCycSymbol(":negation-by-failure?"), false);
-    defaultQueryProperties.put(makeCycSymbol(":allow-indeterminate-results?"),
-            true);
-    defaultQueryProperties.put(makeCycSymbol(":allow-abnormality-checking?"),
-            true);
-    defaultQueryProperties.put(makeCycSymbol(":disjunction-free-el-vars-policy"),
+    defaultQueryProperties.put(":allow-hl-predicate-transformation?", false);
+    defaultQueryProperties.put(":allow-unbound-predicate-transformation?", false);
+    defaultQueryProperties.put(":allow-evaluatable-predicate-transformation?", false);
+    defaultQueryProperties.put(":intermediate-step-validation-level", makeCycSymbol(":all"));
+    defaultQueryProperties.put(":negation-by-failure?", false);
+    defaultQueryProperties.put(":allow-indeterminate-results?", true);
+    defaultQueryProperties.put(":allow-abnormality-checking?", true);
+    defaultQueryProperties.put(":disjunction-free-el-vars-policy",
             makeCycSymbol(":compute-intersection"));
-    defaultQueryProperties.put(makeCycSymbol(":allowed-modules"), makeCycSymbol(
-            ":all"));
-    defaultQueryProperties.put(makeCycSymbol(
-            ":completeness-minimization-allowed?"), true);
-    defaultQueryProperties.put(makeCycSymbol(":direction"), makeCycSymbol(
-            ":backward"));
-    defaultQueryProperties.put(makeCycSymbol(":equality-reasoning-method"),
-            makeCycSymbol(":czer-equal"));
-    defaultQueryProperties.put(makeCycSymbol(":equality-reasoning-domain"),
-            makeCycSymbol(":all"));
-    defaultQueryProperties.put(makeCycSymbol(":max-problem-count"),
-            Long.valueOf(100000));
-    defaultQueryProperties.put(makeCycSymbol(":transformation-allowed?"), false);
-    defaultQueryProperties.put(makeCycSymbol(
-            ":add-restriction-layer-of-indirection?"), true);
-    defaultQueryProperties.put(makeCycSymbol(":evaluate-subl-allowed?"), true);
-    defaultQueryProperties.put(makeCycSymbol(":rewrite-allowed?"), false);
-    defaultQueryProperties.put(makeCycSymbol(":abduction-allowed?"), false);
-    defaultQueryProperties.put(makeCycSymbol(
-            ":removal-backtracking-productivity-limit"), Long.valueOf(2000000));
+    defaultQueryProperties.put(":allowed-modules", makeCycSymbol(":all"));
+    defaultQueryProperties.put(":completeness-minimization-allowed?", true);
+    defaultQueryProperties.put(":direction", makeCycSymbol(":backward"));
+    defaultQueryProperties.put(":equality-reasoning-method", makeCycSymbol(":czer-equal"));
+    defaultQueryProperties.put(":equality-reasoning-domain", makeCycSymbol(":all"));
+    defaultQueryProperties.put(":max-problem-count", Long.valueOf(100000));
+    defaultQueryProperties.put(":transformation-allowed?", false);
+    defaultQueryProperties.put(":add-restriction-layer-of-indirection?", true);
+    defaultQueryProperties.put(":evaluate-subl-allowed?", true);
+    defaultQueryProperties.put(":rewrite-allowed?", false);
+    defaultQueryProperties.put(":abduction-allowed?", false);
+    defaultQueryProperties.put(":removal-backtracking-productivity-limit", Long.valueOf(2000000));
     // dynamic query properties
-    defaultQueryProperties.put(makeCycSymbol(":max-number"), null);
-    defaultQueryProperties.put(makeCycSymbol(":max-time"), Integer.valueOf(120));
-    defaultQueryProperties.put(makeCycSymbol(":max-transformation-depth"),
-            Integer.valueOf(0));
-    defaultQueryProperties.put(makeCycSymbol(":block?"), false);
-    defaultQueryProperties.put(makeCycSymbol(":max-proof-depth"), null);
-    defaultQueryProperties.put(makeCycSymbol(":cache-inference-results?"), false);
-    defaultQueryProperties.put(makeCycSymbol(":answer-language"), makeCycSymbol(
-            ":el"));
-    defaultQueryProperties.put(makeCycSymbol(":continuable?"), false);
-    defaultQueryProperties.put(makeCycSymbol(":browsable?"), false);
-    defaultQueryProperties.put(makeCycSymbol(":productivity-limit"),
-            Long.valueOf(2000000));
+    defaultQueryProperties.put(":max-number", null);
+    defaultQueryProperties.put(":max-time", Integer.valueOf(120));
+    defaultQueryProperties.put(":max-transformation-depth", Integer.valueOf(0));
+    defaultQueryProperties.put(":block?", false);
+    defaultQueryProperties.put(":max-proof-depth", null);
+    defaultQueryProperties.put(":cache-inference-results?", false);
+    defaultQueryProperties.put(":answer-language", makeCycSymbol(":el"));
+    defaultQueryProperties.put(":continuable?", false);
+    defaultQueryProperties.put(":browsable?", false);
+    defaultQueryProperties.put(":productivity-limit", Long.valueOf(2000000));
 
     final CycArrayList<CycSymbolImpl> queryPropertiesList = new CycArrayList(
             defaultQueryProperties.keySet());
@@ -1255,7 +1239,7 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
       CycList results = getConverse().converseList(command);
       for (int i = 0, size = results.size(); i < size; i++) {
         if (results.get(i).equals(CycObjectFactory.nil)) {
-          final CycSymbolImpl badProperty = queryPropertiesList.get(i);
+          final String badProperty = queryPropertiesList.get(i).toCanonicalString();
           System.err.println(badProperty + " is not a query-property-p");
           defaultQueryProperties.remove(badProperty);
         }
@@ -1278,9 +1262,9 @@ public class CycInferenceTool extends AbstractKBTool implements InferenceTool {
                 "ALL-QUERY-PROPERTIES"));
         for (final Object property : allQueryProperties) {
           if (property instanceof CycSymbolImpl && defaults.containsKey(
-                  (CycSymbolImpl) property)) {
-            final Object value = defaults.get((CycSymbolImpl) property);
-            defaultQueryProperties.put((CycSymbolImpl) property, value);
+                  property.toString())) {
+            final Object value = defaults.get(property.toString());
+            defaultQueryProperties.put(property.toString(), value);
           }
         }
       } catch (CycConnectionException ex) {

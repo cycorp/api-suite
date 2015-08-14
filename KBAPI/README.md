@@ -54,4 +54,4 @@ Contact
 -------
 
 For questions about the APIs or issues with using them, please visit the
-[Cyc Dev Center issues page](http://dev.cyc.com/cyc-api/issues.html).
+[Cyc Dev Center issues page](http://dev.cyc.com/issues/).

@@ -74,8 +74,6 @@ public class RuleTest {
   public void tearDown() {
   }
 
-  // @Test
-  // public void hello() {}
   
   @Test
   public void testAddRule() throws KBTypeException, CreateException, KBApiException {

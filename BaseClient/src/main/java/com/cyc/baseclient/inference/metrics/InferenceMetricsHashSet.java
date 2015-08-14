@@ -21,8 +21,8 @@ package com.cyc.baseclient.inference.metrics;
  * #L%
  */
 
-import com.cyc.base.inference.metrics.InferenceMetric;
-import com.cyc.base.inference.metrics.InferenceMetrics;
+import com.cyc.query.metrics.InferenceMetric;
+import com.cyc.query.metrics.InferenceMetrics;
 
 import java.util.HashSet;
 
@@ -37,12 +37,10 @@ import com.cyc.baseclient.cycobject.CycArrayList;
  */
 public class InferenceMetricsHashSet extends HashSet<InferenceMetric> implements InferenceMetrics {
 
-  @Override
   public String stringApiValue() {
     return ((CycList)cycListApiValue()).stringApiValue();
   }
 
-  @Override
   public Object cycListApiValue() {
     final CycList cyclistApiValue = new CycArrayList<CycSymbol>(this.size());
     for (final InferenceMetric metric : this) {
@@ -51,7 +49,6 @@ public class InferenceMetricsHashSet extends HashSet<InferenceMetric> implements
     return cyclistApiValue;
   }
 
-  @Override
   public CycSymbol getCycSymbol() {
     throw new UnsupportedOperationException();
   }

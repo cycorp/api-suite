@@ -21,17 +21,17 @@ package com.cyc.baseclient.inference.params;
  * #L%
  */
 
-import com.cyc.base.inference.InferenceMode;
-import com.cyc.base.inference.ResultUniqueness;
+import com.cyc.query.InferenceMode;
+import com.cyc.query.ResultUniqueness;
 import com.cyc.base.CycAccess;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.DisjunctionFreeELVarsPolicy;
-import com.cyc.base.inference.InferenceAnswerLanguage;
-import com.cyc.base.inference.InferenceParameters;
-import com.cyc.base.inference.ProblemReusePolicy;
-import com.cyc.base.inference.ProofValidationMode;
-import com.cyc.base.inference.TransitiveClosureMode;
-import com.cyc.base.inference.metrics.InferenceMetrics;
+import com.cyc.query.DisjunctionFreeELVarsPolicy;
+import com.cyc.query.InferenceAnswerLanguage;
+import com.cyc.query.InferenceParameters;
+import com.cyc.query.ProblemReusePolicy;
+import com.cyc.query.ProofValidationMode;
+import com.cyc.query.TransitiveClosureMode;
+import com.cyc.query.metrics.InferenceMetrics;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -75,9 +75,7 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
   @Override
   public Object clone() {
     SpecifiedInferenceParameters copy = new SpecifiedInferenceParameters();
-    Iterator<CycSymbol> iterator = this.keySet().iterator();
-    while (iterator.hasNext()) {
-      CycSymbol key = iterator.next();
+    for (String key : this.keySet()) {
       Object value = this.get(key); // note: this might should be cloned
       copy.put(key, value);
     }
@@ -87,9 +85,7 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
 //  @Override
   public DefaultInferenceParameters toDefaultInferenceParameters(CycAccess cyc) {
     DefaultInferenceParameters copy = new DefaultInferenceParameters(cyc);
-    Iterator<CycSymbol> iterator = this.keySet().iterator();
-    while (iterator.hasNext()) {
-      CycSymbol key = iterator.next();
+    for (String key : this.keySet()) {
       Object value = this.get(key); // note: this might should be cloned
       copy.put(key, value);
     }
@@ -101,13 +97,9 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
     map.clear();
   }
 
-  @Override
-  public Object parameterValueCycListApiValue(CycSymbol key, Object val) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 
   @Override
-  public Set<Entry<CycSymbol, Object>> entrySet() {
+  public Set<Entry<String, Object>> entrySet() {
     return Collections.unmodifiableSet(map.entrySet());
   }
 
@@ -132,35 +124,35 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
   }
 
   @Override
-  public Set<CycSymbol> keySet() {
+  public Set<String> keySet() {
     return Collections.unmodifiableSet(map.keySet());
   }
 
   @Override
-  public Object get(CycSymbol parameterName) {
-    return map.get(parameterName);
+  public Object get(String parameterName) {
+    return map.get(parameterName.toUpperCase());
   }
 
   @Override
   public void putAll(InferenceParameters properties) {
-    for (final CycSymbol key : properties.keySet()) {
+    for (final String key : properties.keySet()) {
       put(key, properties.get(key));
     }
   }
 
   @Override
-  public void remove(CycSymbol property) {
-    map.remove(property);
+  public void remove(String property) {
+    map.remove(property.toUpperCase());
   }
 
   @Override
-  public Object put(CycSymbol parameterName, Object value) {
-    return map.put(parameterName, value);
+  public Object put(String parameterName, Object value) {
+    return map.put(parameterName.toUpperCase(), value);
   }
 
   @Override
-  public boolean containsKey(CycSymbol key) {
-    return map.containsKey(key);
+  public boolean containsKey(String key) {
+    return map.containsKey(key.toUpperCase());
   }
 
   @Override
@@ -231,7 +223,7 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
   @Override
   public void updateFromPlist(final List plist) {
     for (int i = 0; i < plist.size(); i++) {
-      final CycSymbol paramKey = (CycSymbol) plist.get(i++);
+      final String paramKey = ((CycSymbol) plist.get(i++)).cyclify();
       final Object paramValue = plist.get(i);
       put(paramKey, paramValue);
     }
@@ -315,7 +307,7 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
   public int hashCode() {
     return map.hashCode();
   }
-  final Map<CycSymbol, Object> map = new HashMap<CycSymbol, Object>();
+  final Map<String, Object> map = new HashMap<String, Object>();
 
   @Override
   public String toString() {
@@ -421,7 +413,7 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
     return getAs(EQUALITY_REASONING_DOMAIN, ProblemReusePolicy.class);
   }
 
-  private <T extends Enum> T getAs(CycSymbol key, Class<T> type) {
+  private <T extends Enum> T getAs(String key, Class<T> type) {
     return coerceToEnum(get(key), type);
   }
 
@@ -436,4 +428,10 @@ public class SpecifiedInferenceParameters implements InferenceParameters {
       throw new IllegalStateException("Bad " + type.getSimpleName() + " value " + value);
     }
   }
+
+  @Override
+  public Object parameterValueCycListApiValue(String key, Object val) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
 }

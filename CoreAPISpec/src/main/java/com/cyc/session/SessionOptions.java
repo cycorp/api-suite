@@ -1,5 +1,7 @@
 package com.cyc.session;
 
+import com.cyc.kb.config.DefaultContext;
+
 /*
  * #%L
  * File: SessionOptions.java
@@ -22,11 +24,12 @@ package com.cyc.session;
  */
 
 /**
- * A set of modifiable options, including the name of the cyclist
- * making assertions, and the project's KE purpose.
+ * A set of modifiable options, such as the name of the cyclist making assertions and the 
+ * project's KE purpose.
  * 
- * The session's configuration may provide defaults for these options, or 
- * possibly prevent certain options from being changed.
+ * The session's configuration may provide defaults for these options (typically via
+ * {@link CycSessionConfiguration#getDefaultSessionOptions()) or possibly prevent certain options
+ * from being changed.
  * 
  * @author nwinant
  */
@@ -74,9 +77,36 @@ public interface SessionOptions {
    */
   void setKePurposeName(String project) throws SessionCommunicationException, SessionConfigurationException;
   
+  /**
+   * Declare that KB operations performed in this thread should or shouldn't be
+   * transcripted by the Cyc server.
+   * 
+   * @param shouldTranscriptOperations flag to control the transcription of the operations
+   */
+  void setShouldTranscriptOperations(boolean shouldTranscriptOperations);
+  
+  /**
+   * Will actions in the current thread that modify the KB be transcripted by
+   * the Cyc server?
+   *
+   * @return will KB operations from the current thread be transcripted?
+   */
+  boolean getShouldTranscriptOperations();
+  
+  /**
+   * Sets the default context ThreadLocal
+   * @param defaultContext
+   */
+  void setDefaultContext(DefaultContext defaultContext);
+  
+  /**
+   * Returns the current default contexts
+   * @return the contents of the DefaultContest ThreadLocal
+   */
+  DefaultContext getDefaultContext();
   
   /**
    * Clears all values, reverting to any defaults specified in CycSessionConfiguration.
    */
-  void clear();
+  void reset();
 }

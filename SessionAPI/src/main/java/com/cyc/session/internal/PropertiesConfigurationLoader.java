@@ -47,8 +47,8 @@ public class PropertiesConfigurationLoader extends AbstractConfigurationLoader i
   
   @Override
   public CycSessionConfiguration getConfiguration() throws SessionConfigurationException {
-    if (isValuePopulated(getEnvironment().getPolicyFileName())) {
-      final Properties props = reader.fromFile(getEnvironment().getPolicyFileName());
+    if (isValuePopulated(getEnvironment().getConfigurationFileName())) {
+      final Properties props = reader.fromFile(getEnvironment().getConfigurationFileName());
       return getConfiguration(props);
     }
     return null;

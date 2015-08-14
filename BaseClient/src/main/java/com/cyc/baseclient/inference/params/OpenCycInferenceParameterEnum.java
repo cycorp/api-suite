@@ -21,8 +21,9 @@ package com.cyc.baseclient.inference.params;
  * #L%
  */
 
-import com.cyc.base.inference.InferenceMode;
-import com.cyc.base.inference.InferenceParameterValueDescription;
+import com.cyc.query.InferenceParameter;
+import com.cyc.query.InferenceMode;
+import com.cyc.query.InferenceParameterValueDescription;
 import java.util.Arrays;
 import java.util.List;
 import com.cyc.baseclient.CycObjectFactory;
@@ -37,7 +38,7 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author baxter
  * @date August 9, 2005, 8:49 PM
- * @version $Id: OpenCycInferenceParameterEnum.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: OpenCycInferenceParameterEnum.java 158569 2015-05-19 21:51:08Z daves $
  */
 public enum OpenCycInferenceParameterEnum {
 
@@ -125,7 +126,7 @@ public enum OpenCycInferenceParameterEnum {
   private static final List<InferenceParameterValueDescription> INFERENCE_MODES =
           Arrays.asList(MINIMAL, SHALLOW, EXTENDED, MAXIMAL);
   private static final InferenceParameter INFERERNCE_MODE_PARAM =
-          new DefaultEnumerationInferenceParameter(SHALLOW, CycObjectFactory.makeCycSymbol(":INFERENCE-MODE"),
+          new DefaultEnumerationInferenceParameter(SHALLOW, ":INFERENCE-MODE",
           null, "Inference engine mode",
           "This controls what mode the inference engine will operate under; roughly, "
           + "how deep it will search for an answer before giving up.  "

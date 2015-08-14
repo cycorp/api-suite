@@ -43,7 +43,20 @@ import com.cyc.base.cycobject.Guid;
  * @author nwinant
  */
 public interface ObjectTool {
-  
+
+  /**
+   * Returns the Heuristic Level (HL) object represented by the given string.
+   *
+   * @param string the string which represents a number, quoted string, constant, naut or nart
+   *
+   * @return the Heuristic Level (HL) object represented by the given string
+   *
+   * @throws IOException if a communications error occurs
+   * @throws UnknownHostException if the Cyc server cannot be found
+   * @throws CycApiException if the Cyc server returns an error
+   */
+  public Object getHLCycTerm(String string)
+          throws CycConnectionException, com.cyc.base.CycApiException;
   /**
    * Returns the canonical Heuristic Level Microtheory (HLMT) given a list representation.
    *

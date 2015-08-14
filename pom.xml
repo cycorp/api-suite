@@ -4,7 +4,7 @@
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-parent</artifactId>
-  <version>1.0.0-rc2</version>
+  <version>1.0.0-rc3-SNAPSHOT</version>
   <packaging>pom</packaging>
   
   <name>Core API Parent</name>
@@ -13,7 +13,29 @@
     Cyc Core API Suite: the core Java APIs for interacting with the Cyc inference engine and 
     knowledge base.
   </description>
-  <url>http://dev.cyc.com/cyc-api/</url>
+  <url>http://dev.cyc.com/api/core/</url>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <!-- maven.build.timestamp doesn't make it through to the filtering mechanism,
+         so we need to store it in another property. Details: 
+         http://java.dzone.com/tips/stamping-version-number-and
+    -->
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+    <project.root>${project.parent.basedir}</project.root>
+  </properties>
+  
+  <modules>
+    <module>CoreAPISpec</module>
+    <module>SessionAPI</module>
+    <module>BaseClient</module>
+    <module>KBAPI</module>
+    <module>QueryAPI</module>
+    <module>CoreAPISuite</module>
+  </modules>
   
   <scm>
     <connection>scm:git:git@github.com:cycorp/CycCoreAPI.git</connection>
@@ -59,26 +81,6 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- maven.build.timestamp doesn't make it through to the filtering mechanism,
-         so we need to store it in another property. Details: 
-         http://java.dzone.com/tips/stamping-version-number-and
-    -->
-    <timestamp>${maven.build.timestamp}</timestamp>
-    <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-    <project.root>${project.parent.basedir}</project.root>
-  </properties>
-  
-  <modules>
-    <module>CoreAPISpec</module>
-    <module>SessionAPI</module>
-    <module>BaseClient</module>
-    <module>KBAPI</module>
-    <module>QueryAPI</module>
-    <module>CoreAPISuite</module>
-  </modules>
   
   <profiles>
     <profile>
@@ -266,8 +268,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
           </configuration>
         </plugin>
         <plugin>
@@ -286,7 +288,20 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.10</version>
+          <version>2.18.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.18.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -336,6 +351,10 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
       <!--
       <plugin> 
@@ -441,27 +460,32 @@
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-core-api</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-session</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-base-client</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-kb</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
         <artifactId>cyc-query</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-suite</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -472,12 +496,12 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.7.5</version>
+        <version>1.7.12</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>1.7.5</version>
+        <version>1.7.12</version>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
@@ -504,6 +528,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <!-- 

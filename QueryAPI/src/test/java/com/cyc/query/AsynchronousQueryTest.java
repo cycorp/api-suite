@@ -24,6 +24,7 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
+import com.cyc.query.metrics.InferenceMetric;
 import com.cyc.query.exception.QueryConstructionException;
 import static com.cyc.query.TestUtils.*;
 
@@ -32,10 +33,6 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.CycTimeOutException;
 import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.FormulaSentence;
-import com.cyc.base.inference.InferenceParameters;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
-import com.cyc.base.inference.metrics.InferenceMetric;
 import com.cyc.kb.exception.KBApiException;
 
 import java.io.IOException;
@@ -51,19 +48,16 @@ import static org.junit.Assert.*;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.ArgPositionImpl;
 import com.cyc.baseclient.cycobject.CycFormulaSentence;
-import com.cyc.baseclient.inference.DefaultInferenceStatus;
-import com.cyc.baseclient.inference.metrics.InferenceMetricsValuesImpl;
-import com.cyc.baseclient.inference.metrics.StandardInferenceMetric;
-import static com.cyc.baseclient.inference.metrics.StandardInferenceMetric.ANSWER_COUNT;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.inference.params.OpenCycInferenceParameterEnum.OpenCycInferenceMode;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.SentenceImpl;
+import com.cyc.query.metrics.InferenceMetricsValues;
 import com.cyc.session.SessionApiException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  *
@@ -105,7 +99,7 @@ public class AsynchronousQueryTest {
    * @throws CycConnectionException
    */
   @Test
-  public void testStart() throws QueryConstructionException, CycConnectionException, InterruptedException {
+  public void testStart() throws QueryConstructionException, InterruptedException, SessionCommunicationException {
     System.out.println("start");
     q = constructXIsaBirdQuery();
     final InferenceStatus status = q.getStatus();
@@ -118,10 +112,12 @@ public class AsynchronousQueryTest {
   /**
    * Test of stop method, of class Query.
    *
-   * @throws CycConnectionException
+   * @throws java.lang.InterruptedException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.session.SessionCommunicationException
    */
   @Test
-  public void testStop() throws InterruptedException, CycConnectionException, QueryConstructionException {
+  public void testStop() throws InterruptedException, QueryConstructionException, SessionCommunicationException {
     System.out.println("stop");
     q = constructXIsaBirdQuery();
     q.start();
@@ -129,16 +125,19 @@ public class AsynchronousQueryTest {
     waitForQueryToFinish();
     final InferenceStatus status = q.getStatus();
     System.out.println(q.getStatus());
-    assertFalse("Wrong query status after starting, stopping and waiting.", status.equals(DefaultInferenceStatus.RUNNING));
+    assertFalse("Wrong query status after starting, stopping and waiting.", status.equals(InferenceStatus.RUNNING));
   }
 
   /**
    * Test of continueQuery method, of class Query.
    *
+   * @throws java.lang.InterruptedException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @throws CycConnectionException
    */
   @Test
-  public void testContinueQuery() throws InterruptedException, CycConnectionException, QueryConstructionException {
+  public void testContinueQuery() throws InterruptedException, QueryConstructionException, SessionCommunicationException {
     System.out.println("continueQuery");
     q = constructXIsaBirdQuery();
     q.setInferenceMode(OpenCycInferenceMode.MAXIMAL_MODE);
@@ -155,9 +154,12 @@ public class AsynchronousQueryTest {
   /**
    * Test of addListener method, of class Query.
    *
+   * @throws java.lang.InterruptedException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.session.SessionCommunicationException
    */
   @Test
-  public void testAddListener() throws InterruptedException, CycConnectionException, QueryConstructionException {
+  public void testAddListener() throws InterruptedException, QueryConstructionException, SessionCommunicationException {
     System.out.println("addListener");
     final TestQueryListener testQueryListener = new TestQueryListener();
     {
@@ -187,6 +189,8 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of removeQueryVariable and addQueryVariable methods, of class Query.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testAddAndRemoveQueryVariable() throws QueryConstructionException, KBApiException {
@@ -201,6 +205,8 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of setQueryVariables method, of class Query.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testSetQueryVariables() throws QueryConstructionException, KBApiException {
@@ -217,6 +223,8 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of setQuerySentenceMainClause method, of class Query.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testSetQuerySentenceMainClause() throws QueryConstructionException, KBApiException {
@@ -227,6 +235,8 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of setQuerySentenceHypothesizedClause method, of class Query.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testSetQuerySentenceHypothesizedClause() throws QueryConstructionException, KBApiException {
@@ -242,11 +252,14 @@ public class AsynchronousQueryTest {
   /**
    * Test of findRedundantClauses method, of class Query.
    *
-   * @throws CycConnectionException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
+   * @throws com.cyc.session.SessionCommunicationException
    */
   @Test
-  public void testFindRedundantClauses() throws CycConnectionException, QueryConstructionException, KBApiException {
-    q = new Query(SentenceImpl.and(xIsaBird(), xIsaEmu), Constants.inferencePSCMt());
+  public void testFindRedundantClauses() throws QueryConstructionException, KBApiException, SessionCommunicationException, OpenCycUnsupportedFeatureException {
+    assumeNotOpenCyc();
+    q = QueryFactory.getQuery(SentenceImpl.and(xIsaBird(), xIsaEmu), Constants.inferencePSCMt());
     final Collection<Collection<Sentence>> redundantClauses = q.findRedundantClauses();
     assertFalse(redundantClauses.isEmpty());
     final Collection<Sentence> oneSet = redundantClauses.iterator().next();
@@ -254,41 +267,49 @@ public class AsynchronousQueryTest {
   }
 
   /**
-   * Test of findUnconnectedClauses method, of class Query.
+   * Test of findUnconnectedClauses method, of class QueryImpl.
    *
-   * @throws CycConnectionException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
+   * @throws com.cyc.session.SessionCommunicationException
    */
   @Test
-  public void testFindUnconnectedClauses() throws CycConnectionException, QueryConstructionException, KBApiException {
+  public void testFindUnconnectedClauses() throws QueryConstructionException, KBApiException, SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("findUnconnectedClauses");
-    q = new Query(SentenceImpl.and(xIsaBird(), xIsaEmu), Constants.inferencePSCMt());
+    assumeNotOpenCyc();
+    q = QueryFactory.getQuery(SentenceImpl.and(xIsaBird(), xIsaEmu), Constants.inferencePSCMt());
     final Collection<ArgPosition> unconnectedClauses = q.findUnconnectedClauses();
     assertTrue(unconnectedClauses.isEmpty());
-    FormulaSentence newSentence = q.getQuerySentenceMainClauseCyc().deepCopy();
+    FormulaSentence newSentence = ((QueryImpl)q).getQuerySentenceMainClauseCyc().deepCopy();
     newSentence.setSpecifiedObject(ArgPositionImpl.ARG1.deepCopy().extend(
             ArgPositionImpl.ARG1),
             CycObjectFactory.makeCycVariable("Y"));
-    q.setQuerySentenceMainClause((CycFormulaSentence) newSentence);
+    Sentence s = new SentenceImpl(newSentence);
+    q.setQuerySentenceMainClause(s);
     unconnectedClauses.addAll(q.findUnconnectedClauses());
     assertFalse(unconnectedClauses.isEmpty());
   }
 
   /**
-   * Test of merge method, of class Query.
+   * Test of merge method, of class QueryImpl.
    *
-   * @throws CycConnectionException
+   * @throws com.cyc.kb.exception.KBApiException
+   * @throws com.cyc.session.SessionCommunicationException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testMerge() throws KBApiException, CycConnectionException, QueryConstructionException {
+  public void testMerge() throws KBApiException, QueryConstructionException, SessionCommunicationException, OpenCycUnsupportedFeatureException {
     System.out.println("merge");
-    q = new Query(xIsaBird(), Constants.inferencePSCMt(), defaultParams);
-    Query otherQuery = new Query(xIsaEmu, Constants.inferencePSCMt(), defaultParams);
+    assumeNotOpenCyc();
+    q = QueryFactory.getQuery(xIsaBird(), Constants.inferencePSCMt(), defaultParams);
+    Query otherQuery = QueryFactory.getQuery(xIsaEmu, Constants.inferencePSCMt(), defaultParams);
     q = q.merge(otherQuery);
-    assertTrue(q.getQuerySentenceCyc().treeContains(QueryApiTestConstants.bird().getCore()));
+    assertTrue(((CycFormulaSentence)q.getQuerySentence().getCore()).treeContains(QueryApiTestConstants.bird().getCore()));
   }
 
   /**
-   * Test of setMaxTime method, of class Query.
+   * Test of setMaxTime method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testSetMaxTime() throws QueryConstructionException {
@@ -300,6 +321,7 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of setMaxNumber method, of class Query.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testSetMaxNumber() throws QueryConstructionException {
@@ -311,12 +333,13 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of setInferenceMode method, of class Query.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testSetInferenceMode() throws QueryConstructionException {
     System.out.println("setInferenceMode");
     q = constructXIsaBirdQuery();
-    q.setInferenceMode(OpenCycInferenceMode.MINIMAL_MODE);
+    q.setInferenceMode(OpenCycInferenceMode.MINIMAL_MODE); //@#$@%$@#$ OpenCycInferenceMode @##$&#%^@#$%
     assertEquals(OpenCycInferenceMode.MINIMAL_MODE, q.getInferenceMode());
   }
 
@@ -324,7 +347,7 @@ public class AsynchronousQueryTest {
     Thread.sleep(1000);
   }
 
-  private static class TestQueryListener extends QueryListener {
+  private static class TestQueryListener extends QueryListenerImpl {
 
     private boolean created = false;
     private boolean terminated = false;
@@ -358,8 +381,7 @@ public class AsynchronousQueryTest {
     }
 
     @Override
-    public void notifyInferenceTerminated(Query query,
-            Exception e) {
+    public void notifyInferenceTerminated(Query query, Exception e) {
       System.out.println("Inference terminated.");
       terminated = true;
     }
@@ -367,6 +389,9 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of bindVariable method, of class Query.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testBindVariable_String_Object() throws IOException, QueryConstructionException, KBApiException {
@@ -381,6 +406,9 @@ public class AsynchronousQueryTest {
 
   /**
    * Test of bindVariable method, of class Query.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testBindVariable_CycVariable_Object() throws IOException, QueryConstructionException, KBApiException {
@@ -393,26 +421,32 @@ public class AsynchronousQueryTest {
   /**
    * Test of metrics accessors, of class Query.
    *
-   * @throws CycConnectionException
+   * @throws java.lang.InterruptedException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.session.SessionCommunicationException
+   * @throws com.cyc.base.CycConnectionException
    * @throws CycTimeOutException
    */
   @Test
-  public void testMetrics() throws InterruptedException, CycConnectionException, QueryConstructionException {
+  public void testMetrics() throws InterruptedException, QueryConstructionException, SessionCommunicationException, CycConnectionException {
     System.out.println("testMetrics");
     q = constructXIsaBirdQuery();
     // Gather up all the metrics we have java constants for:
     final List<? extends InferenceMetric> metricsList = Arrays.asList(
-            ANSWER_COUNT, StandardInferenceMetric.HYPOTHESIZATION_TIME, StandardInferenceMetric.LINK_COUNT,
+            StandardInferenceMetric.ANSWER_COUNT, StandardInferenceMetric.HYPOTHESIZATION_TIME, StandardInferenceMetric.LINK_COUNT,
             StandardInferenceMetric.PROBLEM_COUNT, StandardInferenceMetric.PROBLEM_STORE_PROBLEM_COUNT,
             StandardInferenceMetric.PROBLEM_STORE_PROOF_COUNT, StandardInferenceMetric.PROOF_COUNT,
-            StandardInferenceMetric.SKSI_QUERY_START_TIMES, StandardInferenceMetric.SKSI_QUERY_TOTAL_TIME,
             StandardInferenceMetric.TACTIC_COUNT, StandardInferenceMetric.TIME_PER_ANSWER, StandardInferenceMetric.TIME_TO_FIRST_ANSWER,
             StandardInferenceMetric.TIME_TO_LAST_ANSWER, StandardInferenceMetric.TOTAL_TIME, StandardInferenceMetric.WASTED_TIME_AFTER_LAST_ANSWER);
     // Add them all to our query:
     q.getMetrics().addAll(metricsList);
+    if (!TestUtils.cyc.isOpenCyc()) {
+      q.getMetrics().add(StandardInferenceMetric.SKSI_QUERY_START_TIMES);
+      q.getMetrics().add(StandardInferenceMetric.SKSI_QUERY_TOTAL_TIME);
+    }
     q.start();
     waitForQueryToFinish();
-    final InferenceMetricsValuesImpl metricsValues = (InferenceMetricsValuesImpl) q.getMetricsValues();
+    final InferenceMetricsValues metricsValues =  q.getMetricsValues();
     for (final InferenceMetric metric : metricsList) {
       final Object value = metricsValues.getValue(metric);
       System.out.println(metric + ": " + value);

@@ -27,11 +27,15 @@ import java.util.List;
  * <P>NonAtomicTerm is designed to...
  * 
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: NonAtomicTerm.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: NonAtomicTerm.java 158611 2015-05-21 16:49:58Z daves $
  */
 public interface NonAtomicTerm extends DenotationalTerm {
   
-  Fort getFunctor();
+  /**
+   *
+   * @return
+   */
+  DenotationalTerm getFunctor();
   /**
    * Get the arguments of this non-atomic term, not including the functor,
    * or arg0.

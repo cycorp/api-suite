@@ -53,9 +53,9 @@ import com.cyc.baseclient.api.SubLWorkerSynch;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
+import com.cyc.query.InferenceParameters;
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
@@ -66,7 +66,7 @@ import com.cyc.baseclient.parser.CycLParserUtil;
  <p>
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:55 AM
- * @version $Id: DefaultInferenceWorker.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultInferenceWorker.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class DefaultInferenceWorker extends DefaultSubLWorker implements InferenceWorker {
 
@@ -451,14 +451,14 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
 
   @Override
   public DefaultInferenceIdentifier getInferenceIdentifier() {
-    return new DefaultInferenceIdentifier(getProblemStoreId(), getInferenceId(), getCycAccess());
+    return new DefaultInferenceIdentifier(getProblemStoreId(), getInferenceId(), getCycAccess().getCycSession());
   }
 
   /**
    *
    * @return the current status of this worker's inference.
    */
-  public DefaultInferenceStatus getInferenceStatus() {
+  public InferenceStatus getInferenceStatus() {
     return status;
   }
 
@@ -495,7 +495,7 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
     nlBuff.append("Inference id: ").append(inferenceId).append(newlinePlusIndent);
     nlBuff.append("ProblemStore id: ").append(problemStoreId).append(newlinePlusIndent);
     nlBuff.append("Status: ").append(status).append(newlinePlusIndent);
-    if (status == DefaultInferenceStatus.SUSPENDED) {
+    if (status == InferenceStatus.SUSPENDED) {
       nlBuff.append("Suspend reason: ").append(suspendReason).append(newlinePlusIndent);
     }
     nlBuff.append(getAnswersCount()).append(" answers").append(newlinePlusIndent);
@@ -523,7 +523,7 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
   //// Protected Area
 
   //// Private Area
-  private void fireInferenceStatusChanged(final DefaultInferenceStatus oldStatus) throws BaseClientRuntimeException {
+  private void fireInferenceStatusChanged(final InferenceStatus oldStatus) throws BaseClientRuntimeException {
     Object[] curListeners = getInferenceListeners();
     List<Exception> errors = new ArrayList<Exception>();
     for (int i = curListeners.length - 1; i >= 0; i -= 1) {
@@ -556,8 +556,8 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
   }
 
   private void doSubLWorkerStarted(WorkerEvent event) {
-    DefaultInferenceStatus oldStatus = status;
-    status = DefaultInferenceStatus.STARTED;
+    InferenceStatus oldStatus = status;
+    status = InferenceStatus.STARTED;
     Object[] curListeners = getInferenceListeners();
     List<Exception> errors = new ArrayList<Exception>();
     for (int i = curListeners.length - 1; i >= 0; i -= 1) {
@@ -674,8 +674,8 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
     if ((statusObj == null) || (!(statusObj instanceof CycSymbol))) {
       throw new BaseClientRuntimeException("Got bad inference status: " + statusObj);
     }
-    DefaultInferenceStatus newStatus = DefaultInferenceStatus.findInferenceStatus((CycSymbol) statusObj);
-    DefaultInferenceStatus oldStatus = status;
+    InferenceStatus newStatus = InferenceStatus.valueOf(statusObj.toString().replace(":", ""));
+    InferenceStatus oldStatus = status;
     status = newStatus;
     if (status == null) {
       throw new BaseClientRuntimeException("Got bad inference status name: " + statusObj);
@@ -709,8 +709,8 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
               answerProcessingFunction.getSymbolName());
     }
     String processingFnStr = ((answerProcessingFunction != null) ? answerProcessingFunction.stringApiValue() : "nil");
-    queryProperties.put(new CycSymbolImpl(":CONTINUABLE?"), Boolean.TRUE);
-    return "(open-cyc-start-continuable-query " + query.stringApiValue() + " " + mt.stringApiValue() + " " + queryProperties.stringApiValue() + " " + CycArrayList.convertMapToPlist(nlGenerationProperties).stringApiValue() + " " + processingFnStr + " t " + (optimizeVariables ? "t" : "nil") + ")";
+    queryProperties.put(":CONTINUABLE?", Boolean.TRUE);
+    return "(open-cyc-start-continuable-query " + query.stringApiValue() + " " + mt.stringApiValue() + " " + ((CycList)queryProperties.cycListApiValue()).stringApiValue() + " " + CycArrayList.convertMapToPlist(nlGenerationProperties).stringApiValue() + " " + processingFnStr + " t " + (optimizeVariables ? "t" : "nil") + ")";
   }
 
   /**
@@ -742,7 +742,7 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
               answerProcessingFunction.getSymbolName());
     }
     String processingFnStr = ((answerProcessingFunction != null) ? answerProcessingFunction.stringApiValue() : "nil");
-    queryProperties.put(new CycSymbolImpl(":CONTINUABLE?"), Boolean.TRUE);
+    queryProperties.put(":CONTINUABLE?", Boolean.TRUE);
     return "(cdr (list (open-cyc-continue-query " + problemStoreId + " " + inferenceId + " " + queryProperties.stringApiValue() + " nil " + processingFnStr + " t)))";
   }
 
@@ -765,7 +765,7 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
   
   private volatile int problemStoreId;
   private volatile int inferenceId;
-  private volatile DefaultInferenceStatus status = DefaultInferenceStatus.NOT_STARTED;
+  private volatile InferenceStatus status = InferenceStatus.NOT_STARTED;
   private List answers = Collections.synchronizedList(new ArrayList());
   /** This holds the list of registered WorkerListener listeners. */
   final private EventListenerList inferenceListeners = new EventListenerList();

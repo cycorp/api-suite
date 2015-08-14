@@ -85,9 +85,12 @@ public class EnvironmentConfigurationLoader implements SessionConfigurationLoade
   }
   
   public static boolean isEnvironmentEmpty() {
-    return (System.getProperty(SessionConfigurationProperties.SERVER_KEY) == null)
-            && (System.getProperty(SessionConfigurationProperties.POLICY_FILE_KEY) == null)
-            && (System.getProperty(SessionConfigurationProperties.POLICY_NAME_KEY) == null);
+    for (String key : SessionConfigurationProperties.ALL_KEYS) {
+      if (System.getProperty(key) != null) {
+        return false;
+      }
+    }
+    return true;
   }
   
   

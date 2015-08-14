@@ -22,9 +22,9 @@ package com.cyc.kb.client;
  */
 
 import com.cyc.baseclient.CycObjectLibraryLoader;
+import com.cyc.baseclient.CycObjectLibraryLoader.CycLibraryField;
 import com.cyc.kb.Context;
 import com.cyc.kb.KBObject;
-import java.lang.reflect.Field;
 import java.util.Collection;
 
 import java.util.logging.Logger;
@@ -84,7 +84,7 @@ public class ConstantsTest {
     
   @Test
   public void testKBObjectLibraryLoader() {
-    final KBObjectLibraryLoader loader = KBObjectLibraryLoader.get();
+    final KBObjectLibraryLoader loader = new KBObjectLibraryLoader();
     final Collection<KBObject> allObj = loader.getAllKBObjectsForClass(Constants.class);
     for (KBObject o : allObj) {
       System.out.println("  - " + o);
@@ -110,14 +110,14 @@ public class ConstantsTest {
       }
 
       @Override
-      public void onFieldEvaluation(Field field, String value, boolean hasAnnotation, String expectedValue, Boolean equivalent) {
+      public void onFieldEvaluation(CycLibraryField cycField, String value, Boolean equivalent) {
         numFields++;
-        final String fieldString = "  - " + field.getType().getSimpleName() + ": " + field.getName();
+        final String fieldString = "  - " + cycField.getField().getType().getSimpleName() + ": " + cycField.getField().getName();
         final String valueString = "    " + value;
-        if (hasAnnotation) {
+        if (cycField.isAnnotated()) {
           System.out.println(fieldString);
           System.out.println(valueString);
-          assertEquals(expectedValue, value);
+          assertEquals(cycField.getCycl(), value);
         } else {
           numUnannotatedFields++;
           System.out.println(fieldString + "      [WARNING! Field is not annotated]");
@@ -126,12 +126,12 @@ public class ConstantsTest {
       }
 
       @Override
-      public void onException(Field field, Exception ex) {
+      public void onException(CycLibraryField cycField, Exception ex) {
         throw new RuntimeException(ex);
       }
 
       @Override
-      public void onLibraryEvaluationEnd(Class libraryClass) {
+      public void onLibraryEvaluationEnd(Class libraryClass, Collection<CycLibraryField> processedFields) {
         System.out.println("  " + numFields + " fields evaluated.");
         if (numUnannotatedFields == 0) {
           System.out.println("  All fields annotated, which is good!");

@@ -20,11 +20,11 @@ package com.cyc.baseclient.xml;
  * limitations under the License.
  * #L%
  */
-
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -32,20 +32,36 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
 
 /**
  * A class for JAXB marshallers
  *
  * @author baxter
  */
-public class CycJAXBMarshaller<T> {
+public abstract class CycJAXBMarshaller<T> {
 
   protected static final Pattern XML_CHARS = Pattern.compile("[<>&]");
   protected final Marshaller marshaller;
+  private URI xslUri = null;
   protected final OutputFormat outputFormat = new OutputFormat();
   /**
    * Map from namespace URIs onto the prefixes desired for them.
@@ -57,13 +73,13 @@ public class CycJAXBMarshaller<T> {
     marshaller.setProperty(
             "com.sun.xml.bind.namespacePrefixMapper",
             new NamespacePrefixMapper() {
-      @Override
-      public String getPreferredPrefix(String namespaceUri,
-              String suggestion,
-              boolean requirePrefix) {
-        return preferredPrefixes.get(namespaceUri);
-      }
-    });
+              @Override
+              public String getPreferredPrefix(String namespaceUri,
+                      String suggestion,
+                      boolean requirePrefix) {
+                return preferredPrefixes.get(namespaceUri);
+              }
+            });
   }
 
   /**
@@ -74,9 +90,19 @@ public class CycJAXBMarshaller<T> {
    * @throws JAXBException
    */
   public void marshal(final T pojo, final Writer destination) throws JAXBException, IOException {
-    synchronized (marshaller) {
-      marshaller.marshal(pojo, new CDATASerializer(destination).asContentHandler());
+    try {
+      Document document = marshalToDocument(pojo);
+      Transformer transformer = createTransformer();
+      transformer.transform(new DOMSource(document), new StreamResult(destination));
+    } catch (ParserConfigurationException parserConfigurationException) {
+    } catch (JAXBException jAXBException) {
+    } catch (DOMException dOMException) {
+    } catch (TransformerFactoryConfigurationError transformerFactoryConfigurationError) {
+    } catch (IllegalArgumentException illegalArgumentException) {
+    } catch (TransformerException transformerException) {
     }
+    destination.flush();
+    destination.close();
   }
 
   /**
@@ -103,7 +129,19 @@ public class CycJAXBMarshaller<T> {
    */
   public void marshal(final T pojo, final OutputStream destination) throws JAXBException, IOException {
     synchronized (marshaller) {
-      marshaller.marshal(pojo, new CDATASerializer(destination).asContentHandler());
+      try {
+        Document document = marshalToDocument(pojo);
+        Transformer transformer = createTransformer();
+        transformer.transform(new DOMSource(document), new StreamResult(destination));
+      } catch (ParserConfigurationException parserConfigurationException) {
+      } catch (JAXBException jAXBException) {
+      } catch (DOMException dOMException) {
+      } catch (TransformerFactoryConfigurationError transformerFactoryConfigurationError) {
+      } catch (IllegalArgumentException illegalArgumentException) {
+      } catch (TransformerException transformerException) {
+      }
+      destination.flush();
+      destination.close();
     }
   }
 
@@ -136,27 +174,77 @@ public class CycJAXBMarshaller<T> {
     preferredPrefixes.put(namespace, prefix);
   }
 
-  private class CDATASerializer extends XMLSerializer {
-
-    public CDATASerializer(OutputStream out) {
-      super(out, outputFormat);
-    }
-
-    private CDATASerializer(Writer destination) {
-      super(destination, outputFormat);
-    }
-
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-      boolean useCData = XML_CHARS.matcher(
-              new String(ch, start, length)).find();
-      if (useCData) {
-        super.startCDATA();
-      }
-      super.characters(ch, start, length);
-      if (useCData) {
-        super.endCDATA();
+  protected void cdatafy(Node node) {
+    if (shouldUseCDATA(node)) {
+      final String textContent = node.getTextContent();
+      final CDATASection cdata = node.getOwnerDocument().createCDATASection(textContent);
+      node.setTextContent(null);
+      node.appendChild(cdata);
+    } else {
+      final NodeList children = node.getChildNodes();
+      for (int i = 0; i < children.getLength(); i++) {
+        cdatafy(children.item(i));
       }
     }
   }
+
+  protected Transformer createTransformer() throws TransformerConfigurationException, TransformerFactoryConfigurationError, IllegalArgumentException {
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    Transformer transformer = transformerFactory.newTransformer();
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+    transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
+    return transformer;
+  }
+
+  protected Document getNewDocument() throws ParserConfigurationException {
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(true);
+    DocumentBuilder db = dbf.newDocumentBuilder();
+    Document document = db.newDocument();
+    return document;
+  }
+
+  /**
+   *
+   * @return The URI of the XSL stylesheet to use to render the marshalled XML
+   * as HTML. <code>null</code> if none.
+   */
+  public URI getXslUri() {
+    return xslUri;
+  }
+
+  public void setXslUri(URI uri) {
+    xslUri = uri;
+  }
+
+  protected void maybeInsertStylesheet(final Document document) throws DOMException {
+    final URI xsluri = getXslUri();
+    if (xsluri != null) {
+      final ProcessingInstruction processingInstruction
+              = document.createProcessingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"" + xsluri + "\"");
+      Node rootElement = document.getDocumentElement();
+      document.insertBefore(processingInstruction, rootElement);
+    }
+  }
+
+  /** Should we use CDATA for node? **/
+  protected boolean shouldUseCDATA(Node node) {
+    final NodeList children = node.getChildNodes();
+    return children.getLength() == 1 && children.item(0) instanceof Text && shouldUseCDATA(node.getTextContent());
+  }
+
+  /** Should we use CDATA for str? **/
+  protected boolean shouldUseCDATA(String str) {
+    return str != null && XML_CHARS.matcher(str).find();
+  }
+
+  protected Document marshalToDocument(T pojo) throws JAXBException, DOMException, ParserConfigurationException, IOException {
+    Document document = getNewDocument();
+    marshal(pojo, document);
+    maybeInsertStylesheet(document);
+    cdatafy(document);
+    return document;
+  }
+
 }

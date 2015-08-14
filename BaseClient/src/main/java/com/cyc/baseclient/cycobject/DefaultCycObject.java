@@ -29,7 +29,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.Fort;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import java.io.IOException;
 import java.util.*;
 import java.math.BigInteger;
@@ -41,7 +41,7 @@ import com.cyc.baseclient.datatype.StringUtils;
 /**
  * This is the default implementation of a CycL object.
  *
- * @version $Id: DefaultCycObject.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultCycObject.java 158569 2015-05-19 21:51:08Z daves $
  * @author  tbrussea
  *
  */

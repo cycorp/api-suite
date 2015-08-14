@@ -21,10 +21,11 @@ package com.cyc.baseclient.inference;
  * #L%
  */
 
-import com.cyc.base.inference.InferenceAnswerIdentifier;
-import com.cyc.base.inference.InferenceIdentifier;
+import com.cyc.query.InferenceAnswerIdentifier;
+import com.cyc.query.InferenceIdentifier;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.session.CycSession;
 
 /**
  * An identifier for an individual answer within a specific Cyc inference.
@@ -45,11 +46,11 @@ public class SpecifiedInferenceAnswerIdentifier implements InferenceAnswerIdenti
 
   @Override
   public String stringApiValue() {
-    return cycListApiValue().stringApiValue();
+    return ((CycList<Integer>)cycListApiValue()).stringApiValue();
   }
 
   @Override
-  public CycList<Integer> cycListApiValue() {
+  public Object cycListApiValue() {
     return CycArrayList.makeCycList(inferenceID.getProblemStoreID(),
             inferenceID.getInferenceID(), answerID);
   }
@@ -60,7 +61,7 @@ public class SpecifiedInferenceAnswerIdentifier implements InferenceAnswerIdenti
   }
 
   @Override
-  public InferenceIdentifier getInferenceID() {
+  public InferenceIdentifier getInferenceIdentifier() {
     return inferenceID;
   }
 
@@ -79,6 +80,11 @@ public class SpecifiedInferenceAnswerIdentifier implements InferenceAnswerIdenti
     }
     return false;
   }
-  private InferenceIdentifier inferenceID;
-  private int answerID;
+  private final InferenceIdentifier inferenceID;
+  private final int answerID;
+
+  @Override
+  public CycSession getSession() {
+    return inferenceID.getSession();
+  }
 }

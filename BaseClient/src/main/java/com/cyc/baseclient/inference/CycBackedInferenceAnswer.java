@@ -22,7 +22,9 @@ package com.cyc.baseclient.inference;
  */
 
 import com.cyc.base.CycAccess;
+import com.cyc.base.CycAccessSession;
 import com.cyc.base.CycConnectionException;
+import com.cyc.base.cycobject.CycList;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +40,8 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.InformationSource;
 import com.cyc.base.inference.InferenceAnswer;
-import com.cyc.base.inference.InferenceAnswerIdentifier;
+import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.query.InferenceAnswerIdentifier;
 
 /**
  * A class for representing one answer to an inference.
@@ -71,7 +74,7 @@ public class CycBackedInferenceAnswer implements InferenceAnswer {
     if (bindings == null) {
       bindings = new Bindings();
       final String command = SubLAPIHelper.makeSubLStmt(
-              "open-cyc-get-answer-bindings", getId().cycListApiValue());
+              "open-cyc-get-answer-bindings", (CycList)(getId().cycListApiValue()));
       final CycObject result = getCycAccess().converse().converseCycObject(command);
       if (result instanceof CycArrayList) {
         bindings.populateFromCycList((CycArrayList) result);
@@ -122,7 +125,7 @@ public class CycBackedInferenceAnswer implements InferenceAnswer {
   }
 
   private CycAccess getCycAccess() {
-    return getId().getInferenceID().getCycAccess();
+    return ((CycAccessSession)(getId().getInferenceIdentifier().getSession())).getAccess();
   }
   private final InferenceAnswerIdentifier id;
   private Bindings bindings = null;

@@ -32,7 +32,7 @@ import java.util.Set;
  * (in a {@link Query}) or claims (in an {@link Assertion}).
  *
  * @author vijay
- * @version $Id: Sentence.java 157024 2015-03-11 16:57:41Z nwinant $
+ * @version $Id: Sentence.java 158044 2015-04-24 01:10:39Z nwinant $
  * @since 1.0
  */
 public interface Sentence extends KBObject {
@@ -86,7 +86,7 @@ public interface Sentence extends KBObject {
 
   /**
    * For each element of <code>from</code> replace it with the element of <code>to</code> that's at
-   * the same index.  This does not modify the original SentenceImpl, but instead returns a new sentence.
+   * the same index.  This does not modify the original Sentence, but instead returns a new sentence.
    * 
    * @param from  a list of objects that will be replaced if found
    * @param to    a list of objects that will be in the new modified sentence

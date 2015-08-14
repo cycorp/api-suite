@@ -28,6 +28,7 @@ import java.util.List;
 
 import com.cyc.base.justification.Justification;
 import com.cyc.base.justification.Justification.Node;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  * A depth-first iterator over the nodes of a justification.
@@ -36,7 +37,7 @@ import com.cyc.base.justification.Justification.Node;
 public class JustificationWalker implements Iterator<Node> {
   final Deque<Justification.Node> queue = new ArrayDeque<Justification.Node>();
 
-  public JustificationWalker(final Justification justification) {
+  public JustificationWalker(final Justification justification) throws OpenCycUnsupportedFeatureException {
     queue.add(justification.getRoot());
   }
 

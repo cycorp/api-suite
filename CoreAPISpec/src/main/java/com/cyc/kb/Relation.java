@@ -41,7 +41,7 @@ public interface Relation extends KBIndividual {
    * Returns an ordered list of all argIsa constraints for <code>this</code>
    * Relation. This method iterates over all the argument positions, that is,
    * from 1 to {@link #getArity()} and builds a list of argIsa constraints, 
-   * as viewed from the default context {@link DefaultContext#forQuery()} set in
+   * as viewed from the default context {@link com.cyc.kb.config.DefaultContext#forQuery()} set in
    * {@link KBAPIConfiguration#getDefaultContext()}.
    * 
    * @see #getArgGenl(int) 
@@ -65,7 +65,7 @@ public interface Relation extends KBIndividual {
   /**
    * gets the <code>KBCollection</code>s that all arguments in position
    * <code>argPos</code> of the relation most be instances of, as viewed from
-   * the default context {@link DefaultContext#forQuery()} set in
+   * the default context {@link com.cyc.kb.config.DefaultContext#forQuery()} set in
    * {@link KBAPIConfiguration#getDefaultContext()}.
    *
    * The returned collection could be empty.
@@ -160,7 +160,7 @@ public interface Relation extends KBIndividual {
    * Returns an ordered list of all argGenl constraints for <code>this</code>
    * Relation. This method iterates over all the argument positions, that is,
    * from 1 to {@link #getArity()} and builds a list of argGenl constraints as 
-   * viewed from {@link DefaultContext#forQuery()} set in
+   * viewed from {@link com.cyc.kb.config.DefaultContext#forQuery()} set in
    * {@link KBAPIConfiguration#getDefaultContext()}.
    * 
    * @see #getArgGenl(int) 
@@ -184,7 +184,7 @@ public interface Relation extends KBIndividual {
   /**
    * gets the <code>KBCollection</code>s that all arguments in position
    * <code>argPos</code> of the relation must be specializations of, as viewed
-   * from the default context specified by {@link DefaultContext#forQuery()} set in
+   * from the default context specified by {@link com.cyc.kb.config.DefaultContext#forQuery()} set in
    * {@link KBAPIConfiguration#getDefaultContext()}.
    * <p>
    *

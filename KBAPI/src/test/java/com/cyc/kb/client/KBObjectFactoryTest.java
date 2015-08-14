@@ -34,9 +34,7 @@ import com.cyc.kb.Assertion;
 import com.cyc.kb.Context;
 import com.cyc.kb.KBIndividual;
 import com.cyc.kb.KBObject;
-import com.cyc.kb.Sentence;
 import com.cyc.kb.exception.KBApiException;
-import com.cyc.kb.exception.KBTypeException;
 import com.cyc.session.SessionApiException;
 
 import java.io.IOException;
@@ -65,7 +63,7 @@ public class KBObjectFactoryTest {
   public static void tearDown() throws Exception {
   }
   
-  //@Test
+  @Test
   public void testAssertionsAreNotSentences() throws SessionApiException, KBApiException, UnknownHostException, IOException, Exception {
 //    FormulaSentence istSentence = CycFormulaSentence.makeCycSentence("(ist LogicalTruthMt (isa Collection Collection))");
     CycAccess cyc = CycAccessManager.getCurrentAccess();
@@ -88,13 +86,13 @@ public class KBObjectFactoryTest {
             + "(natFunction ?NAT ?FUNCTION) "
             + "(resultIsa ?FUNCTION ?COL)) "
             + "(isa ?NAT ?COL))");
-    Assertion a = AssertionImpl.get((Sentence)SentenceImpl.get(cycSentence), coreCyclMtContext); 
+    Assertion a = AssertionImpl.get(new SentenceImpl(cycSentence), coreCyclMtContext); 
     FormulaSentence cycSentence2 = CycFormulaSentence.makeCycSentence(cyc, "(implies (and "
             + "(natFunction ?NAT2 ?FUNCTION) "
             + "(resultIsa ?FUNCTION ?COL)) "
             + "(isa ?NAT2 ?COL))");
     Assertion a2 = AssertionImpl.get(new SentenceImpl(cycSentence2), coreCyclMtContext);
-    assertSame("Got the different rules back for what should be the same assertion.", a, a2);
+    assertSame("Got different rules back for what should be the same assertion.", a, a2);
   }
   
   @Test

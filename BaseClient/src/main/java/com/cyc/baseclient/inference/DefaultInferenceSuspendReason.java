@@ -23,7 +23,7 @@ package com.cyc.baseclient.inference;
 
 //// Internal Imports
 import com.cyc.base.BaseClientRuntimeException;
-import com.cyc.base.inference.InferenceSuspendReason;
+import com.cyc.query.InferenceSuspendReason;
 import java.util.HashMap;
 import java.util.Map;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
@@ -40,7 +40,7 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
  *
  * @author bklimt
  * @date October 31, 2005, 10:29 AM
- * @version $Id: DefaultInferenceSuspendReason.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultInferenceSuspendReason.java 158569 2015-05-19 21:51:08Z daves $
  */
 public final class DefaultInferenceSuspendReason implements InferenceSuspendReason {
 

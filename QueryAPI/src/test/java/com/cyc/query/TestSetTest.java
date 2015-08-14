@@ -21,9 +21,7 @@ package com.cyc.query;
  * #L%
  */
 import com.cyc.query.exception.QueryConstructionException;
-import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.CycTimeOutException;
 import com.cyc.kb.Context;
 import com.cyc.kb.KBCollection;
 import com.cyc.kb.KBIndividual;
@@ -31,6 +29,7 @@ import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.KBCollectionImpl;
 import com.cyc.kb.config.KBAPIConfiguration;
 import com.cyc.kb.exception.KBApiException;
+import com.cyc.session.exception.UnsupportedCycOperationException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -57,7 +56,7 @@ public class TestSetTest {
     TestUtils.ensureConstantsInitialized();
   }
 
-  public TestSetTest() throws Exception {
+  public TestSetTest() {
     inferencePSC = Constants.inferencePSCMt();
     try {
       testSet = KBCollectionImpl.get("QueryAPIKBQTest");
@@ -67,7 +66,7 @@ public class TestSetTest {
   }
 
   @Test
-  public void testTestSet() throws Exception {
+  public void testTestSet() throws QueryConstructionException, KBApiException, UnsupportedCycOperationException, CycConnectionException {
     if (testSet == null) {
       System.out.println("No tests to run.");
       return;

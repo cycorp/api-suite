@@ -21,6 +21,7 @@ package com.cyc.base.inference;
  * #L%
  */
 
+import com.cyc.query.InferenceIdentifier;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycTimeOutException;
 import com.cyc.base.cycobject.CycConstant;

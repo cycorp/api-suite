@@ -30,10 +30,10 @@ import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import com.cyc.base.inference.InferenceResultSet;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
 import com.cyc.base.inference.InferenceWorker;
 import com.cyc.base.inference.InferenceWorkerListener;
 import com.cyc.base.inference.InferenceWorkerSynch;
@@ -76,8 +76,7 @@ public class BaseApiOverview {
     params.setMaxTransformationDepth(1);
     params.setBrowsable(true);
     params.setMaxTime(30000);
-    params.put(CycObjectFactory.makeCycSymbol(":INFERENCE-MODE"), 
-            CycObjectFactory.makeCycSymbol(":MINIMAL"));
+    params.put(":INFERENCE-MODE", CycObjectFactory.makeCycSymbol(":MINIMAL"));
     // etc...
     
     final ELMt queryMt = access.getObjectTool().makeELMt("InferencePSC");

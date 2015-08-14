@@ -2,6 +2,7 @@ package com.cyc.query;
 
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
+import com.cyc.base.CycConnectionException;
 import com.cyc.base.annotation.CycObjectLibrary;
 import com.cyc.base.annotation.CycTerm;
 import com.cyc.base.cycobject.Naut;
@@ -15,7 +16,10 @@ import com.cyc.kb.client.KBIndividualImpl;
 import com.cyc.kb.client.KBPredicateImpl;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBTypeException;
+import com.cyc.session.CycSessionManager;
 import com.cyc.session.SessionApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * #%L
@@ -43,7 +47,7 @@ import com.cyc.session.SessionApiException;
  */
 @CycObjectLibrary(accessor="getInstance")
 public class QueryApiConstants {
-
+  
   public static synchronized QueryApiConstants getInstance() throws KBTypeException, CreateException {
     if (instance == null) {
       instance = new QueryApiConstants();
@@ -76,15 +80,26 @@ public class QueryApiConstants {
   @CycTerm(cycl="#$CycLQuerySpecification")
   public final KBCollection CYCL_QUERY_SPECIFICATION = KBCollectionImpl.get("CycLQuerySpecification");
   
-  @CycTerm(cycl="#$CAEGuidanceMtQuery")
-  public final KBIndividual CAE_GUIDANCE_MT_QUERY = KBIndividualImpl.get("CAEGuidanceMtQuery");
+  @CycTerm(cycl="#$CAEGuidanceMtQuery", includedInOpenCycKB=false)
+  public final KBIndividual CAE_GUIDANCE_MT_QUERY;
   
+  private static final Logger LOG = LoggerFactory.getLogger(QueryApiConstants.class);
   private static QueryApiConstants instance = null;
 
   private QueryApiConstants() throws KBTypeException, CreateException {
     super();
+    try {
+      if (!getCyc().isOpenCyc()) {
+        CAE_GUIDANCE_MT_QUERY = KBIndividualImpl.get("CAEGuidanceMtQuery");
+      } else {
+        LOG.warn("#$CAEGuidanceMtQuery is not included in OpenCyc KB, skipping...");
+        CAE_GUIDANCE_MT_QUERY = null;
+      }
+    } catch (CycConnectionException ex) {
+      throw new RuntimeException("Couldn't get Cyc access to initialize constants.", ex);
+    }
   }
-
+  
   static private CycAccess getCyc() {
     try {
     return CycAccessManager.getCurrentAccess();

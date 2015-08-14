@@ -22,6 +22,7 @@ package com.cyc.baseclient.api;
  */
 
 //// External Imports
+import com.cyc.base.CycAccess;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.base.CycApiException;
 import com.cyc.baseclient.CycClient;
@@ -58,29 +59,31 @@ import com.cyc.base.conn.CycConnectionInterface;
 import com.cyc.base.conn.LeaseManager;
 import com.cyc.base.conn.TimerI;
 import com.cyc.baseclient.util.Timer;
-import com.cyc.session.internal.GenericServerAddress;
+import com.cyc.session.CycServerAddress;
+import com.cyc.session.ServerAddress;
 
 /**
  * Provides a binary connection and an ascii connection to the OpenCyc server. The ascii connection
  * is legacy and its use is deprecated.
  *
  * <p>
- * Collaborates with the <tt>CycClient</tt> class which wraps the api functions. CycClient may be
+ * Collaborates with the <tt>CycAccess</tt> class which wraps the api functions. CycAccess may be
  specified as null in the CycConnection constructors when the binary api is used. Concurrent api
  requests are supported for binary (cfasl) mode. This is implemented by two socket connections,
  the first being for asynchronous api requests sent to Cyc, and the second for the asychronous
  api responses received from Cyc.
  </p>
  *
- * @version $Id: CycConnection.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycConnection.java 158888 2015-06-08 21:51:55Z nwinant $
  * @author Stephen L. Reed <p><p><p><p><p>
  */
 public class CycConnection implements CycConnectionInterface {
 
-  /** Default host name for the OpenCyc server. */
-  public static String DEFAULT_HOSTNAME = CycServer.DEFAULT.getHostName();
-  /** Default base tcp port for the OpenCyc server. */
-  public static final int DEFAULT_BASE_PORT = CycServer.DEFAULT.getBasePort();
+  /* * Default host name for the OpenCyc server. */
+  //public static String DEFAULT_HOSTNAME = CycServer.DEFAULT.getHostName();
+  /* * Default base tcp port for the OpenCyc server. */
+  //public static final int DEFAULT_BASE_PORT = CycServer.DEFAULT.getBasePort();
+  
   /** HTTP port offset for the OpenCyc server. */
   public static final int HTTP_PORT_OFFSET = CycServer.CYC_HTTP_PORT_OFFSET;
   /** HTTP port offset for the OpenCyc webapp server. */
@@ -119,10 +122,10 @@ public class CycConnection implements CycConnectionInterface {
    */
   protected boolean isSymbolicExpression = false;
   /**
-   * A reference to the parent CycClient object for dereferencing constants in ascii symbolic
+   * A reference to the parent CycAccess object for dereferencing constants in ascii symbolic
  expressions.
    */
-  protected CycClient cycAccess;
+  protected CycAccess cycAccess;
   protected Comm comm;
   /** outbound request serial id */
   static private int apiRequestId = 0;
@@ -189,7 +192,7 @@ public class CycConnection implements CycConnectionInterface {
    *
    * @param cfaslSocket tcp socket which forms the binary connection to the OpenCyc server
    *
-   * @throws IOException when communication error occurs
+   * @throws CycConnectionException when a communications error occurs or the cyc server cannot be found
    */
   public CycConnection(Socket cfaslSocket) throws CycConnectionException {
     if (Log.current == null) {
@@ -209,48 +212,19 @@ public class CycConnection implements CycConnectionInterface {
     }
     cfaslOutputStream.trace = trace;
   }
-
-  /**
-   * Constructs a new CycConnection object using the default host name and default base port numbe.
-   * When CycClient is null as in this case, diagnostic output is reduced.
-   *
-   * @throws UnknownHostException when the cyc server cannot be found
-   * @throws IOException when communications error occurs
-   * @throws CycApiException when an api error occurs
-   */
-  public CycConnection() throws CycConnectionException, CycApiException {
-    this(DEFAULT_HOSTNAME, DEFAULT_BASE_PORT, null);
-  }
-
-  /**
-   * Constructs a new CycConnection object using the default host name, default base port number
- and the given CycClient object.
-   *
-   * @param cycAccess the given CycClient object which provides api services over this
- CycConnection object
-   *
-   * @throws CycApiException when a Cyc api exception occurs
-   * @throws IOException when communication error occurs
-   * @throws UnknownHostException when the cyc server cannot be found
-   */
-  public CycConnection(CycClient cycAccess) throws CycConnectionException, CycApiException {
-    this(DEFAULT_HOSTNAME, DEFAULT_BASE_PORT, cycAccess);
-  }
-
+  
   /**
    * Constructs a new CycConnection object using a given host name, the given base port number, the
- given communication mode, and the given CycClient object
+ given communication mode, and the given CycAccess object
    *
    * @param hostName the cyc server host name
    * @param basePort the base tcp port on which the OpenCyc server is listening for connections.
-   * @param cycAccess the given CycClient object which provides api services over this
- CycConnection object
+   * @param cycAccess the given CycAccess object which provides api services over this CycConnection object
    *
-   * @throws IOException when a communications error occurs
-   * @throws UnknownHostException when the cyc server cannot be found
+   * @throws CycConnectionException when a communications error occurs or the cyc server cannot be found
    * @throws CycApiException when a Cyc API error occurs
    */
-  public CycConnection(String hostName, int basePort, CycClient cycAccess) throws CycConnectionException, CycApiException {
+  public CycConnection(String hostName, int basePort, CycAccess cycAccess) throws CycConnectionException, CycApiException {
     if (Log.current == null) {
       Log.makeLog("cyc-api.log");
     }
@@ -274,6 +248,37 @@ public class CycConnection implements CycConnectionInterface {
     connectionTimer.isCycConnectionEstablished = true;
   }
   
+  public CycConnection(CycServerAddress server, CycAccess cycAccess) throws CycConnectionException, CycApiException {
+    this(server.getHostName(), server.getBasePort(), cycAccess);
+  }
+  
+  /* *
+   * Constructs a new CycConnection object using the default host name and default base port number.
+   * When CycAccess is null as in this case, diagnostic output is reduced.
+   *
+   * @throws CycConnectionException when a communications error occurs or the cyc server cannot be found
+   * @throws CycApiException when an api error occurs
+   */
+  /*
+  public CycConnection() throws CycConnectionException, CycApiException {
+    this(DEFAULT_HOSTNAME, DEFAULT_BASE_PORT, null);
+  }
+  */
+  
+  /**
+   * Constructs a new CycConnection object using the default host name, default base port number
+   * and the given CycAccess object.
+   *
+   * @param cycAccess the given CycAccess object which provides api services over this CycConnection object
+   *
+   * @throws CycApiException when a Cyc api exception occurs
+   * @throws CycConnectionException when a communications error occurs or the cyc server cannot be found
+   */
+  public CycConnection(CycAccess cycAccess) throws CycConnectionException, CycApiException {
+    //this(DEFAULT_HOSTNAME, DEFAULT_BASE_PORT, cycAccess);
+    this(cycAccess.getCycServer(), cycAccess);
+  }
+  
   /**
    *
    * @param comm
@@ -282,7 +287,7 @@ public class CycConnection implements CycConnectionInterface {
    * @throws UnknownHostException
    * @throws CycApiException
    */
-  public CycConnection(Comm comm, CycClient cycAccess) throws CycConnectionException, CycApiException { 
+  public CycConnection(Comm comm, CycAccess cycAccess) throws CycConnectionException, CycApiException { 
     uuid = UUID.randomUUID();
     if (Log.current == null) {
       Log.makeLog("cyc-api.log");
@@ -575,7 +580,7 @@ public class CycConnection implements CycConnectionInterface {
    */
   @Override
   public String getResolvedHostName() {
-    return GenericServerAddress.resolveHostName(this.hostName);
+    return ServerAddress.resolveHostName(this.hostName);
   }
   
   /**
@@ -645,7 +650,7 @@ public class CycConnection implements CycConnectionInterface {
    * @throws IOException when a communications error occurs
    * @throws CycTimeOutException when the time limit is exceeded
    * @throws CycApiException when a Cyc api error occurs
-   * @throws RuntimeException if CycClient is not present
+   * @throws RuntimeException if CycAccess is not present
    */
   public Object[] converse(Object message,
           TimerI timeout)

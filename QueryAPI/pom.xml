@@ -5,17 +5,20 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-parent</artifactId>
-    <version>1.0.0-rc2</version>
+    <version>1.0.0-rc3-SNAPSHOT</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-query</artifactId>
-  <version>1.0.0-rc2</version>
+  <version>1.0.0-rc3-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>Query API Implementation</name>
-  <description>Java API for requesting and handling answers to arbitrarily complex questions posed to a Cyc server.</description>
-  <url>http://dev.cyc.com/cyc-api/</url>
+  <description>
+    Java API for requesting and handling answers to arbitrarily complex questions posed to a 
+    Cyc server.
+  </description>
+  <url>http://dev.cyc.com/api/core/</url>
   
   <scm>
     <connection>scm:git:git@github.com:cycorp/CycCoreAPI.git</connection>
@@ -68,7 +71,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
       </plugin>
-              	
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -135,6 +138,54 @@
           </execution>
         </executions>
       </plugin>
+      
+      <plugin>
+        <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+        <artifactId>serviceloader-maven-plugin</artifactId>
+        <version>1.0.2</version>
+        <configuration>
+          <services>
+            <param>com.cyc.query.QueryFactoryService</param>
+          </services>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <!--
+            Set properties to be used by unit tests.
+            
+            For details, see com.cyc.session.internal.TestEnvironmentProperties
+            -->
+            <!--
+            <property>
+              <name>cyc.test.forceOpenCycTestsToRun</name>
+              <value>true</value>
+            </property>
+            -->
+          </systemProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    
     </plugins>
   </build>
     

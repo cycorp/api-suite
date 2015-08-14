@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
  * and understood by the server, and are used extensively to perform queries or make assertions.
  *
  * @author Vijay Raj
- * @version $Id: SentenceImpl.java 157022 2015-03-11 16:19:37Z nwinant $
+ * @version $Id: SentenceImpl.java 160089 2015-08-04 23:44:28Z nwinant $
  * @since 1.0
  */
 public class SentenceImpl extends StandardKBObject implements Sentence {
@@ -251,7 +251,7 @@ public class SentenceImpl extends StandardKBObject implements Sentence {
    * parsed.
    */
   public SentenceImpl(String sentStr) throws KBApiException {
-    super(parseCycLString(sentStr));
+    this(parseCycLString(sentStr));
   }
   
   /**

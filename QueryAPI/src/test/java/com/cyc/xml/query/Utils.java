@@ -35,7 +35,7 @@ import com.cyc.kb.client.Constants;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBTypeException;
-import com.cyc.query.Query;
+import com.cyc.query.QueryImpl;
 import com.cyc.query.QueryAnswer;
 import com.cyc.query.QueryApiTestConstants;
 import com.cyc.query.exception.QueryConstructionException;
@@ -54,7 +54,7 @@ public class Utils {
     if (cyc == null) {
       cyc = CycAccessManager.getAccess();
     }
-    Query query = new Query(QueryApiTestConstants.getInstance().genlsEmuBird, Constants.inferencePSCMt());
+    QueryImpl query = new QueryImpl(QueryApiTestConstants.getInstance().genlsEmuBird, Constants.inferencePSCMt());
     query.retainInference();
     answer = query.getAnswer(0);
     System.out.println("Performed inference. Got answer: " + answer);
@@ -67,7 +67,7 @@ public class Utils {
 
   public static void teardown() {
     try {
-      answer.getId().getInferenceID().close();
+      answer.getId().getInferenceIdentifier().close();
     } catch (Exception e) {
     }
   }

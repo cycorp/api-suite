@@ -193,7 +193,7 @@ public class ArgPositionImpl extends DefaultCycObject implements ArgPosition {
    * @return true iff this arg position matches candidate
    */
   @Override
-  public boolean matchingArgPositionI(ArgPosition candidate, boolean matchEmpty) {
+  public boolean matchingArgPosition(ArgPosition candidate, boolean matchEmpty) {
     if (candidate == null) {
       return matchEmpty;
     } else {

@@ -22,7 +22,7 @@ package com.cyc.session.internal;
  */
 
 import static com.cyc.session.SessionConfigurationProperties.*;
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSessionConfiguration;
 import java.io.PrintStream;
 
@@ -58,8 +58,8 @@ public class ConfigurationValidator {
   public boolean isValid() {
     return (getConfiguration() != null)
             && isCycServerValid()
-            && isPolicyNameValid()
-            && isPolicyFileNameValid();
+            && isConfigurationLoaderNameValid()
+            && isConfigurationFileNameValid();
   }
   
   /**
@@ -78,27 +78,27 @@ public class ConfigurationValidator {
    * @return are there errors in the server configuration?
    */
   public boolean isCycServerValid() {
-    final CycServer server = getConfiguration().getCycServer();
+    final CycServerAddress server = getConfiguration().getCycServer();
     return isUnpopulated(server) || server.isDefined();
   }
   
   /**
    * Note that this does not mean that this field is <em>populated</em>; merely
    * that it is not populated incorrectly.
-   * @return is the policyName valid (if set)?
+   * @return is the configurationLoaderName valid (if set)?
    */
-  public boolean isPolicyNameValid() {
-    final String name = this.getConfiguration().getPolicyName();
-    return isUnpopulated(name) || isPolicyNameValid(getConfiguration().getPolicyName());
+  public boolean isConfigurationLoaderNameValid() {
+    final String name = this.getConfiguration().getConfigurationLoaderName();
+    return isUnpopulated(name) || isConfigurationLoaderNameValid(getConfiguration().getConfigurationLoaderName());
   }
   
   /**
    * Note that this does not mean that this field is <em>populated</em>; merely
    * that it is not populated incorrectly.
-   * @return is the policy file name valid (if set)?
+   * @return is the configuration file name valid (if set)?
    */
-  public boolean isPolicyFileNameValid() {
-    // TODO: if config.getPolicyFileName(), validate path. Via org.apache.commons.io.FilenameUtils.normalize != null?
+  public boolean isConfigurationFileNameValid() {
+    // TODO: if config.getConfigurationFileName(), validate path. Via org.apache.commons.io.FilenameUtils.normalize != null?
     return true;
   }
   
@@ -110,8 +110,8 @@ public class ConfigurationValidator {
     out.println("Configuration class: " + getConfiguration().getClass().getName());
     out.println("         Loaded via: " + getConfiguration().getLoaderClass().getName());
     out.println(SERVER_KEY + ":     [" + getConfiguration().getCycServer() + "]");
-    out.println(POLICY_NAME_KEY + ": [" + getConfiguration().getPolicyName() + "]");
-    out.println(POLICY_FILE_KEY +": [" + getConfiguration().getPolicyFileName() + "]");
+    out.println(CONFIGURATION_LOADER_KEY + ": [" + getConfiguration().getConfigurationLoaderName() + "]");
+    out.println(CONFIGURATION_FILE_KEY +": [" + getConfiguration().getConfigurationFileName() + "]");
   }
   
   public void print() {
@@ -129,9 +129,9 @@ public class ConfigurationValidator {
   
   // Static
   
-  public static boolean isPolicyNameValid(String policyName) {
-    // TODO: should this be elsewhere? Possibly a PolicyName class?
+  public static boolean isConfigurationLoaderNameValid(String configLoaderName) {
+    // TODO: should this be elsewhere? Possibly a ConfigurationLoaderName class?
     // TODO: flesh this out more via regex.
-    return (policyName != null) && !policyName.trim().isEmpty();
+    return (configLoaderName != null) && !configLoaderName.trim().isEmpty();
   }
 }

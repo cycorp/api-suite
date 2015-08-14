@@ -22,16 +22,16 @@ package com.cyc.baseclient.inference;
  */
 
 import com.cyc.base.CycAccess;
+import com.cyc.base.CycAccessSession;
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.inference.InferenceIdentifier;
-import java.io.IOException;
-import java.net.UnknownHostException;
+import com.cyc.query.InferenceIdentifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.cyc.base.CycApiException;
 import com.cyc.baseclient.CycObjectFactory;
 import static com.cyc.baseclient.api.SubLAPIHelper.makeNestedSubLStmt;
 import static com.cyc.baseclient.api.SubLAPIHelper.makeSubLStmt;
+import com.cyc.session.CycSession;
 
 /**
  * An object that identifies an inference object in a Cyc image.
@@ -41,7 +41,8 @@ import static com.cyc.baseclient.api.SubLAPIHelper.makeSubLStmt;
 public class DefaultInferenceIdentifier implements InferenceIdentifier {
 
   private int problemStoreID;
-
+  private CycSession session;
+  
   @Override
   public boolean equals(Object obj) {
     if (obj == null) {
@@ -117,10 +118,10 @@ public class DefaultInferenceIdentifier implements InferenceIdentifier {
             inferenceID) + ")";
   }
 
-  public DefaultInferenceIdentifier(int problemStoreID, int inferenceID, CycAccess cyc) {
+  public DefaultInferenceIdentifier(int problemStoreID, int inferenceID, CycSession session) {
     this.problemStoreID = problemStoreID;
     this.inferenceID = inferenceID;
-    this.cyc = cyc;
+    this.session = session;
   }
 
   public DefaultInferenceIdentifier(int problemStoreID, int inferenceID) {
@@ -129,7 +130,7 @@ public class DefaultInferenceIdentifier implements InferenceIdentifier {
 
   public void close() {
     try {
-      getCycAccess().converse().converseVoid(
+      ((CycAccessSession)session).getAccess().converse().converseVoid(
               "(destroy-inference-and-problem-store " + stringApiValue() + ")");
     } catch (CycConnectionException ex) {
       logSevereException(ex);
@@ -163,5 +164,10 @@ public class DefaultInferenceIdentifier implements InferenceIdentifier {
             + "<problemStore id=\"" + problemStoreID + "\"/>"
             + "<inference id=\"" + inferenceID + "\"/>"
             + "</inferenceIdentifier>";
+  }
+
+  @Override
+  public CycSession getSession() {
+    return session;
   }
 }

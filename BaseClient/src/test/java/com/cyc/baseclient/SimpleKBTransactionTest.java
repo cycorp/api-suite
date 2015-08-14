@@ -73,12 +73,13 @@ public class SimpleKBTransactionTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws CycConnectionException {
+      cleanupTestConstants();
     }
 
     @After
     public void tearDown() {
-        CycClient.setCurrentTransaction(null);
+      CycClient.setCurrentTransaction(null);
     }
 
     /**
@@ -142,13 +143,7 @@ public class SimpleKBTransactionTest {
             assertTrue("After commit, there's still an active KBTransaction", CycClient.getCurrentTransaction() == null);
 
         } finally {
-            if (cyc.getLookupTool().getConstantByName("commitTestConstant") != null) {
-                cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant"));
-            }
-            if (cyc.getLookupTool().getConstantByName("commitTestConstant2") != null) {
-                cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant2"));
-            }
-
+            cleanupTestConstants();
         }
     }
 
@@ -199,13 +194,7 @@ public class SimpleKBTransactionTest {
 
 
         } finally {
-            if (cyc.getLookupTool().getConstantByName("commitTestConstant") != null) {
-                cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant"));
-            }
-            if (cyc.getLookupTool().getConstantByName("commitTestConstant2") != null) {
-                cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant2"));
-            }
-
+            cleanupTestConstants();
         }
     }
 
@@ -248,12 +237,7 @@ public class SimpleKBTransactionTest {
             assertFalse("After rollback, commitTestConstant2 is known to be a binary predicate.", cyc.getInspectorTool().isBinaryPredicate(commitTestConstant2));
 
         } finally {
-            if (cyc.getLookupTool().getConstantByName("commitTestConstant") != null) {
-                cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant"));
-            }
-            if (cyc.getLookupTool().getConstantByName("commitTestConstant2") != null) {
-                cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant2"));
-            }
+            cleanupTestConstants();
             CycClient.setCurrentTransaction(null);
 
         }
@@ -551,4 +535,13 @@ public class SimpleKBTransactionTest {
         cyc.getObjectTool().makeCycConstant("BaseKB-" + System.currentTimeMillis());
         assertEquals(instance.getCreatedTerms().size(), 2);
     }
+  
+  private void cleanupTestConstants() throws CycConnectionException {
+    if (cyc.getLookupTool().getConstantByName("commitTestConstant") != null) {
+      cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant"));
+    }
+    if (cyc.getLookupTool().getConstantByName("commitTestConstant2") != null) {
+      cyc.getUnassertTool().kill(cyc.getLookupTool().getConstantByName("commitTestConstant2"));
+    }
+  }
 }

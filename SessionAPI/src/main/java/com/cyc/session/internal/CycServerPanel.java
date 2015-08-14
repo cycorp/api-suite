@@ -60,7 +60,7 @@ public class CycServerPanel extends JPanel {
   }
   
   public CycServerPanel() {
-    this(CycServer.DEFAULT);
+    this(DEFAULT_CYC_SERVER);
   }
   
   
@@ -95,25 +95,33 @@ public class CycServerPanel extends JPanel {
   final private JComboBox portField;
   protected static final String TITLE="Set Cyc Connection";
   
+  /**
+   * This is the default location of a Cyc server, but you should be very wary of assuming it.
+   */
+  private static final CycServer DEFAULT_CYC_SERVER = new CycServer("localhost", 3600);
+  
+  
   // Static
   
   /**
-   * Presents a CycConnectionPanel to the user via a JOptionPane, and
-   * returns the user's input wrapped in a CycServer object.
+   * Presents a CycDialogPanel to the user via a CycDialogPane, and
+ returns the user's input wrapped in a CycServer object.
    * 
    * @param server
    * @return Returns a CycServer object wrapping the user's input, or null if they cancel.
    */
-  private static CycServer wrapInJOptionPane(CycServerPanel panel) {
-    final Object[] options = { "OK", "Cancel" };
-    int result = JOptionPane.showOptionDialog(null, panel, TITLE,
-              JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+  private static CycServer presentCycServerPanel(CycServerPanel panel) {
+    final Object[] options = {"OK", "Cancel"};
+    final CycDialogPane pane = CycDialogPane.create(panel, TITLE, options);
+    pane.getDialog().setAlwaysOnTop(true);
+    pane.prompt();
+    final int result = pane.getSelectedValue();
     if (result == JOptionPane.OK_OPTION) {
       return panel.getCycServer();
     }
     return null;
   }
-  
+
   /**
    * Creates a CycConnectionPanel, presents it to the user via a JOptionPane, and
    * returns the user's input wrapped in a CycServer object.
@@ -122,7 +130,7 @@ public class CycServerPanel extends JPanel {
    * @return Returns a CycServer object wrapping the user's input, or null if they cancel.
    */
   public static CycServer promptUser(CycServer server) {
-    return wrapInJOptionPane(new CycServerPanel(server));
+    return presentCycServerPanel(new CycServerPanel(server));
   }
   
   /**
@@ -134,7 +142,7 @@ public class CycServerPanel extends JPanel {
    * @return Returns a CycServer object wrapping the user's input, or null if they cancel.
    */
   public static CycServer promptUser(String defaultHost, Integer defaultPort) {
-    return wrapInJOptionPane(new CycServerPanel(defaultHost, defaultPort));
+    return presentCycServerPanel(new CycServerPanel(defaultHost, defaultPort));
   }
   
   /**
@@ -144,7 +152,22 @@ public class CycServerPanel extends JPanel {
    * @return Returns a CycServer object wrapping the user's input, or null if they cancel.
    */
   public static CycServer promptUser() {
-    return wrapInJOptionPane(new CycServerPanel());
+    return presentCycServerPanel(new CycServerPanel());
   }
 
+  
+  // Main
+  
+  public static void main(String[] args) {
+    try {
+      System.out.println("Here we go...");
+      CycServer server = CycServerPanel.promptUser();
+      System.out.println("Server: " + server);
+    } catch (Exception ex) {
+      ex.printStackTrace(System.err);
+      System.exit(1);
+    } finally {
+      System.exit(0);
+    }
+  }
 }

@@ -30,23 +30,22 @@ import com.cyc.baseclient.CycClient;
 import com.cyc.base.CycConnectionException;
 import com.cyc.session.CycServer;
 import com.cyc.base.conn.Worker;
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.baseclient.CommonConstants;
-import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import com.cyc.baseclient.CycClientManager;
+//import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
-import com.cyc.baseclient.cycobject.GuidImpl;
 
 /** 
  * <P>SubLAPIHelper is designed to...
  *
  * @author tbrussea, Nov 4, 2010, 11:33:24 AM
- * @version $Id: SubLAPIHelper.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: SubLAPIHelper.java 158663 2015-05-26 21:30:12Z nwinant $
  */
 public class SubLAPIHelper {
 
@@ -55,11 +54,7 @@ public class SubLAPIHelper {
   }
 
   //// Constructors
-  public SubLAPIHelper(String hostName, int port, CycObject user) throws CycConnectionException {
-    this(new CycClient(hostName, port), user);
-    madeCycAccess = true;
-  }
-
+  
   public SubLAPIHelper(CycClient access, CycObject user) {
     if (access == null) {
       throw new BaseClientRuntimeException("Got invalid access: " + access);
@@ -89,12 +84,11 @@ public class SubLAPIHelper {
   }
   
   private synchronized void recreateCycAccess() throws CycConnectionException {
-    String hosName = getCycAccess().getHostName();
-    int port = getCycAccess().getBasePort();
-    setCycAccess(new CycClient(hosName, port));
+    final CycServer server = getCycAccess().getCycServer();
+    setCycAccess(new CycClient(server));
     madeCycAccess = true;
   }
-
+  
   private CycObject getUser() {
     return user;
   }
@@ -106,13 +100,13 @@ public class SubLAPIHelper {
   public int getPort() {
     return getCycAccess().getBasePort();
   }
-  static public final CycSymbolImpl THE_CYCLIST = CycObjectFactory.makeCycSymbol("*the-cyclist*");
+  static public final CycSymbol THE_CYCLIST = CycObjectFactory.makeCycSymbol("*the-cyclist*");
 
   public String wrapCommandWithUser(String command) {
     return wrapVariableBinding(command, THE_CYCLIST, getUser());
   }
 
-  public static String wrapVariableBinding(String command, CycSymbolImpl variable, Object value) {
+  public static String wrapVariableBinding(String command, CycSymbol variable, Object value) {
     try {
       // @todo consider setting *ke-purpose*
       return "(clet ((" + DefaultCycObject.cyclifyWithEscapeChars(variable, true) + " " + getAPIString(value) + ")) " + command + ")";
@@ -175,7 +169,7 @@ public class SubLAPIHelper {
   }
 
   /** @return an executable SubL statement string applying function to params. */
-  public static String makeSubLStmt(CycSymbolImpl function, Object... params) {
+  public static String makeSubLStmt(CycSymbol function, Object... params) {
     return makeSubLStmt(function.getSymbolName(), params);
   }
 
@@ -202,7 +196,7 @@ public class SubLAPIHelper {
   }
 
   /** @return a SubL statement applying function to params, suitable for using as an argument to {@link #makeSubLStmt(String, Object[])}. */
-  public static AsIsTerm makeNestedSubLStmt(CycSymbolImpl function, Object... params) {
+  public static AsIsTerm makeNestedSubLStmt(CycSymbol function, Object... params) {
     return makeNestedSubLStmt(function.getSymbolName(), params);
   }
 
@@ -281,7 +275,7 @@ public class SubLAPIHelper {
     SubLAPIHelper thisObj = null;
     try {
       CycConstantImpl admin = CommonConstants.ADMINISTRATOR;
-      thisObj = new SubLAPIHelper(CycServer.DEFAULT.getHostName(), CycServer.DEFAULT.getBasePort(), admin);
+      thisObj = new SubLAPIHelper(CycClientManager.getCurrentClient(), admin);
       setLoggingLevel(Level.FINE);
       String command = thisObj.makeSubLStmt("asdlfksjd", 1, 2, 3, 4);
       Object result = thisObj.executeCommandSynchronously(command);

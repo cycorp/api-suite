@@ -29,7 +29,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.inference.InferenceResultSet;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import com.cyc.base.CycTimeOutException;
 
 /**

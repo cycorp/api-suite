@@ -26,7 +26,7 @@ import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.cycobject.InformationSource;
 import com.cyc.base.inference.InferenceAnswer;
-import com.cyc.base.inference.InferenceAnswerIdentifier;
+import com.cyc.query.InferenceAnswerIdentifier;
 
 import java.util.Collection;
 
@@ -37,7 +37,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 import com.cyc.baseclient.CommonConstants;
-import com.cyc.baseclient.CycClient;
 import com.cyc.baseclient.CycClientManager;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.ELMtCycNaut;
@@ -47,6 +46,7 @@ import static com.cyc.baseclient.testing.TestUtils.getCyc;
 import com.cyc.baseclient.cycobject.InformationSourceImpl;
 import static com.cyc.baseclient.testing.TestConstants.*;
 import static com.cyc.baseclient.testing.TestSentences.*;
+import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
 
 /**
  *
@@ -76,24 +76,23 @@ public class CycBackedInferenceAnswerTest extends InferenceAnswerTest {
   public void testGetSources() throws Exception {
     System.out.println("getSources");
     // TODO -- Find or create a sourced query available in OpenCyc KB.
-    if (!getCyc().isOpenCyc()) {
-      final CycConstant WHH_WP = getCyc().getLookupTool().find("#$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison");
-      // (#$ContextOfPCWFn #$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison)
-      final ELMt WHH_WP_MT = ELMtCycNaut.makeELMtCycNaut(
-          CycArrayList.makeCycList(CONTEXT_OF_PCW_FN, WHH_WP));
-      
-      InferenceAnswer inferenceAnswer = getFirstInferenceAnswer(ISA_WILLIAM_HENRY_HARRISON_US_PRESIDENT_STRING, WHH_WP_MT);
-      final Collection<InformationSource> sources = 
-              inferenceAnswer.getSources(
-                      new InformationSourceImpl.CycCitationGenerator(
-                              CHICAGO_MANUAL_OF_STYLE_STANDARD));
-      assertFalse(sources.isEmpty());
-      for (final InformationSource source : sources) {
-        assertNotNull("No citation string for " + source.getCycL(), source.getCitationString());
-        if (CycClientManager.getClientManager().fromCycAccess(getCyc()).isFullKB()) {
-          // TODO: should we add an assertion for the icon?
-          assertNotNull("No icon for " + source.getCycL(), source.getIconURL());
-        }
+    assumeNotOpenCyc();
+    final CycConstant WHH_WP = getCyc().getLookupTool().find("#$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison");
+    // (#$ContextOfPCWFn #$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison)
+    final ELMt WHH_WP_MT = ELMtCycNaut.makeELMtCycNaut(
+            CycArrayList.makeCycList(CONTEXT_OF_PCW_FN, WHH_WP));
+
+    InferenceAnswer inferenceAnswer = getFirstInferenceAnswer(ISA_WILLIAM_HENRY_HARRISON_US_PRESIDENT_STRING, WHH_WP_MT);
+    final Collection<InformationSource> sources
+            = inferenceAnswer.getSources(
+                    new InformationSourceImpl.CycCitationGenerator(
+                            CHICAGO_MANUAL_OF_STYLE_STANDARD));
+    assertFalse(sources.isEmpty());
+    for (final InformationSource source : sources) {
+      assertNotNull("No citation string for " + source.getCycL(), source.getCitationString());
+      if (CycClientManager.getClientManager().fromCycAccess(getCyc()).isFullKB()) {
+        // TODO: should we add an assertion for the icon?
+        assertNotNull("No icon for " + source.getCycL(), source.getIconURL());
       }
     }
   }

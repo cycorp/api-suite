@@ -23,6 +23,7 @@ package com.cyc.baseclient.datatype;
 
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.baseclient.CommonConstants;
@@ -38,7 +39,7 @@ import com.cyc.baseclient.util.ParseException;
  * @todo Add more currencies. Currently only supports USD.
  *
  * @author nwinant, May 21, 2010, 2:03:06 PM
- * @version $Id: MoneyConverter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: MoneyConverter.java 158611 2015-05-21 16:49:58Z daves $
  */
 public class MoneyConverter extends DataTypeConverter<Money> {
 
@@ -127,7 +128,7 @@ public class MoneyConverter extends DataTypeConverter<Money> {
   @Override
   protected Naut toCycTerm(final Money money) throws ParseException {
     ensureCurrencyMapInitialized();
-    final Fort functor = lookupCycCurrencyTerm(money.getCurrency());
+    final DenotationalTerm functor = lookupCycCurrencyTerm(money.getCurrency());
     if (functor == null) {
       throwParseException(
               "Cannot find Cyc UnitOfMoney for currency code " + money.getCurrency().getCurrencyCode());
@@ -136,12 +137,12 @@ public class MoneyConverter extends DataTypeConverter<Money> {
   }
 
   //// Private Area
-  public static Fort lookupCycCurrencyTerm(final Currency curr) {
+  public static DenotationalTerm lookupCycCurrencyTerm(final Currency curr) {
     ensureCurrencyMapInitialized();
     return CURRENCY_TO_CYC_CURRENCY_MAP.get(curr);
   }
 
-  public static Currency lookupCurrency(final Fort cycTerm) {
+  public static Currency lookupCurrency(final DenotationalTerm cycTerm) {
     ensureCurrencyMapInitialized();
     return lookupKeyByValue(CURRENCY_TO_CYC_CURRENCY_MAP, cycTerm);
   }
@@ -157,12 +158,12 @@ public class MoneyConverter extends DataTypeConverter<Money> {
    * See http://en.wikipedia.org/wiki/ISO_4217
    */
   private static void initializeCurrencyCycTermHash() {
-    CURRENCY_TO_CYC_CURRENCY_MAP = new HashMap<Currency, Fort>();
+    CURRENCY_TO_CYC_CURRENCY_MAP = new HashMap<Currency, DenotationalTerm>();
     CURRENCY_TO_CYC_CURRENCY_MAP.put(Currency.getInstance("USD"), CommonConstants.DOLLAR_UNITED_STATES);
   }
   //// Internal Rep
 
-  private static Map<Currency, Fort> CURRENCY_TO_CYC_CURRENCY_MAP = null;
+  private static Map<Currency, DenotationalTerm> CURRENCY_TO_CYC_CURRENCY_MAP = null;
   private static MoneyConverter SHARED_INSTANCE = null;
   //// Main
 }

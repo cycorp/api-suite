@@ -31,6 +31,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.kb.Context;
 import com.cyc.kb.KBCollection;
 import com.cyc.kb.KBObject;
+import static com.cyc.kb.client.TestUtils.skipTest;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBTypeException;
 import java.util.ArrayList;
@@ -72,10 +73,11 @@ public class KBUtilsTest {
   /**
    * Test of convertKBObjectMapToCoObjectMap method, of class KBUtils.
    */
-  //@Test
+  @Test
   public void testConvertKBObjectMapToCoObjectMap() {
     // @TODO -- Make a real test.
     System.out.println("convertKBObjectMapToCoObjectMap");
+    skipTest(this, "testConvertKBObjectMapToCoObjectMap", "This test is not yet implemented.");
     Map<KBObject, Object> mapToConvert = null;
     Map<CycObject, Object> expResult = null;
     Map<CycObject, Object> result = KBUtils.convertKBObjectMapToCoObjectMap(mapToConvert);

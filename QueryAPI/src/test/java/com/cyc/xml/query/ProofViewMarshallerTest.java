@@ -52,8 +52,10 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.CycTimeOutException;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
+import static com.cyc.query.TestUtils.assumeNotOpenCyc;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.SessionApiException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  *
@@ -67,8 +69,9 @@ public class ProofViewMarshallerTest {
   @BeforeClass
   public static void setUpClass() throws IOException, UnknownHostException, JAXBException, 
           CycApiException, CycConnectionException, CycTimeOutException, QueryConstructionException, 
-          SessionApiException, CreateException, KBApiException {
+          SessionApiException, CreateException, KBApiException, OpenCycUnsupportedFeatureException {
     setup();
+    assumeNotOpenCyc();
     proofViewJustification = new ProofViewJustification(answer);
   }
 
@@ -90,21 +93,23 @@ public class ProofViewMarshallerTest {
    * Test of marshal method, of class ProofViewMarshaller.
    */
   @Test
-  public void testMarshal_ProofView_Writer() throws Exception {
+  public void testMarshal_ProofView_Writer() throws IOException, OpenCycUnsupportedFeatureException, JAXBException {
     System.out.println("\nmarshal to writer");
+    assumeNotOpenCyc();
     final File destination = File.createTempFile("proofViewTest", ".xml");
     System.out.println("Marshaling proof view to " + destination);
     final ProofView proofView = proofViewJustification.getProofView();
     assertNotNull("Failed to get proof view.", proofView);
     new ProofViewMarshaller().marshal(proofView, new FileWriter(destination));
   }
-
+  
   /**
    * Test of marshal method, of class ProofViewMarshaller.
    */
   @Test
-  public void testMarshal_ProofView_OutputStream() throws Exception {
+  public void testMarshal_ProofView_OutputStream() throws OpenCycUnsupportedFeatureException, JAXBException, IOException {
     System.out.println("\nmarshal to stream");
+    assumeNotOpenCyc();
     final ProofView proofView = proofViewJustification.getProofView();
     assertNotNull("Failed to get proof view.", proofView);
     new ProofViewMarshaller().marshal(proofView, System.out);
@@ -114,8 +119,9 @@ public class ProofViewMarshallerTest {
    * Test round-trip marshalling and unmarshalling.
    */
   @Test
-  public void testMarshalUnmarshalRoundTrip() throws Exception {
+  public void testMarshalUnmarshalRoundTrip() throws IOException, OpenCycUnsupportedFeatureException, JAXBException {
     System.out.println("\nTest marshal-unmarshal round trip.");
+    assumeNotOpenCyc();
     final File file1 = File.createTempFile("proofViewTest", ".xml");
     final ProofView proofView = proofViewJustification.getProofView();
     final ProofViewMarshaller marshaller = new ProofViewMarshaller();

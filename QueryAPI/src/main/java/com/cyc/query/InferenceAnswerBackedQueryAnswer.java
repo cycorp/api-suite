@@ -25,17 +25,31 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
+import com.cyc.base.CycAccess;
+import com.cyc.base.CycAccessManager;
+import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
+import com.cyc.base.CycTimeOutException;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.inference.InferenceAnswer;
-import com.cyc.base.inference.InferenceAnswerIdentifier;
+import com.cyc.baseclient.api.DefaultSubLWorkerSynch;
+import com.cyc.baseclient.api.SubLWorkerSynch;
 import com.cyc.baseclient.inference.CycBackedInferenceAnswer;
+import com.cyc.baseclient.inference.DefaultProofIdentifier;
+import com.cyc.baseclient.util.CycTaskInterruptedException;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.KBObjectImpl;
+import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBTypeException;
+import com.cyc.query.exception.QueryApiRuntimeException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.SessionConfigurationException;
+import com.cyc.session.SessionInitializationException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +57,7 @@ import java.util.Set;
  *
  * @author baxter
  */
-class InferenceAnswerBackedQueryAnswer implements QueryAnswer {
+public class InferenceAnswerBackedQueryAnswer implements QueryAnswer {
 
   private final InferenceAnswer answerCyc;
 
@@ -77,6 +91,65 @@ class InferenceAnswerBackedQueryAnswer implements QueryAnswer {
     } catch (CycConnectionException ex) {
       throw new RuntimeException(ex);
     }
+  }
+
+  /**
+   * Gets the id of an arbitrary proof used to support this InferenceAnswer.
+   *
+   * @return
+   */
+  public ProofIdentifier getProofIdentifier() throws QueryApiRuntimeException {
+    try {
+      CycAccess cyc;
+      cyc = CycAccessManager.getCurrentAccess();
+
+      int timeoutMsecs = 1000;
+      InferenceIdentifier inferenceIdentifier = getId().getInferenceIdentifier();
+      SubLWorkerSynch subLWorker = new DefaultSubLWorkerSynch("(proof-suid (first (inference-answer-proofs (find-inference-answer-by-ids  "
+              + inferenceIdentifier.getProblemStoreID()
+              + " "
+              + inferenceIdentifier.getInferenceID()
+              + " "
+              + getId().getAnswerID()
+              + "))))",
+              cyc, timeoutMsecs);
+      Integer id = (Integer) subLWorker.getWork();
+      return new DefaultProofIdentifier(this.getId().getInferenceIdentifier().getProblemStoreID(), id);
+    } catch (CycConnectionException ex) {
+      throw new QueryApiRuntimeException(ex);
+    } catch (CycTimeOutException ex) {
+      throw new QueryApiRuntimeException(ex);
+    } catch (CycApiException ex) {
+      throw new QueryApiRuntimeException(ex);
+    } catch (CycTaskInterruptedException ex) {
+      throw new QueryApiRuntimeException(ex);
+    } catch (SessionConfigurationException ex) {
+      throw new QueryApiRuntimeException(ex);
+    } catch (SessionCommunicationException ex) {
+      throw new QueryApiRuntimeException(ex);
+    } catch (SessionInitializationException ex) {
+      throw new QueryApiRuntimeException(ex);
+    }
+  }
+
+  public Set<ProofIdentifier> getProofIdentifiers() throws SessionCommunicationException, SessionConfigurationException, SessionInitializationException, CycApiException, CycTimeOutException, CycConnectionException {
+    Set<ProofIdentifier> ids = new HashSet<ProofIdentifier>();
+    CycAccess cyc = CycAccessManager.getCurrentAccess();
+    int timeoutMsecs = 1000;
+    InferenceIdentifier inferenceIdentifier = getId().getInferenceIdentifier();
+    SubLWorkerSynch subLWorker = new DefaultSubLWorkerSynch("(find-proof-ids-for-inference-answer "
+            + inferenceIdentifier.getProblemStoreID()
+            + " "
+            + inferenceIdentifier.getInferenceID()
+            + " "
+            + getId().getAnswerID()
+            + ")",
+            cyc, timeoutMsecs);
+    List<Integer> result = (List<Integer>) subLWorker.getWork();
+    for (Integer proofId : result) {
+      ids.add(new DefaultProofIdentifier(this.getId().getInferenceIdentifier().getProblemStoreID(), proofId));
+    }
+    return ids;
   }
 
   @Override
@@ -136,7 +209,15 @@ class InferenceAnswerBackedQueryAnswer implements QueryAnswer {
 
         @Override
         public Set<Variable> keySet() {
-          throw new UnsupportedOperationException("Not supported yet.");
+          Set<Variable> vars = new HashSet<Variable>();
+          for (CycVariable var : cycBindings.keySet()) {
+            try {
+              vars.add(new VariableImpl(var));
+            } catch (KBTypeException ex) {
+              ex.printStackTrace();
+            }
+          }
+          return vars;
         }
 
         @Override

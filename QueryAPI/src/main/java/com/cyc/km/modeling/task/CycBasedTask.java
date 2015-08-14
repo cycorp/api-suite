@@ -34,14 +34,21 @@ import com.cyc.kb.Fact;
 import com.cyc.kb.KBObject;
 import com.cyc.kb.KBIndividual;
 import com.cyc.kb.Sentence;
+import com.cyc.kb.client.KBIndividualImpl;
 import com.cyc.kb.client.KBObjectImpl;
+import com.cyc.kb.exception.CreateException;
 import com.cyc.query.Query;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBObjectNotFoundException;
+import com.cyc.kb.exception.KBTypeException;
 import com.cyc.query.QueryApiConstants;
+import com.cyc.query.QueryFactory;
 import com.cyc.query.exception.QueryApiRuntimeException;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.SessionApiException;
+import com.cyc.session.compatibility.CycSessionRequirementList;
+import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,13 +71,19 @@ import java.util.Map;
  */
 public class CycBasedTask {
 
+  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> CYC_BASED_TASK_REQUIREMENTS = CycSessionRequirementList.fromList(
+          NotOpenCycRequirement.NOT_OPENCYC
+  );
+  
   /**
    * Returns a collection of all known Cyc-based tasks.
    *
    * @return the collection of tasks.
-   * @throws Exception if something goes wrong.
+   * @throws com.cyc.kb.exception.KBTypeException
+   * @throws com.cyc.kb.exception.CreateException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  static public Collection<CycBasedTask> getAll() throws Exception {
+  static public Collection<CycBasedTask> getAll() throws KBTypeException, CreateException, OpenCycUnsupportedFeatureException {
     final Collection<CycBasedTask> tasks = new HashSet<CycBasedTask>();
     for (final KBIndividual task : QueryApiConstants.getInstance().CAE_ANALYSIS_TASK.
             <KBIndividual>getInstances(Constants.everythingPSCMt())) {
@@ -85,8 +98,10 @@ public class CycBasedTask {
    * based on an existing <code>KBIndividual</code> in the Knowledge Base.
    *
    * @param taskTerm the KBIndividual representing this task.
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
-  public CycBasedTask(KBIndividual taskTerm) {
+  public CycBasedTask(KBIndividual taskTerm) throws OpenCycUnsupportedFeatureException {
+    CYC_BASED_TASK_REQUIREMENTS.testCompatibilityWithRuntimeException();
     this.taskTerm = taskTerm;
   }
 
@@ -129,7 +144,7 @@ public class CycBasedTask {
    * @return the summary
    * @throws Exception
    */
-  public String getSummary() throws Exception {
+  public String getSummary() throws KBTypeException, CreateException {
     final ArrayList names = new ArrayList(taskTerm.getValues(
             QueryApiConstants.getInstance().NAMESTRING, 1, 2, Constants.inferencePSCMt()));
     return (names.isEmpty()) ? null : (String) names.get(0);
@@ -158,9 +173,10 @@ public class CycBasedTask {
    * Returns a collection of concepts particularly relevant to this task
    *
    * @return the collection of key concepts.
-   * @throws Exception if something goes wrong.
+   * @throws com.cyc.kb.exception.KBTypeException
+   * @throws com.cyc.kb.exception.CreateException
    */
-  public Collection<KBObject> getKeyConcepts() throws Exception {
+  public Collection<KBObject> getKeyConcepts() throws KBTypeException, CreateException, KBApiException {
     synchronized (concepts) {
       if (concepts.contains(null)) {
         for (final Fact fact : taskTerm.getFacts(
@@ -188,7 +204,7 @@ public class CycBasedTask {
    * focal
    */
   public List<Object> getCandidateReplacements(Sentence querySentence,
-          ArgPosition argPosition) throws RuntimeException, CycConnectionException {
+          ArgPosition argPosition) throws RuntimeException, OpenCycUnsupportedFeatureException {
     try {
       final List<Object> bapiAnswer = ((FormulaSentence) querySentence.getCore()).getCandidateReplacements(argPosition, getGuidanceMt(),
               getCyc());
@@ -207,6 +223,8 @@ public class CycBasedTask {
       throw new QueryApiRuntimeException(ex);
     } catch (QueryConstructionException ex) {
       throw new QueryApiRuntimeException(ex);
+    } catch (CycConnectionException ex) {
+      throw new QueryApiRuntimeException(ex);
     }
   }
 
@@ -220,18 +238,23 @@ public class CycBasedTask {
   }
 
   private Object getSingleAnswerQueryValue(final KBIndividual kbQuery,
-          final Object defaultAnswer) throws KBApiException, CycConnectionException,
+          final Object defaultAnswer) throws KBApiException,
           SessionApiException, QueryConstructionException {
-    final Query query = Query.load(kbQuery);
-    Map<CycObject, Object> substitutions = new HashMap<CycObject, Object>();
-    final Fort taskTermFort = getFort();
-    // @TODO Use KBObjects:
-    substitutions.put(QueryApiConstants.getInstance().taskIndexical, taskTermFort);
-    query.substituteTermsWithCycObject(substitutions);
-    query.setMaxNumber(1);
-    return query.getAnswerCount() >= 1
-            ? query.getAnswer(0).getBindings().values().iterator().next()
-            : defaultAnswer;
+    try {
+      Map<KBObject, Object> substitutions = new HashMap<KBObject, Object>();
+      final Fort taskTermFort = getFort();
+      // @TODO Use KBObjects:
+      substitutions.put(KBIndividualImpl.get(QueryApiConstants.getInstance().taskIndexical), KBIndividualImpl.get(taskTermFort));
+      final Query query = QueryFactory.getQuery(kbQuery, substitutions);
+      query.setMaxNumber(1);
+      return query.getAnswerCount() >= 1
+              ? query.getAnswer(0).getBindings().values().iterator().next()
+              : defaultAnswer;
+    } catch (CycConnectionException ex) {
+      throw new QueryConstructionException(ex);
+    } catch (Exception ex) {
+      throw new QueryConstructionException(ex);
+    }
   }
 
   private synchronized ELMt getGuidanceMt() throws KBApiException, CycConnectionException,

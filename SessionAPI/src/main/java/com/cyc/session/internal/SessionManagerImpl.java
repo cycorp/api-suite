@@ -136,7 +136,7 @@ public class SessionManagerImpl<T extends CycSession> implements SessionManager<
   /**
    * @param server
    * @return is the server managed by this session manager?
-   * @deprecated May be removed or changed in 1.0.0-rc2
+   * @deprecated May be removed or changed before final 1.0.0 release
    */
   @Deprecated
   protected boolean hasSession(CycServer server) {
@@ -146,7 +146,7 @@ public class SessionManagerImpl<T extends CycSession> implements SessionManager<
   /**
    * @param session
    * @throws SessionConfigurationException
-   * @deprecated May be removed or changed in 1.0.0-rc2
+   * @deprecated May be removed or changed before final 1.0.0 release
    */
   @Deprecated
   protected void putSession(T session) throws SessionConfigurationException {
@@ -156,7 +156,7 @@ public class SessionManagerImpl<T extends CycSession> implements SessionManager<
   /**
    * @param server
    * @return the session associated with this server.
-   * @deprecated May be removed or changed in 1.0.0-rc2
+   * @deprecated May be removed or changed before final 1.0.0 release
    */
   @Deprecated
   protected T getSession(CycServer server) {
@@ -296,5 +296,13 @@ public class SessionManagerImpl<T extends CycSession> implements SessionManager<
       factories.add(factory);
     }
     return factories;
+  }
+
+  @Override
+  public int compareTo(SessionManager<T> o) {
+    if (o == null) {
+      return 1;
+    }
+    return -1;
   }
 }

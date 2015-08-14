@@ -60,7 +60,7 @@ public class SocketCommRoundRobin extends AbstractComm implements Comm {
         try {
           // This will add upto 5 cyc images, running on localhost, 3600, 3620 to 3680.
           // This is only for testing purposes
-          String host = CycServer.DEFAULT.getHostName();
+          String host = "127.0.0.1";
           int port = 3600 + 20 * socketList.size();
           //System.out.println("Socket connection to: Host: " + host + " Port: " + port);
           SocketData socketData = new SocketData(host, port);

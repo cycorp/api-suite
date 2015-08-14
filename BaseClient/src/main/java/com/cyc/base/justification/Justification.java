@@ -24,6 +24,7 @@ package com.cyc.base.justification;
 import java.util.List;
 
 import com.cyc.base.inference.InferenceAnswer;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  * An interface for representing and generating justifications of Cyc inference
@@ -45,16 +46,19 @@ public interface Justification {
    * rendering algorithm would display this node, and recurse on its child nodes
    * iff it is to be expanded initially.
    *
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    * @see com.cyc.base.justification.Justification.Node#isExpandInitially()
    * @return the root node
    */
-  Node getRoot();
+  Node getRoot() throws OpenCycUnsupportedFeatureException;
 
   /**
    * Flesh out this justification, setting its root node and tree structure
    * underneath the root.
+   * 
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
-  void populate();
+  void populate() throws OpenCycUnsupportedFeatureException;
 
   /**
    * Returns the inference answer justified by this object

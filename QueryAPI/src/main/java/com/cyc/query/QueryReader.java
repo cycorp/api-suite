@@ -31,7 +31,6 @@ import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.base.cycobject.NonAtomicTerm;
-import com.cyc.base.inference.InferenceParameters;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.api.SubLAPIHelper;
 import com.cyc.baseclient.cycobject.ELMtCycNaut;
@@ -48,8 +47,10 @@ import java.io.InputStream;
 import javax.xml.bind.JAXBException;
 
 import static com.cyc.baseclient.xml.cycml.CycMLDecoder.translateObject;
+import com.cyc.kb.Sentence;
 import com.cyc.kb.client.ContextImpl;
 import com.cyc.kb.client.KBIndividualImpl;
+import com.cyc.kb.client.SentenceImpl;
 import com.cyc.query.exception.QueryApiRuntimeException;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.SessionApiException;
@@ -62,9 +63,9 @@ import com.cyc.xml.query.QueryInferenceProperty;
 import com.cyc.xml.query.QueryMt;
 
 /**
- * Support for reading in a Query from XML.
+ * Support for reading in a QueryImpl from XML.
  *
- * @see com.cyc.query.Query
+ * @see com.cyc.query.QueryImpl
  * @author baxter
  */
 public class QueryReader {
@@ -112,6 +113,7 @@ public class QueryReader {
    * @param queryTerm
    * @return a Query object defined by queryTerm
    * @throws KBApiException if any needed KBObjects cannot be found or created.
+   * @throws com.cyc.query.exception.QueryConstructionException
    * @throws QueryApiRuntimeException if there is some other kind of problem
    */
   protected Query queryFromTerm(KBIndividual queryTerm) throws KBApiException,
@@ -137,19 +139,19 @@ public class QueryReader {
   }
 
   /**
-   * Convert a CyclQuery to a Query.
+   * Convert a CyclQuery to a QueryImpl.
    *
    * @param cyclQuery
-   * @return the new Query object.
+   * @return the new QueryImpl object.
    * @throws KBApiException if any needed KBObjects cannot be found or created.
    * @throws QueryConstructionException if any other problem is encountered
-   * constructing the Query object.
+ constructing the QueryImpl object.
    * @see CyclQuery
    */
   public Query convertQuery(CyclQuery cyclQuery) throws KBApiException, QueryConstructionException {
     final DenotationalTerm queryID = convertID(cyclQuery.getQueryID());
-    final FormulaSentence querySentence = convertFormula(
-            cyclQuery.getQueryFormula());
+    final Sentence querySentence = new SentenceImpl(convertFormula(
+            cyclQuery.getQueryFormula()));
     final Context queryContext = convertMt(cyclQuery.getQueryMt());
     InferenceParameters queryParams = null;
     for (final Object obj : cyclQuery.getQueryCommentOrQueryInferencePropertiesOrQueryIndexicals()) {
@@ -161,8 +163,8 @@ public class QueryReader {
         }
       }
     }
-    final Query query = new Query(querySentence, queryContext, queryParams);
-    query.setId(KBIndividualImpl.findOrCreate(queryID));
+    final Query query = QueryFactory.getQuery(querySentence, queryContext, queryParams);
+    ((QueryImpl)query).setId(KBIndividualImpl.findOrCreate(queryID));
     return query;
   }
 

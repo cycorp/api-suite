@@ -91,7 +91,7 @@ public interface ArgPosition {
    * @param matchEmpty Should we match the null arg position?
    * @return true iff this arg position matches candidate
    */
-  public boolean matchingArgPositionI(ArgPosition candidate, boolean matchEmpty);
+  public boolean matchingArgPosition(ArgPosition candidate, boolean matchEmpty);
 
   /**
    * Destructively modify this ArgPosition to be its parent arg position.

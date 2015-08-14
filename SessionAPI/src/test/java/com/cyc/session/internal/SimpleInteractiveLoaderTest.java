@@ -65,8 +65,8 @@ public class SimpleInteractiveLoaderTest extends TestCase {
       loader.setEnvironment(envloader.getConfiguration());
       CycSessionConfiguration config = loader.getConfiguration();
       assertNotNull(config.getCycServer());
-      assertNull(config.getPolicyFileName());
-      assertNull(config.getPolicyName());
+      assertNull(config.getConfigurationFileName());
+      assertNull(config.getConfigurationLoaderName());
     }
   }
   

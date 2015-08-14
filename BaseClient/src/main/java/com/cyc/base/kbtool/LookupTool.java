@@ -36,6 +36,7 @@ import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.cycobject.Guid;
 import com.cyc.base.CycTimeOutException;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -1784,9 +1785,9 @@ public interface LookupTool {
    */
   CycList getSiblings(Fort cycFort, CycObject mt) throws CycConnectionException, CycConnectionException, CycApiException;
 
-  CycSentence getSimplifiedSentence(FormulaSentence sentence) throws CycConnectionException, CycConnectionException;
+  CycSentence getSimplifiedSentence(FormulaSentence sentence) throws CycConnectionException, CycConnectionException, OpenCycUnsupportedFeatureException;
 
-  CycSentence getSimplifiedSentence(FormulaSentence sentence, ELMt mt) throws CycConnectionException, CycConnectionException;
+  CycSentence getSimplifiedSentence(FormulaSentence sentence, ELMt mt) throws CycConnectionException, CycConnectionException, OpenCycUnsupportedFeatureException;
 
   /**
    * Gets the list of the siblings (direct specs of the direct genls) for the given Fort

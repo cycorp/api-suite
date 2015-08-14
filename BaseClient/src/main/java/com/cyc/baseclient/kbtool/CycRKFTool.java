@@ -28,6 +28,9 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
 import static com.cyc.baseclient.api.SubLAPIHelper.makeSubLStmt;
+import com.cyc.session.compatibility.CycSessionRequirementList;
+import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  * Tools from the RKF project.
@@ -37,6 +40,11 @@ import static com.cyc.baseclient.api.SubLAPIHelper.makeSubLStmt;
  */
 @Deprecated
 public class CycRKFTool extends AbstractKBTool {
+  
+  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> RKF_REQUIREMENTS = CycSessionRequirementList.fromList(
+          NotOpenCycRequirement.NOT_OPENCYC
+  );
+  
   
   public CycRKFTool(CycAccess client) {
     super(client);
@@ -63,10 +71,11 @@ public class CycRKFTool extends AbstractKBTool {
    *
    * @throws CycConnectionException if a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  public CycList rkfPhraseReader(String text, String parsingMt, String domainMt) 
-          throws CycConnectionException, CycApiException {
-        return rkfPhraseReader(text,
+  public CycList rkfPhraseReader(String text, String parsingMt, String domainMt)
+          throws CycConnectionException, CycApiException, OpenCycUnsupportedFeatureException {
+    return rkfPhraseReader(text,
             getKnownConstantByName_inner(parsingMt),
             getKnownConstantByName_inner(domainMt));
   }
@@ -89,9 +98,11 @@ public class CycRKFTool extends AbstractKBTool {
    *
    * @throws CycConnectionException if a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  public CycList rkfPhraseReader(String text, Fort parsingMt, Fort domainMt) throws CycConnectionException, CycApiException {
-        String command = makeSubLStmt("rkf-phrase-reader", text, parsingMt, domainMt);
+  public CycList rkfPhraseReader(String text, Fort parsingMt, Fort domainMt) throws CycConnectionException, CycApiException, OpenCycUnsupportedFeatureException {
+    RKF_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    String command = makeSubLStmt("rkf-phrase-reader", text, parsingMt, domainMt);
     return getConverse().converseList(command);
   }
 }

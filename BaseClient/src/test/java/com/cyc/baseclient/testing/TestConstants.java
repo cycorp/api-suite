@@ -39,6 +39,12 @@ import com.cyc.baseclient.cycobject.ELMtConstant;
 @CycObjectLibrary(requireFieldAnnotations=false)
 public class TestConstants {
   
+  @Deprecated
+  @CycTerm(cycl="#$CIAWorldFactbook1995Mt", includedInOpenCycKB=false)
+  public static final CycConstant CIA_WORLD_FACTBOOK_1995_MT =
+          new CycConstantImpl("CIAWorldFactbook1995Mt", new GuidImpl(
+                  "c0a41a91-9c29-11b1-9dad-c379636f7270"));
+  
   public static final CycConstant DOLLAR =
           new CycConstantImpl("USDollarFn", new GuidImpl(
                   "bf8330c4-9c29-11b1-9dad-c379636f7270"));

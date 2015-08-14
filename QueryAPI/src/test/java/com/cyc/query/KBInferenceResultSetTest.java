@@ -22,17 +22,17 @@ package com.cyc.query;
  */
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.cycobject.CycObject;
 import com.cyc.kb.FirstOrderCollection;
 import com.cyc.kb.KBCollection;
 import com.cyc.kb.KBIndividual;
 import com.cyc.kb.KBObject;
 import static com.cyc.query.TestUtils.*;
-import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.SentenceImpl;
+import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBApiRuntimeException;
+import com.cyc.kb.exception.KBTypeException;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
@@ -54,16 +54,12 @@ public class KBInferenceResultSetTest {
   private final SentenceImpl evaluateThreeMinusOne;
   private final SentenceImpl evaluateOneMinusPointFive;
 
-  public KBInferenceResultSetTest() {
-    try {
-      genlsThingThing = new SentenceImpl(Constants.genls(), testConstants().thing, testConstants().thing);
-      commentBillClintonX = new SentenceImpl(testConstants().comment, testConstants().billClinton, X);
-      evaluateThreeMinusOne = new SentenceImpl(testConstants().evaluate, X, testConstants().threeMinusOne);
-      evaluateOneMinusPointFive = new SentenceImpl(testConstants().evaluate, X, testConstants().oneMinusPointFive);
-      equalsXTrue = new SentenceImpl(testConstants().cycEquals, X, testConstants().cycTrue);
-    } catch (Exception ex) {
-      throw new RuntimeException("Exception initializing test.", ex);
-    }
+  public KBInferenceResultSetTest() throws KBTypeException, CreateException {
+    genlsThingThing = new SentenceImpl(Constants.genls(), testConstants().thing, testConstants().thing);
+    commentBillClintonX = new SentenceImpl(testConstants().comment, testConstants().billClinton, X);
+    evaluateThreeMinusOne = new SentenceImpl(testConstants().evaluate, X, testConstants().threeMinusOne);
+    evaluateOneMinusPointFive = new SentenceImpl(testConstants().evaluate, X, testConstants().oneMinusPointFive);
+    equalsXTrue = new SentenceImpl(testConstants().cycEquals, X, testConstants().cycTrue);
   }
 
   @BeforeClass
@@ -90,99 +86,100 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getObject method, of class KBInferenceResultSet.
+   * Test of getObject method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetObject_int_Class() throws Exception {
+  public void testGetObject_int_Class() {
     System.out.println("getObject");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.next());
     Object result = resultSet.getObject(1, KBCollection.class);
     assertNotNull(result);
   }
 
   /**
-   * Test of getKBObject method, of class KBInferenceResultSet.
+   * Test of getKBObject method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetKBObject_int() {
+  public void testGetKBObject_int() throws IllegalArgumentException, KBApiException {
     System.out.println("getKBObject");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.next());
-    KBObject result = resultSet.getKBObject(resultSet.findColumn(X));
+    KBObject result = resultSet.getKBObject(resultSet.findColumn(X), KBCollection.class);
     assertNotNull(result);
   }
 
   /**
-   * Test of getObject method, of class KBInferenceResultSet.
+   * Test of getObject method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetObject_String_Class() throws Exception {
+  public void testGetObject_String_Class() {
     System.out.println("getObject");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.next());
-    KBCollection result = resultSet.getObject("?" + X.getName(), KBCollection.class);
+    KBCollection result = (KBCollection)resultSet.getObject("?" + X.getName(), KBCollection.class);
     assertNotNull(result);
   }
 
   /**
-   * Test of getObject method, of class KBInferenceResultSet.
+   * Test of getObject method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetObject_int() throws Exception {
+  public void testGetObject_int() {
     System.out.println("getObject");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.next());
-    Object result = resultSet.getObject(1);
+    Object result = resultSet.getObject(1, KBCollection.class);
     assertNotNull(result);
   }
 
   /**
-   * Test of getObject method, of class KBInferenceResultSet.
+   * Test of getObject method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetObject_String() throws Exception {
+  public void testGetObject_String() {
     System.out.println("getObject");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.next());
-    KBCollection result = (KBCollection) resultSet.getObject("?" + X.getName());
+    KBCollection result = (KBCollection) resultSet.getObject("?" + X.getName(), KBCollection.class);
     assertNotNull(result);
   }
 
   /**
-   * Test of getKBObject method, of class KBInferenceResultSet.
+   * Test of getKBObject method, of class QueryResultSetImpl.
    */
-  //@Test
-  public void testGetKBObject_String() throws Exception {
+  @Test
+  public void testGetKBObject_String() throws IllegalArgumentException, KBApiException {
+    assumeNotOpenCyc();
     // TODO: currently throwing ClassCastException, which it should not.
     System.out.println("getKBObject");
     String columnLabel = "?X";
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
-    FirstOrderCollection result = resultSet.getKBObject(columnLabel);
+    FirstOrderCollection result = (FirstOrderCollection)resultSet.getKBObject(columnLabel, KBCollection.class);
     assertTrue(result instanceof KBObject);
   }
 
   /**
-   * Test of getKBObject method, of class KBInferenceResultSet.
+   * Test of getKBObject method, of class QueryResultSetImpl.
    */
   @Test(expected = ClassCastException.class)
-  public void testGetKBObject_String_Exception() throws Exception {
+  public void testGetKBObject_String_Exception() throws IllegalArgumentException, KBApiException {
     System.out.println("getKBObject Exception");
     String columnLabel = "?X";
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     // The actual answers are all collections, so this should throw an exception:
-    KBIndividual result = resultSet.getKBObject(columnLabel);
+    KBIndividual result = (KBIndividual)resultSet.getKBObject(columnLabel, KBIndividual.class);
   }
 
   /**
-   * Test of getColumnNames method, of class KBInferenceResultSet.
+   * Test of getColumnNames method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetColumnNames() throws Exception {
+  public void testGetColumnNames() {
     System.out.println("getKBObject");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     List<String> result = resultSet.getColumnNames();
     assertEquals(result.size(), 1);
     assertEquals(result.get(0).toString(), "?X");
@@ -190,41 +187,41 @@ public class KBInferenceResultSetTest {
   }
 
   private void resetQ() throws QueryConstructionException, KBApiRuntimeException {
-    q = new Query(testConstants().genlsAnimalX, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().genlsAnimalX, Constants.inferencePSCMt());
   }
 
   /**
-   * Test of isInferenceComplete method, of class KBInferenceResultSet.
+   * Test of isInferenceComplete method, of class QueryResultSetImpl.
    */
   @Test
   public void testIsInferenceComplete() throws CycConnectionException, QueryConstructionException {
     System.out.println("isInferenceComplete");
     resetQ();
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.isInferenceComplete());
     q.close();
   }
 
   /**
-   * Test of close method, of class KBInferenceResultSet.
+   * Test of close method, of class QueryResultSetImpl.
    */
   @Test
   public void testClose() {
     System.out.println("close");
     q.setContinuable(true);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.close();
     assertTrue(resultSet.isClosed());
     //@todo Make sure the inference and problem store were really removed from the Cyc server.
   }
 
   /**
-   * Test of next method, of class KBInferenceResultSet.
+   * Test of next method, of class QueryResultSetImpl.
    */
   @Test
   public void testNext() {
     System.out.println("next");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(q.isProvable());
     while (resultSet.getRow() < q.getAnswerCount()) {
       assertTrue(resultSet.next());
@@ -233,30 +230,30 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of findColumn method, of class KBInferenceResultSet.
+   * Test of findColumn method, of class QueryResultSetImpl.
    */
   @Test
   public void testFindColumn_Variable() {
     System.out.println("findColumn");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertEquals(1, resultSet.findColumn(X));
   }
 
   /**
-   * Test of getCurrentRowCount method, of class KBInferenceResultSet.
+   * Test of getCurrentRowCount method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetCurrentRowCount() throws Exception {
+  public void testGetCurrentRowCount() throws QueryConstructionException, KBApiException {
     System.out.println("getCurrentRowCount");
-    q = new Query(equalsXTrue, inferencePSC);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(equalsXTrue, inferencePSC);
+    QueryResultSet resultSet = q.getResultSet();
     int result = resultSet.getCurrentRowCount();
     assertEquals(1, result);
     resultSet.close();
 
-    q = new Query(genlsThingThing, inferencePSC);
+    q = QueryFactory.getQuery(genlsThingThing, inferencePSC);
     resultSet = q.getResultSet();
-    assertEquals("Expected no rows for " + q.getQuerySentence(), 0, resultSet.getCurrentRowCount());
+    assertEquals("Expected no rows for " + q.getQuerySentence(), 0, resultSet.getCurrentRowCount().longValue());
     resultSet.close();
     //@todo add more tests for asynchronous queries.
   }
@@ -266,13 +263,13 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getTruthValue method, of class KBInferenceResultSet.
+   * Test of getTruthValue method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetTruthValue() throws Exception {
+  public void testGetTruthValue() throws QueryConstructionException {
     System.out.println("getTruthValue");
-    q = new Query(genlsThingThing, inferencePSC);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(genlsThingThing, inferencePSC);
+    QueryResultSet resultSet = q.getResultSet();
     boolean expResult = true;
     boolean result = resultSet.getTruthValue();
     assertEquals(expResult, result);
@@ -280,40 +277,40 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getString method, of class KBInferenceResultSet.
+   * Test of getString method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetString_int() throws Exception {
+  public void testGetString_int() throws QueryConstructionException {
     System.out.println("getString");
-    q = new Query(commentBillClintonX, inferencePSC);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(commentBillClintonX, inferencePSC);
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     String result = resultSet.getString(1);
     assertTrue(result instanceof String);
   }
 
   /**
-   * Test of getString method, of class KBInferenceResultSet.
+   * Test of getString method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetString_Variable() throws Exception {
+  public void testGetString_Variable() throws QueryConstructionException {
     System.out.println("getString");
-    q = new Query(commentBillClintonX, inferencePSC);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(commentBillClintonX, inferencePSC);
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     String result = resultSet.getString(X);
     assertTrue(result instanceof String);
   }
 
   /**
-   * Test of getBoolean method, of class KBInferenceResultSet.
+   * Test of getBoolean method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetBoolean_int() throws Exception {
+  public void testGetBoolean_int() throws QueryConstructionException {
     System.out.println("getBoolean");
-    q = new Query(equalsXTrue, inferencePSC);
+    q = QueryFactory.getQuery(equalsXTrue, inferencePSC);
     int columnIndex = 1;
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     boolean expResult = true;
     boolean result = resultSet.getBoolean(columnIndex);
@@ -322,14 +319,14 @@ public class KBInferenceResultSetTest {
   private final SentenceImpl equalsXTrue;
 
   /**
-   * Test of getInt method, of class KBInferenceResultSet.
+   * Test of getInt method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetInt_int() throws Exception {
+  public void testGetInt_int() throws QueryConstructionException {
     System.out.println("getInt");
-    q = new Query(evaluateThreeMinusOne, inferencePSC);
+    q = QueryFactory.getQuery(evaluateThreeMinusOne, inferencePSC);
     int columnIndex = 1;
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     int expResult = 2;
     int result = resultSet.getInt(columnIndex);
@@ -337,13 +334,13 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getInt method, of class KBInferenceResultSet.
+   * Test of getInt method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetInt_String() throws Exception {
+  public void testGetInt_String() throws QueryConstructionException {
     System.out.println("getInt");
-    q = new Query("(evaluate ?X (DifferenceFn 3 1))");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery("(evaluate ?X (DifferenceFn 3 1))");
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     int expResult = 2;
     int result = resultSet.getInt("?X");
@@ -351,14 +348,14 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getLong method, of class KBInferenceResultSet.
+   * Test of getLong method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetLong_int() throws Exception {
+  public void testGetLong_int() throws QueryConstructionException {
     System.out.println("getLong");
-    q = new Query("(evaluate ?X (DifferenceFn 3 1))");
+    q = QueryFactory.getQuery("(evaluate ?X (DifferenceFn 3 1))");
     int columnIndex = 1;
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     long expResult = 2;
     long result = resultSet.getLong(columnIndex);
@@ -366,13 +363,13 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getLong method, of class KBInferenceResultSet.
+   * Test of getLong method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetLong_String() throws Exception {
+  public void testGetLong_String() throws QueryConstructionException {
     System.out.println("getLong");
-    q = new Query("(evaluate ?X (DifferenceFn 3 1))");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery("(evaluate ?X (DifferenceFn 3 1))");
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     long expResult = 2;
     long result = resultSet.getLong("?X");
@@ -380,14 +377,14 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getFloat method, of class KBInferenceResultSet.
+   * Test of getFloat method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetFloat_int() throws Exception {
+  public void testGetFloat_int() throws QueryConstructionException {
     System.out.println("getFloat");
-    q = new Query(evaluateOneMinusPointFive, Constants.baseKbMt());
+    q = QueryFactory.getQuery(evaluateOneMinusPointFive, Constants.baseKbMt());
     int columnIndex = 1;
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     float expResult = 0.5F;
     float result = resultSet.getFloat(columnIndex);
@@ -395,13 +392,13 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getFloat method, of class KBInferenceResultSet.
+   * Test of getFloat method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetFloat_String() throws Exception {
+  public void testGetFloat_String() throws QueryConstructionException {
     System.out.println("getFloat");
-    q = new Query(evaluateOneMinusPointFive, Constants.baseKbMt());
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(evaluateOneMinusPointFive, Constants.baseKbMt());
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     float expResult = 0.5F;
     float result = resultSet.getFloat("?X");
@@ -409,14 +406,14 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getDouble method, of class KBInferenceResultSet.
+   * Test of getDouble method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetDouble_int() throws Exception {
+  public void testGetDouble_int() throws QueryConstructionException {
     System.out.println("getDouble");
-    q = new Query(evaluateOneMinusPointFive, Constants.baseKbMt());
+    q = QueryFactory.getQuery(evaluateOneMinusPointFive, Constants.baseKbMt());
     int columnIndex = 1;
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     double expResult = 0.5D;
     double result = resultSet.getDouble(columnIndex);
@@ -424,13 +421,13 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getDouble method, of class KBInferenceResultSet.
+   * Test of getDouble method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetDouble_String() throws Exception {
+  public void testGetDouble_String() throws QueryConstructionException {
     System.out.println("getDouble");
-    q = new Query(evaluateOneMinusPointFive, Constants.baseKbMt());
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(evaluateOneMinusPointFive, Constants.baseKbMt());
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     double expResult = 0.5D;
     double result = resultSet.getDouble("?X");
@@ -438,27 +435,27 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getString method, of class KBInferenceResultSet.
+   * Test of getString method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetString_String() throws Exception {
+  public void testGetString_String() throws QueryConstructionException {
     System.out.println("getString");
-    q = new Query(commentBillClintonX, inferencePSC);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    q = QueryFactory.getQuery(commentBillClintonX, inferencePSC);
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     String result = resultSet.getString("?X");
     assertTrue(result instanceof String);
   }
 
   /**
-   * Test of getBoolean method, of class KBInferenceResultSet.
+   * Test of getBoolean method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetBoolean_String() throws Exception {
+  public void testGetBoolean_String() throws QueryConstructionException {
     System.out.println("getBoolean");
-    q = new Query("(equals ?X True)");
+    q = QueryFactory.getQuery("(equals ?X True)");
     String var = "?X";
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     boolean expResult = true;
     boolean result = resultSet.getBoolean(var);
@@ -466,13 +463,13 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of getDate method, of class KBInferenceResultSet.
+   * Test of getDate method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetDate_String() throws Exception {
+  public void testGetDate_String() throws QueryConstructionException {
     System.out.println("getDate");
-    //KBInferenceResultSet resultSet = new Query("(#$equals ?NOW (#$IndexicalReferentFn #$Now-Indexical))").getResultSet();
-    KBInferenceResultSet resultSet = new Query("(#$indexicalReferent #$Now-Indexical ?NOW)").getResultSet();
+    //KBInferenceResultSet resultSet = new QueryImpl("(#$equals ?NOW (#$IndexicalReferentFn #$Now-Indexical))").getResultSet();
+    QueryResultSet resultSet = QueryFactory.getQuery("(#$indexicalReferent #$Now-Indexical ?NOW)").getResultSet();
     try {
       resultSet.next();
       assertTrue(resultSet.getDate("?NOW") instanceof Date);
@@ -482,34 +479,34 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of findColumn method, of class KBInferenceResultSet.
+   * Test of findColumn method, of class QueryResultSetImpl.
    */
   @Test
-  public void testFindColumn_String() throws Exception {
+  public void testFindColumn_String() {
     System.out.println("findColumn");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertEquals(1, resultSet.findColumn("?X"));
   }
 
   /**
-   * Test of isBeforeFirst method, of class KBInferenceResultSet.
+   * Test of isBeforeFirst method, of class QueryResultSetImpl.
    */
   @Test
-  public void testIsBeforeFirst() throws Exception {
+  public void testIsBeforeFirst() {
     System.out.println("isBeforeFirst");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.isBeforeFirst());
     resultSet.last();
     assertFalse(resultSet.isBeforeFirst());
   }
 
   /**
-   * Test of isAfterLast method, of class KBInferenceResultSet.
+   * Test of isAfterLast method, of class QueryResultSetImpl.
    */
   @Test
-  public void testIsAfterLast() throws Exception {
+  public void testIsAfterLast() {
     System.out.println("isAfterLast");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertFalse(resultSet.isAfterLast());
     resultSet.last();
     assertFalse(resultSet.isAfterLast());
@@ -518,12 +515,12 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of isFirst method, of class KBInferenceResultSet.
+   * Test of isFirst method, of class QueryResultSetImpl.
    */
   @Test
-  public void testIsFirst() throws Exception {
+  public void testIsFirst() {
     System.out.println("isFirst");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
     assertTrue(resultSet.isFirst());
     resultSet.last();
@@ -531,48 +528,48 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of isLast method, of class KBInferenceResultSet.
+   * Test of isLast method, of class QueryResultSetImpl.
    */
   @Test
-  public void testIsLast() throws Exception {
+  public void testIsLast() {
     System.out.println("isLast");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertFalse(resultSet.isLast());
     resultSet.last();
     assertTrue(resultSet.isLast());
   }
 
   /**
-   * Test of beforeFirst method, of class KBInferenceResultSet.
+   * Test of beforeFirst method, of class QueryResultSetImpl.
    */
   @Test
-  public void testBeforeFirst() throws Exception {
+  public void testBeforeFirst() {
     System.out.println("beforeFirst");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.beforeFirst();
     assertTrue(resultSet.isBeforeFirst());
   }
 
   /**
-   * Test of afterLast method, of class KBInferenceResultSet.
+   * Test of afterLast method, of class QueryResultSetImpl.
    */
   @Test
-  public void testAfterLast() throws Exception {
+  public void testAfterLast() {
     System.out.println("afterLast");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.afterLast();
     assertTrue(resultSet.isAfterLast());
   }
 
   /**
-   * Test of first method, of class KBInferenceResultSet.
+   * Test of first method, of class QueryResultSetImpl.
    */
   @Test
-  public void testFirst() throws Exception {
+  public void testFirst() throws QueryConstructionException {
     System.out.println("first");
-    q = new Query(evaluateThreeMinusOne, inferencePSC);
+    q = QueryFactory.getQuery(evaluateThreeMinusOne, inferencePSC);
     q.setMaxNumber(1);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertEquals(1, q.getAnswerCount());
     boolean result = resultSet.first();
     assertEquals(true, result);
@@ -580,55 +577,55 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of last method, of class KBInferenceResultSet.
+   * Test of last method, of class QueryResultSetImpl.
    */
   @Test
-  public void testLast() throws Exception {
+  public void testLast() throws QueryConstructionException {
     System.out.println("last");
-    q = new Query(evaluateThreeMinusOne, inferencePSC);
+    q = QueryFactory.getQuery(evaluateThreeMinusOne, inferencePSC);
     q.setMaxNumber(1);
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     boolean result = resultSet.last();
     assertEquals(true, result);
     assertEquals(1, resultSet.getRow());
   }
 
   /**
-   * Test of getRow method, of class KBInferenceResultSet.
+   * Test of getRow method, of class QueryResultSetImpl.
    */
   @Test
-  public void testGetRow() throws Exception {
+  public void testGetRow() throws QueryConstructionException {
     System.out.println("getRow");
-    q = new Query(evaluateThreeMinusOne, inferencePSC);
+    q = QueryFactory.getQuery(evaluateThreeMinusOne, inferencePSC);
     q.setMaxNumber(1);
     assertEquals(1, q.getAnswerCount());
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     int expResult = 0;
     int result = resultSet.getRow();
     assertEquals(expResult, result);
   }
 
   /**
-   * Test of absolute method, of class KBInferenceResultSet.
+   * Test of absolute method, of class QueryResultSetImpl.
    */
   @Test
-  public void testAbsolute() throws Exception {
+  public void testAbsolute() throws QueryConstructionException {
     System.out.println("absolute");
-    q = new Query(evaluateThreeMinusOne, inferencePSC);
+    q = QueryFactory.getQuery(evaluateThreeMinusOne, inferencePSC);
     q.setMaxNumber(1);
     assertEquals(1, q.getAnswerCount());
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.absolute(1));
     assertFalse(resultSet.absolute(0));
   }
 
   /**
-   * Test of relative method, of class KBInferenceResultSet.
+   * Test of relative method, of class QueryResultSetImpl.
    */
   @Test
-  public void testRelative() throws Exception {
+  public void testRelative() {
     System.out.println("relative");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     resultSet.first();
     assertTrue(resultSet.relative(2));
     assertEquals(3, resultSet.getRow());
@@ -637,12 +634,12 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of previous method, of class KBInferenceResultSet.
+   * Test of previous method, of class QueryResultSetImpl.
    */
   @Test
-  public void testPrevious() throws Exception {
+  public void testPrevious() {
     System.out.println("previous");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertTrue(resultSet.absolute(3));
     assertEquals(3, resultSet.getRow());
     assertTrue(resultSet.previous());
@@ -650,12 +647,12 @@ public class KBInferenceResultSetTest {
   }
 
   /**
-   * Test of isClosed method, of class KBInferenceResultSet.
+   * Test of isClosed method, of class QueryResultSetImpl.
    */
   @Test
-  public void testIsClosed() throws Exception {
+  public void testIsClosed() {
     System.out.println("isClosed");
-    KBInferenceResultSet resultSet = q.getResultSet();
+    QueryResultSet resultSet = q.getResultSet();
     assertFalse(resultSet.isClosed());
     resultSet.close();
     assertTrue(resultSet.isClosed());

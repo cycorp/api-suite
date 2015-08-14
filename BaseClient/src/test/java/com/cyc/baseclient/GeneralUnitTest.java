@@ -78,7 +78,7 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import com.cyc.base.inference.InferenceResultSet;
 import com.cyc.baseclient.api.CfaslInputStream;
 import com.cyc.baseclient.api.CfaslOutputStream;
@@ -102,8 +102,8 @@ import com.cyc.baseclient.kbtool.CycObjectTool;
 import com.cyc.baseclient.nl.Paraphraser;
 import com.cyc.baseclient.testing.TestConstants;
 import com.cyc.baseclient.testing.TestSentences;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import org.junit.AfterClass;
 import org.junit.Before;
 
@@ -589,23 +589,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
-   */
-  @Test
-  public void testBinaryCycAccess1() {
-    System.out.println("\n**** testBinaryCycAccess 1 ****");
-
-    //cycAccess.traceOn();
-    doTestCycAccess1(cycAccess);
-
-    System.out.println("**** testBinaryCycAccess 1 OK ****");
-  }
-
-  /**
-   * Tests a portion of the CycAccess methods using the given api connection.
    *
    * @param cycAccess the server connection handler
    */
-  protected void doTestCycAccess1(CycAccess cycAccess) {
+  @Test
+  public void testBinaryCycAccess1() {
     long startMilliseconds = System.currentTimeMillis();
 
     resetCycConstantCaches();
@@ -707,19 +695,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    */
   @Test
   public void testBinaryCycAccess2() {
-    System.out.println("\n**** testBinaryCycAccess 2 ****");
-
-    doTestCycAccess2(cycAccess);
-
-    System.out.println("**** testBinaryCycAccess 2 OK ****");
-  }
-
-  /**
-   * Tests a portion of the CycAccess methods using the given api connection.
-   *
-   * @param cycAccess the server connection handler
-   */
-  protected void doTestCycAccess2(CycAccess cycAccess) {
     long startMilliseconds = System.currentTimeMillis();
     System.out.println(cycAccess.getCycConnection().connectionInfo());
     resetCycConstantCaches();
@@ -977,14 +952,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
       phrase = p.paraphrase(dog).getString();
       assertNotNull(phrase);
-      if (cycAccess.isOpenCyc()) {
-        assertEquals("dog", phrase);
+      if (isBasicParaphraser(p)) {
+        assertEquals("Dog", phrase);
       } else {
-        if (isBasicParaphraser(p)) {
-          assertEquals("Dog", phrase);
-        } else {
-          assertEquals("Canis familiaris", phrase);
-        }
+        assertEquals("Canis familiaris", phrase);
       }
     } catch (Throwable e) {
       fail(e.toString());
@@ -1048,23 +1019,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Tests a portion of the CycAccess methods using the binary api connection.
-   */
-  @Test
-  public void testBinaryCycAccess3() {
-    System.out.println("\n**** testBinaryCycAccess 3 ****");
-
-    doTestCycAccess3(cycAccess);
-
-    // cycAccess.getLookupTool().getCycLeaseManager().removeListener(this);
-    for (Map.Entry<InputStream, LeaseManager> kv : cycAccess.getCycConnection().getCycLeaseManagerCommMap().entrySet()) {
-      kv.getValue().removeListener(this);
-    }
-
-    System.out.println("**** testBinaryCycAccess 3 OK ****");
-  }
-
-  /**
    * Notifies the listener of the given Cyc API services lease event.
    *
    * @param evt the the given Cyc API services lease event
@@ -1075,11 +1029,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Tests a portion of the CycAccess methods using the given api connection.
-   *
-   * @param cycAccess the server connection handler
+   * Tests a portion of the CycAccess methods using the binary api connection.
    */
-  protected void doTestCycAccess3(CycAccess cycAccess) {
+  @Test
+  public void testBinaryCycAccess3() {
+    System.out.println("\n**** testBinaryCycAccess 3 ****");
+
     long startMilliseconds = System.currentTimeMillis();
     resetCycConstantCaches();
 
@@ -1213,9 +1168,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertNotNull(genlSiblings);
       assertTrue(genlSiblings instanceof CycArrayList);
       genlSiblings = ((CycArrayList) genlSiblings).sort();
-      if (!cycAccess.isOpenCyc()) {
-        assertTrue(genlSiblings.toString().indexOf("JuvenileAnimal") > -1);
-      }
+      assertTrue(genlSiblings.toString().indexOf("JuvenileAnimal") > -1);
     } catch (Throwable e) {
       e.printStackTrace();
       fail(e.toString());
@@ -1380,44 +1333,37 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     assertTrue(answer);
 
+    // cycAccess.getLookupTool().getCycLeaseManager().removeListener(this);
+    for (Map.Entry<InputStream, LeaseManager> kv : cycAccess.getCycConnection().getCycLeaseManagerCommMap().entrySet()) {
+      kv.getValue().removeListener(this);
+    }
+
+    System.out.println("**** testBinaryCycAccess 3 OK ****");
   }
 
   /**
-   * Tests a portion of the CycAccess methods using the binary api connection.
+   * Tests a portion of the CycAccess methods using a CycAccess connection.
    */
   @Test
-  public void testBinaryCycAccess4() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 4 ****");
-
-    doTestCycAccess4(cycAccess);
-
-    System.out.println("**** testBinaryCycAccess 4 OK ****");
-  }
-
-  /**
-   * Tests a portion of the CycAccess methods using the given api connection.
-   *
-   * @param cycAccess the server connection handler
-   */
-  protected void doTestCycAccess4(CycAccess cycAccess) throws CycConnectionException {
+  public void testBinaryCycAccess4_1() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 4.1 ****");
     long startMilliseconds = System.currentTimeMillis();
     resetCycConstantCaches();
 
     // getCollectionLeaves.
-
-      //cycAccess.traceOnDetailed();
-      CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      List collectionLeaves = cycAccess.getLookupTool().getCollectionLeaves(animal);
-      assertNotNull(collectionLeaves);
-      assertTrue(collectionLeaves instanceof CycArrayList);
+    //cycAccess.traceOnDetailed();
+    CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    List collectionLeaves = cycAccess.getLookupTool().getCollectionLeaves(animal);
+    assertNotNull(collectionLeaves);
+    assertTrue(collectionLeaves instanceof CycArrayList);
       //cycAccess.traceOff();
 
     // getWhyGenl.
     CycList whyGenl = null;
 
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      whyGenl = cycAccess.getLookupTool().getWhyGenl(dog, animal);
+    CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
+    // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    whyGenl = cycAccess.getLookupTool().getWhyGenl(dog, animal);
 
     assertNotNull(whyGenl);
     System.out.println("whyGenl " + whyGenl);
@@ -1436,147 +1382,136 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
      }
      */
     // getWhyCollectionsIntersect.
-    
-      CycConstant domesticatedAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              DOMESTICATED_ANIMAL_GUID_STRING);
-      CycConstant nonPersonAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              NON_PERSON_ANIMAL_GUID_STRING);
-      List whyCollectionsIntersect = cycAccess.getLookupTool().getWhyCollectionsIntersect(
-              domesticatedAnimal, nonPersonAnimal);
-      assertNotNull(whyCollectionsIntersect);
-      assertTrue(whyCollectionsIntersect instanceof CycArrayList);
-      System.out.println("whyCollectionsIntersect " + whyCollectionsIntersect);
+    CycConstant domesticatedAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
+            DOMESTICATED_ANIMAL_GUID_STRING);
+    CycConstant nonPersonAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
+            NON_PERSON_ANIMAL_GUID_STRING);
+    List whyCollectionsIntersect = cycAccess.getLookupTool().getWhyCollectionsIntersect(
+            domesticatedAnimal, nonPersonAnimal);
+    assertNotNull(whyCollectionsIntersect);
+    assertTrue(whyCollectionsIntersect instanceof CycArrayList);
+    System.out.println("whyCollectionsIntersect " + whyCollectionsIntersect);
 
-      CycList expectedWhyCollectionsIntersect = cycAccess.getObjectTool().makeCycList(
-              "(((" + genls + " " + domesticatedAnimalString + " " + tameAnimal + ") :TRUE) "
-              + "((" + genls + " " + tameAnimal + " " + nonPersonAnimalString + ") :TRUE))");
+    CycList expectedWhyCollectionsIntersect = cycAccess.getObjectTool().makeCycList(
+            "(((" + genls + " " + domesticatedAnimalString + " " + tameAnimal + ") :TRUE) "
+            + "((" + genls + " " + tameAnimal + " " + nonPersonAnimalString + ") :TRUE))");
 
-      /**
-       * assertEquals(expectedWhyCollectionsIntersect.toString(),
-       * whyCollectionsIntersect.toString());
-       * assertEquals(expectedWhyCollectionsIntersect, whyCollectionsIntersect);
-       */
-    
-
+    /**
+     * assertEquals(expectedWhyCollectionsIntersect.toString(), whyCollectionsIntersect.toString());
+     * assertEquals(expectedWhyCollectionsIntersect, whyCollectionsIntersect);
+     */
     // getLocalDisjointWith.
-    
-      CycConstant vegetableMatter = cycAccess.getLookupTool().getKnownConstantByGuid(
-              VEGETABLE_MATTER_GUID_STRING);
-      List localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
-      assertNotNull(localDisjointWiths);
-      assertTrue(localDisjointWiths.toString().indexOf("AnimalBLO") > 0);
-    
+    CycConstant vegetableMatter = cycAccess.getLookupTool().getKnownConstantByGuid(
+            VEGETABLE_MATTER_GUID_STRING);
+    List localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
+    assertNotNull(localDisjointWiths);
+    assertTrue(localDisjointWiths.toString().indexOf("AnimalBLO") > 0);
 
     // areDisjoint.
-    boolean answer = true;
-
-    
-      // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
-      answer = cycAccess.getComparisonTool().areDisjoint(animal, plant);
-    
+    CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
+    boolean answer = cycAccess.getComparisonTool().areDisjoint(animal, plant);
 
     assertTrue(answer);
 
     // getMinIsas.
-    
-      CycConstant wolf = cycAccess.getLookupTool().getKnownConstantByGuid(WOLF_GUID_STRING);
-      List minIsas = cycAccess.getLookupTool().getMinIsas(wolf);
+    CycConstant wolf = cycAccess.getLookupTool().getKnownConstantByGuid(WOLF_GUID_STRING);
+    List minIsas = cycAccess.getLookupTool().getMinIsas(wolf);
 
-      CycConstant organismClassificationType = cycAccess.getLookupTool().getKnownConstantByGuid(
-              ORGANISM_CLASSIFICATION_TYPE_GUID_STRING);
-      assertTrue(minIsas.contains(organismClassificationType));
-    
+    CycConstant organismClassificationType = cycAccess.getLookupTool().getKnownConstantByGuid(
+            ORGANISM_CLASSIFICATION_TYPE_GUID_STRING);
+    assertTrue(minIsas.contains(organismClassificationType));
 
     // getInstances.
-    
-      CycConstant maleHuman = cycAccess.getLookupTool().getKnownConstantByGuid(
-              MALE_HUMAN_GUID_STRING);
-      List instances = cycAccess.getLookupTool().getInstances(maleHuman);
-      assertTrue(instances instanceof CycArrayList);
+    CycConstant maleHuman = cycAccess.getLookupTool().getKnownConstantByGuid(
+            MALE_HUMAN_GUID_STRING);
+    List instances = cycAccess.getLookupTool().getInstances(maleHuman);
+    assertTrue(instances instanceof CycArrayList);
 
-      CycConstant plato = cycAccess.getLookupTool().getKnownConstantByGuid(PLATO_GUID_STRING);
-      assertTrue(((CycArrayList) instances).contains(plato));
-    
+    CycConstant plato = cycAccess.getLookupTool().getKnownConstantByGuid(PLATO_GUID_STRING);
+    assertTrue(((CycArrayList) instances).contains(plato));
 
     // getAllIsa.
-    
       //cycAccess.traceOn();
-      // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      List allIsas = cycAccess.getLookupTool().getAllIsa(animal);
+    // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    List allIsas = cycAccess.getLookupTool().getAllIsa(animal);
 
       //System.out.println(allIsas);
-      //CycConstant organismClassificationType = cycAccess.getLookupTool().getKnownConstantByGuid(
-      //        ORGANISM_CLASSIFICATION_TYPE_GUID_STRING);
-      assertTrue(allIsas.contains(organismClassificationType));
-    
+    //CycConstant organismClassificationType = cycAccess.getLookupTool().getKnownConstantByGuid(
+    //        ORGANISM_CLASSIFICATION_TYPE_GUID_STRING);
+    assertTrue(allIsas.contains(organismClassificationType));
 
     // getAllInstances.
-    
-      if (!cycAccess.isOpenCyc()) {
-        //CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
-        List allPlants = cycAccess.getLookupTool().getAllInstances(plant);
+    long endMilliseconds = System.currentTimeMillis();
+    System.out.println(
+            "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
+    System.out.println("**** testBinaryCycAccess 4.1 OK ****");
+  }
+  
+  /**
+   * Tests a portion of the CycAccess methods using a CycAccess connection.
+   */
+  @Test
+  public void testBinaryCycAccess4_2() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 4.2 ****");
+    long startMilliseconds = System.currentTimeMillis();
+    resetCycConstantCaches();
+    CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
+    CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    boolean answer = cycAccess.getComparisonTool().areDisjoint(animal, plant);
 
-        CycConstant treatyOak = cycAccess.getLookupTool().getKnownConstantByGuid(
-                TREATY_OAK_GUID_STRING);
-        assertTrue(allPlants.contains(treatyOak));
+      // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    //CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
+    List allPlants = cycAccess.getLookupTool().getAllInstances(plant);
 
-        CycConstant burningBushOldTestament = cycAccess.getLookupTool().getKnownConstantByGuid(
-                BURNING_BUSH_GUID_STRING);
-        assertTrue(allPlants.contains(burningBushOldTestament));
-      }
-    
+    CycConstant treatyOak = cycAccess.getLookupTool().getKnownConstantByGuid(
+            TREATY_OAK_GUID_STRING);
+    assertTrue(allPlants.contains(treatyOak));
+
+    CycConstant burningBushOldTestament = cycAccess.getLookupTool().getKnownConstantByGuid(
+            BURNING_BUSH_GUID_STRING);
+    assertTrue(allPlants.contains(burningBushOldTestament));
 
     // isa.
-    
-      if (!cycAccess.isOpenCyc()) {
-        //CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
-        CycConstant treatyOak = cycAccess.getLookupTool().getKnownConstantByGuid(
-                TREATY_OAK_GUID_STRING);
-        answer = cycAccess.getInspectorTool().isa(treatyOak, plant);
-        assertTrue(answer);
+    //CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
+    answer = cycAccess.getInspectorTool().isa(treatyOak, plant);
+    assertTrue(answer);
 
-        final CycConstant term1 = cycAccess.getLookupTool().getKnownConstantByName(
-                nthSubSituationTypeOfTypeFn);
-        final CycConstant term2 = cycAccess.getLookupTool().getKnownConstantByName(
-                preparingFoodItemFn);
-        final CycConstant term3 = cycAccess.getLookupTool().getKnownConstantByName(
-                spaghettiMarinara);
-        final CycConstant term4 = cycAccess.getLookupTool().getKnownConstantByName(
-                fluidFlowComplete);
-        final CycConstant collection = cycAccess.getLookupTool().getKnownConstantByName(
-                collectionString);
-        final CycConstant mt = cycAccess.getLookupTool().getKnownConstantByName(
-                humanActivitiesMt);
-        final Nart nart1 = new NartImpl(term2, term3);
-        final CycArrayList nartList = new CycArrayList();
-        nartList.add(term1);
-        nartList.add(nart1);
-        nartList.add(term4);
-        nartList.add(2);
-        final Nart nart2 = new NartImpl(nartList);
+    final CycConstant term1 = cycAccess.getLookupTool().getKnownConstantByName(
+            nthSubSituationTypeOfTypeFn);
+    final CycConstant term2 = cycAccess.getLookupTool().getKnownConstantByName(
+            preparingFoodItemFn);
+    final CycConstant term3 = cycAccess.getLookupTool().getKnownConstantByName(
+            spaghettiMarinara);
+    final CycConstant term4 = cycAccess.getLookupTool().getKnownConstantByName(
+            fluidFlowComplete);
+    final CycConstant collection = cycAccess.getLookupTool().getKnownConstantByName(
+            collectionString);
+    final CycConstant mt = cycAccess.getLookupTool().getKnownConstantByName(
+            humanActivitiesMt);
+    final Nart nart1 = new NartImpl(term2, term3);
+    final CycArrayList nartList = new CycArrayList();
+    nartList.add(term1);
+    nartList.add(nart1);
+    nartList.add(term4);
+    nartList.add(2);
+    final Nart nart2 = new NartImpl(nartList);
 
-        //(isa? (QUOTE (NthSubSituationTypeOfTypeFn (PreparingFoodItemFn SpaghettiMarinara) FluidFlow-Complete 2)) Collection HumanActivitiesMt)
-        answer = cycAccess.getInspectorTool().isa(nart2, collection, mt);
-        assertTrue(answer);
-      }
-    
+    //(isa? (QUOTE (NthSubSituationTypeOfTypeFn (PreparingFoodItemFn SpaghettiMarinara) FluidFlow-Complete 2)) Collection HumanActivitiesMt)
+    answer = cycAccess.getInspectorTool().isa(nart2, collection, mt);
+    assertTrue(answer);
 
     // getWhyCollectionsIntersectParaphrase.
     ArrayList whyCollectionsIntersectParaphrase = null;
 
-    
-      //cycAccess.traceOn();
+    //cycAccess.traceOn();
     //  CycConstant domesticatedAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(              DOMESTICATED_ANIMAL_GUID_STRING);
     //  CycConstant nonPersonAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(              NON_PERSON_ANIMAL_GUID_STRING);
-      System.out.println("bypassing getWhyCollectionsIntersectParaphrase");
+    System.out.println("bypassing getWhyCollectionsIntersectParaphrase");
 
-      /*
-       whyCollectionsIntersectParaphrase =
-       cycAccess.getLookupTool().getWhyCollectionsIntersectParaphrase(domesticatedAnimal, nonPersonAnimal);
-       */
-    
-
+    /*
+     whyCollectionsIntersectParaphrase =
+     cycAccess.getLookupTool().getWhyCollectionsIntersectParaphrase(domesticatedAnimal, nonPersonAnimal);
+     */
     /*
      assertNotNull(whyCollectionsIntersectParaphrase);
      String oneExpectedCollectionsIntersectParaphrase =
@@ -1587,17 +1522,14 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     // getWhyGenlParaphrase.
     ArrayList whyGenlParaphrase = null;
 
-    
-      //cycAccess.traceOn();
+    //cycAccess.traceOn();
     //  CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
     //  CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      System.out.println("bypassing getWhyGenlParaphrase");
+    System.out.println("bypassing getWhyGenlParaphrase");
 
-      /*
-       whyGenlParaphrase = cycAccess.getLookupTool().getWhyGenlParaphrase(dog, animal);
-       */
-    
-
+    /*
+     whyGenlParaphrase = cycAccess.getLookupTool().getWhyGenlParaphrase(dog, animal);
+     */
     /*
      assertNotNull(whyGenlParaphrase);
      String oneExpectedGenlParaphrase =
@@ -1612,6 +1544,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
+    System.out.println("**** testBinaryCycAccess 4.2 OK ****");
   }
 
   @Test
@@ -1628,24 +1561,13 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       fail(e.toString());
     }
   }
-
-  /**
-   * Tests a portion of the CycAccess methods using the binary api connection.
-   */
-  @Test
-  public void testBinaryCycAccess5() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 5 ****");
-
-    doTestCycAccess5(cycAccess);
-    System.out.println("**** testBinaryCycAccess 5 OK ****");
-  }
-
+  
   /**
    * Tests a portion of the CycAccess methods using the given api connection.
-   *
-   * @param cycAccess the server connection handler
    */
-  protected void doTestCycAccess5(CycAccess cycAccess) throws CycConnectionException {
+  @Test
+  public void testBinaryCycAccess5_1() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 5.1 ****");
     long startMilliseconds = System.currentTimeMillis();
     resetCycConstantCaches();
 
@@ -1811,132 +1733,120 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       fail(e.toString());
     }
 
-    // executeQuery
-    
-    if (!cycAccess.isOpenCyc()) {
-      FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(WHAT_IS_IN_AUSTIN_STRING);
-      mt = (CycConstantImpl) EVERYTHING_PSC;
-
-      InferenceParameters queryProperties = new DefaultInferenceParameters(
-              cycAccess);
-      InferenceResultSet response = cycAccess.getInferenceTool().executeQuery(query,
-              cycAccess.getObjectTool().makeELMt(mt), queryProperties, 20000);
-      assertNotNull(response);
-
-      //System.out.println("query: " + query + "\n  response: " + response);
-      //queryProperties.setMaxNumber(4);
-      queryProperties.put(makeCycSymbol(":max-time"), 30);
-      response = cycAccess.getInferenceTool().executeQuery(query, cycAccess.getObjectTool().makeELMt(mt),
-              queryProperties, 20000);
-      //System.out.println("query: " + query + "\n  response: " + response);  
-      assertTrue(response.getCurrentRowCount() > 0);
-      
-      CycConstant cycorp = cycAccess.getLookupTool().getKnownConstantByName("#$Cycorp");
-      
-      boolean findCycorp = false;
-      while (response.next()) {
-        try {
-          CycConstant res = response.getConstant("?WHAT");
-          if (res.equals(cycorp)) {
-            findCycorp = true;
-          }
-        } catch (Exception ex) {
-
-        }
-      }
-      
-      assertTrue("Could not find Cycorp in Austin.", findCycorp);
-    }
-    
-
-    // executeQuery with query pragma
-    if (!cycAccess.isOpenCyc()) {
-      FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(WHAT_IS_IN_AUSTIN_STRING);
-      mt = (CycConstantImpl) EVERYTHING_PSC;
-
-      InferenceParameters queryProperties = new DefaultInferenceParameters(
-              cycAccess);
-      queryProperties.put(CycObjectFactory.makeCycSymbol(":non-explanatory-sentence"),
-              cycAccess.getObjectTool().makeCycSentence(TestSentences.UNKNOWN_SENTENCE_FOOD_ORG.cyclify()));
-      InferenceResultSet response = cycAccess.getInferenceTool().executeQuery(query,
-              cycAccess.getObjectTool().makeELMt(mt), queryProperties, 20000);
-      assertNotNull(response);
-    }
-
-    // askWithVariable
-    if (!cycAccess.isOpenCyc()) {
-      FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(
-              WHAT_IS_IN_AUSTIN_STRING);
-      CycVariable variable = makeCycVariable("?WHAT");
-      mt = (CycConstantImpl) CommonConstants.EVERYTHING_PSC;
-      InferenceParameters queryProperties = new DefaultInferenceParameters(
-              cycAccess);
-      CycList response = cycAccess.getInferenceTool().queryVariable(variable, query, mt,
-              queryProperties);
-      assertNotNull(response);
-      assertTrue(response.contains(cycAccess.getLookupTool().getConstantByName(
-              UT_AUSTIN.cyclify())));
-    }
-
-    // askWithVariables
-    if (!cycAccess.isOpenCyc()) {
-      FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(
-              TestSentences.OBJECT_FOUND_WHAT_WHERE.cyclify());
-      CycArrayList variables = new CycArrayList();
-      variables.add(makeCycVariable("?WHAT"));
-      variables.add(makeCycVariable("?WHERE"));
-      InferenceParameters queryProperties = new DefaultInferenceParameters(
-              cycAccess);
-      CycConstant universeDataMt = cycAccess.getLookupTool().getKnownConstantByGuid(
-              UNIVERSE_DATA_MT_GUID_STRING);
-      CycList response = cycAccess.getInferenceTool().queryVariables(variables, query,
-              universeDataMt, queryProperties);
-      assertNotNull(response);
-    }
-
-    // isQueryTrue
-    if (!cycAccess.isOpenCyc()) {
-      //cycAccess.traceOn();
-      FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(
-              UT_AUSTIN_IN_AUSTIN.cyclify()
-      );
-      mt = (CycConstantImpl) EVERYTHING_PSC;
-      InferenceParameters queryProperties = new DefaultInferenceParameters(
-              cycAccess);
-      assertTrue(cycAccess.getInferenceTool().isQueryTrue(query, mt, queryProperties));
-      query = cycAccess.getObjectTool().makeCycSentence(
-              UT_AUSTIN_IN_HOUSTON.cyclify());
-      assertTrue(!cycAccess.getInferenceTool().isQueryTrue(query, mt, queryProperties));
-    }
-
     // countAllInstances
     CycConstant country = cycAccess.getLookupTool().getKnownConstantByGuid(COUNTRY_GUID_STRING);
     CycConstant worldGeographyMt = cycAccess.getLookupTool().getKnownConstantByGuid(
             WORLD_GEOGRAPHY_MT_GUID_STRING);
     assertTrue(cycAccess.getInspectorTool().countAllInstances(country, worldGeographyMt) > 0);
+    System.out.println("**** testBinaryCycAccess 5.1 OK ****");
+  }
+  
+  /**
+   * Tests a portion of the CycAccess methods using the binary api connection.
+   */
+  @Test
+  public void testBinaryCycAccess5_2() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 5.2 ****");
+    long startMilliseconds = System.currentTimeMillis();
+    resetCycConstantCaches();
+    // executeQuery
+    FormulaSentence query1 = cycAccess.getObjectTool().makeCycSentence(WHAT_IS_IN_AUSTIN_STRING);
+    CycConstant mt = (CycConstantImpl) EVERYTHING_PSC;
+
+    InferenceParameters queryProperties1 = new DefaultInferenceParameters(
+            cycAccess);
+    InferenceResultSet response1 = cycAccess.getInferenceTool().executeQuery(query1,
+            cycAccess.getObjectTool().makeELMt(mt), queryProperties1, 20000);
+    assertNotNull(response1);
+
+      //System.out.println("query: " + query + "\n  response: " + response);
+    //queryProperties.setMaxNumber(4);
+    queryProperties1.put(":max-time", 30);
+    response1 = cycAccess.getInferenceTool().executeQuery(query1, cycAccess.getObjectTool().makeELMt(mt),
+            queryProperties1, 20000);
+    //System.out.println("query: " + query + "\n  response: " + response);  
+    assertTrue(response1.getCurrentRowCount() > 0);
+
+    CycConstant cycorp = cycAccess.getLookupTool().getKnownConstantByName("#$Cycorp");
+
+    boolean findCycorp = false;
+    while (response1.next()) {
+      try {
+        CycConstant res = response1.getConstant("?WHAT");
+        if (res.equals(cycorp)) {
+          findCycorp = true;
+        }
+      } catch (Exception ex) {
+
+      }
+    }
+
+    assertTrue("Could not find Cycorp in Austin.", findCycorp);
+
+    // executeQuery with query pragma
+    FormulaSentence query2 = cycAccess.getObjectTool().makeCycSentence(WHAT_IS_IN_AUSTIN_STRING);
+    mt = (CycConstantImpl) EVERYTHING_PSC;
+
+    InferenceParameters queryProperties2 = new DefaultInferenceParameters(
+            cycAccess);
+    queryProperties2.put(":non-explanatory-sentence",
+            cycAccess.getObjectTool().makeCycSentence(TestSentences.UNKNOWN_SENTENCE_FOOD_ORG.cyclify()));
+    InferenceResultSet response2 = cycAccess.getInferenceTool().executeQuery(query2,
+            cycAccess.getObjectTool().makeELMt(mt), queryProperties2, 20000);
+    assertNotNull(response2);
+
+    // askWithVariable
+    FormulaSentence query3 = cycAccess.getObjectTool().makeCycSentence(
+            WHAT_IS_IN_AUSTIN_STRING);
+    CycVariable variable = makeCycVariable("?WHAT");
+    mt = (CycConstantImpl) CommonConstants.EVERYTHING_PSC;
+    InferenceParameters queryProperties3 = new DefaultInferenceParameters(
+            cycAccess);
+    CycList response3 = cycAccess.getInferenceTool().queryVariable(variable, query3, mt,
+            queryProperties3);
+    assertNotNull(response3);
+    assertTrue(response3.contains(cycAccess.getLookupTool().getConstantByName(
+            UT_AUSTIN.cyclify())));
+
+    // askWithVariables
+    FormulaSentence query4 = cycAccess.getObjectTool().makeCycSentence(
+            TestSentences.OBJECT_FOUND_WHAT_WHERE.cyclify());
+    CycArrayList variables = new CycArrayList();
+    variables.add(makeCycVariable("?WHAT"));
+    variables.add(makeCycVariable("?WHERE"));
+    InferenceParameters queryProperties4 = new DefaultInferenceParameters(
+            cycAccess);
+    CycConstant universeDataMt = cycAccess.getLookupTool().getKnownConstantByGuid(
+            UNIVERSE_DATA_MT_GUID_STRING);
+    CycList response4 = cycAccess.getInferenceTool().queryVariables(variables, query4,
+            universeDataMt, queryProperties4);
+    assertNotNull(response4);
+
+      // isQueryTrue
+    //cycAccess.traceOn();
+    FormulaSentence query5 = cycAccess.getObjectTool().makeCycSentence(
+            UT_AUSTIN_IN_AUSTIN.cyclify()
+    );
+    mt = (CycConstantImpl) EVERYTHING_PSC;
+    InferenceParameters queryProperties5 = new DefaultInferenceParameters(
+            cycAccess);
+    assertTrue(cycAccess.getInferenceTool().isQueryTrue(query5, mt, queryProperties5));
+    query5 = cycAccess.getObjectTool().makeCycSentence(
+            UT_AUSTIN_IN_HOUSTON.cyclify());
+    assertTrue(!cycAccess.getInferenceTool().isQueryTrue(query5, mt, queryProperties5));
 
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
   }
-
+  
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
-   */
-  @Test
-  public void testBinaryCycAccess6() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 6 ****");
-
-    doTestCycAccess6(cycAccess);
-    System.out.println("**** testBinaryCycAccess 6 OK ****");
-  }
-
-  /**
-   * Tests a portion of the CycAccess methods using the given api connection.
    *
    * @param cycAccess the server connection handler
    */
-  protected void doTestCycAccess6(CycAccess cycAccess) throws CycConnectionException {
+  @Test
+  public void testBinaryCycAccess6() throws CycConnectionException {
     long startMilliseconds = System.currentTimeMillis();
 
     // Test sending a constant to Cyc.
@@ -1948,9 +1858,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertNotNull(obj);
     assertTrue(obj instanceof CycConstantImpl);
     assertEquals(obj, COLLECTION);
-
+    
     // Test isBackchainRequired, isBackchainEncouraged, isBackchainDiscouraged, isBackchainForbidden
-    if (!cycAccess.isOpenCyc()) {
       CycConstant keRequirement = cycAccess.getLookupTool().getKnownConstantByGuid(
               KE_REQUIREMENT_GUID_STRING);
       assertTrue(cycAccess.getInspectorTool().isBackchainRequired(keRequirement, BASE_KB));
@@ -1964,7 +1873,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(!cycAccess.getInspectorTool().isBackchainEncouraged(nearestIsa, BASE_KB));
       assertTrue(!cycAccess.getInspectorTool().isBackchainDiscouraged(nearestIsa, BASE_KB));
       assertTrue(cycAccess.getInspectorTool().isBackchainForbidden(nearestIsa, BASE_KB));
-    }
 
     // isWellFormedFormula
     assertTrue(cycAccess.getInspectorTool().isWellFormedFormula(cycAccess.getObjectTool().makeCycSentence(
@@ -1989,18 +1897,17 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     // hasSomePredicateUsingTerm
     if (!cycAccess.isOpenCyc()) {
+      // TODO: rewrite this without #$CIAWorldFactbook1995Mt
       CycConstant algeria = cycAccess.getLookupTool().getKnownConstantByGuid(
               ALGERIA_GUID_STRING);
       CycConstant percentOfRegionIs = cycAccess.getLookupTool().getKnownConstantByGuid(
               PERCENT_OF_REGION_IS_GUID_STRING);
-      CycConstant ciaWorldFactbook1995Mt = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CIA_WORLD_FACTBOOK_1995_MT_GUID_STRING);
-
+      
       assertTrue(cycAccess.getLookupTool().hasSomePredicateUsingTerm(
               percentOfRegionIs,
               algeria,
               1,
-              ciaWorldFactbook1995Mt));
+              CIA_WORLD_FACTBOOK_1995_MT));
 
       assertTrue(cycAccess.getLookupTool().hasSomePredicateUsingTerm(
               percentOfRegionIs,
@@ -2011,7 +1918,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               percentOfRegionIs,
               algeria,
               2,
-              ciaWorldFactbook1995Mt));
+              CIA_WORLD_FACTBOOK_1995_MT));
     }
 
     // Test common constants.
@@ -2057,31 +1964,18 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    *
    * TODO associated the Cyc user state with the java client uuid, then put
    * these tests back.
+   * 
+   * N O T E be sure that the test system is clean of the special symbols
+   * introduced in the test. E.G. MY-MACRO, A, B, C
    */
   @Test
   public void testBinaryCycAccess7() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 7 ****");
-    doTestCycAccess7(cycAccess);
-    System.out.println("**** testBinaryCycAccess 7 OK ****");
-  }
-
-  /**
-   * Tests a portion of the CycAccess methods using the given api connection.
-   *
-   * N O T E be sure that the test system is clean of the special symbols
-   * introduced in the test. E.G. MY-MACRO, A, B, C
-   *
-   *
-   * @param cycAccess the server connection handler
-   */
-  protected void doTestCycAccess7(CycAccess cycAccess) throws CycConnectionException {
     long startMilliseconds = System.currentTimeMillis();
     resetCycConstantCaches();
 
     //cycAccess.traceOn();
     // SubL scripts
 
-      if (!cycAccess.isOpenCyc()) {
         //cycAccess.traceNamesOn();
         String script = null;
         // Java ByteArray  and SubL byte-vector are used only in the binary api.
@@ -2104,9 +1998,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         command1.add(quote);
         command1.add(myByteArray);
         assertTrue(cycAccess.converse().converseBoolean(command));
-      }
-      String script;
-      Object responseObject;
+        
       CycList responseList;
       String responseString;
       boolean responseBoolean;
@@ -2148,7 +2040,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
        * method removes the effect of CSETQ if setting a new variable.
        *
        */
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq a '(1 " + dog + " " + plant + " ))";
         cycAccess.converse().converseVoid(script);
         script = "(symbol-value 'a)";
@@ -2203,26 +2094,21 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
         script = "(clet (a b) \n" + "  (csetq a '(1 2 3)) \n" + "  (csetq b (cpop a)) \n" + "  (list a b))";
         testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((2 3) (2 3))"));
-      }
 
       // boundp
-      if (!cycAccess.isOpenCyc()) {
         final Random random = new Random();
         CycSymbolImpl symbol = makeCycSymbol(
                 "test-symbol-for-value-binding" + random.nextInt());
         assertTrue(!cycAccess.converse().converseBoolean("(boundp '" + symbol + ")"));
         cycAccess.converse().converseVoid("(csetq " + symbol + " nil)");
         assertTrue(cycAccess.converse().converseBoolean("(boundp '" + symbol + ")"));
-      }
 
       // fi-get-parameter
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq my-parm '(2 " + dog + " " + plant + " ))";
         cycAccess.converse().converseVoid(script);
         script = "(fi-get-parameter 'my-parm)";
         testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
                 "(2 " + dog + " " + plant + " )"));
-      }
 
       // eval
       script = "(eval '(csetq a 4))";
@@ -2270,7 +2156,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       script = "(multiple-value-list (floor 5 3))";
       testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
 
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq answer nil)";
         testObjectScript(cycAccess, script, nil);
 
@@ -2297,7 +2182,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         testListScript(
                 cycAccess, script, cycAccess.getObjectTool().makeCycList(
                         "(" + brazil + " " + dog + " (" + brazil + " " + dog + ") 0)"));
-      }
 
       // arithmetic
       script = "(add1 2)";
@@ -2390,7 +2274,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(responseBoolean);
 
       // conditional sequencing
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq answer nil)";
         testObjectScript(cycAccess, script, nil);
         script = "(pcond ((eq 0 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
@@ -2506,10 +2389,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         responseString = cycAccess.converse().converseString(script);
         assertEquals("clause 1 true",
                 responseString);
-      }
 
       // iteration
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq answer nil)";
         testObjectScript(cycAccess, script, nil);
 
@@ -2543,7 +2424,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         assertEquals(nil, cycAccess.converse().converseObject(script));
         script = "(symbol-value 'answer)";
         testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(4 3 2 1)"));
-      }
 
       // mapping
       script = "(mapcar #'list '(a b c))";
@@ -2556,7 +2436,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       script = "(mapcar #'eq '(a b c) '(d b f))";
       testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(nil t nil)"));
 
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq answer nil)";
         testObjectScript(cycAccess, script, nil);
 
@@ -2624,7 +2503,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         responseList = cycAccess.converse().converseList(script);
         assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
                 "(" + france + " " + paris + " (1 2))")));
-      }
 
       // ccatch and throw
       script = "(define my-super () \n" + "  (clet (result) \n" + "    (ccatch :abort \n"
@@ -2646,12 +2524,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       testObjectScript(cycAccess, script, "protected");
 
       // get-environment
-      if (!cycAccess.isOpenCyc()) {
         script = "(csetq a nil)";
         testObjectScript(cycAccess, script, nil);
         script = "(csetq b -1)";
         testObjectScript(cycAccess, script, -1);
-      }
 
       // cdestructuring-bind
       script = "(cdestructuring-bind () '() (print 'foo))";
@@ -2709,7 +2585,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertEquals(responseList, cycAccess.getObjectTool().makeCycList(
               "((1 2 :D 4 :E 3) 1 2 (:D 4 :E 3) 3 NIL)"));
 
-      if (!cycAccess.isOpenCyc()) {
         // type testing
         script = "(csetq a 1)";
         testObjectScript(cycAccess, script, 1);
@@ -2863,7 +2738,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         assertTrue(cycAccess.converse().converseBoolean(script));
 
         // empty list is treated the same as nil.
-        CycArrayList command = new CycArrayList();
+        command = new CycArrayList();
         command.add(makeCycSymbol("csetq"));
         command.add(makeCycSymbol("a"));
         command.add(new CycArrayList());
@@ -2886,7 +2761,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         assertTrue(cycAccess.converse().converseBoolean(script));
         script = "(null a)";
         assertTrue(cycAccess.converse().converseBoolean(script));
-      }
 
 
       /*
@@ -2920,8 +2794,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests a portion of the CycAccess methods using the binary api connection.
    */
   @Test
-  public void testBinaryCycAccess8() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 8 ****");
+  public void testBinaryCycAccess8_1() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 8.1 ****");
 
     long startMilliseconds = System.currentTimeMillis();
 
@@ -2935,53 +2809,62 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     CycList responseList = cycAccess.converse().converseList(script);
     assertEquals(cycAccess.getObjectTool().makeCycList("(nil 1)"), responseList);
 
-    if (!cycAccess.isOpenCyc()) {
-      // rkfPhraseReader
-      Fort rkfEnglishLexicalMicrotheoryPsc = cycAccess.getLookupTool().getKnownConstantByGuid(ENGLISHMT_GUID_STRING);
-      String text = "penguins";
-      final CycClient cycClient = CycClientManager.getClientManager().fromCycAccess(cycAccess);
-      CycList parseExpressions = cycClient.getRKFTool().rkfPhraseReader(
-              text,
-              rkfEnglishLexicalMicrotheoryPsc,
-              (Fort) INFERENCE_PSC);
-      CycArrayList parseExpression = (CycArrayList) parseExpressions.first();
-      CycArrayList spanExpression = (CycArrayList) parseExpression.first();
-      CycArrayList terms = (CycArrayList) parseExpression.second();
+    long endMilliseconds = System.currentTimeMillis();
+    System.out.println(
+            "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
+  }
+  
+  @Test
+  public void testBinaryCycAccess8_2() throws CycConnectionException, CycApiException, OpenCycUnsupportedFeatureException {
+    System.out.println("\n**** testBinaryCycAccess 8.2 ****");
+    assumeNotOpenCyc();
+    long startMilliseconds = System.currentTimeMillis();
 
-      // #$Penguin
-      Fort penguin = cycAccess.getLookupTool().getKnownConstantByGuid(PENGUIN_GUID_STRING);
-      assertTrue(terms.contains(penguin));
+    // rkfPhraseReader
+    Fort rkfEnglishLexicalMicrotheoryPsc = cycAccess.getLookupTool().getKnownConstantByGuid(ENGLISHMT_GUID_STRING);
+    String text = "penguins";
+    final CycClient cycClient = CycClientManager.getClientManager().fromCycAccess(cycAccess);
+    CycList parseExpressions = cycClient.getRKFTool().rkfPhraseReader(
+            text,
+            rkfEnglishLexicalMicrotheoryPsc,
+            (Fort) INFERENCE_PSC);
+    CycArrayList parseExpression = (CycArrayList) parseExpressions.first();
+    CycArrayList spanExpression = (CycArrayList) parseExpression.first();
+    CycArrayList terms = (CycArrayList) parseExpression.second();
 
-      // #$PittsburghPenguins
-      Fort pittsburghPenguins = cycAccess.getLookupTool().getKnownConstantByGuid(
-              PITTSBURGH_PENGUINS_GUID_STRING);
-      assertTrue(terms.contains(pittsburghPenguins));
+    // #$Penguin
+    Fort penguin = cycAccess.getLookupTool().getKnownConstantByGuid(PENGUIN_GUID_STRING);
+    assertTrue(terms.contains(penguin));
 
-      // generateDisambiguationPhraseAndTypes
-      CycArrayList objects = new CycArrayList();
-      objects.add(penguin);
-      objects.add(pittsburghPenguins);
+    // #$PittsburghPenguins
+    Fort pittsburghPenguins = cycAccess.getLookupTool().getKnownConstantByGuid(
+            PITTSBURGH_PENGUINS_GUID_STRING);
+    assertTrue(terms.contains(pittsburghPenguins));
 
-      CycList disambiguationExpression = cycAccess.getObjectTool().generateDisambiguationPhraseAndTypes(
-              objects);
-      System.out.println(
-              "disambiguationExpression\n" + disambiguationExpression);
-      assertEquals(2, disambiguationExpression.size());
+    // generateDisambiguationPhraseAndTypes
+    CycArrayList objects = new CycArrayList();
+    objects.add(penguin);
+    objects.add(pittsburghPenguins);
 
-      CycArrayList penguinDisambiguationExpression = (CycArrayList) disambiguationExpression.first();
-      System.out.println(
-              "penguinDisambiguationExpression\n" + penguinDisambiguationExpression);
-      assertTrue(penguinDisambiguationExpression.contains("penguin"));
+    CycList disambiguationExpression = cycAccess.getObjectTool().generateDisambiguationPhraseAndTypes(
+            objects);
+    System.out.println(
+            "disambiguationExpression\n" + disambiguationExpression);
+    assertEquals(2, disambiguationExpression.size());
 
-      CycArrayList pittsburghPenguinDisambiguationExpression
-              = (CycArrayList) disambiguationExpression.second();
-      System.out.println(
-              "pittsburghPenguinDisambiguationExpression\n" + pittsburghPenguinDisambiguationExpression);
-      assertTrue(pittsburghPenguinDisambiguationExpression.contains(
-              "the Pittsburgh Penguins"));
-      assertTrue(pittsburghPenguinDisambiguationExpression.contains(
-              "ice hockey team"));
-    }
+    CycArrayList penguinDisambiguationExpression = (CycArrayList) disambiguationExpression.first();
+    System.out.println(
+            "penguinDisambiguationExpression\n" + penguinDisambiguationExpression);
+    assertTrue(penguinDisambiguationExpression.contains("penguin"));
+
+    CycArrayList pittsburghPenguinDisambiguationExpression
+            = (CycArrayList) disambiguationExpression.second();
+    System.out.println(
+            "pittsburghPenguinDisambiguationExpression\n" + pittsburghPenguinDisambiguationExpression);
+    assertTrue(pittsburghPenguinDisambiguationExpression.contains(
+            "the Pittsburgh Penguins"));
+    assertTrue(pittsburghPenguinDisambiguationExpression.contains(
+            "ice hockey team"));
 
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
@@ -3052,9 +2935,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(cycAccess.getInspectorTool().isGenlInverseOf(siblings, siblings));
 
       // isGenlMtOf
-      if (!cycAccess.isOpenCyc()) {
         assertTrue(cycAccess.getInspectorTool().isGenlMtOf(BASE_KB, biologyVocabularyMt));
-      }
 
       /*
        // tests proper receipt of narts from the server.
@@ -3193,7 +3074,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertEquals(11, ((String) third).length());
 
       // isFormulaWellFormed
-      if (!cycAccess.isOpenCyc()) {
         FormulaSentence formula1 = cycAccess.getObjectTool().makeCycSentence(
                 "(" + isa + " " + brazil + " " + independentCountry + ")");
         CycConstant mt = cycAccess.getLookupTool().getKnownConstantByName(
@@ -3202,7 +3082,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         FormulaSentence formula2 = cycAccess.getObjectTool().makeCycSentence(
                 "(" + genls + " " + brazil + " " + collectionString + ")");
         assertTrue(!cycAccess.getInspectorTool().isFormulaWellFormed(formula2, mt));
-      }
 
       // isCycLNonAtomicReifableTerm
       Naut formula3 = cycAccess.getObjectTool().makeCycNaut(
@@ -3245,9 +3124,69 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println("\n**** testBinaryCycAccess 11 ****");
     resetCaches();
     try {
-      if (!cycAccess.isOpenCyc()) {
-        doTestCycAccess11(cycAccess);
+
+      long startMilliseconds = System.currentTimeMillis();
+
+      try {
+        String script = "(+ 1 2)";
+        int answer = cycAccess.converse().converseInt(script);
+        assertEquals(3, answer);
+      } catch (Throwable e) {
+        e.printStackTrace();
+        fail(e.toString());
       }
+//    cycAccess.getLookupTool().getCycLeaseManager().setLeaseDurationMilliseconds(100000);
+//    cycAccess.getLookupTool().getCycLeaseManager().immediatelyRenewLease();
+
+      System.out.println("Concurrent API requests.");
+
+      ArrayList apiRequestors = new ArrayList();
+
+      apiRequestors.add(new LongApiRequestor(cycAccess));
+      for (int i = 1; i < 8; i++) {
+        apiRequestors.add(new ShortApiRequestor(cycAccess));
+      }
+
+      int iterationsUntilCancel = 10;
+      boolean isCancelled = false;
+      while (true) {
+        boolean apiRequestorTheadRunning = false;
+
+        try {
+          Thread.sleep(3000);
+        } catch (InterruptedException e) {
+          break;
+        }
+
+        System.out.println("-----------------------");
+        for (int i = 0; i < apiRequestors.size(); i++) {
+          final ApiRequestor apiRequestor = (ApiRequestor) apiRequestors.get(i);
+
+          if (!apiRequestor.done) {
+            apiRequestorTheadRunning = true;
+
+            if ((iterationsUntilCancel-- < 0) && apiRequestor instanceof LongApiRequestor && !isCancelled) {
+              System.out.println("Cancelling " + apiRequestor.name);
+              isCancelled = true;
+              try {
+                apiRequestor.cancel();
+              } catch (Throwable e) {
+                e.printStackTrace();
+                fail(e.getMessage());
+              }
+            }
+          }
+        }
+
+        if (!apiRequestorTheadRunning) {
+          break;
+        }
+      }
+
+      long endMilliseconds = System.currentTimeMillis();
+      System.out.println(
+              "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
+
     } catch (Throwable e) {
       e.printStackTrace();
       fail(e.toString());
@@ -3258,75 +3197,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       kv.getValue().removeAllListeners();
     }
     System.out.println("**** testBinaryCycAccess 11 OK ****");
-  }
-
-  /**
-   * Tests a portion of the CycAccess methods using the given api connection.
-   *
-   * @param cycAccess the server connection handler
-   */
-  protected void doTestCycAccess11(CycAccess cycAccess) {
-    long startMilliseconds = System.currentTimeMillis();
-
-    try {
-      String script = "(+ 1 2)";
-      int answer = cycAccess.converse().converseInt(script);
-      assertEquals(3, answer);
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
-//    cycAccess.getLookupTool().getCycLeaseManager().setLeaseDurationMilliseconds(100000);
-//    cycAccess.getLookupTool().getCycLeaseManager().immediatelyRenewLease();
-
-    System.out.println("Concurrent API requests.");
-
-    ArrayList apiRequestors = new ArrayList();
-
-    apiRequestors.add(new LongApiRequestor(cycAccess));
-    for (int i = 1; i < 8; i++) {
-      apiRequestors.add(new ShortApiRequestor(cycAccess));
-    }
-
-    int iterationsUntilCancel = 10;
-    boolean isCancelled = false;
-    while (true) {
-      boolean apiRequestorTheadRunning = false;
-
-      try {
-        Thread.sleep(3000);
-      } catch (InterruptedException e) {
-        break;
-      }
-
-      System.out.println("-----------------------");
-      for (int i = 0; i < apiRequestors.size(); i++) {
-        final ApiRequestor apiRequestor = (ApiRequestor) apiRequestors.get(i);
-
-        if (!apiRequestor.done) {
-          apiRequestorTheadRunning = true;
-
-          if ((iterationsUntilCancel-- < 0) && apiRequestor instanceof LongApiRequestor && !isCancelled) {
-            System.out.println("Cancelling " + apiRequestor.name);
-            isCancelled = true;
-            try {
-              apiRequestor.cancel();
-            } catch (Throwable e) {
-              e.printStackTrace();
-              fail(e.getMessage());
-            }
-          }
-        }
-      }
-
-      if (!apiRequestorTheadRunning) {
-        break;
-      }
-    }
-
-    long endMilliseconds = System.currentTimeMillis();
-    System.out.println(
-            "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
   }
 
   private void testListScript(CycAccess cycAccess, String script,
@@ -3539,174 +3409,172 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests a portion of the CycAccess methods using the binary api connection.
    */
   @Test
-  public void testBinaryCycAccess13() throws CycConnectionException {
+  public void testBinaryCycAccess13_1() throws CycConnectionException {
     System.out.println("\n**** testBinaryCycAccess 13 ****");
+    // NART case
+    {
+      //cycAccess.traceNamesOn();
+      final String elmtString = AZERI_LANGUAGE_LEXICAL_MT.cyclify();
+      final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
+      final ELMt hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
+      assertNotNull(hlmtObject);
+      assertTrue(hlmtObject instanceof NartImpl);
+      assertEquals(elmtString, hlmtObject.cyclify());
+    }
 
-    if (!(cycAccess.isOpenCyc())) {
-      // NART case
-      {
-        //cycAccess.traceNamesOn();
-        final String elmtString = AZERI_LANGUAGE_LEXICAL_MT.cyclify();
-        final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
-        final ELMt hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
-        assertNotNull(hlmtObject);
-        assertTrue(hlmtObject instanceof NartImpl);
-        assertEquals(elmtString, hlmtObject.cyclify());
-      }
+    // NAUT case
+    {
+      final String elmtString = MT_SPACE_TIME_NOW.cyclify();
+      final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
+      final ELMt hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
+      assertNotNull(hlmtObject);
+      assertTrue(hlmtObject instanceof Naut);
+      assertEquals(elmtString, hlmtObject.cyclify());
+    }
 
-      // NAUT case
-      {
-        final String elmtString = MT_SPACE_TIME_NOW.cyclify();
-        final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
-        final ELMt hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
-        assertNotNull(hlmtObject);
-        assertTrue(hlmtObject instanceof Naut);
-        assertEquals(elmtString, hlmtObject.cyclify());
-      }
+    // Constant case
+    {
+      final String elmtString = MT_SPACE_TIME_ALWAYS.cyclify();
+      final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
+      final ELMt hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
+      assertNotNull(hlmtObject);
+      assertTrue(hlmtObject instanceof CycConstantImpl);
+      assertEquals("#$BaseKB", hlmtObject.cyclify());
+    }
 
-      // Constant case
-      {
-        final String elmtString = MT_SPACE_TIME_ALWAYS.cyclify();
-        final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
-        final ELMt hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
-        assertNotNull(hlmtObject);
-        assertTrue(hlmtObject instanceof CycConstantImpl);
-        assertEquals("#$BaseKB", hlmtObject.cyclify());
-      }
-
-      // Nonsense case
-      {
-        final String elmtString = "(" + plusFn + " 1 1)";
-        final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
-        final CycObject hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
-        assertNotNull(hlmtObject);
-        assertTrue(hlmtObject instanceof Naut);
-        assertEquals(elmtString,
-                hlmtObject.cyclify());
-      }
+    // Nonsense case
+    {
+      final String elmtString = "(" + plusFn + " 1 1)";
+      final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
+      final CycObject hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
+      assertNotNull(hlmtObject);
+      assertTrue(hlmtObject instanceof Naut);
+      assertEquals(elmtString,
+              hlmtObject.cyclify());
     }
 
     // makeELMt
+    // NART case
+    String elmtString = AZERI_LANGUAGE_LEXICAL_MT.cyclify();
+    Naut naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
+    ELMt elmt = cycAccess.getObjectTool().makeELMt(naut);
+    assertNotNull(elmt);
+    assertTrue(elmt instanceof Nart);
+    assertEquals(elmtString, elmt.cyclify());
 
-      if (!(cycAccess.isOpenCyc())) {
-        // NART case
-        String elmtString = AZERI_LANGUAGE_LEXICAL_MT.cyclify();
-        Naut naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
-        ELMt elmt = cycAccess.getObjectTool().makeELMt(naut);
-        assertNotNull(elmt);
-        assertTrue(elmt instanceof Nart);
-        assertEquals(elmtString, elmt.cyclify());
+    // Nonsense case
+    elmtString = "(" + plusFn + " 1 1)";
+    naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
+    elmt = cycAccess.getObjectTool().makeELMt(naut);
+    assertNotNull(elmt);
+    assertTrue(elmt instanceof Naut);
+    assertEquals(elmtString, elmt.cyclify());
 
-        // Nonsense case
-        elmtString = "(" + plusFn + " 1 1)";
-        naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
-        elmt = cycAccess.getObjectTool().makeELMt(naut);
-        assertNotNull(elmt);
-        assertTrue(elmt instanceof Naut);
-        assertEquals(elmtString, elmt.cyclify());
-
-        // Constant case
-        elmtString = BASE_KB.toString();
-        Fort baseKB = cycAccess.getLookupTool().getKnownConstantByName(elmtString);
-        elmt = cycAccess.getObjectTool().makeELMt(baseKB);
-        assertNotNull(elmt);
-        assertTrue(elmt instanceof CycConstantImpl);
-        assertEquals(elmtString, elmt.toString());
-      }
+    // Constant case
+    elmtString = BASE_KB.toString();
+    Fort baseKB = cycAccess.getLookupTool().getKnownConstantByName(elmtString);
+    elmt = cycAccess.getObjectTool().makeELMt(baseKB);
+    assertNotNull(elmt);
+    assertTrue(elmt instanceof CycConstantImpl);
+    assertEquals(elmtString, elmt.toString());
+  }
+      
+  @Test
+  public void testBinaryCycAccess13_2() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 13 ****");
 
     // getHLCycTerm
-      Object obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("1");
-      assertTrue(obj instanceof Integer);
-      obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("\"abc\"");
-      assertTrue(obj instanceof String);
-      {
-        CycConstant randomConstant = cycAccess.getLookupTool().getRandomConstant();
-        obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
-        assertEquals(randomConstant, obj);
-      }
-      {
-        boolean ok = true;
-        Nart randomNart = null;
-        for (int count = 0; (count < 1000) && (ok == true); count++) {
-          while (randomNart == null || !(cycAccess.getInspectorTool().isGround(randomNart))) { //Non-ground NARTs can have canonicalization issues.
-            randomNart = cycAccess.getLookupTool().getRandomNart();
-          }
-          obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
-          if (!randomNart.equalsAtEL(obj)) {
-            ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
-            randomNart.equalsAtEL(obj);
-            ok = false;
-          }
-        }
-        assertTrue(randomNart.cyclify() + " is not equal (at EL) to " + obj,
-                ok);
-      }
-
-    // getELCycTerm
-      obj = cycAccess.getObjectTool().getELCycTerm("1");
-      assertTrue(obj instanceof Integer);
-      obj = cycAccess.getObjectTool().getELCycTerm("\"abc\"");
-      assertTrue(obj instanceof String);
-
+    Object obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("1");
+    assertTrue(obj instanceof Integer);
+    obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("\"abc\"");
+    assertTrue(obj instanceof String);
+    {
       CycConstant randomConstant = cycAccess.getLookupTool().getRandomConstant();
       obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
       assertEquals(randomConstant, obj);
+    }
+    {
+      boolean ok = true;
+      Nart randomNart = null;
+      for (int count = 0; (count < 1000) && (ok == true); count++) {
+        while (randomNart == null || !(cycAccess.getInspectorTool().isGround(randomNart))) { //Non-ground NARTs can have canonicalization issues.
+          randomNart = cycAccess.getLookupTool().getRandomNart();
+        }
+        obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
+        if (!randomNart.equalsAtEL(obj)) {
+          ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
+          randomNart.equalsAtEL(obj);
+          ok = false;
+        }
+      }
+      assertTrue(randomNart.cyclify() + " is not equal (at EL) to " + obj,
+              ok);
+    }
 
-      Nart randomNart = cycAccess.getLookupTool().getRandomNart();
-      obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
-      assertEquals(randomNart, obj);
+    // getELCycTerm
+    obj = cycAccess.getObjectTool().getELCycTerm("1");
+    assertTrue(obj instanceof Integer);
+    obj = cycAccess.getObjectTool().getELCycTerm("\"abc\"");
+    assertTrue(obj instanceof String);
+
+    CycConstant randomConstant = cycAccess.getLookupTool().getRandomConstant();
+    obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
+    assertEquals(randomConstant, obj);
+
+    Nart randomNart = cycAccess.getLookupTool().getRandomNart();
+    obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
+    assertEquals(randomNart, obj);
 
     // canonicalizeList
-      String query = DAY_MARCH_1_2004_EVENT.cyclify();
-      CycList queryList = cycAccess.getObjectTool().makeCycList(query);
-      //System.out.println(queryList.cyclify());
-      CycList canonicalizedList = cycAccess.getObjectTool().canonicalizeList(queryList);
-      //System.out.println(canonicalizedList.cyclify());
-      assertTrue(canonicalizedList.second() instanceof CycArrayList);
-      InferenceParameters queryProperties = new DefaultInferenceParameters(
-              cycAccess);
-      assertTrue(!cycAccess.getInferenceTool().isQueryTrue(canonicalizedList,
-              UNIVERSAL_VOCABULARY_MT, queryProperties));
+    String query = DAY_MARCH_1_2004_EVENT.cyclify();
+    CycList queryList = cycAccess.getObjectTool().makeCycList(query);
+    //System.out.println(queryList.cyclify());
+    CycList canonicalizedList = cycAccess.getObjectTool().canonicalizeList(queryList);
+    //System.out.println(canonicalizedList.cyclify());
+    assertTrue(canonicalizedList.second() instanceof CycArrayList);
+    InferenceParameters queryProperties = new DefaultInferenceParameters(
+            cycAccess);
+    assertTrue(!cycAccess.getInferenceTool().isQueryTrue(canonicalizedList,
+            UNIVERSAL_VOCABULARY_MT, queryProperties));
 
-      query = DAY_MARCH_1_2004_CALENDAR_DAY.cyclify();
-      queryList = cycAccess.getObjectTool().makeCycList(query);
-      //System.out.println(queryList.cyclify());
-      canonicalizedList = cycAccess.getObjectTool().canonicalizeList(queryList);
-      //System.out.println(canonicalizedList.cyclify());
-      assertTrue(canonicalizedList.second() instanceof CycArrayList);
-      assertTrue(cycAccess.getInferenceTool().isQueryTrue(canonicalizedList,
-              UNIVERSAL_VOCABULARY_MT, queryProperties));
+    query = DAY_MARCH_1_2004_CALENDAR_DAY.cyclify();
+    queryList = cycAccess.getObjectTool().makeCycList(query);
+    //System.out.println(queryList.cyclify());
+    canonicalizedList = cycAccess.getObjectTool().canonicalizeList(queryList);
+    //System.out.println(canonicalizedList.cyclify());
+    assertTrue(canonicalizedList.second() instanceof CycArrayList);
+    assertTrue(cycAccess.getInferenceTool().isQueryTrue(canonicalizedList,
+            UNIVERSAL_VOCABULARY_MT, queryProperties));
 
-      query = DAY_MARCH_1_2004_CALENDAR_DAY.cyclify();
-      final FormulaSentence sentence = cycAccess.getObjectTool().makeCycSentence(query);
-      //System.out.println(queryList.cyclify());
-      assertTrue(cycAccess.getInferenceTool().isQueryTrue(sentence, UNIVERSAL_VOCABULARY_MT,
-              queryProperties));
-
+    query = DAY_MARCH_1_2004_CALENDAR_DAY.cyclify();
+    final FormulaSentence sentence = cycAccess.getObjectTool().makeCycSentence(query);
+    //System.out.println(queryList.cyclify());
+    assertTrue(cycAccess.getInferenceTool().isQueryTrue(sentence, UNIVERSAL_VOCABULARY_MT,
+            queryProperties));
+  }
+  
+  @Test
+  public void testBinaryCycAccess13_3() throws CycConnectionException {
     // assertions containing hl variables
-
-      if (!cycAccess.isOpenCyc()) {
-        FormulaSentence query2 = cycAccess.getObjectTool().makeCycSentence(
-                "(" + salientAssertions + " " + performedBy + " ?ASSERTION)");
-        InferenceParameters queryProperties2 = cycAccess.getInferenceTool().getHLQueryProperties();
-        queryProperties2.put(makeCycSymbol(":answer-language"), makeCycSymbol(
-                ":hl"));
-        InferenceResultSet resultSet = cycAccess.getInferenceTool().executeQuery(query2, BASE_KB,
-                queryProperties2);
-        resultSet.next();
-        CycAssertion cycAssertion = (CycAssertion) resultSet.getCycObject(1);
-        System.out.println("cycAssertion= " + cycAssertion.cyclify());
-        assertTrue(cycAssertion.cyclify().indexOf("?VAR0") > -1);
-        CycArrayList command = new CycArrayList();
-        command.add(makeCycSymbol("identity"));
-        command.add(cycAssertion);
-        //cycAccess.traceOnDetailed();
-        Object result = cycAccess.converse().converseObject(command);
-        assertTrue(result instanceof CycAssertion);
-        assertTrue(((CycAssertion) result).cyclify().indexOf("?VAR0") > -1);
-        //System.out.println("cycAssertion= " + ((CycAssertion) result).cyclify());
-      }
-
+    FormulaSentence query2 = cycAccess.getObjectTool().makeCycSentence(
+            "(" + salientAssertions + " " + performedBy + " ?ASSERTION)");
+    InferenceParameters queryProperties2 = cycAccess.getInferenceTool().getHLQueryProperties();
+    queryProperties2.put(":answer-language", makeCycSymbol(
+            ":hl"));
+    InferenceResultSet resultSet = cycAccess.getInferenceTool().executeQuery(query2, BASE_KB,
+            queryProperties2);
+    resultSet.next();
+    CycAssertion cycAssertion = (CycAssertion) resultSet.getCycObject(1);
+    System.out.println("cycAssertion= " + cycAssertion.cyclify());
+    assertTrue(cycAssertion.cyclify().indexOf("?VAR0") > -1);
+    CycArrayList command = new CycArrayList();
+    command.add(makeCycSymbol("identity"));
+    command.add(cycAssertion);
+    //cycAccess.traceOnDetailed();
+    Object result = cycAccess.converse().converseObject(command);
+    assertTrue(result instanceof CycAssertion);
+    assertTrue(((CycAssertion) result).cyclify().indexOf("?VAR0") > -1);
+    //System.out.println("cycAssertion= " + ((CycAssertion) result).cyclify());
     System.out.println("**** testBinaryCycAccess 13 OK ****");
   }
 
@@ -3846,13 +3714,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       Nart nart = null;
       String comment = null;
       try {
-        if (!cycAccess.isOpenCyc()) {
           nart = (Nart) cycAccess.converse().converseObject(
                   "(find-nart '(" + juvenileFn + " " + dog + "))");
           comment = cycAccess.getLookupTool().getComment(nart);
           assertNotNull(comment);
           //assertEquals("", comment);
-        }
       } catch (Throwable e) {
         e.printStackTrace();
         fail(e.toString());
@@ -3980,36 +3846,21 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * response from Cyc.
    */
   @Test
-  public void testBinaryCycAccess16() {
+  public void testBinaryCycAccess16() throws CycConnectionException {
     System.out.println("\n**** testBinaryCycAccess 16 ****");
+    List genls = null;
+    CycConstant carAccident = null;
+    carAccident = cycAccess.getLookupTool().getKnownConstantByGuid(
+            CAR_ACCIDENT_GUID_STRING);
+    genls = cycAccess.getLookupTool().getGenls(carAccident);
+    assertNotNull(genls);
+    assertTrue(genls instanceof CycArrayList);
+    
+    Iterator iter = genls.iterator();
 
-    try {
-
-      try {
-        if (!(cycAccess.isOpenCyc())) {
-          List genls = null;
-          CycConstant carAccident = null;
-          carAccident = cycAccess.getLookupTool().getKnownConstantByGuid(
-                  CAR_ACCIDENT_GUID_STRING);
-          genls = cycAccess.getLookupTool().getGenls(carAccident);
-          assertNotNull(genls);
-          assertTrue(genls instanceof CycArrayList);
-
-          Iterator iter = genls.iterator();
-
-          while (iter.hasNext()) {
-            Object obj = iter.next();
-            assertTrue(obj instanceof Fort);
-          }
-
-        }
-      } catch (Throwable e) {
-        e.printStackTrace();
-        fail(e.toString());
-      }
-
-    } finally {
-
+    while (iter.hasNext()) {
+      Object obj = iter.next();
+      assertTrue(obj instanceof Fort);
     }
     System.out.println("**** testBinaryCycAccess 16 OK ****");
   }
@@ -4040,18 +3891,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests the getCycImageID() api method.
    */
   @Test
-  public void testGetCycImage() {
+  public void testGetCycImage() throws CycConnectionException {
     System.out.println("\n**** testGetCycImage ****");
-
-    try {
-      if (!cycAccess.isOpenCyc()) {
-        String id = cycAccess.getCycImageID();
-        assertTrue(id != null);
-      }
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    String id = cycAccess.getCycImageID();
+    assertTrue(id != null);
     System.out.println("**** testGetCycImage OK ****");
   }
 
@@ -4059,15 +3902,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests the ggetELCycTerm method.
    */
   @Test
-  public void testGetELCycTerm() {
+  public void testGetELCycTerm() throws CycConnectionException {
     System.out.println("\n**** testGetELCycTerm ****");
-
-    try {
-      Object obj = cycAccess.getObjectTool().getELCycTerm("(" + juvenileFn + " " + dog + ")");
-      assertTrue(obj != null);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    Object obj = cycAccess.getObjectTool().getELCycTerm("(" + juvenileFn + " " + dog + ")");
+    assertTrue(obj != null);
     System.out.println("**** testGetELCycTerm OK ****");
   }
 
@@ -4095,34 +3933,26 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests the getArg2 method.
    */
   @Test
-  public void testGetArg2() {
+  public void testGetArg2() throws CycConnectionException {
     System.out.println("\n**** testGetArg2 ****");
-
-    try {
-      Fort cycAdministrator = cycAccess.getLookupTool().getKnownConstantByName(
-              "CycAdministrator");
-      Object obj = cycAccess.getLookupTool().getArg2(ISA, cycAdministrator);
-      assertNotNull(obj);
-      assertTrue(obj instanceof Fort || obj instanceof CycArrayList);
-      if (!cycAccess.isOpenCyc()) {
-        final String predName = "scientificName";
-        final String termName = "Emu";
-        final String mtName = "AllEnglishValidatedLexicalMicrotheoryPSC";
-        obj = cycAccess.getLookupTool().getArg2(predName, termName, mtName);
-        System.out.println(obj);
-        assertNotNull(obj);
-        Fort predicate = cycAccess.getLookupTool().getKnownConstantByName(predName);
-        Fort arg1 = cycAccess.getLookupTool().getKnownConstantByName(termName);
-        Fort mt = cycAccess.getLookupTool().getKnownConstantByName(mtName);
-        obj = cycAccess.getLookupTool().getArg2(predicate, arg1, mt);
-        System.out.println(obj);
-        assertNotNull(obj);
-      }
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
-
+    Fort cycAdministrator = cycAccess.getLookupTool().getKnownConstantByName(
+            "CycAdministrator");
+    Object obj = cycAccess.getLookupTool().getArg2(ISA, cycAdministrator);
+    assertNotNull(obj);
+    assertTrue(obj instanceof Fort || obj instanceof CycArrayList);
+    assumeNotOpenCyc();
+    final String predName = "scientificName";
+    final String termName = "Emu";
+    final String mtName = "AllEnglishValidatedLexicalMicrotheoryPSC";
+    obj = cycAccess.getLookupTool().getArg2(predName, termName, mtName);
+    System.out.println(obj);
+    assertNotNull(obj);
+    Fort predicate = cycAccess.getLookupTool().getKnownConstantByName(predName);
+    Fort arg1 = cycAccess.getLookupTool().getKnownConstantByName(termName);
+    Fort mt = cycAccess.getLookupTool().getKnownConstantByName(mtName);
+    obj = cycAccess.getLookupTool().getArg2(predicate, arg1, mt);
+    System.out.println(obj);
+    assertNotNull(obj);
     System.out.println("**** testGetArg2 OK ****");
   }
 
@@ -4197,15 +4027,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     params.setBrowsable(false);
     params.setContinuable(false);
     params.setAllowIndeterminateResults(false);
-    params.put(CycObjectFactory.makeCycSymbol(":ALLOW-ABNORMALITY-CHECKING?"), CycObjectFactory.nil);
-    params.put(CycObjectFactory.makeCycSymbol(":NEW-TERMS-ALLOWED?"), CycObjectFactory.nil);
-    params.put(CycObjectFactory.makeCycSymbol(":COMPUTE-ANSWER-JUSTIFICATIONS?"), CycObjectFactory.nil);
-    params.put(CycObjectFactory.makeCycSymbol(":MAX-PROBLEM-COUNT"),
-            CycObjectFactory.makeCycSymbol(":POSITIVE-INFINITY"));
-    params.put(CycObjectFactory.makeCycSymbol(":PRODUCTIVITY-LIMIT"),
-            CycObjectFactory.makeCycSymbol(":POSITIVE-INFINITY"));
-    params.put(CycObjectFactory.makeCycSymbol(":ANSWER-LANGUAGE"),
-            CycObjectFactory.makeCycSymbol(":HL"));
+    params.put(":ALLOW-ABNORMALITY-CHECKING?", CycObjectFactory.nil);
+    params.put(":NEW-TERMS-ALLOWED?", CycObjectFactory.nil);
+    params.put(":COMPUTE-ANSWER-JUSTIFICATIONS?", CycObjectFactory.nil);
+    params.put(":MAX-PROBLEM-COUNT", CycObjectFactory.makeCycSymbol(":POSITIVE-INFINITY"));
+    params.put(":PRODUCTIVITY-LIMIT", CycObjectFactory.makeCycSymbol(":POSITIVE-INFINITY"));
+    params.put(":ANSWER-LANGUAGE", CycObjectFactory.makeCycSymbol(":HL"));
     params.setMaxTime(600);
     params.setMaxTransformationDepth(0);
     return params;
@@ -4528,37 +4355,30 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests inference problem store reuse.
    */
   @Test
-  public void testInferenceProblemStoreReuse() {
+  public void testInferenceProblemStoreReuse() throws CycConnectionException {
     System.out.println("\n**** testInferenceProblemStoreReuse ****");
-
-    try {
-      if (!cycAccess.isOpenCyc()) {
-        final String inferenceProblemStoreName = "my-problem-store";
-        cycAccess.getInferenceTool().initializeNamedInferenceProblemStore(
-                inferenceProblemStoreName, null);
-        FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(
-                OBJECT_FOUND_WHAT_WHERE.cyclify());
-        CycArrayList variables = new CycArrayList();
-        variables.add(makeCycVariable("?WHAT"));
-        variables.add(makeCycVariable("?WHERE"));
-        InferenceParameters queryProperties = new DefaultInferenceParameters(
-                cycAccess);
-        CycConstant universeDataMt = cycAccess.getLookupTool().getKnownConstantByGuid(
-                UNIVERSE_DATA_MT_GUID_STRING);
-        CycList response = cycAccess.getInferenceTool().queryVariables(variables, query,
-                universeDataMt, queryProperties, inferenceProblemStoreName);
-        assertNotNull(response);
-        response = cycAccess.getInferenceTool().queryVariables(variables, query, universeDataMt,
-                queryProperties, inferenceProblemStoreName);
-        assertNotNull(response);
-        response = cycAccess.getInferenceTool().queryVariables(variables, query, universeDataMt,
-                queryProperties, inferenceProblemStoreName);
-        assertNotNull(response);
-        cycAccess.getInferenceTool().destroyInferenceProblemStoreByName(inferenceProblemStoreName);
-      }
-    } catch (CycConnectionException ex) {
-      Logger.getLogger(GeneralUnitTest.class.getName()).log(Level.SEVERE, null, ex);
-    }
+    final String inferenceProblemStoreName = "my-problem-store";
+    cycAccess.getInferenceTool().initializeNamedInferenceProblemStore(
+            inferenceProblemStoreName, null);
+    FormulaSentence query = cycAccess.getObjectTool().makeCycSentence(
+            OBJECT_FOUND_WHAT_WHERE.cyclify());
+    CycArrayList variables = new CycArrayList();
+    variables.add(makeCycVariable("?WHAT"));
+    variables.add(makeCycVariable("?WHERE"));
+    InferenceParameters queryProperties = new DefaultInferenceParameters(
+            cycAccess);
+    CycConstant universeDataMt = cycAccess.getLookupTool().getKnownConstantByGuid(
+            UNIVERSE_DATA_MT_GUID_STRING);
+    CycList response = cycAccess.getInferenceTool().queryVariables(variables, query,
+            universeDataMt, queryProperties, inferenceProblemStoreName);
+    assertNotNull(response);
+    response = cycAccess.getInferenceTool().queryVariables(variables, query, universeDataMt,
+            queryProperties, inferenceProblemStoreName);
+    assertNotNull(response);
+    response = cycAccess.getInferenceTool().queryVariables(variables, query, universeDataMt,
+            queryProperties, inferenceProblemStoreName);
+    assertNotNull(response);
+    cycAccess.getInferenceTool().destroyInferenceProblemStoreByName(inferenceProblemStoreName);
 
     System.out.println("**** testInferenceProblemStoreReuse OK ****");
   }
@@ -4569,60 +4389,19 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   @Test
   public void testInvalidTerms() {
     System.out.println("\n**** testInvalidTerms ****");
-    try {
-      if (cycAccess.isOpenCyc()) {
-        System.out.println("Can't test invalid terms on OpenCyc image.");
-      } else {
-        // invalid constant
-        {
-          final boolean invalidConstantCfaslWorks = false; // Until system 1.131015.
-          if (invalidConstantCfaslWorks) {
-            try {
-              final String command = "(list \"a\" 1 " + brazil + " (cfasl-invalid-constant) \"z\")";
-              cycAccess.converse().converseList(command);
-              fail("Expected CycApiException not thrown.");
-            } catch (CycApiException e) {
-            } catch (CycConnectionException e) {
-              fail(StringUtils.getStringForException(e));
-            } catch (Throwable t) {
-              fail(t.getLocalizedMessage());
-            }
-            try {
-              final String command = "(list \"a\" 1 " + brazil + " \"z\")";
-              final CycList result = cycAccess.converse().converseList(command);
-              assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
-            } catch (Throwable e) {
-              fail(StringUtils.getStringForException(e));
-            }
-          }
-        }
-
-        // invalid nart
+    // invalid constant
+    {
+      final boolean invalidConstantCfaslWorks = false; // Until system 1.131015.
+      if (invalidConstantCfaslWorks) {
         try {
-          final String command = "(list \"a\" 1 " + brazil + " (cfasl-invalid-nart) \"z\")";
-          final CycList result = cycAccess.converse().converseList(command);
+          final String command = "(list \"a\" 1 " + brazil + " (cfasl-invalid-constant) \"z\")";
+          cycAccess.converse().converseList(command);
           fail("Expected CycApiException not thrown.");
         } catch (CycApiException e) {
         } catch (CycConnectionException e) {
           fail(StringUtils.getStringForException(e));
-        }
-        try {
-          final String command = "(list \"a\" 1 " + brazil + " \"z\")";
-          final CycList result = cycAccess.converse().converseList(command);
-          assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
-        } catch (Throwable e) {
-          fail(StringUtils.getStringForException(e));
-        }
-
-        // invalid assertion
-        try {
-          final String command = "(list \"a\" 1 " + brazil + " (create-sample-invalid-assertion) \"z\")";
-          final CycList result = cycAccess.converse().converseList(command);
-          fail("Expected CycApiException not thrown.");
-        } catch (CycApiException e) {
-          //System.out.println(e.getMessage());
-        } catch (CycConnectionException e) {
-          fail(StringUtils.getStringForException(e));
+        } catch (Throwable t) {
+          fail(t.getLocalizedMessage());
         }
         try {
           final String command = "(list \"a\" 1 " + brazil + " \"z\")";
@@ -4632,11 +4411,42 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
           fail(StringUtils.getStringForException(e));
         }
       }
-    } catch (Throwable t) {
-      System.out.println("Caught " + t);
-    } finally {
     }
 
+    // invalid nart
+    try {
+      final String command = "(list \"a\" 1 " + brazil + " (cfasl-invalid-nart) \"z\")";
+      final CycList result = cycAccess.converse().converseList(command);
+      fail("Expected CycApiException not thrown.");
+    } catch (CycApiException e) {
+    } catch (CycConnectionException e) {
+      fail(StringUtils.getStringForException(e));
+    }
+    try {
+      final String command = "(list \"a\" 1 " + brazil + " \"z\")";
+      final CycList result = cycAccess.converse().converseList(command);
+      assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
+    } catch (Throwable e) {
+      fail(StringUtils.getStringForException(e));
+    }
+
+    // invalid assertion
+    try {
+      final String command = "(list \"a\" 1 " + brazil + " (create-sample-invalid-assertion) \"z\")";
+      final CycList result = cycAccess.converse().converseList(command);
+      fail("Expected CycApiException not thrown.");
+    } catch (CycApiException e) {
+      //System.out.println(e.getMessage());
+    } catch (CycConnectionException e) {
+      fail(StringUtils.getStringForException(e));
+    }
+    try {
+      final String command = "(list \"a\" 1 " + brazil + " \"z\")";
+      final CycList result = cycAccess.converse().converseList(command);
+      assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
+    } catch (Throwable e) {
+      fail(StringUtils.getStringForException(e));
+    }
     System.out.println("**** testInvalidTerms OK ****");
   }
 

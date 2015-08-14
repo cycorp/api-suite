@@ -37,4 +37,5 @@ import org.atteo.classindex.IndexAnnotated;
 public @interface CycFormula {
   String cycl();
   boolean optional() default false;
+  boolean includedInOpenCycKB() default true;
 }

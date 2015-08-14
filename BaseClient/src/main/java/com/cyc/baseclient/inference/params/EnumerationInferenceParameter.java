@@ -23,7 +23,8 @@ package com.cyc.baseclient.inference.params;
 
 //// Internal Imports
 //// External Imports
-import com.cyc.base.inference.InferenceParameterValueDescription;
+import com.cyc.query.InferenceParameter;
+import com.cyc.query.InferenceParameterValueDescription;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ import java.util.List;
  *
  * @author tbrussea
  * @date August 2, 2005, 10:25 AM
- * @version $Id: EnumerationInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: EnumerationInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 public interface EnumerationInferenceParameter extends InferenceParameter {
 

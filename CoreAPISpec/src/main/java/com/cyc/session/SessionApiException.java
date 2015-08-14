@@ -22,42 +22,41 @@ package com.cyc.session;
  */
 
 /**
- * SessionApiException is the base exception which indicates that an 
- * application library has encountered a problem in interacting with a Cyc 
- * server. Subclasses of CycSessionException indicate specific
- * types of issues, such as configuration issues, communications issues, etc.
+ * SessionApiException is the base exception which indicates that an application library has 
+ * encountered a problem in interacting with a Cyc server. Subclasses of CycSessionException 
+ * indicate specific types of issues, such as configuration issues, communications issues, etc.
  * 
+ * @see com.cyc.session.exception.SessionApiRuntimeException
  * @author nwinant
  */
 public class SessionApiException extends Exception {
   
   /**
-   * Construct a CycConfigurationException object with no specified message.
+   * Constructs a new exception with no specified message.
    */
   public SessionApiException() {
     super();
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message.
-   * @param s a message describing the exception.
+   * Constructs a new exception with a specified message.
+   * @param message a message describing the exception.
    */
-  public SessionApiException(String s) {
-    super(s);
+  public SessionApiException(String message) {
+    super(message);
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message
-   * and throwable.
-   * @param s the message string
+   * Constructs a new exception with a specified message and throwable.
+   * @param message the message string
    * @param cause the Throwable that caused this exception
    */
-  public SessionApiException(String s, Throwable cause) {
-    super(s, cause);
+  public SessionApiException(String message, Throwable cause) {
+    super(message, cause);
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified throwable.
+   * Constructs a new exception with a specified throwable.
    * @param cause the throwable that caused this exception
    */
   public SessionApiException(Throwable cause) {

@@ -209,19 +209,21 @@ public class AssertionTest {
       assertEquals(s, asent.getFormula());
 	}
     
-	/**
+	/* *
 	 * Test of getSupportingAssertions method, of class Assertion.
 	 */
-	//@Test
+        /*
+	@Test
 	public void testGetSupportingAssertions() throws KBApiException {
 		// Covered in testIsDeducedAssertion
 	}
-
-	/**
+        */
+        
+	/* *
 	 * Test of getAllSupportingAssertions method, of class Assertion.
 	 */
-	// @Test
-	/*
+	/* 
+           @Test
 	 * public void testGetAllSupportingAssertions() throws KBApiException {
 	 * System.out.println("getAllSupportingAssertions"); Assertion instance =
 	 * new Assertion(); Collection expResult = null; Collection result =

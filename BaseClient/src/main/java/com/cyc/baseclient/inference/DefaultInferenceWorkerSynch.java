@@ -41,10 +41,10 @@ import com.cyc.base.conn.WorkerStatus;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import com.cyc.base.inference.InferenceResultSet;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
 
 //// External Imports
 import java.util.*;
@@ -57,7 +57,7 @@ import com.cyc.baseclient.parser.CycLParserUtil;
  <p>
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:55 AM
- * @version $Id: DefaultInferenceWorkerSynch.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultInferenceWorkerSynch.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class DefaultInferenceWorkerSynch extends DefaultInferenceWorker implements InferenceWorkerSynch {
   
@@ -345,6 +345,11 @@ public class DefaultInferenceWorkerSynch extends DefaultInferenceWorker implemen
     }
     System.out.println("Finished");
     System.exit(0);
+  }
+
+  @Override
+  public InferenceStatus getInferenceStatus() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   
 }

@@ -1,5 +1,7 @@
 package com.cyc.baseclient.inference.params;
 
+import com.cyc.query.InferenceParameter;
+
 /*
  * #%L
  * File: FloatingPointInferenceParameter.java
@@ -32,7 +34,7 @@ package com.cyc.baseclient.inference.params;
  *
  * @author tbrussea
  * @date August 2, 2005, 10:25 AM
- * @version $Id: FloatingPointInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: FloatingPointInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 public interface FloatingPointInferenceParameter extends InferenceParameter {
   double getMinValue();

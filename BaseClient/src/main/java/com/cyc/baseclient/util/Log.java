@@ -23,13 +23,15 @@ package com.cyc.baseclient.util;
 
 /**
  * Provides the behavior and attributes of a event log for Base Client.<p>
- *
+ * 
+ * TODO: replace this with SLF4J. - nwinant, 2015-06-25
+ * 
  * Class Log provides a local log facility for Base Client agents.  Messages can be
  * written to a file, displayed to stdout, stderr.<p>
  *
  * user -Dcom.cyc.baseclient.util.log=file  to enable writing to a file.
  *
- * @version $Id: Log.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: Log.java 159482 2015-07-03 23:37:56Z nwinant $
  * @author Stephen L. Reed
  */
 

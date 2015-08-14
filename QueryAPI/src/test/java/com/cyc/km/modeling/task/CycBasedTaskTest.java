@@ -25,9 +25,13 @@ package com.cyc.km.modeling.task;
  * #L%
  */
 
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KBApiException;
+import com.cyc.kb.exception.KBTypeException;
 import static org.junit.Assert.*;
 import org.junit.*;
 import static com.cyc.query.TestUtils.*;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  *
@@ -41,6 +45,7 @@ public class CycBasedTaskTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
+    assumeNotOpenCyc();
     ensureConstantsInitialized();
     t = CycBasedTask.getAll().iterator().next();
   }
@@ -61,14 +66,9 @@ public class CycBasedTaskTest {
    * Test of getAll method, of class CycBasedTask.
    */
   @Test
-  public void testGetAll() {
+  public void testGetAll() throws KBTypeException, CreateException, OpenCycUnsupportedFeatureException {
     System.out.println("getAll");
-    try {
-      assertFalse(CycBasedTask.getAll().isEmpty());
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      fail();
-    }
+    assertFalse(CycBasedTask.getAll().isEmpty());
   }
 
   /**
@@ -84,7 +84,7 @@ public class CycBasedTaskTest {
    * Test of getDescription method, of class CycBasedTask.
    */
   @Test
-  public void testGetDescription() throws Exception {
+  public void testGetDescription() throws KBApiException {
     System.out.println("getDescription");
     t.getDescription();
   }
@@ -93,7 +93,7 @@ public class CycBasedTaskTest {
    * Test of getSummary method, of class CycBasedTask.
    */
   @Test
-  public void testGetSummary() throws Exception {
+  public void testGetSummary() throws KBTypeException, CreateException {
     System.out.println("getSummary");
     t.getSummary();
   }
@@ -102,7 +102,7 @@ public class CycBasedTaskTest {
    * Test of getAssignedCyclists method, of class CycBasedTask.
    */
   @Test
-  public void testGetAssignedCyclists() throws Exception {
+  public void testGetAssignedCyclists() throws KBApiException {
     System.out.println("getAssignedCyclists");
     t.getAssignedCyclists();
   }
@@ -111,7 +111,7 @@ public class CycBasedTaskTest {
    * Test of getKeyConcepts method, of class CycBasedTask.
    */
   @Test
-  public void testGetKeyConcepts() throws Exception {
+  public void testGetKeyConcepts() throws CreateException, KBApiException {
     System.out.println("getKeyConcepts");
     t.getKeyConcepts();
   }

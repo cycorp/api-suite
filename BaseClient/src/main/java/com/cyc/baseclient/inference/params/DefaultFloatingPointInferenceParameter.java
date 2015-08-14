@@ -26,10 +26,7 @@ import com.cyc.base.BaseClientRuntimeException;
 import java.util.Map;
 
 //// Internal Imports
-import com.cyc.base.CycApiException;
 import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.CycSymbolImpl;
 
 /**
  * <P>DefaultBooleanInferenceParameter is designed to...
@@ -40,12 +37,13 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
  *
  * @author zelal
  * @date August 9, 2005, 9:09 PM
- * @version $Id: DefaultFloatingPointInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultFloatingPointInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class DefaultFloatingPointInferenceParameter extends AbstractInferenceParameter implements FloatingPointInferenceParameter {
 
   //// Constructors
-  /** Creates a new instance of DefaultBooleanInferenceParameter. */
+  /** Creates a new instance of DefaultBooleanInferenceParameter.
+   * @param propertyMap */
   public DefaultFloatingPointInferenceParameter(Map propertyMap) {
     super(propertyMap);
     for (int i = 0, size = REQUIRED_SYMBOLS.length; i < size; i++) {
@@ -61,6 +59,7 @@ public class DefaultFloatingPointInferenceParameter extends AbstractInferencePar
   }
 
   //// Public Area
+  @Override
   public boolean isValidValue(Object potentialValue) {
     if (isAlternateValue(potentialValue)) {
       return true;
@@ -79,14 +78,17 @@ public class DefaultFloatingPointInferenceParameter extends AbstractInferencePar
     }
   }
 
+  @Override
   public double getMaxValue() {
     return maxValue;
   }
 
+  @Override
   public double getMinValue() {
     return minValue;
   }
 
+  @Override
   public String toString() {
     return super.toString() + " min=" + minValue + " max=" + maxValue;
   }
@@ -116,9 +118,9 @@ public class DefaultFloatingPointInferenceParameter extends AbstractInferencePar
   //// Internal Rep
   private double maxValue;
   private double minValue;
-  private final static CycSymbolImpl MAX_VALUE_SYMBOL = new CycSymbolImpl(":MAX-VALUE");
-  private final static CycSymbolImpl MIN_VALUE_SYMBOL = new CycSymbolImpl(":MIN-VALUE");
-  private final static CycSymbolImpl[] REQUIRED_SYMBOLS = {MAX_VALUE_SYMBOL,
+  private final static String MAX_VALUE_SYMBOL = ":MAX-VALUE";
+  private final static String MIN_VALUE_SYMBOL = ":MIN-VALUE";
+  private final static String[] REQUIRED_SYMBOLS = {MAX_VALUE_SYMBOL,
     MIN_VALUE_SYMBOL};
 
   //// Main

@@ -28,7 +28,7 @@ import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.Guid;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.cyc.baseclient.CycClientManager;
@@ -39,13 +39,14 @@ import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.nl.Paraphraser;
 import com.cyc.baseclient.util.Log;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 // FIXME: TestSentences - nwinant ? ? ? ? ? 
 
 /**
  * Provides a simple demo of the Base Client.<p>
  *
- * @version $Id: ApiDemo.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: ApiDemo.java 159483 2015-07-03 23:49:46Z nwinant $
  * @author Stephen L. Reed
  */
 
@@ -255,16 +256,16 @@ public class ApiDemo {
       Log.current.println("\nThis demo is not available in OpenCyc");
     }
     else {
-      Log.current.println("Demonstrating getParaphrase api function.\n");
-      FormulaSentence formula = cycAccess.getObjectTool().makeCycSentence(
+    Log.current.println("Demonstrating getParaphrase api function.\n");
+    FormulaSentence formula = cycAccess.getObjectTool().makeCycSentence(
       "(#$thereExists ?PLANET\n" +
       "  (#$and\n" +
       "    (#$isa ?PLANET #$Planet)\n" +
       "    (#$orbits ?PLANET #$Sun)))");
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
-      String paraphrase = p.paraphrase(formula).getString();
-      Log.current.println("\nThe obtained paraphrase for\n" + formula + "\nis:\n" + paraphrase);
-    }
+    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    String paraphrase = p.paraphrase(formula).getString();
+    Log.current.println("\nThe obtained paraphrase for\n" + formula + "\nis:\n" + paraphrase);
+  }
   }
   
   /**
@@ -315,24 +316,26 @@ public class ApiDemo {
   
   /**
    * Demonstrates usage of the rkfPhraseReader api function.
+   * @throws com.cyc.base.CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  protected void demo16() throws CycConnectionException, CycApiException {
+  protected void demo16() throws CycConnectionException, CycApiException, OpenCycUnsupportedFeatureException {
     if (cycAccess.isOpenCyc()) {
       Log.current.println("\nThis demo is not available in OpenCyc");
     }
     else {
-      Log.current.println("Demonstrating usage of the rkfPhraseReader api function.\n");
-      String phrase = "penguins";
+    Log.current.println("Demonstrating usage of the rkfPhraseReader api function.\n");
+    String phrase = "penguins";
       Fort inferencePsc =
       cycAccess.getLookupTool().getKnownConstantByGuid("bd58915a-9c29-11b1-9dad-c379636f7270");
       Fort rkfEnglishLexicalMicrotheoryPsc =
       cycAccess.getLookupTool().getKnownConstantByGuid("bf6df6e3-9c29-11b1-9dad-c379636f7270");
-      final CycClient cycClient = CycClientManager.getClientManager().fromCycAccess(cycAccess);
-      CycList parsingExpression = cycClient.getRKFTool().rkfPhraseReader(phrase,
-      rkfEnglishLexicalMicrotheoryPsc,
-      inferencePsc);
-      Log.current.println("the result of parsing the phrase \"" + phrase + "\" is\n" + parsingExpression);
-    }
+    final CycClient cycClient = CycClientManager.getClientManager().fromCycAccess(cycAccess);
+    CycList parsingExpression = cycClient.getRKFTool().rkfPhraseReader(phrase,
+            rkfEnglishLexicalMicrotheoryPsc,
+            inferencePsc);
+    Log.current.println("the result of parsing the phrase \"" + phrase + "\" is\n" + parsingExpression);
+  }
   }
   
   /**
@@ -343,13 +346,13 @@ public class ApiDemo {
       Log.current.println("\nThis demo is not available in OpenCyc");
     }
     else {
-      Log.current.println("Demonstrating usage of the generateDisambiguationPhraseAndTypes api function.\n");
-      Fort mt = cycAccess.getLookupTool().getKnownConstantByName("PeopleDataMt");
-      CycList objects = cycAccess.getObjectTool().makeCycList("(#$Penguin #$PittsburghPenguins)");
-      CycList disambiguationExpression = cycAccess.getObjectTool().generateDisambiguationPhraseAndTypes(objects);
+    Log.current.println("Demonstrating usage of the generateDisambiguationPhraseAndTypes api function.\n");
+    Fort mt = cycAccess.getLookupTool().getKnownConstantByName("PeopleDataMt");
+    CycList objects = cycAccess.getObjectTool().makeCycList("(#$Penguin #$PittsburghPenguins)");
+    CycList disambiguationExpression = cycAccess.getObjectTool().generateDisambiguationPhraseAndTypes(objects);
       Log.current.println("the result of disambiguating the objects \"" + objects.cyclify() + "\" is\n" +
       disambiguationExpression);
-    }
+  }
   }
   
 }

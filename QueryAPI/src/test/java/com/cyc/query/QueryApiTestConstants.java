@@ -83,8 +83,9 @@ public class QueryApiTestConstants {
   @CycTerm(cycl = "#$Animal")
   private final KBCollectionImpl animal = KBCollectionImpl.get("Animal");
 
+  // (#$TheFn #$Animal) isn't in the OCyc 5.0 KB, so we add it if necessary - nwinant, 2015-04-17
   @CycTerm(cycl = "(#$TheFn #$Animal)")
-  public final KBIndividual theAnimal = KBIndividualImpl.get("(TheFn Animal)");
+  public final KBIndividual theAnimal = KBIndividualImpl.findOrCreate("(TheFn Animal)");
 
   public final Sentence theAnimalIsAnAnimal
           = new SentenceImpl(Constants.isa(), theAnimal, animal);

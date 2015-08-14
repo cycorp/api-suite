@@ -47,7 +47,9 @@ import static com.cyc.baseclient.cycobject.CycFormulaSentence.*;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.testing.TestConstants;
 import com.cyc.baseclient.testing.TestSentences;
+import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
 import com.cyc.session.SessionApiException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 // FIXME: TestSentences - nwinant
 
@@ -184,48 +186,52 @@ public class CycFormulaSentenceTest {
 
   /**
    * Test of getOptimizedVarNames method, of class CycFormulaSentence.
+   * @throws com.cyc.base.CycConnectionException
    */
   @Test
-  public void testGetOptimizedVarNames() throws Exception {
+  public void testGetOptimizedVarNames() throws CycConnectionException {
+    // TODO: could this be re-enabled for OpenCyc? - nwinant, 2015-06-08
     System.out.println("getOptimizedVarNames");
-    if (!getCyc().isOpenCyc()) {
-      final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
-              COLLECTION);
-      Map result = sentence.getOptimizedVarNames(getCyc());
-      assertTrue(result.containsKey(X));
-    }
+    assumeNotOpenCyc();
+    final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
+            COLLECTION);
+    Map result = sentence.getOptimizedVarNames(getCyc());
+    assertTrue(result.containsKey(X));
   }
 
   /**
    * Test of getSimplifiedSentence method, of class CycFormulaSentence.
+   * @throws com.cyc.base.CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
   @Test
-  public void testGetSimplifiedSentence_CycAccess() throws Exception {
-    if (!getCyc().isOpenCyc()) {
-      System.out.println("getSimplifiedSentence");
-      final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
-              COLLECTION);
-      assertEquals(sentence, makeConjunction(sentence).getSimplifiedSentence(
-              getCyc()));
-    }
+  public void testGetSimplifiedSentence_CycAccess() throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    System.out.println("getSimplifiedSentence");
+    assumeNotOpenCyc();
+    final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
+            COLLECTION);
+    assertEquals(sentence, makeConjunction(sentence).getSimplifiedSentence(
+            getCyc()));
   }
 
   /**
    * Test of getSimplifiedSentence method, of class CycFormulaSentence.
+   * @throws com.cyc.base.CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
   @Test
-  public void testGetSimplifiedSentence_CycAccess_ELMt() throws Exception {
-    if (!getCyc().isOpenCyc()) {
-      System.out.println("getSimplifiedSentence");
-      final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
-              COLLECTION);
-      assertEquals(sentence, makeConjunction(sentence).getSimplifiedSentence(
-              getCyc(), BASE_KB));
-    }
+  public void testGetSimplifiedSentence_CycAccess_ELMt() throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    System.out.println("getSimplifiedSentence");
+    assumeNotOpenCyc();
+    final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
+            COLLECTION);
+    assertEquals(sentence, makeConjunction(sentence).getSimplifiedSentence(
+            getCyc(), BASE_KB));
   }
 
   /**
    * Test of getNonWffAssertExplanation method, of class CycFormulaSentence.
+   * @throws com.cyc.base.CycConnectionException
    */
   @Test
   public void testGetNonWffAssertExplanation_CycAccess() throws CycConnectionException {
@@ -307,7 +313,7 @@ public class CycFormulaSentenceTest {
    * Test of treeSubstitute method, of class CycFormulaSentence.
    */
   @Test
-  public void testTreeSubstitute() throws Exception {
+  public void testTreeSubstitute() throws CycConnectionException {
     System.out.println("treeSubstitute");
     final CycAccess cyc = getCyc();
     final LookupTool lookupTool = cyc.getLookupTool();
@@ -372,7 +378,7 @@ public class CycFormulaSentenceTest {
    * Test of makeCycSentence method, of class CycFormulaSentence.
    */
   @Test
-  public void testMakeCycSentence() throws Exception {
+  public void testMakeCycSentence() throws CycConnectionException {
     System.out.println("makeCycSentence");
     final String isaThingThing = TestSentences.ISA_THING_THING_STRING;
     assertEquals(getCyc().getObjectTool().makeCycSentence(isaThingThing),
@@ -423,52 +429,52 @@ public class CycFormulaSentenceTest {
    * Test of splice method, of class CycFormulaSentence.
    */
   @Test
-  public void testSplice() throws CycConnectionException {
-    if (!getCyc().isOpenCyc()) {
-      System.out.println("splice");
-      final FormulaSentence conjunction = CycFormulaSentence.makeConjunction(
-              isaThingThing);
-      final FormulaSentence toInsert = getCyc().getObjectTool().makeCycSentence(
-              isaWilliamHenryHarrisonBLO_STRING);
-      final FormulaSentence result = conjunction.splice(
-              toInsert, ArgPositionImpl.ARG1, getCyc());
-      assertTrue(result.treeContains(isaThingThing));
-      assertTrue(result.treeContains(toInsert));
-    }
+  public void testSplice() throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    System.out.println("splice");
+    assumeNotOpenCyc();
+    final FormulaSentence conjunction = CycFormulaSentence.makeConjunction(
+            isaThingThing);
+    final FormulaSentence toInsert = getCyc().getObjectTool().makeCycSentence(
+            isaWilliamHenryHarrisonBLO_STRING);
+    final FormulaSentence result = conjunction.splice(
+            toInsert, ArgPositionImpl.ARG1, getCyc());
+    assertTrue(result.treeContains(isaThingThing));
+    assertTrue(result.treeContains(toInsert));
   }
 
   /**
    * Test of getCandidateReplacements method, of class CycFormulaSentence.
+   * @throws com.cyc.base.CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
   @Test
-  public void testGetCandidateReplacements() throws CycConnectionException {
+  public void testGetCandidateReplacements() throws CycConnectionException, OpenCycUnsupportedFeatureException {
     System.out.println("getCandidateReplacements");
-    if (!getCyc().isOpenCyc()) {
-      final CycConstant universeDataMt = getCyc().getLookupTool().getKnownConstantByName(
-              UNIVERSE_DATA_MT);
-      final FormulaSentence suggestionSentence
-              = getCyc().getObjectTool().makeCycSentence(
-                      "(" + SUGGESTION_FOR_PRED_RELATIVE_TO_ISA_IN_ARG + " " + WEIGHT_ON_PLANET
-                              + " " + CELESTIAL_BODY + " 2 " + CELESTIAL_BODY + " 2)");
-      final boolean suggestionKnown = getCyc().getInferenceTool().isQueryTrue(
-              suggestionSentence, universeDataMt,
-              new DefaultInferenceParameters(
-                      getCyc()));
+    assumeNotOpenCyc();
+    final CycConstant universeDataMt = getCyc().getLookupTool().getKnownConstantByName(
+            UNIVERSE_DATA_MT);
+    final FormulaSentence suggestionSentence
+            = getCyc().getObjectTool().makeCycSentence(
+                    "(" + SUGGESTION_FOR_PRED_RELATIVE_TO_ISA_IN_ARG + " " + WEIGHT_ON_PLANET
+                    + " " + CELESTIAL_BODY + " 2 " + CELESTIAL_BODY + " 2)");
+    final boolean suggestionKnown = getCyc().getInferenceTool().isQueryTrue(
+            suggestionSentence, universeDataMt,
+            new DefaultInferenceParameters(
+                    getCyc()));
+    if (!suggestionKnown) {
+      getCyc().getAssertTool().assertGaf(suggestionSentence, universeDataMt);
+    }
+    try {
+      Collection result = getCyc().getObjectTool().makeCycSentence(
+              "(" + WEIGHT_ON_PLANET + " ?ME " + PLANET_MARS + ")").getCandidateReplacements(
+                      ArgPositionImpl.ARG2,
+                      ELMtConstant.makeELMtConstant(universeDataMt), getCyc());
+      assertFalse(result.isEmpty());
+      assertTrue(
+              result.contains(getCyc().getLookupTool().getKnownConstantByName(PLANET_VENUS)));
+    } finally {
       if (!suggestionKnown) {
-        getCyc().getAssertTool().assertGaf(suggestionSentence, universeDataMt);
-      }
-      try {
-        Collection result = getCyc().getObjectTool().makeCycSentence(
-                "(" + WEIGHT_ON_PLANET + " ?ME " + PLANET_MARS + ")").getCandidateReplacements(
-                        ArgPositionImpl.ARG2,
-                        ELMtConstant.makeELMtConstant(universeDataMt), getCyc());
-        assertFalse(result.isEmpty());
-        assertTrue(
-                result.contains(getCyc().getLookupTool().getKnownConstantByName(PLANET_VENUS)));
-      } finally {
-        if (!suggestionKnown) {
-          getCyc().getUnassertTool().unassertGaf(suggestionSentence, universeDataMt);
-        }
+        getCyc().getUnassertTool().unassertGaf(suggestionSentence, universeDataMt);
       }
     }
   }
@@ -490,7 +496,7 @@ public class CycFormulaSentenceTest {
    * Test of getEqualsFoldedSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetEqualsFoldedSentence_CycAccess() throws Exception {
+  public void testGetEqualsFoldedSentence_CycAccess() throws CycConnectionException {
     System.out.println("getEqualsFoldedSentence");
     CycAccess access = null;
     CycFormulaSentence instance = null;
@@ -505,7 +511,7 @@ public class CycFormulaSentenceTest {
    * Test of getEqualsFoldedSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetEqualsFoldedSentence_CycAccess_ELMt() throws Exception {
+  public void testGetEqualsFoldedSentence_CycAccess_ELMt() throws CycConnectionException {
     System.out.println("getEqualsFoldedSentence");
     CycAccess access = null;
     ELMt mt = null;
@@ -521,7 +527,7 @@ public class CycFormulaSentenceTest {
    * Test of getExpandedSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetExpandedSentence_CycAccess() throws Exception {
+  public void testGetExpandedSentence_CycAccess() throws CycConnectionException {
     System.out.println("getExpandedSentence");
     CycAccess access = null;
     CycFormulaSentence instance = null;
@@ -536,7 +542,7 @@ public class CycFormulaSentenceTest {
    * Test of getExpandedSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetExpandedSentence_CycAccess_ELMt() throws Exception {
+  public void testGetExpandedSentence_CycAccess_ELMt() throws CycConnectionException {
     System.out.println("getExpandedSentence");
     CycAccess access = null;
     ELMt mt = null;
@@ -552,7 +558,7 @@ public class CycFormulaSentenceTest {
    * Test of getCanonicalElSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetCanonicalElSentence_CycAccess() throws Exception {
+  public void testGetCanonicalElSentence_CycAccess() throws CycConnectionException {
     System.out.println("getCanonicalElSentence");
     CycAccess access = null;
     CycFormulaSentence instance = null;
@@ -567,7 +573,7 @@ public class CycFormulaSentenceTest {
    * Test of getCanonicalElSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetCanonicalElSentence_CycAccess_Boolean() throws Exception {
+  public void testGetCanonicalElSentence_CycAccess_Boolean() throws CycConnectionException {
     System.out.println("getCanonicalElSentence");
     CycAccess access = null;
     Boolean canonicalizeVars = null;
@@ -584,7 +590,7 @@ public class CycFormulaSentenceTest {
    * Test of getCanonicalElSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetCanonicalElSentence_3args() throws Exception {
+  public void testGetCanonicalElSentence_3args() throws CycConnectionException {
     System.out.println("getCanonicalElSentence");
     CycAccess access = null;
     ELMt mt = null;

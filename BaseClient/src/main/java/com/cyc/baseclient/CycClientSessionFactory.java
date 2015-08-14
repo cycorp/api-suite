@@ -24,7 +24,7 @@ package com.cyc.baseclient;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.session.connection.SessionFactory;
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionConfigurationException;
@@ -48,7 +48,7 @@ public class CycClientSessionFactory implements SessionFactory<CycClientSession>
   
   @Override
   public CycClientSession initializeSession(CycClientSession session) throws SessionCommunicationException, SessionInitializationException {
-    final CycServer server = session.getConfiguration().getCycServer();
+    final CycServerAddress server = session.getConfiguration().getCycServer();
     final CycClient client;
     try {
       client = new CycClient(session);

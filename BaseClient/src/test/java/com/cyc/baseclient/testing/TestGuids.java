@@ -45,7 +45,6 @@ public class TestGuids {
   public static final String BRAZIL_GUID_STRING = "bd588f01-9c29-11b1-9dad-c379636f7270";
   public static final String BURNING_BUSH_GUID_STRING = "be846866-9c29-11b1-9dad-c379636f7270";
   public static final String CANINE_ANIMAL_GUID_STRING = "bd58d044-9c29-11b1-9dad-c379636f7270";
-  public static final String CIA_WORLD_FACTBOOK_1995_MT_GUID_STRING = "c0a41a91-9c29-11b1-9dad-c379636f7270";
   public static final String CITY_NAMED_FN_GUID_STRING = "bd6870a6-9c29-11b1-9dad-c379636f7270";
   public static final String CONSTANT_NAME_GUID_STRING = "bd7183b0-9c29-11b1-9dad-c379636f7270";
   public static final String COUNTRY_GUID_STRING = "bd588879-9c29-11b1-9dad-c379636f7270";
@@ -100,8 +99,8 @@ public class TestGuids {
   public Collection<String> findMissingGuids(CycAccess access)
           throws CycConnectionException, CycApiException {
     final Collection<String> results = new ArrayList<String>();
-    
-    final Collection<String> objs = CycObjectLibraryLoader.get().getAllObjectsForClass(TestGuids.class, String.class);
+    final CycObjectLibraryLoader objLoader = new CycObjectLibraryLoader(TestUtils.getCyc());
+    final Collection<String> objs = objLoader.getAllObjectsForClass(TestGuids.class, String.class);
     for (String str : objs) {
       boolean exists = false;
       try {

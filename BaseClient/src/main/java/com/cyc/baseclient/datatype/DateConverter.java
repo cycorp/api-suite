@@ -21,19 +21,23 @@ package com.cyc.baseclient.datatype;
  * #L%
  */
 
+import com.cyc.base.CycApiException;
 import com.cyc.base.annotation.CycObjectLibrary;
 import com.cyc.base.annotation.CycTerm;
-import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.base.cycobject.CycList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
+import static com.cyc.baseclient.datatype.TimeGranularity.*;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.base.cycobject.CycObject;
-import com.cyc.base.cycobject.Fort;
+import com.cyc.base.cycobject.DenotationalTerm;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import com.cyc.baseclient.util.ParseException;
 import com.cyc.baseclient.cycobject.GuidImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 /**
  * <P>DateConverter is designed to convert java-style dates to their corresponding
@@ -48,21 +52,11 @@ import com.cyc.baseclient.cycobject.NautImpl;
  *
  * @author baxter
  * @date January 15, 2008, 5:33 PM
- * @version $Id: DateConverter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DateConverter.java 159296 2015-06-24 22:44:04Z nwinant $
  */
 @CycObjectLibrary
 public class DateConverter extends DataTypeConverter<Date> {
-
-  public static final int DAY_GRANULARITY = TimeGranularity.DAY.intValue();
-  public static final int HOUR_GRANULARITY = TimeGranularity.HOUR.intValue();
-  public static final int MILLISECOND_GRANULARITY = TimeGranularity.MILLISECOND.intValue();
-  public static final int MINUTE_GRANULARITY = TimeGranularity.MINUTE.intValue();
-  public static final int MONTH_GRANULARITY = TimeGranularity.MONTH.intValue();
-  public static final int SECOND_GRANULARITY = TimeGranularity.SECOND.intValue();
-  public static final int WEEK_GRANULARITY = TimeGranularity.WEEK.intValue();
-//  public static final int SEASON_GRANULARITY = TimeGranularity.SEASON.intValue();
-  public static final int YEAR_GRANULARITY = TimeGranularity.YEAR.intValue();
-
+  
   //// Constructors
   /** Creates a new instance of DateConverter. */
   private DateConverter() {
@@ -99,7 +93,7 @@ public class DateConverter extends DataTypeConverter<Date> {
    * @see TimeZone#getDefault
    * @deprecated Use CycNaut version.
    */
-  static public Date parseCycDate(final CycArrayList cycList,
+  static public Date parseCycDate(final CycList cycList,
           final boolean shouldReportFailure) {
     final Object naut = NautImpl.convertIfPromising(cycList);
     if (naut instanceof Naut) {
@@ -136,7 +130,7 @@ public class DateConverter extends DataTypeConverter<Date> {
    *
    * @deprecated Use CycNaut version.
    */
-  static public Date parseCycDate(final CycArrayList cycList, final TimeZone timeZone,
+  static public Date parseCycDate(final CycList cycList, final TimeZone timeZone,
           final boolean shouldReportFailure) {
     final Object naut = NautImpl.convertIfPromising(cycList);
     if (naut instanceof Naut) {
@@ -180,7 +174,7 @@ public class DateConverter extends DataTypeConverter<Date> {
    * @see TimeZone#getDefault
    * @deprecated Use CycNaut version.
    */
-  static public Date parseCycDate(final CycArrayList cycList) {
+  static public Date parseCycDate(final CycList cycList) {
     return getInstance().parse(cycList);
   }
 
@@ -203,39 +197,40 @@ public class DateConverter extends DataTypeConverter<Date> {
   /** @return the precision of <tt>cycDate</tt> as a Calendar constant int.
    * @deprecated Use CycNaut version.
    */
-  public static int getCycDatePrecision(CycArrayList cycDate) {
+  public static TimeGranularity getCycDatePrecision(CycList cycDate) {
     return getCycDatePrecision(new NautImpl(cycDate));
   }
 
   /**
    * @param cycDate a date-denoting Cyc NAUT.
-   * @return the precision of <tt>cycDate</tt> as a Calendar constant int. */
-  public static int getCycDatePrecision(Naut cycDate) {
+   * @return the precision of <tt>cycDate</tt> as a Calendar constant int. 
+   */
+  public static TimeGranularity getCycDatePrecision(Naut cycDate) {
     final Object fn = cycDate.getOperator();
     if (YEAR_FN.equals(fn)) {
-      return YEAR_GRANULARITY;
+      return YEAR;
     }
     if (MONTH_FN.equals(fn)) {
-      return MONTH_GRANULARITY;
+      return MONTH;
     }
     if (DAY_FN.equals(fn)) {
-      return DAY_GRANULARITY;
+      return DAY;
     }
     if (HOUR_FN.equals(fn)) {
-      return HOUR_GRANULARITY;
+      return HOUR;
     }
     if (MINUTE_FN.equals(fn)) {
-      return MINUTE_GRANULARITY;
+      return MINUTE;
     }
     if (SECOND_FN.equals(fn)) {
-      return SECOND_GRANULARITY;
+      return SECOND;
     }
     if (MILLISECOND_FN.equals(fn)) {
-      return MILLISECOND_GRANULARITY;
+      return MILLISECOND;
     }
-    return -1;
+    return null;
   }
-
+  
   /** Convert the date in
    * <code>date</code> to a CycL date term.
    *
@@ -249,18 +244,10 @@ public class DateConverter extends DataTypeConverter<Date> {
    * @return The Cyc term corresponding to date.
    * @throws ParseException if date cannot be converted.
    * */
-  public static Naut toCycDate(final Date date, final int granularity) {
+  public static Naut toCycDate(final Date date, final TimeGranularity granularity) {
     return date2Naut(date, granularity);
   }
-
-  public static int guessGranularity(final Date date) {
-    return TimeGranularity.guessGranularity(date).intValue();
-  }
-
-  public static int guessGranularity(final long millis) {
-    return TimeGranularity.guessGranularity(millis).intValue();
-  }
-
+  
   /** Convert the date in
    * <code>date</code> to a CycL date term.
    *
@@ -269,7 +256,7 @@ public class DateConverter extends DataTypeConverter<Date> {
    * @throws ParseException if date cannot be converted.
    * */
   public static CycObject toCycDate(Date date) {
-    return date2Naut(date, guessGranularity(date));
+    return date2Naut(date, TimeGranularity.guessGranularity(date));
   }
 
   /** Convert the date in
@@ -285,7 +272,7 @@ public class DateConverter extends DataTypeConverter<Date> {
    * @return the Naut representation of <tt>calendar</tt>
    * @see com.cyc.baseclient.cycobject.Naut
    * */
-  public static Naut toCycDate(final Calendar calendar, final int granularity) {
+  public static Naut toCycDate(final Calendar calendar, final TimeGranularity granularity) {
     return calendar2Naut(calendar, granularity);
   }
 
@@ -306,39 +293,35 @@ public class DateConverter extends DataTypeConverter<Date> {
 
   @Override
   protected Naut toCycTerm(Date date) {
-    return date2Naut(date, guessGranularity(date));
+    return date2Naut(date, TimeGranularity.guessGranularity(date));
   }
 
   //// Private Area
-  static private Naut date2Naut(Date date, final int granularity) {
+  static private Naut date2Naut(Date date, final TimeGranularity granularity) {
     final Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
     return calendar2Naut(calendar, granularity);
   }
-
+  
   private static Naut calendar2Naut(final Calendar calendar,
-          final int granularity) {
-    Naut dateNaut = new NautImpl(YEAR_FN, calendar.get(YEAR_GRANULARITY));
+          final TimeGranularity granularity) {
+    Naut dateNaut = new NautImpl(YEAR_FN, YEAR.getCalendarValue(calendar));
 //      if (granularity == WEEK_GRANULARITY) {
-//        dateNaut = new NautImpl(WEEK_FN, calendar.get(WEEK_GRANULARITY), dateNaut);
+//        dateNaut = new NautImpl(WEEK_FN, WEEK_GRANULARITY.getCalendarValue(calendar), dateNaut);
 //      } else
-    if (granularity > YEAR_GRANULARITY) {
-      dateNaut = new NautImpl(MONTH_FN, lookupMonth(calendar.get(
-              MONTH_GRANULARITY)), dateNaut);
-      if (granularity > MONTH_GRANULARITY) {
-        dateNaut = new NautImpl(DAY_FN, calendar.get(DAY_GRANULARITY), dateNaut);
-        if (granularity > DAY_GRANULARITY) {
-          dateNaut = new NautImpl(HOUR_FN, calendar.get(HOUR_GRANULARITY),
-                  dateNaut);
-          if (granularity > Calendar.HOUR) {
-            dateNaut = new NautImpl(MINUTE_FN, calendar.get(MINUTE_GRANULARITY),
-                    dateNaut);
-            if (granularity > MINUTE_GRANULARITY) {
-              dateNaut = new NautImpl(SECOND_FN, calendar.get(SECOND_GRANULARITY),
-                      dateNaut);
-              if (granularity > SECOND_GRANULARITY) {
-                dateNaut = new NautImpl(MILLISECOND_FN, calendar.get(
-                        MILLISECOND_GRANULARITY), dateNaut);
+    if (granularity.isGreaterThan(YEAR)) {
+      dateNaut = new NautImpl(MONTH_FN, lookupMonth(MONTH.getCalendarValue(calendar)), dateNaut);
+      if (granularity.isGreaterThan(MONTH)) {
+        dateNaut = new NautImpl(DAY_FN, DAY.getCalendarValue(calendar), dateNaut);
+        if (granularity.isGreaterThan(DAY)) {
+          dateNaut = new NautImpl(HOUR_FN, HOUR.getCalendarValue(calendar), dateNaut);
+          if (granularity.isGreaterThan(Calendar.HOUR)) {
+            dateNaut = new NautImpl(MINUTE_FN, MINUTE.getCalendarValue(calendar), dateNaut);
+            if (granularity.isGreaterThan(MINUTE)) {
+              dateNaut = new NautImpl(SECOND_FN, SECOND.getCalendarValue(calendar), dateNaut);
+              if (granularity.isGreaterThan(SECOND)) {
+                dateNaut = new NautImpl(MILLISECOND_FN, MILLISECOND.getCalendarValue(calendar), 
+                        dateNaut);
               }
             }
           }
@@ -366,14 +349,14 @@ public class DateConverter extends DataTypeConverter<Date> {
    * <code>naut</code> */
   static private void updateCalendar(final Naut naut, final Calendar calendar) throws ParseException {
     final int arity = naut.getArity();
-    final Fort functor = naut.getFunctor();
+    final DenotationalTerm functor = naut.getFunctor();
     if (arity < 1 || arity > 2) {
       throwParseException(naut);
     }
     final Object arg1 = naut.getArg(1);
     if (arity == 1 && YEAR_FN.equals(functor)) {
       final Integer yearNum = parseInteger(arg1, "year number");
-      calendar.set(YEAR_GRANULARITY, yearNum);
+      YEAR.setCalendarValue(calendar, yearNum);
     } else if (arity == 1) {
       throwParseException(naut);
     } else {
@@ -390,19 +373,19 @@ public class DateConverter extends DataTypeConverter<Date> {
           throw new ParseException(arg1 + " is not a valid CycL month.");
         }
         updateCalendar((Naut) arg2, calendar);
-        calendar.set(MONTH_GRANULARITY, monthNum);
+        MONTH.setCalendarValue(calendar, monthNum);
       } else if (DAY_FN.equals(functor)) {
         final Object dayNum = parseInteger(arg1, "day number");
         updateCalendar((Naut) arg2, calendar);
-        calendar.set(DAY_GRANULARITY, (Integer) dayNum);
+        DAY.setCalendarValue(calendar, (Integer) dayNum);
       } else if (HOUR_FN.equals(functor)) {
         final Object hourNum = parseInteger(arg1, "hour number");
         updateCalendar((Naut) arg2, calendar);
-        calendar.set(HOUR_GRANULARITY, (Integer) hourNum);
+        HOUR.setCalendarValue(calendar, (Integer) hourNum);
       } else if (MINUTE_FN.equals(functor)) {
         final Object minuteNum = parseInteger(arg1, "minute number");
         updateCalendar((Naut) arg2, calendar);
-        calendar.set(MINUTE_GRANULARITY, (Integer) minuteNum);
+        MINUTE.setCalendarValue(calendar, (Integer) minuteNum);
       } else if (SECOND_FN.equals(functor)) {
         final Object secondNum = Integer.valueOf(arg1.toString());
         if (!(secondNum instanceof Integer && (Integer) secondNum >= 0
@@ -410,11 +393,11 @@ public class DateConverter extends DataTypeConverter<Date> {
           throw new ParseException(secondNum + " is not a valid second number.");
         }
         updateCalendar((Naut) arg2, calendar);
-        calendar.set(SECOND_GRANULARITY, (Integer) secondNum);
+        SECOND.setCalendarValue(calendar, (Integer) secondNum);
       } else if (MILLISECOND_FN.equals(functor)) {
         final Object millisecondNum = parseInteger(arg1, "millisecond number");
         updateCalendar((Naut) arg2, calendar);
-        calendar.set(MILLISECOND_GRANULARITY, (Integer) millisecondNum);
+        MILLISECOND.setCalendarValue(calendar, (Integer) millisecondNum);
       } else {
         throwParseException(naut);
       }
@@ -473,14 +456,66 @@ public class DateConverter extends DataTypeConverter<Date> {
   }
 
   public static boolean isCycDate(Object object) {
-    if (object instanceof CycArrayList) {
-      return parseCycDate((CycArrayList) object, false) != null;
+    if (object instanceof CycList) {
+      return parseCycDate((CycList) object, false) != null;
     } else if (object instanceof Naut) {
       return parseCycDate((Naut) object, false) != null;
     } else {
       return false;
     }
   }
+  
+  /** 
+   * Returns the XML datetime string corresponding to the given CycL date.
+   * 
+   * This function was formerly in com.cyc.baseclient.CycClient#xmlDatetimeString.
+   *
+   * @param date the date naut
+   * @return the XML datetime string corresponding to the given CycL date
+   * @throws java.io.IOException
+   */
+  public static String toXMLDatetimeString(final CycList date) throws IOException, CycApiException {
+    try {
+      final Naut dateNaut = (Naut) NautImpl.convertIfPromising(date);
+      final Date javadate = DateConverter.parseCycDate(dateNaut,
+              TimeZone.getDefault(), false);
+      final TimeGranularity precision = getCycDatePrecision(dateNaut);
+      return toXMLDatetimeString(javadate, precision);
+      /*
+      if (precision > DateConverter.DAY_GRANULARITY) {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(javadate);
+      } else {
+        return new SimpleDateFormat("yyyy-MM-dd").format(javadate);
+      }
+      */
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  /**
+   * Returns the XML datetime string corresponding to a given Date
+   * 
+   * @param date the Java Date
+   * @param precision
+   * @return the XML datetime string corresponding to the given date
+   * @throws IOException
+   * @throws CycApiException 
+   */
+  public static String toXMLDatetimeString(final Date date, TimeGranularity precision) {
+    try {
+      //if (precision.intValue() > DateConverter.DAY_GRANULARITY) {
+      if (precision.isGreaterThan(DAY)) {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(date);
+      } else {
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+      }
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  
   //// Internal Rep
   
   @CycTerm(cycl="#$YearFn")

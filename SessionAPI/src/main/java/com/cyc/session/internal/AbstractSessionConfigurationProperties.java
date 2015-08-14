@@ -24,6 +24,7 @@ package com.cyc.session.internal;
 import static com.cyc.session.SessionConfigurationProperties.*;
 import com.cyc.session.CycServer;
 import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.exception.SessionApiRuntimeException;
 import java.util.Properties;
 
 /**
@@ -61,8 +62,8 @@ abstract public class AbstractSessionConfigurationProperties implements CycSessi
   // Protected
   
   protected boolean isSufficientlyConfigured() {
-    return properties.containsKey(POLICY_NAME_KEY)
-            || properties.containsKey(POLICY_FILE_KEY)
+    return properties.containsKey(CONFIGURATION_LOADER_KEY)
+            || properties.containsKey(CONFIGURATION_FILE_KEY)
             || properties.contains(SERVER_KEY);
   }
   
@@ -79,6 +80,23 @@ abstract public class AbstractSessionConfigurationProperties implements CycSessi
       this.misconfigured = new Properties();
     }
     this.misconfigured.put(key, value);
+  }
+  
+  protected Boolean getBooleanProperty(String key, Boolean defaultValue) {
+    final String value = properties.getProperty(SERVER_PATCHING_ALLOWED_KEY,
+            (defaultValue != null) ? defaultValue.toString() : null);
+    // We don't just call Boolean#parseBoolean(String) or Boolean#valueOf(String) because they will
+    // coerce non-boolean string values (e.g., "not a boolean") to either true or false.
+    if (value == null) {
+      return null;
+    }
+    if (value.trim().toLowerCase().equals("true")) {
+      return true;
+    }
+    if (value.trim().toLowerCase().equals("false")) {
+      return false;
+    }
+    throw new SessionApiRuntimeException("Error parsing property '" + key + "': value '" + value + "' cannot be parsed to a boolean.");
   }
   
   

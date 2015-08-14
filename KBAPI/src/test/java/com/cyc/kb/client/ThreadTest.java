@@ -27,6 +27,7 @@ package com.cyc.kb.client;
  * #L%
  */
 
+import static com.cyc.kb.client.TestUtils.skipTest;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -63,8 +63,12 @@ public class ThreadTest {
   }
 
   // Don't run this tests always!!
-  //@Test
+  //
+  // TODO: should this be re-enabled? - nwinant, 2015-07-02
+  // 
+  @Test
   public void createKBContent() throws InterruptedException {
+    skipTest(this, "createKBContent", "We don't always want to run this test.");
       //Running a single thread
     /*
     TestKBThread t = new TestKBThread("FirstThread");

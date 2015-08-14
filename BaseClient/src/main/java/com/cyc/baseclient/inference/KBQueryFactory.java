@@ -37,7 +37,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
 import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 
 /**
  *
@@ -47,7 +47,7 @@ import com.cyc.base.inference.InferenceParameters;
  *
  * @author rck
  * @date 2010-07-08
- * @version $Id: KBQueryFactory.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: KBQueryFactory.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class KBQueryFactory {
 

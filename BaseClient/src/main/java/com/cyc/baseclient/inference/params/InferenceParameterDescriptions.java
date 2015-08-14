@@ -22,9 +22,10 @@ package com.cyc.baseclient.inference.params;
  */
 
 //// External Imports
+import com.cyc.query.InferenceParameter;
 import com.cyc.base.CycAccess;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import java.util.Map;
 
 /**
@@ -37,11 +38,11 @@ import java.util.Map;
  *
  * @author tbrussea
  * @date August 2, 2005, 10:21 AM
- * @version $Id: InferenceParameterDescriptions.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: InferenceParameterDescriptions.java 158569 2015-05-19 21:51:08Z daves $
  * 
  * @see InferenceParameter
  */
-public interface InferenceParameterDescriptions extends Map<CycSymbol, InferenceParameter> {
+public interface InferenceParameterDescriptions extends Map<String, InferenceParameter> {
 
   /**
    * Get the string API representation for this map.

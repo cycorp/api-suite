@@ -31,7 +31,6 @@ import com.cyc.kb.Quantifier;
 import com.cyc.kb.Relation;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycList;
@@ -40,11 +39,14 @@ import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.FormulaImpl;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
+import com.cyc.baseclient.datatype.TimeGranularity;
 import com.cyc.kb.*;
+import com.cyc.kb.client.KBObjectImpl.KBURIType;
+import static com.cyc.kb.client.TestUtils.assumeNotEnterpriseCyc;
+import static com.cyc.kb.client.TestUtils.skipTest;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBObjectNotFoundException;
@@ -53,6 +55,9 @@ import com.cyc.kb.quant.ForAllQuantifiedInstanceRestrictedVariable;
 import com.cyc.kb.quant.QuantifiedRestrictedVariable;
 import com.cyc.kb.quant.ThereExistsQuantifiedInstanceRestrictedVariable;
 import com.cyc.session.SessionApiException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -256,20 +261,21 @@ public class KBObjectTest {
  
    }
    */
-//	@Test
-//	public void testGetFact() {
-//		//(genls Dog CanisGenus)
-//		try {
-//			KBCollection c = new KBCollection ("Dog");
-//			Fact a = c.getFact("'(#$genls #$Dog #$CanisGenus)", "#$UniversalVocabularyMt");
-//
-//			LOG.fine("Fact string:" + a.toString());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			fail("Exception when running the test case");
-//		}
-//	}
-//	
+	/*
+	@Test
+	public void testGetFact() {
+		//(genls Dog CanisGenus)
+		try {
+			KBCollection c = new KBCollection ("Dog");
+			Fact a = c.getFact("'(#$genls #$Dog #$CanisGenus)", "#$UniversalVocabularyMt");
+
+			LOG.fine("Fact string:" + a.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception when running the test case");
+		}
+	}
+	*/
   @Test
   public void testKBObjectHashSet() throws KBApiException {
     Set<KBObjectImpl> sso = new HashSet<KBObjectImpl>();
@@ -431,15 +437,41 @@ public class KBObjectTest {
     System.out.println("The Nested List-Set: " + o3);
   }
   
-  //@Test(expected = ClassCastException.class)
+  @Test
+  public void testDateConversion() throws Exception {
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd HH:mm");
+    final Date dateWithMinuteGranularity = sdf.parse("2014 03 15 10:20");
+    assertEquals("Sat Mar 15 10:20:00 CDT 2014", dateWithMinuteGranularity.toString());
+    
+    final KBObject kbDate = KBObjectImpl.get(DateConverter.toCycDate(dateWithMinuteGranularity));
+    assertEquals("(MinuteFn 20 (HourFn 10 (DayFn 15 (MonthFn March (YearFn 2014)))))", kbDate.toString());
+    
+    final KBObject kbDateWithSecondGranularity = KBObjectImpl.get(DateConverter.toCycDate(dateWithMinuteGranularity, TimeGranularity.SECOND));
+    assertEquals("(SecondFn 0 (MinuteFn 20 (HourFn 10 (DayFn 15 (MonthFn March (YearFn 2014))))))", kbDateWithSecondGranularity.toString());
+    
+    final KBObject kbDateWithDayGranularity = KBObjectImpl.get(DateConverter.toCycDate(dateWithMinuteGranularity, TimeGranularity.DAY));
+    assertEquals("(DayFn 15 (MonthFn March (YearFn 2014)))", kbDateWithDayGranularity.toString());
+  }
+  
+  @Test
+  public void testNautConversion() throws Exception {
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+    final Date date = sdf.parse("2014 03 15 10:20:23");
+    final Naut dateNaut = DateConverter.toCycDate(date, TimeGranularity.SECOND);
+    final KBObject kbDate = KBObjectImpl.get(dateNaut);
+    assertEquals("(SecondFn 23 (MinuteFn 20 (HourFn 10 (DayFn 15 (MonthFn March (YearFn 2014))))))", kbDate.toString());
+  }
+  
+  @Test(expected = ClassCastException.class)
   public void testClassCast () throws Exception {
+    skipTest(this, "testClassCast", "This should throw a ClassCastException, because we have a date, not a predicate.");
     System.out.println("testClassCast");
     Naut n = TestConstants.getCyc().getObjectTool().makeCycNaut("(#$MinuteFn 20 \n" +
       "  (#$HourFn 10 \n" +
       "    (#$DayFn 15 \n" +
       "      (#$MonthFn #$March \n" +
       "        (#$YearFn 2014))))) ");
-    // TODO: This should throw a ClassCastException, because we have a date, not a predicate:
+    // TODO: This should throw a ClassCastException, because we have a dateWithMinuteGranularity, not a predicate:
     KBObjectImpl.<KBPredicate>checkAndCastObject(n);
   }
   
@@ -495,14 +527,14 @@ public class KBObjectTest {
   }
   
   /**
-   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
-   * all Cyc releases.
+   * TODO: This test fails in EnterpriseCyc 1.7-preview; it should be rewritten to use vocabulary 
+   *       present in all Cyc releases.
    * 
    * @throws Exception 
    */
-  @Deprecated
-  //@Test 
+  @Test 
   public void testReplaceTerms () throws Exception {
+    assumeNotEnterpriseCyc();
     // A list of random terms 
     FormulaSentence fs =  TestConstants.getCyc().getObjectTool().makeCyclifiedSentence("(TheList BarackObama BillClinton 1 \n" +
 "  (TheTermBindingFn \n" +
@@ -535,5 +567,24 @@ public class KBObjectTest {
     
     System.out.println("Modified Sentence: " + smod);
     assertEquals(smod.getArgument(0), 1);
+  }
+  
+  @Test
+  public void testToURI_CB() throws Exception {
+    assertCycURIEquals(
+            "/cgi-bin/cg?cb-cf&Mx4rvcyffJwpEbGdrcN5Y29ycA", 
+            KBObjectImpl.from(Constants.getInstance().THELIST_FUNC).toURI(KBURIType.CYC_BROWSER));
+    assertCycURIEquals(
+            "/cgi-bin/cg?cb-cf&Mx4rvViAkpwpEbGdrcN5Y29ycA", 
+            KBObjectImpl.from(KBCollectionImpl.get("#$Person")).toURI(KBURIType.CYC_BROWSER));
+  }
+  
+  
+  // Private
+  
+  private void assertCycURIEquals(String expected, URI asserted) throws URISyntaxException {
+    System.out.println(asserted);
+    final String relativized = asserted.toString().replaceFirst("http://[a-zA-Z_0-9:.]+/", "/");
+    assertEquals(expected, relativized);
   }
 }

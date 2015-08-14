@@ -21,8 +21,11 @@ package com.cyc.kb.client;
  * #L%
  */
 
+import com.cyc.base.CycAccess;
+import com.cyc.base.CycAccessManager;
 import com.cyc.baseclient.CycObjectLibraryLoader;
 import com.cyc.kb.KBObject;
+import com.cyc.kb.exception.KBApiRuntimeException;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,23 +36,21 @@ import org.slf4j.LoggerFactory;
  */
 public class KBObjectLibraryLoader extends CycObjectLibraryLoader {
   
+  // Fields
+
+  private final Logger logger;
+  
   
   // Constructor
 
-  protected KBObjectLibraryLoader() {
+  public KBObjectLibraryLoader() {
+    super(null);
     logger = LoggerFactory.getLogger(this.getClass().getName());
   }
-
-  synchronized public static KBObjectLibraryLoader get() {
-    if (ME == null) {
-      ME = new KBObjectLibraryLoader();
-    }
-    return ME;
-  }
-
+  
   
   // Public
-  
+    
   public Collection<KBObject> getAllKBObjectsForClass(Class libraryClass) {
     return getAllObjectsForClass(libraryClass, KBObject.class);
   }
@@ -62,16 +63,19 @@ public class KBObjectLibraryLoader extends CycObjectLibraryLoader {
   // Protected
   
   @Override
+  protected CycAccess getAccess() {
+    try {
+      return CycAccessManager.getCurrentAccess();
+    } catch (Exception ex) {
+      throw new KBApiRuntimeException(ex);
+    }
+  }
+  
+  @Override
   protected String getObjectCycLValue(Object o) {
     if (KBObject.class.isInstance(o)) {
       return super.getObjectCycLValue(((KBObject) o).getCore());
     }
     return super.getObjectCycLValue(o);
   }
-  
-  
-  // Internal
-  
-  private static KBObjectLibraryLoader ME;
-  private final Logger logger;
 }

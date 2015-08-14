@@ -38,7 +38,7 @@ public interface Context extends KBIndividual {
 
   /**
    * Finds the contexts that are asserted to extend this context, in 
-   * {@link KBAPIDefaultContext#forQuery()}. Effectively,
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}. Effectively,
    * this returns the asserted bindings for <code>?CONTEXT</code> from
    * <code>(#$genlMt ?CONTEXT this)</code>. 
    *
@@ -93,7 +93,7 @@ public interface Context extends KBIndividual {
 
   /**
    * Finds the contexts that this context is asserted to inherit from, in 
-   * {@link KBAPIDefaultContext#forQuery()}.
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    * Effectively, this returns all asserted values for ?CONTEXT from
    * <code>(#$genlMt this ?CONTEXT)</code>
    *

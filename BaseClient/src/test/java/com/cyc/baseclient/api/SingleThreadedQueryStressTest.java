@@ -40,7 +40,7 @@ import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycVariable;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 import java.util.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -107,20 +107,13 @@ public class SingleThreadedQueryStressTest {
       params.setIntermediateStepValidationLevel(CycObjectFactory.makeCycSymbol(
               ":none"));
       params.setBrowsable(false);
-      params.put(CycObjectFactory.makeCycSymbol(
-              ":add-restriction-layer-of-indirection?"), CycObjectFactory.nil);
-      params.put(CycObjectFactory.makeCycSymbol(":allow-abnormality-checking?"),
-              CycObjectFactory.nil);
-      params.put(CycObjectFactory.makeCycSymbol(
-              ":compute-answer-justifications?"), CycObjectFactory.nil);
-      params.put(CycObjectFactory.makeCycSymbol(":max-problem-count"),
-              CycObjectFactory.makeCycSymbol(":positive-infinity"));
-      params.put(CycObjectFactory.makeCycSymbol(":new-terms-allowed?"),
-              CycObjectFactory.nil);
-      params.put(CycObjectFactory.makeCycSymbol(":productivity-limit"),
-              CycObjectFactory.makeCycSymbol(":positive-infinity"));
-      params.put(CycObjectFactory.makeCycSymbol(":transformation-allowed?"),
-              CycObjectFactory.nil);
+      params.put(":add-restriction-layer-of-indirection?", CycObjectFactory.nil);
+      params.put(":allow-abnormality-checking?", CycObjectFactory.nil);
+      params.put(":compute-answer-justifications?", CycObjectFactory.nil);
+      params.put(":max-problem-count", CycObjectFactory.makeCycSymbol(":positive-infinity"));
+      params.put(":new-terms-allowed?", CycObjectFactory.nil);
+      params.put(":productivity-limit", CycObjectFactory.makeCycSymbol(":positive-infinity"));
+      params.put(":transformation-allowed?", CycObjectFactory.nil);
     }
     parameters = params;
   }

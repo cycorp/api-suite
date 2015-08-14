@@ -50,18 +50,28 @@ import static com.cyc.baseclient.testing.TestUtils.getCyc;
 import static com.cyc.baseclient.cycobject.ArgPositionImpl.*;
 import static com.cyc.baseclient.cycobject.CycArrayList.makeCycList;
 import static com.cyc.baseclient.CommonConstants.*;
+import com.cyc.baseclient.api.CycApiServerSideException;
 import com.cyc.baseclient.datatype.DateConverter;
 import static com.cyc.baseclient.testing.TestConstants.*;
 import com.cyc.baseclient.util.CycUtils;
 import com.cyc.baseclient.util.MyStreamTokenizer;
 import com.cyc.baseclient.datatype.Span;
+import com.cyc.baseclient.parser.InvalidConstantGuidException;
+import com.cyc.baseclient.parser.InvalidConstantNameException;
+import com.cyc.baseclient.parser.ParseException;
+import com.cyc.baseclient.parser.TokenMgrError;
+import com.cyc.baseclient.parser.UnsupportedVocabularyException;
 import com.cyc.baseclient.testing.TestConstants;
 import com.cyc.baseclient.testing.TestGuids;
 import com.cyc.baseclient.testing.TestSentences;
+import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
 import com.cyc.baseclient.xml.Marshaller;
 import com.cyc.baseclient.xml.XMLStringWriter;
 import com.cyc.session.SessionApiException;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
+import org.xml.sax.SAXException;
 
 // FIXME: TestSentences - nwinant
 
@@ -355,16 +365,12 @@ public class CycObjectUnitTest {
   }
 
   @Test
-  public void testCompactExternalIds() {
+  public void testCompactExternalIds() throws CycConnectionException {
     System.out.println("\n*** testCompactExternalIds ***");
-    try {
-      final Object obj = CommonConstants.BASE_KB;
-      final String id = "Mx4rvViBEZwpEbGdrcN5Y29ycA";
-      assertEquals(id, DefaultCycObject.toCompactExternalId(obj, getCyc()));
-      assertEquals(obj, DefaultCycObject.fromCompactExternalId(id, getCyc()));
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    final Object obj = CommonConstants.BASE_KB;
+    final String id = "Mx4rvViBEZwpEbGdrcN5Y29ycA";
+    assertEquals(id, DefaultCycObject.toCompactExternalId(obj, getCyc()));
+    assertEquals(obj, DefaultCycObject.fromCompactExternalId(id, getCyc()));
     System.out.println("*** testCompactExternalIds OK ***");
   }
 
@@ -372,7 +378,7 @@ public class CycObjectUnitTest {
    * Tests <tt>GuidImpl</tt> object behavior.
    */
   @Test
-  public void testGuid() {
+  public void testGuid() throws IOException, ParserConfigurationException, SAXException {
     System.out.println("\n*** testGuid ***");
     CycObjectFactory.resetGuidCache();
     assertEquals(0, CycObjectFactory.getGuidCacheSize());
@@ -388,22 +394,19 @@ public class CycObjectUnitTest {
 
     // toXML, toXMLString, unmarshal
     XMLStringWriter xmlStringWriter = new XMLStringWriter();
-    try {
-      guid.toXML(xmlStringWriter, 0, false);
-      assertEquals("<guid>bd58c19d-9c29-11b1-9dad-c379636f7270</guid>\n",
-              xmlStringWriter.toString());
-      assertEquals("<guid>bd58c19d-9c29-11b1-9dad-c379636f7270</guid>\n",
-              guid.toXMLString());
-      String guidXMLString = guid.toXMLString();
-      CycObjectFactory.resetGuidCache();
-      Object object = CycObjectFactory.unmarshal(guidXMLString);
-      assertTrue(object instanceof GuidImpl);
-      assertEquals(guid, (GuidImpl) object);
-      assertTrue(CycObjectFactory.unmarshal(guidXMLString)
-              == CycObjectFactory.unmarshal(guidXMLString));
-    } catch (Exception e) {
-      failWithException(e);
-    }
+
+    guid.toXML(xmlStringWriter, 0, false);
+    assertEquals("<guid>bd58c19d-9c29-11b1-9dad-c379636f7270</guid>\n",
+            xmlStringWriter.toString());
+    assertEquals("<guid>bd58c19d-9c29-11b1-9dad-c379636f7270</guid>\n",
+            guid.toXMLString());
+    String guidXMLString = guid.toXMLString();
+    CycObjectFactory.resetGuidCache();
+    Object object = CycObjectFactory.unmarshal(guidXMLString);
+    assertTrue(object instanceof GuidImpl);
+    assertEquals(guid, (GuidImpl) object);
+    assertTrue(CycObjectFactory.unmarshal(guidXMLString)
+            == CycObjectFactory.unmarshal(guidXMLString));
 
     System.out.println("*** testGuid OK ***");
   }
@@ -412,7 +415,7 @@ public class CycObjectUnitTest {
    * Tests <tt>CycSymbolImpl</tt> object behavior.
    */
   @Test
-  public void testCycSymbol() {
+  public void testCycSymbol() throws CycConnectionException, IOException, ParserConfigurationException, SAXException {
     System.out.println("\n*** testCycSymbol ***");
     CycObjectFactory.resetCycSymbolCache();
     assertEquals(CycObjectFactory.RESET_SYMBOL_CACHE_SIZE,
@@ -433,11 +436,8 @@ public class CycObjectUnitTest {
     CycSymbolImpl cycSymbol4 = CycObjectFactory.makeCycSymbol(symbolName4);
     assertEquals(cycSymbol.toString(), cycSymbol4.toString());
     assertEquals(cycSymbol, cycSymbol4);
-    try {
-      testCycObjectRetrievable(cycSymbol);
-    } catch (Exception ex) {
-      failWithException(ex);
-    }
+    
+    testCycObjectRetrievable(cycSymbol);
 
     // compareTo
     ArrayList symbols = new ArrayList();
@@ -571,17 +571,14 @@ public class CycObjectUnitTest {
 
     // toXML, toXMLString, unmarshal
     XMLStringWriter xmlStringWriter = new XMLStringWriter();
-    try {
-      cycSymbol6.toXML(xmlStringWriter, 0, false);
-      assertEquals("<symbol>:POS</symbol>\n", xmlStringWriter.toString());
-      assertEquals("<symbol>:POS</symbol>\n", cycSymbol6.toXMLString());
-      String cycSymbolXMLString = cycSymbol6.toXMLString();
-      Object object = CycObjectFactory.unmarshal(cycSymbolXMLString);
-      assertTrue(object instanceof CycSymbolImpl);
-      assertEquals(cycSymbol6, (CycSymbolImpl) object);
-    } catch (Exception e) {
-      failWithException(e);
-    }
+
+    cycSymbol6.toXML(xmlStringWriter, 0, false);
+    assertEquals("<symbol>:POS</symbol>\n", xmlStringWriter.toString());
+    assertEquals("<symbol>:POS</symbol>\n", cycSymbol6.toXMLString());
+    String cycSymbolXMLString = cycSymbol6.toXMLString();
+    Object object = CycObjectFactory.unmarshal(cycSymbolXMLString);
+    assertTrue(object instanceof CycSymbolImpl);
+    assertEquals(cycSymbol6, (CycSymbolImpl) object);
 
     System.out.println("*** testCycSymbol OK ***");
   }
@@ -590,9 +587,9 @@ public class CycObjectUnitTest {
    * Tests <tt>CycConstantImpl</tt> object behavior.
    */
   @Test
-  public void testCycConstant() {
+  public void testCycConstant() throws CycConnectionException, IOException, ParserConfigurationException, SAXException {
     System.out.println("\n*** testCycConstantI ***");
-    try {
+    
       CycObjectFactory.resetCycConstantCaches();
       assertEquals(0, CycObjectFactory.getCycConstantCacheByNameSize());
       String guidString = TAME_ANIMAL.getGuid().getGuidString();
@@ -644,9 +641,6 @@ public class CycObjectUnitTest {
       Object object = CycObjectFactory.unmarshal(cycConstantXMLString);
       assertTrue(object instanceof CycConstantImpl);
       assertEquals(cycConstant4, (CycConstantImpl) object);
-    } catch (Exception e) {
-      failWithException(e);
-    }
 
     System.out.println("*** testCycConstantI OK ***");
   }
@@ -655,149 +649,145 @@ public class CycObjectUnitTest {
    * Tests <tt>Nart</tt> object behavior.
    */
   @Test
-  public void testCycNart() {
+  public void testCycNart() throws CycConnectionException, IOException, ParserConfigurationException, SAXException {
     System.out.println("\n*** testCycNart ***");
-    try {
-      Nart cycNart = new NartImpl(DOLLAR, 1);
-      //testCycObjectRetrievable(cycNart);
-      Nart dollar1 = cycNart;
-      assertNotNull(cycNart);
-      assertEquals("(USDollarFn 1)", cycNart.toString());
-      assertEquals("(" + usDollarFn + " 1)", cycNart.cyclify());
 
-      Nart cycNart2 = new NartImpl(DOLLAR, 1);
-      assertEquals(cycNart.toString(), cycNart2.toString());
-      assertEquals(cycNart, cycNart2);
+    Nart cycNart = new NartImpl(DOLLAR, 1);
+    //testCycObjectRetrievable(cycNart);
+    Nart dollar1 = cycNart;
+    assertNotNull(cycNart);
+    assertEquals("(USDollarFn 1)", cycNart.toString());
+    assertEquals("(" + usDollarFn + " 1)", cycNart.cyclify());
 
-      // compareTo
-      {
-        ArrayList narts = new ArrayList();
-        CycArrayList<CycObject> nartCycList = new CycArrayList<CycObject>();
-        nartCycList.add(DateConverter.YEAR_FN);
-        nartCycList.add(Integer.valueOf(2000));
-        Nart year2K = new NartImpl(nartCycList);
-        narts.add(year2K);
-        assertEquals("[(YearFn 2000)]", narts.toString());
-        CycConstant person =
-                getCyc().getLookupTool().getKnownConstantByGuid(
-                CycObjectFactory.makeGuid(TestConstants.PERSON.getGuid().getGuidString()));
-        CycList nartCycList2 = new CycArrayList<CycObject>();
-        nartCycList2.add(CONVEY_FN);
-        nartCycList2.add(person);
-        narts.add(new NartImpl(nartCycList2));
-        CycList nartCycList3 = new CycArrayList<CycObject>();
-        nartCycList3.add(DOLLAR);
-        nartCycList3.add(Integer.valueOf(1));
-        narts.add(new NartImpl(nartCycList3));
-        Collections.sort(narts);
-        assertEquals("[(ConveyFn Person), (USDollarFn 1), (YearFn 2000)]",
-                narts.toString());
-      }
+    Nart cycNart2 = new NartImpl(DOLLAR, 1);
+    assertEquals(cycNart.toString(), cycNart2.toString());
+    assertEquals(cycNart, cycNart2);
 
-      // hasFunctorAndArgs
-      assertTrue(dollar1.hasFunctorAndArgs());
-
-      // toCycList()
-      {
-        CycList cycList = new CycArrayList<CycObject>();
-        cycList.add(DOLLAR);
-        cycList.add(Integer.valueOf(1));
-        assertEquals(cycList, dollar1.toCycList());
-      }
-
-      // check cfasl representation of narts in a list
-      {
-        CycList myNarts = new CycArrayList<CycObject>();
-        final Object randomNart1 = getCyc().converse().converseObject("(random-nart)");
-        myNarts.add(randomNart1);
-        final Object randomNart2 = getCyc().converse().converseObject("(random-nart)");
-        myNarts.add(randomNart2);
-
-        for (int i = 0; i < myNarts.size(); i++) {
-          assertTrue(myNarts.get(i) instanceof Nart);
-        }
-        String command = SubLAPIHelper.makeSubLStmt("csetq",
-                CycObjectFactory.makeCycSymbol("my-narts", false), myNarts);
-        CycList myNartsBackFromCyc1 = getCyc().converse().converseList(command);
-        CycList commandList = new CycArrayList();
-        commandList.add(CycObjectFactory.makeCycSymbol("csetq"));
-        commandList.add(CycObjectFactory.makeCycSymbol("my-narts"));
-        commandList.addQuoted(myNarts);
-        CycList myNartsBackFromCyc = getCyc().converse().converseList(commandList);
-        for (int i = 0; i < myNartsBackFromCyc.size(); i++) {
-          assertTrue(myNartsBackFromCyc.get(i) instanceof Nart);
-          Nart myNartBackFromCyc = (Nart) myNartsBackFromCyc.get(i);
-          assertTrue(myNartBackFromCyc.getFunctor() instanceof Fort);
-          assertTrue(myNartBackFromCyc.getArguments() instanceof ArrayList);
-          ArrayList args = (ArrayList) myNartBackFromCyc.getArguments();
-          final Naut myNartFormula = ((Nart) myNarts.get(i)).getFormula();
-          assertEquals(myNartFormula,
-                  ((Nart) myNartsBackFromCyc.get(i)).getFormula());
-          assertEquals(myNartFormula,
-                  ((Nart) myNartsBackFromCyc1.get(i)).getFormula());
-
-        }
-      }
-
-      // coerceToCycNart
-      {
-        NartImpl cycNart4 = new NartImpl(DOLLAR, Integer.valueOf(1));
-        assertEquals(cycNart4, NartImpl.coerceToCycNart(cycNart4));
-        CycList cycList4 = new CycArrayList<CycObject>();
-        cycList4.add(DOLLAR);
-        cycList4.add(Integer.valueOf(1));
-        assertEquals(cycNart2, NartImpl.coerceToCycNart(cycList4));
-
-        // toXML, toXMLString
-        XMLStringWriter xmlStringWriter = new XMLStringWriter();
-        cycNart4.toXML(xmlStringWriter, 0, false);
-        System.out.println(xmlStringWriter.toString());
-
-        String cycNartXMLString = cycNart4.toXMLString();
-        System.out.println("cycNartXMLString\n" + cycNartXMLString);
-        Object object = CycObjectFactory.unmarshal(cycNartXMLString);
-        assertTrue(object instanceof Nart);
-        assertEquals(cycNart4, (Nart) object);
-        NartImpl cycNart5 = new NartImpl(THE_LIST, Integer.valueOf(1), "a string");
-        cycNartXMLString = cycNart5.toXMLString();
-        System.out.println("cycNartXMLString\n" + cycNartXMLString);
-        object = CycObjectFactory.unmarshal(cycNartXMLString);
-        assertTrue(object instanceof Nart);
-        assertEquals(cycNart5, (Nart) object);
-      }
-
-      // Check whether stringApiValue() behaves properly on a NART with a string argument
-      {
-        Nart attawapiskat = new NartImpl(CITY_NAMED_FN, "Attawapiskat",
-                ONTARIO_CANADIAN_PROVINCE);
-
-        Object result = CycUtils.evalSubLWithWorker(getCyc(),
-                attawapiskat.stringApiValue());
-        assertTrue(result instanceof Nart);
-        assertEquals(attawapiskat, (Nart) result);
-      }
-
-      // Check whether stringApiValue() behaves properly on a NART
-      // with a string that contains a character that needs to be escaped in SubL
-      {
-        Nart hklmSam = new NartImpl(REGISTRY_KEY_FN, "HKLM\\SAM");
-
-        Object result0 = NautImpl.convertIfPromising(CycUtils.evalSubLWithWorker(getCyc(),
-                hklmSam.stringApiValue()));
-        assertTrue(result0 instanceof NonAtomicTerm);
-        assertEquals(hklmSam.getFormula(), ((NonAtomicTerm)result0).getFormula());
-      }
-
-      /*
-       CycAssertion cycAssertion = getCyc().getAssertionById(Integer.valueOf(968857));
-       Nart complexNart = (Nart) cycAssertion.getFormula().second();
-       System.out.println(complexNart.toString());
-       System.out.println(complexNart.cyclify());
-       */
-    } catch (Exception e) {
-      failWithException(e);
+    // compareTo
+    {
+      ArrayList narts = new ArrayList();
+      CycArrayList<CycObject> nartCycList = new CycArrayList<CycObject>();
+      nartCycList.add(DateConverter.YEAR_FN);
+      nartCycList.add(Integer.valueOf(2000));
+      Nart year2K = new NartImpl(nartCycList);
+      narts.add(year2K);
+      assertEquals("[(YearFn 2000)]", narts.toString());
+      CycConstant person
+              = getCyc().getLookupTool().getKnownConstantByGuid(
+                      CycObjectFactory.makeGuid(TestConstants.PERSON.getGuid().getGuidString()));
+      CycList nartCycList2 = new CycArrayList<CycObject>();
+      nartCycList2.add(CONVEY_FN);
+      nartCycList2.add(person);
+      narts.add(new NartImpl(nartCycList2));
+      CycList nartCycList3 = new CycArrayList<CycObject>();
+      nartCycList3.add(DOLLAR);
+      nartCycList3.add(Integer.valueOf(1));
+      narts.add(new NartImpl(nartCycList3));
+      Collections.sort(narts);
+      assertEquals("[(ConveyFn Person), (USDollarFn 1), (YearFn 2000)]",
+              narts.toString());
     }
 
+    // hasFunctorAndArgs
+    assertTrue(dollar1.hasFunctorAndArgs());
+
+    // toCycList()
+    {
+      CycList cycList = new CycArrayList<CycObject>();
+      cycList.add(DOLLAR);
+      cycList.add(Integer.valueOf(1));
+      assertEquals(cycList, dollar1.toCycList());
+    }
+
+    // check cfasl representation of narts in a list
+    {
+      CycList myNarts = new CycArrayList<CycObject>();
+      final Object randomNart1 = getCyc().converse().converseObject("(random-nart)");
+      myNarts.add(randomNart1);
+      final Object randomNart2 = getCyc().converse().converseObject("(random-nart)");
+      myNarts.add(randomNart2);
+
+      for (int i = 0; i < myNarts.size(); i++) {
+        assertTrue(myNarts.get(i) instanceof Nart);
+      }
+      String command = SubLAPIHelper.makeSubLStmt("csetq",
+              CycObjectFactory.makeCycSymbol("my-narts", false), myNarts);
+      CycList myNartsBackFromCyc1 = getCyc().converse().converseList(command);
+      CycList commandList = new CycArrayList();
+      commandList.add(CycObjectFactory.makeCycSymbol("csetq"));
+      commandList.add(CycObjectFactory.makeCycSymbol("my-narts"));
+      commandList.addQuoted(myNarts);
+      CycList myNartsBackFromCyc = getCyc().converse().converseList(commandList);
+      for (int i = 0; i < myNartsBackFromCyc.size(); i++) {
+        assertTrue(myNartsBackFromCyc.get(i) instanceof Nart);
+        Nart myNartBackFromCyc = (Nart) myNartsBackFromCyc.get(i);
+        assertTrue(myNartBackFromCyc.getFunctor() instanceof Fort);
+        assertTrue(myNartBackFromCyc.getArguments() instanceof ArrayList);
+        ArrayList args = (ArrayList) myNartBackFromCyc.getArguments();
+        final Naut myNartFormula = ((Nart) myNarts.get(i)).getFormula();
+        assertEquals(myNartFormula,
+                ((Nart) myNartsBackFromCyc.get(i)).getFormula());
+        assertEquals(myNartFormula,
+                ((Nart) myNartsBackFromCyc1.get(i)).getFormula());
+
+      }
+    }
+
+    // coerceToCycNart
+    {
+      NartImpl cycNart4 = new NartImpl(DOLLAR, Integer.valueOf(1));
+      assertEquals(cycNart4, NartImpl.coerceToCycNart(cycNart4));
+      CycList cycList4 = new CycArrayList<CycObject>();
+      cycList4.add(DOLLAR);
+      cycList4.add(Integer.valueOf(1));
+      assertEquals(cycNart2, NartImpl.coerceToCycNart(cycList4));
+
+      // toXML, toXMLString
+      XMLStringWriter xmlStringWriter = new XMLStringWriter();
+      cycNart4.toXML(xmlStringWriter, 0, false);
+      System.out.println(xmlStringWriter.toString());
+
+      String cycNartXMLString = cycNart4.toXMLString();
+      System.out.println("cycNartXMLString\n" + cycNartXMLString);
+      Object object = CycObjectFactory.unmarshal(cycNartXMLString);
+      assertTrue(object instanceof Nart);
+      assertEquals(cycNart4, (Nart) object);
+      NartImpl cycNart5 = new NartImpl(THE_LIST, Integer.valueOf(1), "a string");
+      cycNartXMLString = cycNart5.toXMLString();
+      System.out.println("cycNartXMLString\n" + cycNartXMLString);
+      object = CycObjectFactory.unmarshal(cycNartXMLString);
+      assertTrue(object instanceof Nart);
+      assertEquals(cycNart5, (Nart) object);
+    }
+
+    // Check whether stringApiValue() behaves properly on a NART with a string argument
+    {
+      Nart attawapiskat = new NartImpl(CITY_NAMED_FN, "Attawapiskat",
+              ONTARIO_CANADIAN_PROVINCE);
+
+      Object result = CycUtils.evalSubLWithWorker(getCyc(),
+              attawapiskat.stringApiValue());
+      assertTrue(result instanceof Nart);
+      assertEquals(attawapiskat, (Nart) result);
+    }
+
+      // Check whether stringApiValue() behaves properly on a NART
+    // with a string that contains a character that needs to be escaped in SubL
+    {
+      Nart hklmSam = new NartImpl(REGISTRY_KEY_FN, "HKLM\\SAM");
+
+      Object result0 = NautImpl.convertIfPromising(CycUtils.evalSubLWithWorker(getCyc(),
+              hklmSam.stringApiValue()));
+      assertTrue(result0 instanceof NonAtomicTerm);
+      assertEquals(hklmSam.getFormula(), ((NonAtomicTerm) result0).getFormula());
+    }
+
+    /*
+     CycAssertion cycAssertion = getCyc().getAssertionById(Integer.valueOf(968857));
+     Nart complexNart = (Nart) cycAssertion.getFormula().second();
+     System.out.println(complexNart.toString());
+     System.out.println(complexNart.cyclify());
+     */
     System.out.println("*** testCycNart OK ***");
   }
 
@@ -805,7 +795,7 @@ public class CycObjectUnitTest {
    * Tests <tt>CycVariable</tt> object behavior.
    */
   @Test
-  public void testCycVariable() {
+  public void testCycVariable() throws CycConnectionException {
     System.out.println("\n*** testCycVariable ***");
     CycVariable cycVariable1 = VAR_X;
     assertNotNull(cycVariable1);
@@ -837,12 +827,8 @@ public class CycObjectUnitTest {
     CycVariable cycVariable1000 = new CycVariableImpl(":X");
     assertNotSame(cycVariable1, cycVariable1000);
 
-    try {
-      testCycObjectRetrievable(VAR_0);
-      testCycObjectRetrievable(VAR_X);
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    testCycObjectRetrievable(VAR_0);
+    testCycObjectRetrievable(VAR_X);
 
     // makeUniqueCycVariable
     CycVariableImpl x = (CycVariableImpl) VAR_X;
@@ -943,396 +929,390 @@ public class CycObjectUnitTest {
    * Tests <tt>CycArrayList</tt> object behavior.
    */
   @Test
-  public void testCycList() {
+  public void testCycList() throws CycConnectionException, IOException, ParserConfigurationException, SAXException {
     System.out.println("\n*** testCycList ***");
 
-    try {
+    // Simple empty list constructor.
+    ArrayList arrayList = new ArrayList();
+    CycList cycList = new CycArrayList<CycObject>(arrayList);
+    assertNotNull(cycList);
+    assertEquals("()", cycList.toString());
 
-      // Simple empty list constructor.
-      ArrayList arrayList = new ArrayList();
-      CycList cycList = new CycArrayList<CycObject>(arrayList);
-      assertNotNull(cycList);
-      assertEquals("()", cycList.toString());
+    // Construct list of one element.
+    ArrayList arrayList2 = new ArrayList();
+    CycObjectFactory.addCycConstantCache(BRAZIL);
+    arrayList2.add(BRAZIL);
+    CycList cycList2 = new CycArrayList<CycObject>(arrayList2);
+    assertEquals("(Brazil)", cycList2.toString());
+    assertEquals("(" + brazil + ")", cycList2.cyclify());
 
-      // Construct list of one element.
-      ArrayList arrayList2 = new ArrayList();
-      CycObjectFactory.addCycConstantCache(BRAZIL);
-      arrayList2.add(BRAZIL);
-      CycList cycList2 = new CycArrayList<CycObject>(arrayList2);
-      assertEquals("(Brazil)", cycList2.toString());
-      assertEquals("(" + brazil + ")", cycList2.cyclify());
+    // Construct list with embedded sublist.
+    ArrayList arrayList3 = new ArrayList();
+    arrayList3.add(BRAZIL);
+    arrayList3.add(cycList);
+    arrayList3.add(cycList2);
+    CycList cycList3 = new CycArrayList<CycObject>(arrayList3);
+    assertEquals("(Brazil () (Brazil))", cycList3.toString());
+    assertEquals("(" + brazil + " () (" + brazil + "))", cycList3.cyclify());
 
-      // Construct list with embedded sublist.
-      ArrayList arrayList3 = new ArrayList();
-      arrayList3.add(BRAZIL);
-      arrayList3.add(cycList);
-      arrayList3.add(cycList2);
-      CycList cycList3 = new CycArrayList<CycObject>(arrayList3);
-      assertEquals("(Brazil () (Brazil))", cycList3.toString());
-      assertEquals("(" + brazil + " () (" + brazil + "))", cycList3.cyclify());
+    // isValid()
+    assertTrue(cycList.isValid());
+    assertTrue(cycList2.isValid());
+    assertTrue(cycList3.isValid());
+    CycList cycList4 = new CycArrayList(new Hashtable());
+    assertFalse(cycList4.isValid());
 
-      // isValid()
-      assertTrue(cycList.isValid());
-      assertTrue(cycList2.isValid());
-      assertTrue(cycList3.isValid());
-      CycList cycList4 = new CycArrayList(new Hashtable());
-      assertFalse(cycList4.isValid());
+    // first(), rest()
+    ArrayList arrayList5 = new ArrayList();
+    arrayList5.add(BRAZIL);
+    CycList cycList5 = new CycArrayList<CycObject>(arrayList5);
+    assertEquals("(Brazil)", cycList5.toString());
+    assertEquals("(" + brazil + ")", cycList5.cyclify());
+    assertEquals(cycList5.first(), BRAZIL);
+    assertTrue(((CycArrayList) (cycList5.rest())).size() == 0);
+    CycList cycList5a = new CycArrayList<CycObject>();
+    cycList5a.add("a");
+    cycList5a.setDottedElement("b");
+    assertEquals("b", cycList5a.rest());
 
-      // first(), rest()
-      ArrayList arrayList5 = new ArrayList();
-      arrayList5.add(BRAZIL);
-      CycList cycList5 = new CycArrayList<CycObject>(arrayList5);
-      assertEquals("(Brazil)", cycList5.toString());
-      assertEquals("(" + brazil + ")", cycList5.cyclify());
-      assertEquals(cycList5.first(), BRAZIL);
-      assertTrue(((CycArrayList) (cycList5.rest())).size() == 0);
-      CycList cycList5a = new CycArrayList<CycObject>();
-      cycList5a.add("a");
-      cycList5a.setDottedElement("b");
-      assertEquals("b", cycList5a.rest());
+    // reverse()
+    assertEquals(cycList5.toString(), cycList5.reverse().toString());
+    assertEquals("((" + brazil + ") () " + brazil + ")", cycList3.reverse().cyclify());
 
-      // reverse()
-      assertEquals(cycList5.toString(), cycList5.reverse().toString());
-      assertEquals("((" + brazil + ") () " + brazil + ")", cycList3.reverse().cyclify());
+    // reverse of strings.
+    ArrayList arrayList6 = new ArrayList();
+    arrayList6.add("z");
+    arrayList6.add("y");
+    arrayList6.add("x");
+    CycList cycList6 = new CycArrayList(arrayList6);
+    assertEquals("(\"z\" \"y\" \"x\")", cycList6.toString());
+    assertEquals("(\"x\" \"y\" \"z\")", cycList6.reverse().toString());
 
-      // reverse of strings.
-      ArrayList arrayList6 = new ArrayList();
-      arrayList6.add("z");
-      arrayList6.add("y");
-      arrayList6.add("x");
-      CycList cycList6 = new CycArrayList(arrayList6);
-      assertEquals("(\"z\" \"y\" \"x\")", cycList6.toString());
-      assertEquals("(\"x\" \"y\" \"z\")", cycList6.reverse().toString());
+    // Improper lists.
+    ArrayList arrayList7 = new ArrayList();
+    arrayList7.add(Integer.valueOf(10));
+    CycList cycList7 = new CycArrayList(arrayList7);
+    cycList7.setDottedElement(BRAZIL);
+    assertTrue(cycList7.size() == 2);
+    assertEquals("(10 . Brazil)", cycList7.toString());
+    //CycListParser.verbosity = 10;
 
-      // Improper lists.
-      ArrayList arrayList7 = new ArrayList();
-      arrayList7.add(Integer.valueOf(10));
-      CycList cycList7 = new CycArrayList(arrayList7);
-      cycList7.setDottedElement(BRAZIL);
-      assertTrue(cycList7.size() == 2);
-      assertEquals("(10 . Brazil)", cycList7.toString());
-      //CycListParser.verbosity = 10;
+    CycListParser cycListParser = new CycListParser(null);
+    CycList cycList7_1 = cycListParser.read("(a b c)");
+    assertEquals("(A B C)", cycList7_1.toString());
 
-      CycListParser cycListParser = new CycListParser(null);
-      CycList cycList7_1 = cycListParser.read("(a b c)");
-      assertEquals("(A B C)", cycList7_1.toString());
+    CycList cycList7a = getCyc().getObjectTool().makeCycList("(a . (b . (c . (d))))");
+    assertEquals("(A B C D)", cycList7a.toString());
+    CycList cycList7b = getCyc().getObjectTool().makeCycList("((a . b) . (c . d))");
+    assertEquals("((A . B) C . D)", cycList7b.toString());
+    CycList cycList7c = getCyc().getObjectTool().makeCycList("((a . (b)) . (c . (d)))");
+    assertEquals("((A B) C D)", cycList7c.toString());
+    CycList cycList7d = getCyc().getObjectTool().makeCycList("(a b . c)");
+    assertEquals("(A B . C)", cycList7d.toString());
+    CycList cycList7e = getCyc().getObjectTool().makeCycList("(a b c . d)");
+    assertEquals("(A B C . D)", cycList7e.toString());
+    // construct
+    Object object1 = CycArrayList.construct(BRAZIL, CycObjectFactory.nil);
+    assertNotNull(object1);
+    assertTrue(object1 instanceof CycArrayList);
+    assertEquals("(Brazil)", object1.toString());
+    // makeDottedPair
+    CycList cycList8 = CycArrayList.makeDottedPair(BRAZIL, "Atlantic");
+    assertEquals("(Brazil . \"Atlantic\")", cycList8.toString());
 
-      CycList cycList7a = getCyc().getObjectTool().makeCycList("(a . (b . (c . (d))))");
-      assertEquals("(A B C D)", cycList7a.toString());
-      CycList cycList7b = getCyc().getObjectTool().makeCycList("((a . b) . (c . d))");
-      assertEquals("((A . B) C . D)", cycList7b.toString());
-      CycList cycList7c = getCyc().getObjectTool().makeCycList("((a . (b)) . (c . (d)))");
-      assertEquals("((A B) C D)", cycList7c.toString());
-      CycList cycList7d = getCyc().getObjectTool().makeCycList("(a b . c)");
-      assertEquals("(A B . C)", cycList7d.toString());
-      CycList cycList7e = getCyc().getObjectTool().makeCycList("(a b c . d)");
-      assertEquals("(A B C . D)", cycList7e.toString());
-      // construct
-      Object object1 = CycArrayList.construct(BRAZIL, CycObjectFactory.nil);
-      assertNotNull(object1);
-      assertTrue(object1 instanceof CycArrayList);
-      assertEquals("(Brazil)", object1.toString());
-      // makeDottedPair
-      CycList cycList8 = CycArrayList.makeDottedPair(BRAZIL, "Atlantic");
-      assertEquals("(Brazil . \"Atlantic\")", cycList8.toString());
+    CycList cycList9 = CycArrayList.makeDottedPair(BRAZIL, Integer.valueOf(1));
+    assertEquals("(Brazil . 1)", cycList9.toString());
 
-      CycList cycList9 = CycArrayList.makeDottedPair(BRAZIL, Integer.valueOf(1));
-      assertEquals("(Brazil . 1)", cycList9.toString());
+    CycList cycList10 = CycArrayList.makeDottedPair(BRAZIL,
+            CycObjectFactory.makeCycSymbol("foo"));
+    assertEquals("(Brazil . FOO)", cycList10.toString());
 
-      CycList cycList10 = CycArrayList.makeDottedPair(BRAZIL,
-              CycObjectFactory.makeCycSymbol("foo"));
-      assertEquals("(Brazil . FOO)", cycList10.toString());
+    // Parse strings to make CycLists.
+    String listAsString = "()";
+    CycList cycList11 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList11.toString());
+    listAsString = "(1)";
+    CycList cycList12 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList12.toString());
+    listAsString = "(1 2 3 4 5)";
+    CycList cycList13 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList13.toString());
+    listAsString = "(\"1\" \"bar\" A " + brazil + " Z 4.25 :KEYWORD ?COLLECTION NIL)";
+    CycList cycList14 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList14.cyclify());
+    listAsString = "((A))";
+    CycList cycList15 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList15.toString());
+    listAsString = "((A) (B C) (((D))))";
+    CycList cycList16 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList16.toString());
+    CycList cycList17 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(cycList17.toString(), cycList16.toString());
+    assertEquals(cycList17.toString(), cycList16.toString());
+    assertEquals(getCyc().getObjectTool().makeCycList("(A)"), cycList17.first());
+    assertEquals(getCyc().getObjectTool().makeCycList("(B C)"), cycList17.second());
+    assertEquals(getCyc().getObjectTool().makeCycList("(((D)))"), cycList17.third());
+    listAsString = "(apply #'+ '(1 2 3))";
+    CycList cycList18 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals("(APPLY (FUNCTION +) (QUOTE (1 2 3)))",
+            cycList18.toString());
+    listAsString = "(1 2 \n"
+            + " ;; a comment \n"
+            + " 3 4 5)";
+    CycList cycList19 = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(cycList13, cycList19);
+    listAsString = "(" + Double.toString(1.0E-05) + ")";
+    CycList cycList19a = getCyc().getObjectTool().makeCycList(listAsString);
+    assertEquals(listAsString, cycList19a.cyclify());
+    cycListParser = new CycListParser(getCyc());
+    listAsString = "(1 2 3) 4 \"5 6\" 7 (8 9 10) 11 test";
+    CycList cycList19b = cycListParser.read(listAsString);
+    assertEquals("(1 2 3)", cycList19b.toString());
+    assertEquals(" 4 \"5 6\" 7 (8 9 10) 11 test",
+            cycListParser.remainingString());
+    listAsString
+            = "(" + istAsserted + " \n"
+            + "  (" + totalInvestmentEarningsForStockTypeBoughtDuring + "  \n"
+            + "    " + techStock + "  \n"
+            + "    (" + minusFn + " (" + poundGreatBritain + " 330000000000))  \n"
+            + "    (" + earlyPartFn + " (" + yearFn + " 2000)))  \n"
+            + "  " + theMotleyFoolUKCorpusMt + "))";
+    final CycList cycList19c = cycListParser.read(listAsString);
+    assertTrue(cycList19c.cyclify().indexOf("330000000000") > -1);
+    assertTrue(
+            DefaultCycObject.cyclify(cycList19c).indexOf("330000000000") > -1);
+    testCycListAdd();
 
-      // Parse strings to make CycLists.
-      String listAsString = "()";
-      CycList cycList11 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList11.toString());
-      listAsString = "(1)";
-      CycList cycList12 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList12.toString());
-      listAsString = "(1 2 3 4 5)";
-      CycList cycList13 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList13.toString());
-      listAsString = "(\"1\" \"bar\" A " + brazil + " Z 4.25 :KEYWORD ?COLLECTION NIL)";
-      CycList cycList14 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList14.cyclify());
-      listAsString = "((A))";
-      CycList cycList15 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList15.toString());
-      listAsString = "((A) (B C) (((D))))";
-      CycList cycList16 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList16.toString());
-      CycList cycList17 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(cycList17.toString(), cycList16.toString());
-      assertEquals(cycList17.toString(), cycList16.toString());
-      assertEquals(getCyc().getObjectTool().makeCycList("(A)"), cycList17.first());
-      assertEquals(getCyc().getObjectTool().makeCycList("(B C)"), cycList17.second());
-      assertEquals(getCyc().getObjectTool().makeCycList("(((D)))"), cycList17.third());
-      listAsString = "(apply #'+ '(1 2 3))";
-      CycList cycList18 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals("(APPLY (FUNCTION +) (QUOTE (1 2 3)))",
-              cycList18.toString());
-      listAsString = "(1 2 \n"
-              + " ;; a comment \n"
-              + " 3 4 5)";
-      CycList cycList19 = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(cycList13, cycList19);
-      listAsString = "(" + Double.toString(1.0E-05) + ")";
-      CycList cycList19a = getCyc().getObjectTool().makeCycList(listAsString);
-      assertEquals(listAsString, cycList19a.cyclify());
-      cycListParser = new CycListParser(getCyc());
-      listAsString = "(1 2 3) 4 \"5 6\" 7 (8 9 10) 11 test";
-      CycList cycList19b = cycListParser.read(listAsString);
-      assertEquals("(1 2 3)", cycList19b.toString());
-      assertEquals(" 4 \"5 6\" 7 (8 9 10) 11 test",
-              cycListParser.remainingString());
-      listAsString =
-              "(" + istAsserted + " \n"
-              + "  (" + totalInvestmentEarningsForStockTypeBoughtDuring + "  \n"
-              + "    " + techStock + "  \n"
-              + "    (" + minusFn + " (" + poundGreatBritain + " 330000000000))  \n"
-              + "    (" + earlyPartFn + " (" + yearFn + " 2000)))  \n"
-              + "  " + theMotleyFoolUKCorpusMt + "))";
-      final CycList cycList19c = cycListParser.read(listAsString);
-      assertTrue(cycList19c.cyclify().indexOf("330000000000") > -1);
-      assertTrue(
-              DefaultCycObject.cyclify(cycList19c).indexOf("330000000000") > -1);
-      testCycListAdd();
+    // subst
+    cycList18 = getCyc().getObjectTool().makeCycList("(b)");
+    cycList19 = cycList18.subst(CycObjectFactory.makeCycSymbol("x"),
+            CycObjectFactory.makeCycSymbol("a"));
+    assertEquals(getCyc().getObjectTool().makeCycList("(b)"), cycList19);
+    CycList cycList20 = getCyc().getObjectTool().makeCycList("(a)");
+    CycList cycList21 = cycList20.subst(CycObjectFactory.makeCycSymbol("x"),
+            CycObjectFactory.makeCycSymbol("a"));
+    assertEquals(getCyc().getObjectTool().makeCycList("(x)"), cycList21);
+    CycList cycList22 = getCyc().getObjectTool().makeCycList("((a))");
+    CycList cycList23 = cycList22.subst(CycObjectFactory.makeCycSymbol("x"),
+            CycObjectFactory.makeCycSymbol("a"));
+    assertEquals(getCyc().getObjectTool().makeCycList("((x))"), cycList23);
+    CycList cycList24 = getCyc().getObjectTool().makeCycList("((a) (b c) (((d))))");
+    CycList cycList25 = cycList24.subst(CycObjectFactory.makeCycSymbol("x"),
+            CycObjectFactory.makeCycSymbol("a"));
+    assertEquals(getCyc().getObjectTool().makeCycList("((x) (b c) (((d))))"), cycList25);
 
-      // subst
-      cycList18 = getCyc().getObjectTool().makeCycList("(b)");
-      cycList19 = cycList18.subst(CycObjectFactory.makeCycSymbol("x"),
-              CycObjectFactory.makeCycSymbol("a"));
-      assertEquals(getCyc().getObjectTool().makeCycList("(b)"), cycList19);
-      CycList cycList20 = getCyc().getObjectTool().makeCycList("(a)");
-      CycList cycList21 = cycList20.subst(CycObjectFactory.makeCycSymbol("x"),
-              CycObjectFactory.makeCycSymbol("a"));
-      assertEquals(getCyc().getObjectTool().makeCycList("(x)"), cycList21);
-      CycList cycList22 = getCyc().getObjectTool().makeCycList("((a))");
-      CycList cycList23 = cycList22.subst(CycObjectFactory.makeCycSymbol("x"),
-              CycObjectFactory.makeCycSymbol("a"));
-      assertEquals(getCyc().getObjectTool().makeCycList("((x))"), cycList23);
-      CycList cycList24 = getCyc().getObjectTool().makeCycList("((a) (b c) (((d))))");
-      CycList cycList25 = cycList24.subst(CycObjectFactory.makeCycSymbol("x"),
-              CycObjectFactory.makeCycSymbol("a"));
-      assertEquals(getCyc().getObjectTool().makeCycList("((x) (b c) (((d))))"), cycList25);
+    // containsDuplicates
+    CycList cycList26 = getCyc().getObjectTool().makeCycList("(a b c d)");
+    assertFalse(cycList26.containsDuplicates());
+    CycList cycList27 = getCyc().getObjectTool().makeCycList("(a a c d)");
+    assertTrue(cycList27.containsDuplicates());
+    CycList cycList28 = getCyc().getObjectTool().makeCycList("(a b c c)");
+    assertTrue(cycList28.containsDuplicates());
+    CycList cycList29 = getCyc().getObjectTool().makeCycList("(a (b) (b) c)");
+    assertTrue(cycList29.containsDuplicates());
 
-      // containsDuplicates
-      CycList cycList26 = getCyc().getObjectTool().makeCycList("(a b c d)");
-      assertFalse(cycList26.containsDuplicates());
-      CycList cycList27 = getCyc().getObjectTool().makeCycList("(a a c d)");
-      assertTrue(cycList27.containsDuplicates());
-      CycList cycList28 = getCyc().getObjectTool().makeCycList("(a b c c)");
-      assertTrue(cycList28.containsDuplicates());
-      CycList cycList29 = getCyc().getObjectTool().makeCycList("(a (b) (b) c)");
-      assertTrue(cycList29.containsDuplicates());
+    // list
+    CycList cycList30 = CycArrayList.list(CycObjectFactory.makeCycSymbol("a"));
+    assertEquals("(A)", cycList30.toString());
+    CycList cycList31 = CycArrayList.list(CycObjectFactory.makeCycSymbol("a"),
+            CycObjectFactory.makeCycSymbol("b"));
+    assertEquals("(A B)", cycList31.toString());
+    CycList cycList32 = CycArrayList.list(CycObjectFactory.makeCycSymbol("a"),
+            CycObjectFactory.makeCycSymbol("b"),
+            CycObjectFactory.makeCycSymbol("c"));
+    assertEquals("(A B C)", cycList32.toString());
 
-      // list
-      CycList cycList30 = CycArrayList.list(CycObjectFactory.makeCycSymbol("a"));
-      assertEquals("(A)", cycList30.toString());
-      CycList cycList31 = CycArrayList.list(CycObjectFactory.makeCycSymbol("a"),
-              CycObjectFactory.makeCycSymbol("b"));
-      assertEquals("(A B)", cycList31.toString());
-      CycList cycList32 = CycArrayList.list(CycObjectFactory.makeCycSymbol("a"),
-              CycObjectFactory.makeCycSymbol("b"),
-              CycObjectFactory.makeCycSymbol("c"));
-      assertEquals("(A B C)", cycList32.toString());
+    // combinationsOf
+    CycList cycList33 = getCyc().getObjectTool().makeCycList("(1 2 3 4)");
+    assertEquals("((1) (2) (3) (4))", cycList33.combinationsOf(1).toString());
+    assertEquals("((1 2) (1 3) (1 4) (2 3) (2 4) (3 4))",
+            cycList33.combinationsOf(2).toString());
+    assertEquals("((1 2 3 4))",
+            cycList33.combinationsOf(4).toString());
+    assertEquals("()",
+            cycList33.combinationsOf(0).toString());
+    assertEquals("()",
+            (new CycArrayList()).combinationsOf(4).toString());
 
-      // combinationsOf
-      CycList cycList33 = getCyc().getObjectTool().makeCycList("(1 2 3 4)");
-      assertEquals("((1) (2) (3) (4))", cycList33.combinationsOf(1).toString());
-      assertEquals("((1 2) (1 3) (1 4) (2 3) (2 4) (3 4))",
-              cycList33.combinationsOf(2).toString());
-      assertEquals("((1 2 3 4))",
-              cycList33.combinationsOf(4).toString());
-      assertEquals("()",
-              cycList33.combinationsOf(0).toString());
-      assertEquals("()",
-              (new CycArrayList()).combinationsOf(4).toString());
+    // randomPermutation
+    CycList cycList34 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 6 7 8 9 10)");
+    CycList permutedCycList = cycList34.randomPermutation();
+    assertEquals(10, permutedCycList.size());
+    assertTrue(permutedCycList.contains(Integer.valueOf(2)));
+    assertFalse(permutedCycList.containsDuplicates());
 
-      // randomPermutation
-      CycList cycList34 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 6 7 8 9 10)");
-      CycList permutedCycList = cycList34.randomPermutation();
-      assertEquals(10, permutedCycList.size());
-      assertTrue(permutedCycList.contains(Integer.valueOf(2)));
-      assertFalse(permutedCycList.containsDuplicates());
+    // doesElementPrecedeOthers
+    CycList cycList35 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 6 7 8 9 10)");
+    assertTrue(cycList35.doesElementPrecedeOthers(Integer.valueOf(1),
+            getCyc().getObjectTool().makeCycList("(8 7 6)")));
+    assertTrue(cycList35.doesElementPrecedeOthers(Integer.valueOf(9),
+            getCyc().getObjectTool().makeCycList("(10)")));
+    assertTrue(cycList35.doesElementPrecedeOthers(Integer.valueOf(10),
+            getCyc().getObjectTool().makeCycList("(18 17 16)")));
+    assertFalse(cycList35.doesElementPrecedeOthers(Integer.valueOf(12),
+            getCyc().getObjectTool().makeCycList("(1 2 10)")));
+    assertFalse(cycList35.doesElementPrecedeOthers(Integer.valueOf(9),
+            getCyc().getObjectTool().makeCycList("(8 7 6)")));
 
-      // doesElementPrecedeOthers
-      CycList cycList35 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 6 7 8 9 10)");
-      assertTrue(cycList35.doesElementPrecedeOthers(Integer.valueOf(1),
-              getCyc().getObjectTool().makeCycList("(8 7 6)")));
-      assertTrue(cycList35.doesElementPrecedeOthers(Integer.valueOf(9),
-              getCyc().getObjectTool().makeCycList("(10)")));
-      assertTrue(cycList35.doesElementPrecedeOthers(Integer.valueOf(10),
-              getCyc().getObjectTool().makeCycList("(18 17 16)")));
-      assertFalse(cycList35.doesElementPrecedeOthers(Integer.valueOf(12),
-              getCyc().getObjectTool().makeCycList("(1 2 10)")));
-      assertFalse(cycList35.doesElementPrecedeOthers(Integer.valueOf(9),
-              getCyc().getObjectTool().makeCycList("(8 7 6)")));
+    // clone
+    CycList cycList36 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
+    CycList cycList37 = (CycArrayList) cycList36.clone();
+    assertEquals(cycList36, cycList37);
+    assertTrue(cycList36 != cycList37);
+    CycList cycList38 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 . 6)");
+    CycList cycList39 = (CycArrayList) cycList38.clone();
 
-      // clone
-      CycList cycList36 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
-      CycList cycList37 = (CycArrayList) cycList36.clone();
-      assertEquals(cycList36, cycList37);
-      assertTrue(cycList36 != cycList37);
-      CycList cycList38 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 . 6)");
-      CycList cycList39 = (CycArrayList) cycList38.clone();
+    assertEquals(cycList38, cycList39);
+    assertTrue(cycList38 != cycList39);
 
-      assertEquals(cycList38, cycList39);
-      assertTrue(cycList38 != cycList39);
+    // deepCopy
+    CycList cycList40 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
+    CycList cycList41 = (CycArrayList) cycList40.deepCopy();
+    assertEquals(cycList40, cycList41);
+    assertTrue(cycList40 != cycList41);
+    CycList cycList42 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 . 6)");
+    CycList cycList43 = (CycArrayList) cycList42.deepCopy();
+    assertEquals(cycList42, cycList43);
+    assertTrue(cycList42 != cycList43);
+    CycList cycList44 = getCyc().getObjectTool().makeCycList("(1 (2 3) (4 5) ((6)))");
+    CycList cycList45 = (CycArrayList) cycList44.deepCopy();
+    assertEquals(cycList44, cycList45);
+    assertTrue(cycList44 != cycList45);
+    assertEquals(cycList44.first(), cycList45.first());
+    assertTrue(cycList44.first() == cycList45.first());
+    assertEquals(cycList44.second(), cycList45.second());
+    assertTrue(cycList44.second() != cycList45.second());
+    assertEquals(cycList44.fourth(), cycList45.fourth());
+    assertTrue(cycList44.fourth() != cycList45.fourth());
+    assertEquals(((CycArrayList) cycList44.fourth()).first(),
+            ((CycArrayList) cycList45.fourth()).first());
+    assertTrue(((CycArrayList) cycList44.fourth()).first()
+            != ((CycArrayList) cycList45.fourth()).first());
 
-      // deepCopy
-      CycList cycList40 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
-      CycList cycList41 = (CycArrayList) cycList40.deepCopy();
-      assertEquals(cycList40, cycList41);
-      assertTrue(cycList40 != cycList41);
-      CycList cycList42 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5 . 6)");
-      CycList cycList43 = (CycArrayList) cycList42.deepCopy();
-      assertEquals(cycList42, cycList43);
-      assertTrue(cycList42 != cycList43);
-      CycList cycList44 = getCyc().getObjectTool().makeCycList("(1 (2 3) (4 5) ((6)))");
-      CycList cycList45 = (CycArrayList) cycList44.deepCopy();
-      assertEquals(cycList44, cycList45);
-      assertTrue(cycList44 != cycList45);
-      assertEquals(cycList44.first(), cycList45.first());
-      assertTrue(cycList44.first() == cycList45.first());
-      assertEquals(cycList44.second(), cycList45.second());
-      assertTrue(cycList44.second() != cycList45.second());
-      assertEquals(cycList44.fourth(), cycList45.fourth());
-      assertTrue(cycList44.fourth() != cycList45.fourth());
-      assertEquals(((CycArrayList) cycList44.fourth()).first(),
-              ((CycArrayList) cycList45.fourth()).first());
-      assertTrue(((CycArrayList) cycList44.fourth()).first()
-              != ((CycArrayList) cycList45.fourth()).first());
+    // addNew
+    CycList cycList46 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
+    assertEquals(5, cycList46.size());
+    cycList46.addNew(Integer.valueOf(6));
+    assertEquals(6, cycList46.size());
+    cycList46.addNew(Integer.valueOf(2));
+    assertEquals(6, cycList46.size());
+    // addAllNew
+    CycArrayList cycList47 = (CycArrayList) getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
+    assertEquals(5, cycList47.size());
+    CycList cycList48 = getCyc().getObjectTool().makeCycList("(6 7 8 9 10)");
+    assertEquals(5, cycList48.size());
+    cycList47.addAllNew(cycList48);
+    assertEquals(10, cycList47.size());
+    CycList cycList49 = getCyc().getObjectTool().makeCycList("(2 5 8 9 11)");
+    assertEquals(5, cycList49.size());
+    cycList47.addAllNew(cycList49);
+    assertEquals(11, cycList47.size());
 
-      // addNew
-      CycList cycList46 = getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
-      assertEquals(5, cycList46.size());
-      cycList46.addNew(Integer.valueOf(6));
-      assertEquals(6, cycList46.size());
-      cycList46.addNew(Integer.valueOf(2));
-      assertEquals(6, cycList46.size());
-      // addAllNew
-      CycArrayList cycList47 = (CycArrayList) getCyc().getObjectTool().makeCycList("(1 2 3 4 5)");
-      assertEquals(5, cycList47.size());
-      CycList cycList48 = getCyc().getObjectTool().makeCycList("(6 7 8 9 10)");
-      assertEquals(5, cycList48.size());
-      cycList47.addAllNew(cycList48);
-      assertEquals(10, cycList47.size());
-      CycList cycList49 = getCyc().getObjectTool().makeCycList("(2 5 8 9 11)");
-      assertEquals(5, cycList49.size());
-      cycList47.addAllNew(cycList49);
-      assertEquals(11, cycList47.size());
-
-      // last
-      cycList46 = getCyc().getObjectTool().makeCycList("(8 7 6)");
-      assertEquals(Integer.valueOf(6), cycList46.last());
-      // toXML, toXMLString
-      listAsString = "(\"1\" A (" + brazil + " . Z) 4.25 :KEYWORD ?collection NIL . " + dog + ")";
-      cycList47 = (CycArrayList) getCyc().getObjectTool().makeCycList(listAsString);
-      XMLStringWriter xmlStringWriter = new XMLStringWriter();
-      String cycListXMLString = cycList47.toXMLString();
-      Object object = CycObjectFactory.unmarshal(cycListXMLString);
-      assertTrue(object instanceof CycArrayList);
-      assertEquals(cycList47, (CycArrayList) object);
-      cycList48 =
-              getCyc().getObjectTool().makeCycList("(T " + TestSentences.BIOLOGICAL_TAXON_ETC.cyclify() + ")");
-      cycListXMLString = Marshaller.marshall(cycList48);
+    // last
+    cycList46 = getCyc().getObjectTool().makeCycList("(8 7 6)");
+    assertEquals(Integer.valueOf(6), cycList46.last());
+    // toXML, toXMLString
+    listAsString = "(\"1\" A (" + brazil + " . Z) 4.25 :KEYWORD ?collection NIL . " + dog + ")";
+    cycList47 = (CycArrayList) getCyc().getObjectTool().makeCycList(listAsString);
+    XMLStringWriter xmlStringWriter = new XMLStringWriter();
+    String cycListXMLString = cycList47.toXMLString();
+    Object object = CycObjectFactory.unmarshal(cycListXMLString);
+    assertTrue(object instanceof CycArrayList);
+    assertEquals(cycList47, (CycArrayList) object);
+    cycList48
+            = getCyc().getObjectTool().makeCycList("(T " + TestSentences.BIOLOGICAL_TAXON_ETC.cyclify() + ")");
+    cycListXMLString = Marshaller.marshall(cycList48);
 //      System.out.println(cycListXMLString);
-      object = CycObjectFactory.unmarshal(cycListXMLString);
-      assertTrue(object instanceof CycArrayList);
-      assertEquals(cycList48, (CycArrayList) object);
-      cycListXMLString =
-              "\n<list>\n"
-              + "  <symbol>QUOTE</symbol>\n"
-              + "  <list>\n"
-              + "    <symbol>A</symbol>\n"
-              + "    <dotted-element>\n"
-              + "      <symbol>B</symbol>\n"
-              + "    </dotted-element>\n"
-              + "  </list>\n"
-              + "</list>\n";
-      object = CycObjectFactory.unmarshal(cycListXMLString);
-      assertTrue(object instanceof CycArrayList);
-      cycList49 = getCyc().getObjectTool().makeCycList("(QUOTE (A . B))");
-      assertEquals(cycList49, object);
-      testCycList50();
+    object = CycObjectFactory.unmarshal(cycListXMLString);
+    assertTrue(object instanceof CycArrayList);
+    assertEquals(cycList48, (CycArrayList) object);
+    cycListXMLString
+            = "\n<list>\n"
+            + "  <symbol>QUOTE</symbol>\n"
+            + "  <list>\n"
+            + "    <symbol>A</symbol>\n"
+            + "    <dotted-element>\n"
+            + "      <symbol>B</symbol>\n"
+            + "    </dotted-element>\n"
+            + "  </list>\n"
+            + "</list>\n";
+    object = CycObjectFactory.unmarshal(cycListXMLString);
+    assertTrue(object instanceof CycArrayList);
+    cycList49 = getCyc().getObjectTool().makeCycList("(QUOTE (A . B))");
+    assertEquals(cycList49, object);
+    testCycList50();
 
-      // addQuoted
-      CycList cycList51 = new CycArrayList();
-      cycList51.add(Integer.valueOf(1));
-      cycList51.addQuoted(CycObjectFactory.makeCycSymbol("quote-me"));
-      assertEquals("(1 (QUOTE QUOTE-ME))", cycList51.toString());
+    // addQuoted
+    CycList cycList51 = new CycArrayList();
+    cycList51.add(Integer.valueOf(1));
+    cycList51.addQuoted(CycObjectFactory.makeCycSymbol("quote-me"));
+    assertEquals("(1 (QUOTE QUOTE-ME))", cycList51.toString());
 
-      // toString (with null element)
-      CycList cycList52 = new CycArrayList();
-      cycList52.add(null);
-      assertNull(cycList52.first());
-      assertEquals("(null)", cycList52.toString());
+    // toString (with null element)
+    CycList cycList52 = new CycArrayList();
+    cycList52.add(null);
+    assertNull(cycList52.first());
+    assertEquals("(null)", cycList52.toString());
 
-      // treeConstants
-      CycList cycList54 =
-              getCyc().getObjectTool().makeCycList("(T " + TestSentences.BIOLOGICAL_TAXON_ETC.cyclify() + ")");
-      cycList54.add(new NartImpl(getCyc().getLookupTool().getKnownConstantByName("FruitFn"),
-              getCyc().getLookupTool().getKnownConstantByName("PumpkinPlant")));
-      CycList cycList55 = cycList54.treeConstants();
-      assertEquals(7, cycList55.size());
+    // treeConstants
+    CycList cycList54
+            = getCyc().getObjectTool().makeCycList("(T " + TestSentences.BIOLOGICAL_TAXON_ETC.cyclify() + ")");
+    cycList54.add(new NartImpl(getCyc().getLookupTool().getKnownConstantByName("FruitFn"),
+            getCyc().getLookupTool().getKnownConstantByName("PumpkinPlant")));
+    CycList cycList55 = cycList54.treeConstants();
+    assertEquals(7, cycList55.size());
 
-      // stringApiValue()
-      CycConstant ontario = null;
-      ontario =
-              getCyc().getLookupTool().getKnownConstantByGuid(
-              CycObjectFactory.makeGuid(TestGuids.ONTARIO_CANADIAN_PROVINCE_GUID_STRING));
-      CycList cycList56 = new CycArrayList(ontario);
-      Object result56 = CycUtils.evalSubLWithWorker(getCyc(),
-              cycList56.stringApiValue());
-      assertTrue(result56 instanceof CycArrayList);
-      assertEquals(cycList56, (CycArrayList) result56);
-      // Check whether stringApiValue works properly on a CycList with a NartImpl element
-      CycConstant cityNamedFn =
-              getCyc().getLookupTool().getKnownConstantByGuid(
-              CycObjectFactory.makeGuid(TestGuids.CITY_NAMED_FN_GUID_STRING));
-      Nart attawapiskat = new NartImpl(cityNamedFn, "Attawapiskat", ontario);
-      CycList cycListWithNart = new CycArrayList(ontario, attawapiskat);
-      Object resultObj = CycUtils.evalSubLWithWorker(getCyc(),
-              cycListWithNart.stringApiValue());
-      assertTrue(resultObj instanceof CycArrayList);
-      assertEquals(cycListWithNart.cyclify(), ((CycArrayList) resultObj).cyclify());
-      // stringApiValue() on a CycList containing a String containing a double-quote
-      CycList cycListWithString = new CycArrayList(new String(
-              "How much \"wood\" would a \"woodchuck\" \"chuck\"?"));
-      resultObj = CycUtils.evalSubLWithWorker(getCyc(),
-              cycListWithString.stringApiValue());
-      assertTrue(resultObj instanceof CycArrayList);
-      assertEquals(cycListWithString, (CycArrayList) resultObj);
+    // stringApiValue()
+    CycConstant ontario = null;
+    ontario
+            = getCyc().getLookupTool().getKnownConstantByGuid(
+                    CycObjectFactory.makeGuid(TestGuids.ONTARIO_CANADIAN_PROVINCE_GUID_STRING));
+    CycList cycList56 = new CycArrayList(ontario);
+    Object result56 = CycUtils.evalSubLWithWorker(getCyc(),
+            cycList56.stringApiValue());
+    assertTrue(result56 instanceof CycArrayList);
+    assertEquals(cycList56, (CycArrayList) result56);
+    // Check whether stringApiValue works properly on a CycList with a NartImpl element
+    CycConstant cityNamedFn
+            = getCyc().getLookupTool().getKnownConstantByGuid(
+                    CycObjectFactory.makeGuid(TestGuids.CITY_NAMED_FN_GUID_STRING));
+    Nart attawapiskat = new NartImpl(cityNamedFn, "Attawapiskat", ontario);
+    CycList cycListWithNart = new CycArrayList(ontario, attawapiskat);
+    Object resultObj = CycUtils.evalSubLWithWorker(getCyc(),
+            cycListWithNart.stringApiValue());
+    assertTrue(resultObj instanceof CycArrayList);
+    assertEquals(cycListWithNart.cyclify(), ((CycArrayList) resultObj).cyclify());
+    // stringApiValue() on a CycList containing a String containing a double-quote
+    CycList cycListWithString = new CycArrayList(new String(
+            "How much \"wood\" would a \"woodchuck\" \"chuck\"?"));
+    resultObj = CycUtils.evalSubLWithWorker(getCyc(),
+            cycListWithString.stringApiValue());
+    assertTrue(resultObj instanceof CycArrayList);
+    assertEquals(cycListWithString, (CycArrayList) resultObj);
 
-      // stringApiValue() on a dotted CycArrayList
-      CycList dottedCycList = new CycArrayList("first element", "second element");
-      dottedCycList.setDottedElement("dotted element");
-      resultObj = CycUtils.evalSubLWithWorker(getCyc(),
-              dottedCycList.stringApiValue());
-      assertTrue(resultObj instanceof CycArrayList);
-      assertEquals(dottedCycList, (CycArrayList) resultObj);
-      // Parse a list containing a string with a backslash
-      String script = "(identity \"abc\")";
-      resultObj = CycUtils.evalSubLWithWorker(getCyc(), script);
-      assertTrue(resultObj instanceof String);
-      script = "(identity \"abc\\\\\")";
-      resultObj = CycUtils.evalSubLWithWorker(getCyc(), script);
-      assertTrue(resultObj instanceof String);
-      CycList command = new CycArrayList();
-      command.add(CycObjectFactory.makeCycSymbol("identity"));
-      command.add("abc\\");
-      script = command.cyclifyWithEscapeChars();
-      resultObj = CycUtils.evalSubLWithWorker(getCyc(), script);
-      assertTrue(resultObj instanceof String);
+    // stringApiValue() on a dotted CycArrayList
+    CycList dottedCycList = new CycArrayList("first element", "second element");
+    dottedCycList.setDottedElement("dotted element");
+    resultObj = CycUtils.evalSubLWithWorker(getCyc(),
+            dottedCycList.stringApiValue());
+    assertTrue(resultObj instanceof CycArrayList);
+    assertEquals(dottedCycList, (CycArrayList) resultObj);
+    // Parse a list containing a string with a backslash
+    String script = "(identity \"abc\")";
+    resultObj = CycUtils.evalSubLWithWorker(getCyc(), script);
+    assertTrue(resultObj instanceof String);
+    script = "(identity \"abc\\\\\")";
+    resultObj = CycUtils.evalSubLWithWorker(getCyc(), script);
+    assertTrue(resultObj instanceof String);
+    CycList command = new CycArrayList();
+    command.add(CycObjectFactory.makeCycSymbol("identity"));
+    command.add("abc\\");
+    script = command.cyclifyWithEscapeChars();
+    resultObj = CycUtils.evalSubLWithWorker(getCyc(), script);
+    assertTrue(resultObj instanceof String);
 
-      final String xml = ((CycArrayList) CycArrayList.makeCycList(2, 3, "foo")).toXMLString();
-      assertNotNull(xml);
-
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    final String xml = ((CycArrayList) CycArrayList.makeCycList(2, 3, "foo")).toXMLString();
+    assertNotNull(xml);
 
     testUnmodifiableCycList();
 
@@ -1361,78 +1341,71 @@ public class CycObjectUnitTest {
    * Tests <tt>CycArrayListVisitor</tt> object behavior.
    */
   @Test
-  public void testCycListVisitor() {
+  public void testCycListVisitor() throws CycConnectionException {
     System.out.println("\n*** testCycListVisitor ***");
-
     CycListParser.verbosity = 0;
+    CycList cycList2000 = getCyc().getObjectTool().makeCycList("(1 . 24)");
+    CycList cycList2001 = getCyc().getObjectTool().makeCycList("(1 . 23)");
+    assertFalse(cycList2001.equals(cycList2000));
 
-    try {
-      CycList cycList2000 = getCyc().getObjectTool().makeCycList("(1 . 24)");
-      CycList cycList2001 = getCyc().getObjectTool().makeCycList("(1 . 23)");
-      assertFalse(cycList2001.equals(cycList2000));
+    CycList cycList1 = getCyc().getObjectTool().makeCycList("()");
+    Enumeration e1 = cycList1.cycListVisitor();
+    assertFalse(e1.hasMoreElements());
 
-      CycList cycList1 = getCyc().getObjectTool().makeCycList("()");
-      Enumeration e1 = cycList1.cycListVisitor();
-      assertFalse(e1.hasMoreElements());
+    CycList cycList2 = getCyc().getObjectTool().makeCycList("(1 \"a\" :foo " + brazil + ")");
+    Enumeration e2 = cycList2.cycListVisitor();
+    assertTrue(e2.hasMoreElements());
+    Integer integer1 = Integer.valueOf(1);
+    Object nextObject = e2.nextElement();
+    assertTrue(nextObject instanceof Integer);
+    assertTrue(((Integer) nextObject).intValue() == integer1.intValue());
+    assertTrue(((Integer) nextObject).intValue() == 1);
+    assertTrue(e2.hasMoreElements());
+    assertEquals("a", e2.nextElement());
+    assertTrue(e2.hasMoreElements());
+    assertEquals(CycObjectFactory.makeCycSymbol(":foo"), e2.nextElement());
+    assertTrue(e2.hasMoreElements());
+    assertEquals(getCyc().getObjectTool().makeCycConstant(brazil),
+            e2.nextElement());
+    assertFalse(e1.hasMoreElements());
 
-      CycList cycList2 = getCyc().getObjectTool().makeCycList("(1 \"a\" :foo " + brazil + ")");
-      Enumeration e2 = cycList2.cycListVisitor();
-      assertTrue(e2.hasMoreElements());
-      Integer integer1 = Integer.valueOf(1);
-      Object nextObject = e2.nextElement();
-      assertTrue(nextObject instanceof Integer);
-      assertTrue(((Integer) nextObject).intValue() == integer1.intValue());
-      assertTrue(((Integer) nextObject).intValue() == 1);
-      assertTrue(e2.hasMoreElements());
-      assertEquals("a", e2.nextElement());
-      assertTrue(e2.hasMoreElements());
-      assertEquals(CycObjectFactory.makeCycSymbol(":foo"), e2.nextElement());
-      assertTrue(e2.hasMoreElements());
-      assertEquals(getCyc().getObjectTool().makeCycConstant(brazil),
-              e2.nextElement());
-      assertFalse(e1.hasMoreElements());
+    CycList cycList3 = getCyc().getObjectTool().makeCycList("((()))");
+    Enumeration e3 = cycList3.cycListVisitor();
+    assertFalse(e3.hasMoreElements());
 
-      CycList cycList3 = getCyc().getObjectTool().makeCycList("((()))");
-      Enumeration e3 = cycList3.cycListVisitor();
-      assertFalse(e3.hasMoreElements());
+    CycList cycList4 = getCyc().getObjectTool().makeCycList("(()())");
+    Enumeration e4 = cycList4.cycListVisitor();
+    assertFalse(e4.hasMoreElements());
 
-      CycList cycList4 = getCyc().getObjectTool().makeCycList("(()())");
-      Enumeration e4 = cycList4.cycListVisitor();
-      assertFalse(e4.hasMoreElements());
+    CycList cycList5 = getCyc().getObjectTool().makeCycList(
+            "(\"a\" (\"b\") (\"c\") \"d\" \"e\")");
+    Enumeration e5 = cycList5.cycListVisitor();
+    assertTrue(e5.hasMoreElements());
+    assertEquals("a", e5.nextElement());
+    assertTrue(e5.hasMoreElements());
+    assertEquals("b", e5.nextElement());
+    assertTrue(e5.hasMoreElements());
+    assertEquals("c", e5.nextElement());
+    assertTrue(e5.hasMoreElements());
+    assertEquals("d", e5.nextElement());
+    assertTrue(e5.hasMoreElements());
+    assertEquals("e", e5.nextElement());
+    assertFalse(e5.hasMoreElements());
 
-      CycList cycList5 = getCyc().getObjectTool().makeCycList(
-              "(\"a\" (\"b\") (\"c\") \"d\" \"e\")");
-      Enumeration e5 = cycList5.cycListVisitor();
-      assertTrue(e5.hasMoreElements());
-      assertEquals("a", e5.nextElement());
-      assertTrue(e5.hasMoreElements());
-      assertEquals("b", e5.nextElement());
-      assertTrue(e5.hasMoreElements());
-      assertEquals("c", e5.nextElement());
-      assertTrue(e5.hasMoreElements());
-      assertEquals("d", e5.nextElement());
-      assertTrue(e5.hasMoreElements());
-      assertEquals("e", e5.nextElement());
-      assertFalse(e5.hasMoreElements());
-
-      CycList cycList6 = getCyc().getObjectTool().makeCycList(
-              "(\"a\" (\"b\" \"c\") (\"d\" \"e\"))");
-      Enumeration e6 = cycList6.cycListVisitor();
-      assertTrue(e6.hasMoreElements());
-      assertEquals("a", e6.nextElement());
-      assertTrue(e6.hasMoreElements());
-      assertEquals("b", e6.nextElement());
-      assertTrue(e6.hasMoreElements());
-      assertEquals("c", e6.nextElement());
-      assertTrue(e6.hasMoreElements());
-      assertEquals("d", e6.nextElement());
-      assertTrue(e6.hasMoreElements());
-      assertEquals("e", e6.nextElement());
-      assertFalse(e6.hasMoreElements());
-    } catch (Exception e) {
-      failWithException(e);
-    }
-
+    CycList cycList6 = getCyc().getObjectTool().makeCycList(
+            "(\"a\" (\"b\" \"c\") (\"d\" \"e\"))");
+    Enumeration e6 = cycList6.cycListVisitor();
+    assertTrue(e6.hasMoreElements());
+    assertEquals("a", e6.nextElement());
+    assertTrue(e6.hasMoreElements());
+    assertEquals("b", e6.nextElement());
+    assertTrue(e6.hasMoreElements());
+    assertEquals("c", e6.nextElement());
+    assertTrue(e6.hasMoreElements());
+    assertEquals("d", e6.nextElement());
+    assertTrue(e6.hasMoreElements());
+    assertEquals("e", e6.nextElement());
+    assertFalse(e6.hasMoreElements());
     System.out.println("*** testCycListVisitor OK ***");
   }
 
@@ -1441,7 +1414,7 @@ public class CycObjectUnitTest {
    * Tests the ByteArray class.
    */
   @Test
-  public void testByteArray() {
+  public void testByteArray() throws IOException, ParserConfigurationException, SAXException {
     System.out.println("\n*** testByteArray ***");
     byte[] bytes = {0, 1, 2, 3, 4, -128};
     ByteArray byteArray1 = new ByteArray(bytes);
@@ -1464,26 +1437,22 @@ public class CycObjectUnitTest {
 
     // toXML, toXMLString, unmarshal
     XMLStringWriter xmlStringWriter = new XMLStringWriter();
-    try {
-      byteArray1.toXML(xmlStringWriter, 0, false);
-      String expectedXmString =
-              "<byte-vector>\n"
-              + "  <length>6</length>\n"
-              + "  <byte>0</byte>\n"
-              + "  <byte>1</byte>\n"
-              + "  <byte>2</byte>\n"
-              + "  <byte>3</byte>\n"
-              + "  <byte>4</byte>\n"
-              + "  <byte>-128</byte>\n"
-              + "</byte-vector>\n";
+    byteArray1.toXML(xmlStringWriter, 0, false);
+    String expectedXmString
+            = "<byte-vector>\n"
+            + "  <length>6</length>\n"
+            + "  <byte>0</byte>\n"
+            + "  <byte>1</byte>\n"
+            + "  <byte>2</byte>\n"
+            + "  <byte>3</byte>\n"
+            + "  <byte>4</byte>\n"
+            + "  <byte>-128</byte>\n"
+            + "</byte-vector>\n";
 
-      assertEquals(expectedXmString, xmlStringWriter.toString());
-      assertEquals(expectedXmString, byteArray1.toXMLString());
-      assertEquals(byteArray1,
-              CycObjectFactory.unmarshal(byteArray1.toXMLString()));
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    assertEquals(expectedXmString, xmlStringWriter.toString());
+    assertEquals(expectedXmString, byteArray1.toXMLString());
+    assertEquals(byteArray1,
+            CycObjectFactory.unmarshal(byteArray1.toXMLString()));
     System.out.println("*** testByteArray OK ***");
   }
 
@@ -1491,20 +1460,14 @@ public class CycObjectUnitTest {
    * Tests the ELMTCycList class.
    */
   @Test
-  public void testELMTCycList() {
+  public void testELMTCycList() throws CycConnectionException {
     System.out.println("\n*** testELMTCycList ***");
-
-    try {
-      if (!getCyc().isOpenCyc()) {
-        final CycObject mt = new NautImpl(
-                getCyc().getObjectTool().makeCycList(
-                        TestSentences.MT_SPACE_CYCLISTS_MT_TIME_POINT.cyclify()
-                ));
-        assertNotNull(getCyc().getLookupTool().getComment(CommonConstants.ISA, mt));
-      }
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    assumeNotOpenCyc();
+    final CycObject mt = new NautImpl(
+            getCyc().getObjectTool().makeCycList(
+                    TestSentences.MT_SPACE_CYCLISTS_MT_TIME_POINT.cyclify()
+            ));
+    assertNotNull(getCyc().getLookupTool().getComment(CommonConstants.ISA, mt));
     System.out.println("*** testELMTCycList OK ***");
   }
 
@@ -1593,53 +1556,48 @@ public class CycObjectUnitTest {
    * Test the CycList pretty printer
    */
   @Test
-  public void testCycListPrettyStringDetails() {
+  public void testCycListPrettyStringDetails() throws CycConnectionException, CycApiException, ParseException, CycApiServerSideException, InvalidConstantNameException, InvalidConstantGuidException, UnsupportedVocabularyException, TokenMgrError, IOException {
     System.out.println("\n*** testCycListPrettyStringDetails ***");
-    try {
-      CycArrayList example = null;
-      Map<ArgPositionImpl, Span> map = null;
-      ArgPositionImpl curPos = null;
-      example = (CycArrayList) com.cyc.baseclient.parser.CycLParserUtil.parseCycLTerm(
-              TestSentences.ISA_MUFFET_DOG_STRING, true, getCyc());
-      map = example.getPrettyStringDetails();
-      checkPrettyStringDetail(map, ArgPositionImpl.TOP, 0, 16);
-      checkPrettyStringDetail(map, ARG0, 1, 4);
-      checkPrettyStringDetail(map, ARG1, 5, 11);
-      checkPrettyStringDetail(map, ARG2, 12, 15);
+    CycArrayList example = null;
+    Map<ArgPositionImpl, Span> map = null;
+    ArgPositionImpl curPos = null;
+    example = (CycArrayList) com.cyc.baseclient.parser.CycLParserUtil.parseCycLTerm(
+            TestSentences.ISA_MUFFET_DOG_STRING, true, getCyc());
+    map = example.getPrettyStringDetails();
+    checkPrettyStringDetail(map, ArgPositionImpl.TOP, 0, 16);
+    checkPrettyStringDetail(map, ARG0, 1, 4);
+    checkPrettyStringDetail(map, ARG1, 5, 11);
+    checkPrettyStringDetail(map, ARG2, 12, 15);
 
-      example = (CycArrayList) com.cyc.baseclient.parser.CycLParserUtil.parseCycLTerm(
-              "(" + isa + " (" + instanceNamedFn + " \"Muffet\" (" + juvenileFn + " " + dog + "))"
-                      + " (" + juvenileFn + " " + dog + "))",
-              true, getCyc());
-      map = example.getPrettyStringDetails();
-      checkPrettyStringDetail(map, ArgPositionImpl.TOP, 0, 74);
-      checkPrettyStringDetail(map, ARG0, 1, 4);
-      checkPrettyStringDetail(map, new ArgPositionImpl(1, 0), 8, 23);
-      checkPrettyStringDetail(map, new ArgPositionImpl(1, 1), 24, 32);
-      curPos = new ArgPositionImpl(1, 2);
-      curPos.extend(0);
-      checkPrettyStringDetail(map, curPos, 38, 48);
-      curPos = new ArgPositionImpl(1, 2);
-      curPos.extend(1);
-      checkPrettyStringDetail(map, curPos, 49, 52);
-      checkPrettyStringDetail(map, new ArgPositionImpl(1, 2), 37, 53);
-      checkPrettyStringDetail(map, new ArgPositionImpl(1), 7, 54);
-      checkPrettyStringDetail(map, new ArgPositionImpl(2, 0), 58, 68);
-      checkPrettyStringDetail(map, new ArgPositionImpl(2, 1), 69, 72);
-      checkPrettyStringDetail(map, ARG2, 57, 73);
+    example = (CycArrayList) com.cyc.baseclient.parser.CycLParserUtil.parseCycLTerm(
+            "(" + isa + " (" + instanceNamedFn + " \"Muffet\" (" + juvenileFn + " " + dog + "))"
+            + " (" + juvenileFn + " " + dog + "))",
+            true, getCyc());
+    map = example.getPrettyStringDetails();
+    checkPrettyStringDetail(map, ArgPositionImpl.TOP, 0, 74);
+    checkPrettyStringDetail(map, ARG0, 1, 4);
+    checkPrettyStringDetail(map, new ArgPositionImpl(1, 0), 8, 23);
+    checkPrettyStringDetail(map, new ArgPositionImpl(1, 1), 24, 32);
+    curPos = new ArgPositionImpl(1, 2);
+    curPos.extend(0);
+    checkPrettyStringDetail(map, curPos, 38, 48);
+    curPos = new ArgPositionImpl(1, 2);
+    curPos.extend(1);
+    checkPrettyStringDetail(map, curPos, 49, 52);
+    checkPrettyStringDetail(map, new ArgPositionImpl(1, 2), 37, 53);
+    checkPrettyStringDetail(map, new ArgPositionImpl(1), 7, 54);
+    checkPrettyStringDetail(map, new ArgPositionImpl(2, 0), 58, 68);
+    checkPrettyStringDetail(map, new ArgPositionImpl(2, 1), 69, 72);
+    checkPrettyStringDetail(map, ARG2, 57, 73);
 
-      final CycArrayList<String> testList = new CycArrayList<String>();
-      final StringBuffer stringBuffer = new StringBuffer();
-      stringBuffer.append('"');
-      stringBuffer.append("abc");
-      testList.add(stringBuffer.toString());
-      final String testEscapedCyclifiedString = testList.toPrettyEscapedCyclifiedString(
-              "");
-      assertEquals("(\"\\\"abc\")", testEscapedCyclifiedString);
-    } catch (Exception e) {
-      failWithException(e);
-    }
-
+    final CycArrayList<String> testList = new CycArrayList<String>();
+    final StringBuffer stringBuffer = new StringBuffer();
+    stringBuffer.append('"');
+    stringBuffer.append("abc");
+    testList.add(stringBuffer.toString());
+    final String testEscapedCyclifiedString = testList.toPrettyEscapedCyclifiedString(
+            "");
+    assertEquals("(\"\\\"abc\")", testEscapedCyclifiedString);
 
     System.out.println("*** testCycListPrettyStringDetails OK ***");
   }
@@ -1685,94 +1643,72 @@ public class CycObjectUnitTest {
   @Test
   public void testVariableNameOptimization() throws CycConnectionException {
     System.out.println("\n*** testVariableNameOptimization ***");
-    if (!getCyc().isOpenCyc()) {
-      FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?X ?Y)");
-      Map<CycVariable, String> varMap = sentence.getOptimizedVarNames(getCyc());
-      assertEquals(varMap.size(), 2);
-    }
+    assumeNotOpenCyc();
+    FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?X ?Y)");
+    Map<CycVariable, String> varMap = sentence.getOptimizedVarNames(getCyc());
+    assertEquals(2, varMap.size());
     System.out.println("*** testVariableNameOptimization OK ***");
   }
 
   @Test
-  public void testIsConditionalSentence() {
+  public void testIsConditionalSentence() throws CycConnectionException {
     System.out.println("\n*** testIsConditionalSentence ***");
-    try {
-      FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?X ?Y)");
-      boolean conditional = sentence.isConditionalSentence();
-      assertEquals(conditional, false);
-      sentence = getCyc().getObjectTool().makeCycSentence(
-              "(" + implies +  " (" + likesAsFriend + " ?X ?Y) (" + isa + " ?X " + dog + "))");
-      conditional = sentence.isConditionalSentence();
-      assertEquals(conditional, true);
-
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?X ?Y)");
+    boolean conditional = sentence.isConditionalSentence();
+    assertEquals(conditional, false);
+    sentence = getCyc().getObjectTool().makeCycSentence(
+            "(" + implies + " (" + likesAsFriend + " ?X ?Y) (" + isa + " ?X " + dog + "))");
+    conditional = sentence.isConditionalSentence();
+    assertEquals(conditional, true);
     System.out.println("*** testVariableNameOptimization OK ***");
   }
 
   @Test
-  public void testSubstituteNonDestructive() {
+  public void testSubstituteNonDestructive() throws CycConnectionException {
     System.out.println("\n*** testSubstituteNonDestructive ***");
-    try {
-      FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?X ?Y)");
-      FormulaSentence newSentence =
-              sentence.substituteNonDestructive(CycObjectFactory.makeCycVariable(
-              "X"), CycObjectFactory.makeCycVariable("Z"));
-      assertFalse(sentence.equals(newSentence));
-      assertFalse(sentence.equals(getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?Z ?Y)")));
-      assertTrue(newSentence.equals(getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?Z ?Y)")));
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?X ?Y)");
+    FormulaSentence newSentence
+            = sentence.substituteNonDestructive(CycObjectFactory.makeCycVariable(
+                            "X"), CycObjectFactory.makeCycVariable("Z"));
+    assertFalse(sentence.equals(newSentence));
+    assertFalse(sentence.equals(getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?Z ?Y)")));
+    assertTrue(newSentence.equals(getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?Z ?Y)")));
     System.out.println("*** testSubstituteNonDestructive OK ***");
   }
 
   @Test
-  public void testSubstituteDestructive() {
+  public void testSubstituteDestructive() throws CycConnectionException {
     System.out.println("\n*** testSubstituteDestructive ***");
-    try {
-      FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?X ?Y)");
-      sentence.substituteDestructive(CycObjectFactory.makeCycVariable(
-              "X"), CycObjectFactory.makeCycVariable("Z"));
-      assertTrue(sentence.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?Z ?Y)")));
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?X ?Y)");
+    sentence.substituteDestructive(CycObjectFactory.makeCycVariable(
+            "X"), CycObjectFactory.makeCycVariable("Z"));
+    assertTrue(sentence.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?Z ?Y)")));
     System.out.println("*** testSubstituteDestructive OK ***");
   }
 
   @Test
-  public void testEqualsAtEL() {
+  public void testEqualsAtEL() throws CycConnectionException {
     System.out.println("\n*** testEqualsAtEL ***");
-    try {
-      FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?X ?Y)");
-      assertTrue(sentence.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
-              "(" + likesAsFriend + " ?Z ?Y)")));
-      FormulaSentence sentence2 = getCyc().getObjectTool().makeCycSentence(
-              "(" + and + "(" + isa + " ?X " + personString + ") (" + likesAsFriend + " ?X ?Y))");
-      assertTrue(sentence2.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
-              "(" + and + "(" + isa + " ?Z " + personString + ") (" + likesAsFriend + " ?Z ?Y))")));
-      FormulaSentence sentence3 = getCyc().getObjectTool().makeCycSentence(
-              "(" + and + "(" + isa + " ?Y " + personString + ") (" + likesAsFriend + " ?X ?Y))");
-      assertFalse(sentence3.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
-              "(" + and + "(" + isa + " ?X " + personString + ") (" + likesAsFriend + " ?X ?Y))")));
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    FormulaSentence sentence = getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?X ?Y)");
+    assertTrue(sentence.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
+            "(" + likesAsFriend + " ?Z ?Y)")));
+    FormulaSentence sentence2 = getCyc().getObjectTool().makeCycSentence(
+            "(" + and + "(" + isa + " ?X " + personString + ") (" + likesAsFriend + " ?X ?Y))");
+    assertTrue(sentence2.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
+            "(" + and + "(" + isa + " ?Z " + personString + ") (" + likesAsFriend + " ?Z ?Y))")));
+    FormulaSentence sentence3 = getCyc().getObjectTool().makeCycSentence(
+            "(" + and + "(" + isa + " ?Y " + personString + ") (" + likesAsFriend + " ?X ?Y))");
+    assertFalse(sentence3.equalsAtEL(getCyc().getObjectTool().makeCycSentence(
+            "(" + and + "(" + isa + " ?X " + personString + ") (" + likesAsFriend + " ?X ?Y))")));
     System.out.println("*** testEqualsAtEL OK ***");
   }
-  
-  static void failWithException(Exception e) {
-    e.printStackTrace();
-    fail(e.getMessage());
-  }
+
 }

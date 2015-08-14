@@ -24,8 +24,16 @@ import com.cyc.kb.KBIndividual;
 import com.cyc.kb.client.BinaryPredicateImpl;
 import com.cyc.kb.client.KBIndividualImpl;
 import com.cyc.kb.client.SentenceImpl;
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KBApiException;
+import com.cyc.kb.exception.KBTypeException;
+import static com.cyc.query.TestUtils.assumeCycSessionRequirements;
+import com.cyc.query.exception.QueryConstructionException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.exception.UnsupportedCycOperationException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import javax.xml.bind.JAXBException;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -56,15 +64,17 @@ public class QueryReaderTest {
   }
 
   @Test
-  public void testLoadIstQuery() throws Exception {
+  public void testLoadIstQuery() throws QueryConstructionException, KBTypeException, CreateException, KBApiException, SessionCommunicationException, UnsupportedCycOperationException {
+    assumeCycSessionRequirements(QueryImpl.QUERY_LOADER_REQUIREMENTS);
+    
     System.out.println("testLoadIstQuery");
-    final Query q1 = new Query(
+    final Query q1 = QueryFactory.getQuery(
             new SentenceImpl(BinaryPredicateImpl.get("ist"), TestUtils.inferencePSC,
                     TestUtils.xIsaBird()), TestUtils.inferencePSC);
     try {
       q1.saveAs("QueryForTestLoadIstQuery");
       final KBIndividual queryObj = KBIndividualImpl.get("QueryForTestLoadIstQuery");
-      final Query q = Query.load(queryObj); // TODO: this test is throwing QueryConstructionExceptions
+      final Query q = QueryFactory.getQuery(queryObj); // TODO: this test is throwing QueryConstructionExceptions
       System.out.println(q.getQuerySentence());
       q.setMaxNumber(1);
       assertTrue("Failed to get any answers.", q.getAnswerCount() > 0);
@@ -75,10 +85,9 @@ public class QueryReaderTest {
 
   /**
    * Test of queryFromXML method, of class QueryReader.
-   * @throws java.lang.Exception
    */
   @Test
-  public void testQueryFromXML() throws Exception {
+  public void testQueryFromXML() throws JAXBException, KBApiException, QueryConstructionException {
     System.out.println("queryFromXML");
     InputStream stream = new ByteArrayInputStream(xml.getBytes());
     QueryReader instance = new ValidatingQueryReader();

@@ -29,7 +29,7 @@ package com.cyc.session;
  * @author nwinant
  * @param <T>
  */
-public interface SessionManager<T extends CycSession> {
+public interface SessionManager<T extends CycSession> extends Comparable<SessionManager<T>> {
   
   /**
    * Returns the CycSession currently assigned to this thread. If no CycSession

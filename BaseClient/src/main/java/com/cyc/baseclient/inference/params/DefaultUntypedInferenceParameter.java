@@ -21,7 +21,12 @@ package com.cyc.baseclient.inference.params;
  * #L%
  */
 
-import com.cyc.base.cycobject.CycSymbol;
+import com.cyc.base.cycobject.CycList;
+import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.query.StandardInferenceMetric;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -33,11 +38,11 @@ import java.util.Map;
  *
  * @author baxter
  * @date June 19, 2009
- * @version $Id: DefaultUntypedInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultUntypedInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 class DefaultUntypedInferenceParameter extends AbstractInferenceParameter {
 
-  public DefaultUntypedInferenceParameter(Map<CycSymbol, Object> propertyMap) {
+  public DefaultUntypedInferenceParameter(Map<String, Object> propertyMap) {
     super(propertyMap);
   }
 
@@ -49,6 +54,16 @@ class DefaultUntypedInferenceParameter extends AbstractInferenceParameter {
  
   @Override
   public Object parameterValueCycListApiValue(Object val) {
+    if (val instanceof HashSet) {
+      CycList l = new CycArrayList();
+      for (Object o : ((HashSet)val).toArray()) {
+        if (o instanceof StandardInferenceMetric) {
+          l.add(new CycSymbolImpl(o.toString()));
+        } else
+          l.add(o);
+      }
+      return l;
+    }
     return val;
   }
 }

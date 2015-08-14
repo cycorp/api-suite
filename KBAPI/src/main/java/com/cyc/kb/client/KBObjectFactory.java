@@ -26,6 +26,7 @@ import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycAssertion;
 import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.kb.Context;
@@ -42,6 +43,7 @@ import com.cyc.kb.exception.KBTypeException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * The class and the methods of this class are not part of the KB API.
  *  
  * @author David Baxter
- * @version $Id: KBObjectFactory.java 157022 2015-03-11 16:19:37Z nwinant $ 
+ * @version $Id: KBObjectFactory.java 158919 2015-06-09 16:05:45Z daves $ 
  */
 
 public class KBObjectFactory {
@@ -86,7 +88,23 @@ public class KBObjectFactory {
           SecondOrderCollectionImpl.class,
           SentenceImpl.class,
           VariableImpl.class);
-
+  
+  protected static final Map<CycObject, Class> cycObjectToKBAPIClass = new HashMap<CycObject, Class>();
+  static {
+    cycObjectToKBAPIClass.put(LogicalConnectiveImpl.getClassTypeCore(), LogicalConnectiveImpl.class);
+    cycObjectToKBAPIClass.put(KBTermImpl.getClassTypeCore(), KBTermImpl.class);
+    cycObjectToKBAPIClass.put(KBCollectionImpl.getClassTypeCore(), KBCollectionImpl.class);
+    cycObjectToKBAPIClass.put(FirstOrderCollectionImpl.getClassTypeCore(), FirstOrderCollectionImpl.class);
+    cycObjectToKBAPIClass.put(SecondOrderCollectionImpl.getClassTypeCore(), SecondOrderCollectionImpl.class);
+    cycObjectToKBAPIClass.put(KBIndividualImpl.getClassTypeCore(), KBIndividualImpl.class);
+    cycObjectToKBAPIClass.put(ContextImpl.getClassTypeCore(), ContextImpl.class);
+    cycObjectToKBAPIClass.put(RelationImpl.getClassTypeCore(), RelationImpl.class);
+    cycObjectToKBAPIClass.put(KBFunctionImpl.getClassTypeCore(), KBFunctionImpl.class);
+    cycObjectToKBAPIClass.put(KBPredicateImpl.getClassTypeCore(), KBPredicateImpl.class);
+    cycObjectToKBAPIClass.put(BinaryPredicateImpl.getClassTypeCore(), BinaryPredicateImpl.class);
+    cycObjectToKBAPIClass.put(QuantifierImpl.getClassTypeCore(), QuantifierImpl.class);
+  }
+  
 
   /**
    * Find an instance of {@link KBObjectImpl} subclass <code>O</code>,
@@ -111,43 +129,56 @@ public class KBObjectFactory {
       log.trace("The object " + kbObj + " was retrieved from cache.");
       return kbObj;
     }
-    // Try subclasses of c, using most specific that works.
-    Class<? extends KBObjectImpl> bestClass = c;
-    kbObj = (O) getAsInstanceOfSpecifiedClass(nameOrId, bestClass, LookupType.FIND);
-    if (kbObj != null) {
-      bestClass = kbObj.getClass();
-    }
-    if (kbObj == null || !kbObj.isVariable()){
-      log.trace("Attempting to find a more specific class than " + bestClass + " for " + kbObj);
-      for (final Class<? extends KBObjectImpl> subclass : KB_OBJECT_TYPES) {
-        if (bestClass.isAssignableFrom(subclass) && !bestClass.equals(subclass)) {
-          try {
-            final O asSubclass = (O) getAsInstanceOfSpecifiedClass(nameOrId, subclass, LookupType.FIND);
-            if (asSubclass != null) {
-              kbObj = (O) cacheKBObject(asSubclass, nameOrId, subclass);
-              log.trace("Found a more specific class " + subclass + " than " + bestClass + " for " + kbObj);
-              bestClass = subclass;
-            }
-          } catch (Exception ex) {
-            KBApiExceptionHandler.rethrowIfCycConnectionException(ex);
-            
-            // Guess it's not one of those.
-            
-            // FIXME: do something here.
-          } catch (Throwable t) {
-            // FIXME: do something here.
-          }
-        }
-      }
-    }
-    if (kbObj == null) {
-      String msg = "No KB object \"" + nameOrId + "\" as " + c.getSimpleName() + ".";
-      log.error(msg);
-      throw new KBObjectNotFoundException(msg);
+    
+    CycObject co = StandardKBObject.getTempCoreFromNameOrId(nameOrId);
+    if (co != null) {
+      return (O) get(co, c);
     } else {
-      log.trace("Found " + kbObj + " and cached it");
-      return (O) cacheKBObject(kbObj, nameOrId, c);
+      String msg = "No KB object \"" + nameOrId + "\" as " + c.getSimpleName() + ".";
+      //since this is called from findOrCreate, it's not necessarily an error.  Don't log it as such.
+      log.trace(msg);
+      throw new KBObjectNotFoundException(msg);
     }
+    
+    
+//    // Try subclasses of c, using most specific that works.
+//    Class<? extends KBObjectImpl> bestClass = c;
+//    kbObj = (O) getAsInstanceOfSpecifiedClass(nameOrId, bestClass, LookupType.FIND);
+//    if (kbObj != null) {
+//      bestClass = kbObj.getClass();
+//    }
+//    
+//    if (kbObj == null || !kbObj.isVariable()){
+//      log.trace("Attempting to find a more specific class than " + bestClass + " for " + kbObj);
+//      for (final Class<? extends KBObjectImpl> subclass : KB_OBJECT_TYPES) {
+//        if (bestClass.isAssignableFrom(subclass) && !bestClass.equals(subclass)) {
+//          try {
+//            final O asSubclass = (O) getAsInstanceOfSpecifiedClass(nameOrId, subclass, LookupType.FIND);
+//            if (asSubclass != null) {
+//              kbObj = (O) cacheKBObject(asSubclass, nameOrId, subclass);
+//              log.trace("Found a more specific class " + subclass + " than " + bestClass + " for " + kbObj);
+//              bestClass = subclass;
+//            }
+//          } catch (Exception ex) {
+//            KBApiExceptionHandler.rethrowIfCycConnectionException(ex);
+//            
+//            // Guess it's not one of those.
+//            
+//            // FIXME: do something here.
+//          } catch (Throwable t) {
+//            // FIXME: do something here.
+//          }
+//        }
+//      }
+//    }
+//    if (kbObj == null) {
+//      String msg = "No KB object \"" + nameOrId + "\" as " + c.getSimpleName() + ".";
+//      log.error(msg);
+//      throw new KBObjectNotFoundException(msg);
+//    } else {
+//      log.trace("Found " + kbObj + " and cached it");
+//      return (O) cacheKBObject(kbObj, nameOrId, c);
+//    }
   }
 
   /**
@@ -339,20 +370,80 @@ public class KBObjectFactory {
       log.trace("The object " + kbObj + " was retrieved from cache.");
       return kbObj;
     }
-    Class<? extends O> bestClass = c;
-    for (final Class<? extends KBObjectImpl> subClass : KB_OBJECT_TYPES) {
-      if (bestClass.isAssignableFrom(subClass)) {
-        try {
-          kbObj = (O) subClass.getDeclaredConstructor(CycObject.class).newInstance(cycObject);
-          kbObj = cacheKBObject(kbObj, getCacheKey(cycObject), c);
-          log.trace("Found a more specific class " + subClass + " than " + bestClass + " for " + kbObj);
-          bestClass = (Class<? extends O>) subClass;
-        } catch (Exception e) {
+    
+    Class<? extends O> requestedClass = c;
+    CycObject tightestCycCol = null;
+    try {
+      tightestCycCol = getStaticAccess().getInspectorTool().categorizeTermWRTApi(cycObject);
+    } catch (CycConnectionException cce) {
+      throw new KBApiRuntimeException(cce.getMessage(), cce);
+    }
+
+    Class tightestClass = cycObjectToKBAPIClass.get(tightestCycCol);
+    if (tightestCycCol != null && tightestClass != null) { 
+      if (requestedClass.isAssignableFrom(tightestClass)) {
+        requestedClass = tightestClass;
+      } else {
+        // Currently the tighening code only makes sence for subclasses of KBTerm
+        if (cycObject instanceof DenotationalTerm) {
+          // If the user wants to tighten the object, we should allow them
+          if (tightestClass.isAssignableFrom(requestedClass)) {
+            // Say, currently TermX is an Individual and user wants to turn it into
+            // Context (#$Microtheory) then this will be true
+            // Best class will remain what the user has passed in.
+            
+            // If the user wants to coerce, say in findOrCreate, it expects KBTypeException
+            // In the get() code path, KBTypeException is appropriate to indicate, 
+            // that something was found, but was a different but coercible type
+            throw new KBTypeException(cycObject.toString() + " is of type "
+                    + tightestClass.getSimpleName() + ", but is being requested as "
+                    + requestedClass.getSimpleName() + ". User findOrCreate to coerce into the requested type.");
+          } else {
+            throw new KBTypeConflictException(cycObject.toString() + " is of type "
+                    + tightestClass.getSimpleName() + ", but is being requested as "
+                    + requestedClass.getSimpleName() + ", which are incompatible types.");
+          }
+        } else if (cycObject instanceof CycAssertion) {
+          if (((CycAssertion)cycObject).isGaf()) {
+            requestedClass = (Class<? extends O>) FactImpl.class;
+          }
         }
       }
     }
+      
+    try {
+      kbObj = (O) requestedClass.getDeclaredConstructor(CycObject.class).newInstance(cycObject);
+      kbObj = cacheKBObject(kbObj, getCacheKey(cycObject), c);
+    } catch (Exception e) {
+    }
+    
+//    for (final Class<? extends KBObjectImpl> subClass : KB_OBJECT_TYPES) {
+//      if (bestClass.isAssignableFrom(subClass)) {
+//        try {
+//          kbObj = (O) subClass.getDeclaredConstructor(CycObject.class).newInstance(cycObject);
+//          kbObj = cacheKBObject(kbObj, getCacheKey(cycObject), c);
+//          log.trace("Found a more specific class " + subClass + " than " + bestClass + " for " + kbObj);
+//          bestClass = (Class<? extends O>) subClass;
+//        } catch (Exception e) {
+//        }
+//      }
+//    }
+    
     if (kbObj == null) {
-      return get(cycObject.cyclify(), c);
+      // Why are we doing this? 
+      // If we can't get something based on proper Cyc object, why do we expect to find
+      // using the Cyclified string??
+      // This may create an infinite loop/stack overflow, 
+      // due to get (string) ->find-> (new link being introduced) get (CycObject)
+      // DaveS says, we did this because, if a CycObject is deleted outside of the scope of
+      // the API, then we may possibly find it based on just the cyclified string. We decided
+      // not to support this behavior anymore.
+//      return get(cycObject.cyclify(), c);
+      
+      String msg = "No KB object \"" + cycObject.toString() + "\" as " + c.getSimpleName() + ".";
+      log.warn(msg);
+      throw new KBObjectNotFoundException(msg);
+      
     } else {
       return kbObj;
     }
@@ -377,6 +468,8 @@ public class KBObjectFactory {
    * @throws KBTypeException
    */
   
+  // NOTE: 2015-04-30, Vijay: Only KBTerm and its subclasses call this general get method
+  // Assertion and its subclasses don't use this method. 
   static <O extends KBObjectImpl> O get(String nameOrId, Class<O> c) throws KBTypeException, CreateException {
     return KBObjectFactory.<O>find(nameOrId, c);
   }

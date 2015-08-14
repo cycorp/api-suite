@@ -1,5 +1,7 @@
 package com.cyc.baseclient.util.query;
 
+import com.cyc.query.InferenceStatus;
+
 /*
  * #%L
  * File: CycQuery.java
@@ -21,12 +23,11 @@ package com.cyc.baseclient.util.query;
  * #L%
  */
 
-import com.cyc.baseclient.inference.DefaultInferenceStatus;
 /**
- * @version $Id: CycQuery.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycQuery.java 158569 2015-05-19 21:51:08Z daves $
  * @author  mreimers
  */
 public interface CycQuery extends Query {
   
-  public DefaultInferenceStatus getInferenceStatus();
+  public InferenceStatus getInferenceStatus();
 }

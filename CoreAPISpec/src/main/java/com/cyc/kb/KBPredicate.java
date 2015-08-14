@@ -38,7 +38,7 @@ public interface KBPredicate extends Relation {
   /**
    * finds the asserted specializations of <code>this</code>
    * <code>Predicate</code>, from the default context specified by
-   * {@link KBAPIDefaultContext#forQuery()}.
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    *
    * @return the <code>KBPredicate</code>s that are specialization of
    * <code>this</code> <code>KBPredicate</code>
@@ -112,7 +112,7 @@ public interface KBPredicate extends Relation {
 
   /**
    * finds the asserted generalizations of <code>this</code>, from the default
-   * context specified by {@link KBAPIDefaultContext#forQuery()}
+   * context specified by {@link com.cyc.kb.config.DefaultContext#forQuery()}
    *
    * @return the <code>KBPredicate</code>s that are generalizations of this
    * <code>KBPredicate</code>

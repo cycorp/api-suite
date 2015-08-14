@@ -25,7 +25,10 @@ import com.cyc.base.CycAccessOptions;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.Fort;
+import com.cyc.kb.config.DefaultContext;
 import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.CycSessionConfiguration.DefaultSessionOptions;
+import com.cyc.session.SessionApiException;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionConfigurationException;
 
@@ -38,10 +41,12 @@ public class CycClientOptions implements CycAccessOptions {
   final private CycClient cyc;
   private Fort cyclist;
   private Fort project;
+  private DefaultContext defaultContext;
+  private Boolean shouldTranscriptOperations;
   
   protected CycClientOptions(CycClient cyc) {
     this.cyc = cyc;
-    this.clear();
+    this.reset(); // Set fields to defaults
   }
   
   /**
@@ -160,16 +165,71 @@ public class CycClientOptions implements CycAccessOptions {
     this.project = project;
   }
   
+  /**
+   * Sets the default context ThreadLocal
+   * @param defaultContext
+   */
   @Override
-  public void clear() {
+  public void setDefaultContext(DefaultContext defaultContext) {
+    this.defaultContext = defaultContext;
+  }
+  
+  /**
+   * Returns the current default contexts
+   * @return the contents of the DefaultContest ThreadLocal
+   */
+  @Override
+  public DefaultContext getDefaultContext() {
+    return this.defaultContext;
+  }
+
+  /**
+   * Declare that KB operations performed in this thread should or shouldn't be
+   * transcripted by the Cyc server.
+   * 
+   * @param shouldTranscriptOperations flag to control the transcription of the operations
+   */
+  @Override
+  public void setShouldTranscriptOperations(boolean shouldTranscriptOperations) {
+    this.shouldTranscriptOperations = shouldTranscriptOperations;
+  }
+  
+  /**
+   * Will actions in the current thread that modify the KB be transcripted by
+   * the Cyc server?
+   *
+   * @return will KB operations from the current thread be transcripted?
+   */
+  @Override
+  public boolean getShouldTranscriptOperations() {
+    return this.shouldTranscriptOperations;
+  }
+  
+  /**
+   * Clears all values, reverting to any defaults specified in 
+   * {@link com.cyc.session.CycSessionConfiguration#getDefaultSessionOptions() }.
+   */
+  @Override
+  public void reset() {
+    final DefaultSessionOptions opts = getConfig().getDefaultSessionOptions();
     this.cyclist = null;
     this.project = null;
-    if (getConfig() != null) {
-      // TODO: Populate defaults...
+    this.shouldTranscriptOperations = opts.getShouldTranscriptOperations();
+    this.defaultContext = opts.getDefaultContext();
+    try {
+      if (opts.getCyclistName() != null) {
+        setCyclistName(opts.getCyclistName());
+      }
+      if (opts.getKePurposeName() != null) {
+        setKePurposeName(opts.getKePurposeName());
+      }
+    } catch (SessionApiException ex) {
+      // TODO: should this be a checked exception, or a higher-level runtime exception?
+      throw new RuntimeException(ex);
     }
   }
   
-
+  
   // Private
   
   private CycSessionConfiguration getConfig() {
@@ -179,5 +239,4 @@ public class CycClientOptions implements CycAccessOptions {
   private String convertFort(Fort fort) {
     return (fort != null) ? fort.toString() : null;
   }
-
 }

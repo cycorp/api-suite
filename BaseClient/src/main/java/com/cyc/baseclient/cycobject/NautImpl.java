@@ -38,7 +38,7 @@ import com.cyc.baseclient.datatype.DateConverter;
  * <P>NautImpl is designed to...
  * 
  * @author baxter, Jul 6, 2009, 10:05:20 AM
- * @version $Id: NautImpl.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: NautImpl.java 158611 2015-05-21 16:49:58Z daves $
  */
 public class NautImpl extends FormulaImpl implements NonAtomicTerm, DenotationalTerm, Naut {
 
@@ -67,8 +67,8 @@ public class NautImpl extends FormulaImpl implements NonAtomicTerm, Denotational
   }
 
   //// Public Area
-  public Fort getFunctor() {
-    return (Fort) getOperator();
+  public DenotationalTerm getFunctor() {
+    return (DenotationalTerm) getOperator();
   }
 
   public NautImpl getFormula() {
@@ -134,7 +134,7 @@ public class NautImpl extends FormulaImpl implements NonAtomicTerm, Denotational
   @Override
   public CycArrayList toCycList() {
     CycArrayList cycList = new CycArrayList();
-    final Fort functor = getFunctor();
+    final DenotationalTerm functor = getFunctor();
     if (functor instanceof NonAtomicTerm) {
       cycList.add(((NonAtomicTerm) functor).toCycList());
     } else {

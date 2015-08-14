@@ -10,12 +10,12 @@
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-api</artifactId>
-  <version>1.0.0-rc2</version>
+  <version>1.0.0-rc3-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>Core API Specification</name>
   <description>The set of interfaces which define the Cyc Core API.</description>
-  <url>http://dev.cyc.com/cyc-api/</url>
+  <url>http://dev.cyc.com/api/core/</url>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -286,6 +286,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -311,5 +312,14 @@
       </plugin>
     </plugins>
   </reporting>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.12</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
   
 </project>

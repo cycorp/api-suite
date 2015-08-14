@@ -31,6 +31,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import com.cyc.base.CycAccess;
+import com.cyc.base.CycAccessSession;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycObject;
@@ -38,8 +39,8 @@ import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.inference.InferenceAnswer;
-import com.cyc.base.inference.InferenceAnswerIdentifier;
-import com.cyc.base.inference.InferenceIdentifier;
+import com.cyc.query.InferenceAnswerIdentifier;
+import com.cyc.query.InferenceIdentifier;
 import com.cyc.base.justification.Justification;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.api.SubLAPIHelper;
@@ -47,6 +48,10 @@ import com.cyc.baseclient.xml.cycml.CycMLDecoder;
 import com.cyc.baseclient.xml.cycml.Paraphrase;
 import com.cyc.query.QueryAnswer;
 import com.cyc.query.exception.QueryApiRuntimeException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.compatibility.CycSessionRequirementList;
+import com.cyc.session.compatibility.NotOpenCycRequirement;
 import com.cyc.xml.query.Content;
 import com.cyc.xml.query.ProofView;
 import com.cyc.xml.query.ProofViewEntry;
@@ -66,29 +71,38 @@ import com.cyc.xml.query.SubEntries;
  */
 public class ProofViewJustification implements Justification {
 
+  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> PROOF_VIEW_JUSTIFICATION_REQUIREMENTS = CycSessionRequirementList.fromList(
+          NotOpenCycRequirement.NOT_OPENCYC
+  );
+  
   /**
    * Create a new, unpopulated justification for the specified answer.
    *
    * @param answer
    * @throws CycConnectionException if there is a problem talking to Cyc.
+   * @throws OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    * @see ProofViewJustification#populate()
    */
-  public ProofViewJustification(QueryAnswer answer) throws CycConnectionException {
+  public ProofViewJustification(QueryAnswer answer) throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    
     this.answer = answer;
     final InferenceAnswerIdentifier answerID = answer.getId();
-    final InferenceIdentifier inferenceID = answerID.getInferenceID();
-    this.cyc = inferenceID.getCycAccess();
+    final InferenceIdentifier inferenceID = answerID.getInferenceIdentifier();
+    try {
+    this.cyc = ((CycAccessSession)(inferenceID.getSession())).getAccess();
     this.proofViewId = cyc.converse().converseInt(makeSubLStmt(
             "get-new-empty-proof-view-id",
             inferenceID.getProblemStoreID(), inferenceID.getInferenceID(),
             answerID.getAnswerID()));
-    try {
       this.proofViewUnmarshaller = new ProofViewUnmarshaller();
     } catch (JAXBException ex) {
       throw new RuntimeException(ex);
+    } catch (CycConnectionException ex) {
+      throw new QueryApiRuntimeException(ex);
     }
   }
-
+  
   @Override
   public InferenceAnswer getAnswer() {
     throw new UnsupportedOperationException("Use getQueryAnswer() instead.");
@@ -101,10 +115,13 @@ public class ProofViewJustification implements Justification {
   /**
    * Flesh out this justification, setting its root node and tree structure
    * underneath the root.
+   * 
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
   @Override
-  public void populate() {
+  public void populate() throws OpenCycUnsupportedFeatureException {
     synchronized (lock) {
+      PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.testCompatibilityWithRuntimeException();
       requireNotPopulated();
       try {
         converseVoid(makeSubLStmt("proof-view-id-populate", proofViewId));
@@ -125,15 +142,19 @@ public class ProofViewJustification implements Justification {
    * this justification.
    *
    * @return the domain microtheory
-   * @throws CycConnectionException if there is a problem talking to Cyc.
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setDomainMt(ELMt)
    */
-  public ELMt getDomainMt() throws CycConnectionException {
+  public ELMt getDomainMt() throws SessionCommunicationException {
     synchronized (lock) {
       if (domainMt == null) {
-        final CycObject mtObject = converseCycObject(makeSubLStmt(
-                "get-proof-view-domain-mt", proofViewId));
-        domainMt = mtFromObject(mtObject);
+        try {
+          final CycObject mtObject = converseCycObject(makeSubLStmt(
+                  "get-proof-view-domain-mt", proofViewId));
+          domainMt = mtFromObject(mtObject);
+        } catch (CycConnectionException ex) {
+          throw new SessionCommunicationException(ex);
+        }
       }
       return domainMt;
     }
@@ -164,14 +185,18 @@ public class ProofViewJustification implements Justification {
    * Should we include a detailed, drill-down section in this justification?
    *
    * @return true iff such a tree is or should be included
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setIncludeDetails(boolean)
    */
-  public boolean isIncludeDetails() throws CycConnectionException {
+  public boolean isIncludeDetails() throws SessionCommunicationException {
     synchronized (lock) {
       if (includeDetails == null) {
-        includeDetails = converseBoolean(makeSubLStmt(
-                "get-proof-view-include-details", proofViewId));
+        try {
+          includeDetails = converseBoolean(makeSubLStmt(
+                  "get-proof-view-include-details", proofViewId));
+        } catch (CycConnectionException ex) {
+         throw new SessionCommunicationException(ex);
+        }
       }
       return includeDetails;
     }
@@ -182,16 +207,20 @@ public class ProofViewJustification implements Justification {
    * section.
    *
    * @param includeDetails true iff it should
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #isIncludeDetails()
    */
-  public void setIncludeDetails(boolean includeDetails) throws CycConnectionException {
+  public void setIncludeDetails(boolean includeDetails) throws SessionCommunicationException  {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-include-details",
-              proofViewId,
-              includeDetails));
-      this.includeDetails = includeDetails;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-include-details",
+                proofViewId,
+                includeDetails));
+        this.includeDetails = includeDetails;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -199,14 +228,18 @@ public class ProofViewJustification implements Justification {
    * Should we include a linear, syllogistic section in this justification?
    *
    * @return true iff such a section is or should be included
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setIncludeLinear(boolean)
    */
-  public boolean isIncludeLinear() throws CycConnectionException {
+  public boolean isIncludeLinear() throws SessionCommunicationException {
     synchronized (lock) {
       if (includeLinear == null) {
-        includeLinear = converseBoolean(makeSubLStmt(
-                "get-proof-view-include-linear", proofViewId));
+        try {
+          includeLinear = converseBoolean(makeSubLStmt(
+                  "get-proof-view-include-linear", proofViewId));
+        } catch (CycConnectionException ex) {
+          throw new SessionCommunicationException(ex);
+        }
       }
       return includeLinear;
     }
@@ -217,15 +250,19 @@ public class ProofViewJustification implements Justification {
    * section.
    *
    * @param includeLinear true iff it should
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #isIncludeLinear()
    */
-  public void setIncludeLinear(boolean includeLinear) throws CycConnectionException {
+  public void setIncludeLinear(boolean includeLinear) throws SessionCommunicationException  {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-include-linear", proofViewId,
-              includeLinear));
-      this.includeLinear = includeLinear;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-include-linear", proofViewId,
+                includeLinear));
+        this.includeLinear = includeLinear;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -233,15 +270,19 @@ public class ProofViewJustification implements Justification {
    * Should we include a short, executive-summary section in this justification?
    *
    * @return true iff such a section is or should be included
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setIncludeSummary(boolean)
    */
-  public boolean isIncludeSummary() throws CycConnectionException {
+  public boolean isIncludeSummary() throws SessionCommunicationException  {
     synchronized (lock) {
       if (includeSummary == null) {
-        final String command = makeSubLStmt(
-                "get-proof-view-include-summary", proofViewId);
-        includeSummary = converseBoolean(command);
+        try {
+          final String command = makeSubLStmt(
+                  "get-proof-view-include-summary", proofViewId);
+          includeSummary = converseBoolean(command);
+        } catch (CycConnectionException ex) {
+          throw new SessionCommunicationException(ex);
+        }
       }
       return includeSummary;
     }
@@ -252,14 +293,18 @@ public class ProofViewJustification implements Justification {
    * section.
    *
    * @param includeSummary true iff it should
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #isIncludeSummary()
    */
-  public void setIncludeSummary(boolean includeSummary) throws CycConnectionException {
+  public void setIncludeSummary(boolean includeSummary) throws SessionCommunicationException  {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-include-summary", proofViewId, includeSummary));
-      this.includeSummary = includeSummary;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-include-summary", proofViewId, includeSummary));
+        this.includeSummary = includeSummary;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -268,15 +313,19 @@ public class ProofViewJustification implements Justification {
    * justification
    *
    * @return the language microtheory
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setLanguageMt(com.cyc.base.cycobject.ELMt)
    */
-  public ELMt getLanguageMt() throws CycConnectionException {
+  public ELMt getLanguageMt() throws SessionCommunicationException {
     synchronized (lock) {
       if (languageMt == null) {
-        final CycObject mtObject = converseCycObject(makeSubLStmt(
-                "get-proof-view-language-mt", proofViewId));
-        languageMt = mtFromObject(mtObject);
+        try {
+          final CycObject mtObject = converseCycObject(makeSubLStmt(
+                  "get-proof-view-language-mt", proofViewId));
+          languageMt = mtFromObject(mtObject);
+        } catch (CycConnectionException ex) {
+          throw new SessionCommunicationException(ex);
+        }
       }
       return languageMt;
     }
@@ -287,14 +336,18 @@ public class ProofViewJustification implements Justification {
    * justification
    *
    * @param languageMt the language microtheory
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #getLanguageMt()
    */
-  public void setLanguageMt(ELMt languageMt) throws CycConnectionException {
+  public void setLanguageMt(ELMt languageMt) throws SessionCommunicationException {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-language-mt", proofViewId, languageMt));
-      this.languageMt = languageMt;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-language-mt", proofViewId, languageMt));
+        this.languageMt = languageMt;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -302,14 +355,18 @@ public class ProofViewJustification implements Justification {
    * Toggles whether to include rich CycL objects in this justification
    *
    * @param bool Whether to include rich CycL
-   * @throws com.cyc.base.CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see com.cyc.base.justification.Justification.Node#getCycL()
    */
-  public void setRichCycLContent(boolean bool) throws CycConnectionException {
+  public void setRichCycLContent(boolean bool) throws SessionCommunicationException {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-include-cycml", proofViewId, bool));
-      this.richCycl = bool;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-include-cycml", proofViewId, bool));
+        this.richCycl = bool;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -317,8 +374,9 @@ public class ProofViewJustification implements Justification {
    * Get the proof view object backing this justification.
    *
    * @return the proof view.
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
-  public ProofView getProofView() {
+  public ProofView getProofView() throws OpenCycUnsupportedFeatureException {
     ensureProofViewInitialized();
     return proofView;
   }
@@ -332,7 +390,7 @@ public class ProofViewJustification implements Justification {
    * @return the root node
    */
   @Override
-  public Node getRoot() {
+  public Node getRoot() throws OpenCycUnsupportedFeatureException {
     ensureProofViewInitialized();
     return root;
   }
@@ -354,14 +412,18 @@ public class ProofViewJustification implements Justification {
    * includes who made the assertion and when, etc.
    *
    * @return true iff it should
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setSuppressAssertionBookkeeping(boolean)
    */
-  public boolean isSuppressAssertionBookkeeping() throws CycConnectionException {
+  public boolean isSuppressAssertionBookkeeping() throws SessionCommunicationException {
     synchronized (lock) {
       if (suppressAssertionBookkeeping == null) {
-        suppressAssertionBookkeeping = converseBoolean(makeSubLStmt(
-                "get-proof-view-suppress-assertion-bookkeeping", proofViewId));
+        try {
+          suppressAssertionBookkeeping = converseBoolean(makeSubLStmt(
+                  "get-proof-view-suppress-assertion-bookkeeping", proofViewId));
+        } catch (CycConnectionException ex) {
+          throw new SessionCommunicationException(ex);
+        }
       }
       return suppressAssertionBookkeeping;
     }
@@ -372,17 +434,21 @@ public class ProofViewJustification implements Justification {
    * nodes for assertions.
    *
    * @param suppressAssertionBookkeeping
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #isSuppressAssertionBookkeeping()
    */
   public void setSuppressAssertionBookkeeping(
-          boolean suppressAssertionBookkeeping) throws CycConnectionException {
+          boolean suppressAssertionBookkeeping) throws SessionCommunicationException {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt(
-              "set-proof-view-suppress-assertion-bookkeeping", proofViewId,
-              suppressAssertionBookkeeping));
-      this.suppressAssertionBookkeeping = suppressAssertionBookkeeping;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt(
+                "set-proof-view-suppress-assertion-bookkeeping", proofViewId,
+                suppressAssertionBookkeeping));
+        this.suppressAssertionBookkeeping = suppressAssertionBookkeeping;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -390,14 +456,18 @@ public class ProofViewJustification implements Justification {
    * Should the cyclist who made a given assertion be cited?
    *
    * @return true iff the cyclist should be cited
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #setSuppressAssertionCyclists(boolean)
    */
-  public boolean isSuppressAssertionCyclists() throws CycConnectionException {
+  public boolean isSuppressAssertionCyclists() throws SessionCommunicationException {
     synchronized (lock) {
       if (suppressAssertionCyclists == null) {
-        suppressAssertionCyclists = converseBoolean(makeSubLStmt(
-                "get-proof-view-suppress-assertion-cyclists", proofViewId));
+        try {
+          suppressAssertionCyclists = converseBoolean(makeSubLStmt(
+                  "get-proof-view-suppress-assertion-cyclists", proofViewId));
+        } catch (CycConnectionException ex) {
+          throw new SessionCommunicationException(ex);
+        }
       }
       return suppressAssertionCyclists;
     }
@@ -408,17 +478,21 @@ public class ProofViewJustification implements Justification {
    * responsible for assertions.
    *
    * @param suppressAssertionCyclists
-   * @throws CycConnectionException
+   * @throws com.cyc.session.SessionCommunicationException
    * @see #isSuppressAssertionCyclists()
    */
-  public void setSuppressAssertionCyclists(boolean suppressAssertionCyclists)
-          throws CycConnectionException {
+  public void setSuppressAssertionCyclists(boolean suppressAssertionCyclists) throws SessionCommunicationException
+           {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-suppress-assertion-cyclists",
-              proofViewId,
-              suppressAssertionCyclists));
-      this.suppressAssertionCyclists = suppressAssertionCyclists;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-suppress-assertion-cyclists",
+                proofViewId,
+                suppressAssertionCyclists));
+        this.suppressAssertionCyclists = suppressAssertionCyclists;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -426,12 +500,16 @@ public class ProofViewJustification implements Justification {
     return summaryAlgorithm;
   }
 
-  public void setSummaryAlgorithm(final SummaryAlgorithm algorithm) throws CycConnectionException {
+  public void setSummaryAlgorithm(final SummaryAlgorithm algorithm) throws SessionCommunicationException {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-summary-algorithm",
-              proofViewId, algorithm.getCycName()));
-      this.summaryAlgorithm = algorithm;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-summary-algorithm",
+                proofViewId, algorithm.getCycName()));
+        this.summaryAlgorithm = algorithm;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -439,12 +517,16 @@ public class ProofViewJustification implements Justification {
     return addressee;
   }
 
-  public void setAddressee(final DenotationalTerm addressee) throws CycConnectionException {
+  public void setAddressee(final DenotationalTerm addressee) throws SessionCommunicationException {
     synchronized (lock) {
-      requireNotPopulated();
-      converseVoid(makeSubLStmt("set-proof-view-addressee",
-              proofViewId, addressee));
-      this.addressee = addressee;
+      try {
+        requireNotPopulated();
+        converseVoid(makeSubLStmt("set-proof-view-addressee",
+                proofViewId, addressee));
+        this.addressee = addressee;
+      } catch (CycConnectionException ex) {
+        throw new SessionCommunicationException(ex);
+      }
     }
   }
 
@@ -537,7 +619,8 @@ public class ProofViewJustification implements Justification {
     }
   }
 
-  private void ensureProofViewInitialized() throws RuntimeException {
+  private void ensureProofViewInitialized() throws RuntimeException, OpenCycUnsupportedFeatureException {
+    PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.testCompatibilityWithRuntimeException();
     synchronized (lock) {
       if (!isPopulated) {
         populate();
@@ -555,7 +638,7 @@ public class ProofViewJustification implements Justification {
       }
     }
   }
-
+    
   /**
    * Implementation of Node backed by a proof-view entry.
    *

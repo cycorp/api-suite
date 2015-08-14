@@ -96,4 +96,9 @@ public class CycClientManager<T extends CycClientSession> extends CycAccessManag
   public CycClient fromCycAccess(CycAccess access) {
     return (CycClient) access;
   }
+
+  @Override
+  public int compareTo(SessionManager<T> o) {
+    return 1;
+  }
 }

@@ -22,7 +22,6 @@ package com.cyc.kb.client;
  */
 
 import com.cyc.base.cycobject.Naut;
-import com.cyc.baseclient.xml.cycml.Constant;
 import com.cyc.kb.Context;
 import com.cyc.kb.Fact;
 import com.cyc.kb.KBCollection;
@@ -31,6 +30,7 @@ import com.cyc.kb.KBIndividual;
 import com.cyc.kb.KBPredicate;
 import com.cyc.kb.KBTerm;
 import com.cyc.kb.Variable;
+import static com.cyc.kb.client.TestUtils.assumeNotEnterpriseCyc;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBApiRuntimeException;
@@ -229,47 +229,43 @@ public class KBFunctionTest {
   }
   
   /**
-   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
-   * all Cyc releases.
+   * TODO: This test fails in EnterpriseCyc 1.7-preview; it should be rewritten to use vocabulary 
+   *       present in all Cyc releases.
    * 
    * @throws Exception 
    */
-  @Deprecated
-  //@Test 
+  @Test 
   public void testFunctionCreateKBTerm() throws Exception {
-  //KBFunctionImpl fin = KBFunctionImpl.get("FindObjectByCompactHLExternalIDStringFn");
-  KBFunctionImpl phys = KBFunctionImpl.get("ThePhysicalFieldValueFn");
-  
-  KBIndividualImpl ps = KBIndividualImpl.findOrCreate("DreamStore-EVIDENCE-PS");
-  ps.isInstanceOf(KBCollectionImpl.get("PhysicalSchema"), ContextImpl.get("UniversalVocabularyMt"));
-  phys.findOrCreateFunctionalTerm(KBIndividualImpl.class, ps, "SOMETHING");
-          
+    assumeNotEnterpriseCyc();
+    //KBFunctionImpl fin = KBFunctionImpl.get("FindObjectByCompactHLExternalIDStringFn");
+    KBFunctionImpl phys = KBFunctionImpl.get("ThePhysicalFieldValueFn");
+
+    KBIndividualImpl ps = KBIndividualImpl.findOrCreate("DreamStore-EVIDENCE-PS");
+    ps.isInstanceOf(KBCollectionImpl.get("PhysicalSchema"), ContextImpl.get("UniversalVocabularyMt"));
+    phys.findOrCreateFunctionalTerm(KBIndividualImpl.class, ps, "SOMETHING");
+
   //fin.findOrCreateFunctionalTerm(KBTermImpl.class, 
     //      phys.findOrCreateFunctionalTerm(KBIndividualImpl.class, ps, "SOMETHING"));
-  
-  KBFunctionImpl lsf = KBFunctionImpl.get("TheLogicalFieldValueFn");
-  
-  
-  KBIndividualImpl ls = KBIndividualImpl.findOrCreate("DreamStore-EVIDENCE-LS");
-  ls.isInstanceOf(KBCollectionImpl.get("LogicalSchema"), ContextImpl.get("UniversalVocabularyMt"));
-  
-  //(TheLogicalFieldValueFn DreamStore-EVIDENCE-LS Set-Mathematical 1)
-  lsf.findOrCreateFunctionalTerm(KBTermImpl.class, ls, KBCollectionImpl.get("Set-Mathematical"), 1);
-  
-  KBFunction elIBF = KBFunctionImpl.get("ELInferenceBindingFn");
-  Variable v = new VariableImpl ("?X");
-  List<Object> nestedlist = new ArrayList<Object>();
-  
-  KBFunction paren = KBFunctionImpl.get("ParenthesizedMathFn");
-  KBFunction mathQ = KBFunctionImpl.get("MathQuantFn");
-  KBIndividual mathQ1 = mathQ.findOrCreateFunctionalTerm(KBIndividual.class, 1);
-  KBIndividual paren1 = paren.findOrCreateFunctionalTerm(KBIndividual.class, mathQ1);
-  nestedlist.add(mathQ1);
-  nestedlist.add(paren1);
-  
-  
-  KBIndividual elibf1 = elIBF.findOrCreateFunctionalTerm(KBIndividual.class, v, nestedlist);
-  KBIndividual expected = KBIndividualImpl.get("(ELInferenceBindingFn ?X (TheList (MathQuantFn 1) (ParenthesizedMathFn (MathQuantFn 1))))");
-  assertEquals(expected, elibf1);
+    KBFunctionImpl lsf = KBFunctionImpl.get("TheLogicalFieldValueFn");
+    KBIndividualImpl ls = KBIndividualImpl.findOrCreate("DreamStore-EVIDENCE-LS");
+    ls.isInstanceOf(KBCollectionImpl.get("LogicalSchema"), ContextImpl.get("UniversalVocabularyMt"));
+
+    //(TheLogicalFieldValueFn DreamStore-EVIDENCE-LS Set-Mathematical 1)
+    lsf.findOrCreateFunctionalTerm(KBTermImpl.class, ls, KBCollectionImpl.get("Set-Mathematical"), 1);
+
+    KBFunction elIBF = KBFunctionImpl.get("ELInferenceBindingFn");
+    Variable v = new VariableImpl("?X");
+    List<Object> nestedlist = new ArrayList<Object>();
+
+    KBFunction paren = KBFunctionImpl.get("ParenthesizedMathFn");
+    KBFunction mathQ = KBFunctionImpl.get("MathQuantFn");
+    KBIndividual mathQ1 = mathQ.findOrCreateFunctionalTerm(KBIndividual.class, 1);
+    KBIndividual paren1 = paren.findOrCreateFunctionalTerm(KBIndividual.class, mathQ1);
+    nestedlist.add(mathQ1);
+    nestedlist.add(paren1);
+
+    KBIndividual elibf1 = elIBF.findOrCreateFunctionalTerm(KBIndividual.class, v, nestedlist);
+    KBIndividual expected = KBIndividualImpl.get("(ELInferenceBindingFn ?X (TheList (MathQuantFn 1) (ParenthesizedMathFn (MathQuantFn 1))))");
+    assertEquals(expected, elibf1);
   }
 }

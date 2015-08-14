@@ -41,6 +41,9 @@ import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.Formula;
 import com.cyc.base.cycobject.NonAtomicTerm;
 import com.cyc.baseclient.CommonConstants;
+import com.cyc.session.compatibility.CycSessionRequirementList;
+import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  * <P>
@@ -48,13 +51,17 @@ import com.cyc.baseclient.CommonConstants;
  a truth function and a list of arguments
  *
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: CycFormulaSentence.java 156120 2015-01-27 00:50:31Z nwinant $
+ * @version $Id: CycFormulaSentence.java 159504 2015-07-06 23:40:29Z nwinant $
  *
  * @todo make it implement CycLFormula, or get rid of CycLFormula, as
  * appropriate
  */
 public class CycFormulaSentence extends FormulaImpl implements CycSentence, FormulaSentence {
 
+  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> ADVANCED_SENTENCE_REQUIREMENTS = CycSessionRequirementList.fromList(
+          NotOpenCycRequirement.NOT_OPENCYC
+  );
+  
   /**
    * Create and return a new CycSentence whose arguments are terms. CycArrayList
  arguments will be converted to CycNauts or CycSentences.
@@ -347,12 +354,14 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    * @param argPosition
    * @param access
    * @return the new sentence
-   * @throws IOException if there is a problem talking to Cyc
+   * @throws com.cyc.base.CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
+  @Override
   public CycFormulaSentence splice(FormulaSentence toInsert,
           ArgPosition argPosition,
-          CycAccess access) throws CycConnectionException {
-    access.requireNonOpenCyc();
+          CycAccess access) throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    ADVANCED_SENTENCE_REQUIREMENTS.testCompatibilityWithRuntimeException();
     final String command = SubLAPIHelper.makeSubLStmt(
             "combine-formulas-at-position", this, toInsert, argPosition);
     final List result = access.converse().converseList(command);
@@ -371,9 +380,10 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    * @throws IOException if there is a problem talking to Cyc
    */
   //@TODO -- Promote to FormulaImpl?
+  @Override
   public List<Object> getCandidateReplacements(ArgPosition position,
-          ELMt mt, CycAccess cyc) throws CycConnectionException {
-    cyc.requireNonOpenCyc();
+          ELMt mt, CycAccess cyc) throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    ADVANCED_SENTENCE_REQUIREMENTS.testCompatibilityWithRuntimeException();
     final String command = SubLAPIHelper.makeSubLStmt(
             "candidate-replacements-for-arg", this, position, mt);
     return cyc.converse().converseList(command);
@@ -442,8 +452,10 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    * @param access
    * @return a simplified version of this sentence
    * @throws CycConnectionException
+   * @throws OpenCycUnsupportedFeatureException
    */
-  public CycSentence getSimplifiedSentence(CycAccess access) throws CycConnectionException {
+  @Override
+  public CycSentence getSimplifiedSentence(CycAccess access) throws CycConnectionException, OpenCycUnsupportedFeatureException {
     return getSimplifiedSentence(access, getDefaultSimplifierMt());
   }
 
@@ -461,11 +473,12 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    * @param access
    * @param mt the microtheory to use for semantic requirements and checks
    * @return a simplified version of this sentence
-   * @throws UnknownHostException
-   * @throws IOException
+   * @throws CycConnectionException
+   * @throws OpenCycUnsupportedFeatureException
    */
-  public CycSentence getSimplifiedSentence(CycAccess access, ELMt mt) throws CycConnectionException {
-    access.requireNonOpenCyc();
+  @Override
+  public CycSentence getSimplifiedSentence(CycAccess access, ELMt mt) throws CycConnectionException, OpenCycUnsupportedFeatureException {
+    ADVANCED_SENTENCE_REQUIREMENTS.testCompatibilityWithRuntimeException();
     String command = null;
     try {
       command = "(with-inference-mt-relevance " + mt.stringApiValue() + " (simplify-cycl-sentence (fold-equals "

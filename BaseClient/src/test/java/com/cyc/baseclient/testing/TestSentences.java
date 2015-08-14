@@ -81,9 +81,9 @@ public class TestSentences {
           CycFormulaSentence.makeCycFormulaSentence(OBJECT_FOUND_IN_LOCATION, VAR_WHAT, CITY_OF_AUSTIN_TX);
   
   public static final String WHAT_IS_IN_AUSTIN_STRING = WHAT_IS_IN_AUSTIN.cyclify();
+
   
-  
-  @CycFormula(cycl="(#$isa #$Thing #$Thing)")
+  @CycFormula(cycl="(#$isa #$Thing #$Thing)", includedInOpenCycKB=false)
   public static final FormulaSentence isaThingThing =
           CycFormulaSentence.makeCycFormulaSentence(ISA, THING, THING);
   

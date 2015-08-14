@@ -21,6 +21,8 @@ package com.cyc.base.inference;
  * #L%
  */
 
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
 import java.util.EventListener; 
 import java.util.List;
 
@@ -29,7 +31,7 @@ import java.util.List;
  *
  * @see InferenceWorker
  * @author tbrussea, zelal
- * @version $Id: InferenceWorkerListener.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: InferenceWorkerListener.java 158569 2015-05-19 21:51:08Z daves $
  */
 public interface InferenceWorkerListener extends EventListener {
   

@@ -34,26 +34,40 @@ public interface SessionConfigurationProperties {
   /**
    * A requested {@link SessionConfigurationLoader}, as either the loader class's canonical name or
    * convenience name (i.e., matching {@link SessionConfigurationLoader#getName()}).
+   * 
+   * @see CycSessionConfiguration#getConfigurationLoaderName() 
    */
-  public static final String POLICY_NAME_KEY = "cyc.session.policyName";
+  public static final String CONFIGURATION_LOADER_KEY = "cyc.session.configurationLoader";
   
   /**
    * The name of a configuration file to be loaded.
+   * 
+   * @see CycSessionConfiguration#getConfigurationFileName() 
    */
-  public static final String POLICY_FILE_KEY = "cyc.session.policyFile";
+  public static final String CONFIGURATION_FILE_KEY = "cyc.session.configurationFile";
   
   /**
    * The address of Cyc server to be connected to, as a serialized {@link CycServer} object; 
    * e.g. <code>localhost:3600</code>.
+   * 
+   * @see CycSessionConfiguration#getCycServer() 
    */
   public static final String SERVER_KEY = "cyc.session.server";
+  
+  /**
+   * Whether the APIs permitted to apply code patches to the Cyc server.
+   * 
+   * @see CycSessionConfiguration#isServerPatchingAllowed() 
+   */
+  public static final String SERVER_PATCHING_ALLOWED_KEY = "cyc.session.server.patchingAllowed";
   
   /**
    * Returns an array of all property names.
    */
   public static final String[] ALL_KEYS = {
-    POLICY_NAME_KEY,
-    POLICY_FILE_KEY,
-    SERVER_KEY
+    CONFIGURATION_LOADER_KEY,
+    CONFIGURATION_FILE_KEY,
+    SERVER_KEY,
+    SERVER_PATCHING_ALLOWED_KEY
   };
 }

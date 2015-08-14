@@ -22,8 +22,6 @@ package com.cyc.baseclient.inference.params;
  */
 
 //// Internal Imports
-import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.baseclient.CycObjectFactory;
 
 /**
  * <P>InferenceParameters is designed to encode the parameters that can be
@@ -35,30 +33,30 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author zelal
  * @date August 14, 2005, 2:41 PM
- * @version $Id: InferenceParametersSymbols.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: InferenceParametersSymbols.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class InferenceParametersSymbols  {
 
-    public final static CycSymbol MAX_NUMBER = CycObjectFactory.makeCycSymbol(":MAX-NUMBER");
-    public static final CycSymbol METRICS = CycObjectFactory.makeCycSymbol(":METRICS");
-    public static final CycSymbol ALLOW_INDETERMINATE_RESULTS = CycObjectFactory.makeCycSymbol(":allow-indeterminate-results?");
-    public static final CycSymbol ANSWER_LANGUAGE = CycObjectFactory.makeCycSymbol(":ANSWER-LANGUAGE");
-    public static final CycSymbol CONDITIONAL_SENTENCE = CycObjectFactory.makeCycSymbol(":CONDITIONAL-SENTENCE?");
-    public static final CycSymbol CONTINUABLE = CycObjectFactory.makeCycSymbol(":continuable?");
-    public static final CycSymbol RESULT_UNIQUENESS = CycObjectFactory.makeCycSymbol(":result-uniqueness");
-    public static final CycSymbol TRANSITIVE_CLOSURE_MODE = CycObjectFactory.makeCycSymbol(":transitive-closure-mode");
-    public static final CycSymbol DISJUNCTION_FREE_EL_VARS_POLICY = CycObjectFactory.makeCycSymbol(":disjunction-free-el-vars-policy");
-    public static final CycSymbol EQUALITY_REASONING_DOMAIN = CycObjectFactory.makeCycSymbol(":equality-reasoning-domain");
-    public static final CycSymbol BROWSABLE = CycObjectFactory.makeCycSymbol(":browsable?");
-    public static final CycSymbol INTERMEDIATE_STEP_VALIDATION_LEVEL = CycObjectFactory.makeCycSymbol(":INTERMEDIATE-STEP-VALIDATION-LEVEL");
-    public static final CycSymbol INFERENCE_MODE = CycObjectFactory.makeCycSymbol(":inference-mode");
+    public final static String MAX_NUMBER = ":MAX-NUMBER";
+    public static final String METRICS = ":METRICS";
+    public static final String ALLOW_INDETERMINATE_RESULTS = ":allow-indeterminate-results?";
+    public static final String ANSWER_LANGUAGE = ":ANSWER-LANGUAGE";
+    public static final String CONDITIONAL_SENTENCE = ":CONDITIONAL-SENTENCE?";
+    public static final String CONTINUABLE = ":continuable?";
+    public static final String RESULT_UNIQUENESS = ":result-uniqueness";
+    public static final String TRANSITIVE_CLOSURE_MODE = ":transitive-closure-mode";
+    public static final String DISJUNCTION_FREE_EL_VARS_POLICY = ":disjunction-free-el-vars-policy";
+    public static final String EQUALITY_REASONING_DOMAIN = ":equality-reasoning-domain";
+    public static final String BROWSABLE = ":browsable?";
+    public static final String INTERMEDIATE_STEP_VALIDATION_LEVEL = ":INTERMEDIATE-STEP-VALIDATION-LEVEL";
+    public static final String INFERENCE_MODE = ":inference-mode";
 
-    public static final CycSymbol MAX_TIME = CycObjectFactory.makeCycSymbol(":MAX-TIME");
+    public static final String MAX_TIME = ":MAX-TIME";
 
-    public static final CycSymbol ABDUCTION_ALLOWED = CycObjectFactory.makeCycSymbol(":ABDUCTION-ALLOWED?");
-    public static final CycSymbol MAX_TRANSFORMATION_DEPTH = CycObjectFactory.makeCycSymbol(":MAX-TRANSFORMATION-DEPTH");
+    public static final String ABDUCTION_ALLOWED = ":ABDUCTION-ALLOWED?";
+    public static final String MAX_TRANSFORMATION_DEPTH = ":MAX-TRANSFORMATION-DEPTH";
 
-    public static final CycSymbol LOAD_PROBLEM_STORE = CycObjectFactory.makeCycSymbol("LOAD-PROBLEM-STORE");
-    public static final CycSymbol FIND_PROBLEM_STORE_BY_ID = CycObjectFactory.makeCycSymbol("FIND-PROBLEM-STORE-BY-ID");
-    public static final CycSymbol PROBLEM_STORE = CycObjectFactory.makeCycSymbol(":PROBLEM-STORE");
+    public static final String LOAD_PROBLEM_STORE = "LOAD-PROBLEM-STORE";
+    public static final String FIND_PROBLEM_STORE_BY_ID = "FIND-PROBLEM-STORE-BY-ID";
+    public static final String PROBLEM_STORE = ":PROBLEM-STORE";
 }

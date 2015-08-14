@@ -42,9 +42,9 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.cycobject.Nart;
-import com.cyc.base.inference.InferenceParameters;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
+import com.cyc.query.InferenceParameters;
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.inference.DefaultInferenceWorker;
@@ -72,7 +72,7 @@ import com.cyc.session.SessionConfigurationException;
 
  Created on : May 1, 2009, 11:13:55 AM Author : tbrussea
  *
- * @version $Id: APIExamples.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: APIExamples.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class APIExamples {
 
@@ -142,7 +142,7 @@ public class APIExamples {
       // Note: NIL can be passed by using CycObjectFactory.nil
       InferenceParameters inferenceParameters = new DefaultInferenceParameters(access);
       inferenceParameters.setMaxTime(10).setMaxNumber(100).setMaxTransformationDepth(2);
-      inferenceParameters.put(new CycSymbolImpl(":ALLOW-INDETERMINATE-RESULTS?"), Boolean.FALSE);
+      inferenceParameters.put(":ALLOW-INDETERMINATE-RESULTS?", Boolean.FALSE);
       ELMt inferencePSC = access.getObjectTool().makeELMt("InferencePSC");
       CycFormulaSentence query = CycLParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,

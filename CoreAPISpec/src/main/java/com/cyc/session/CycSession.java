@@ -23,7 +23,7 @@ package com.cyc.session;
 
 /**
  * An active (or potentially active) session with a Cyc server. 
- * Implementation to be provided by the SessionFactory.
+ * Implementation is provided by a SessionFactory.
  * @author nwinant
  */
 public interface CycSession {

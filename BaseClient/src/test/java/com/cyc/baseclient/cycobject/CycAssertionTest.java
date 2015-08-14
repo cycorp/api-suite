@@ -37,6 +37,7 @@ import static org.junit.Assert.*;
 import static com.cyc.baseclient.testing.TestUtils.getCyc;
 import static com.cyc.baseclient.cycobject.CycObjectUnitTest.*;
 import static com.cyc.baseclient.testing.TestSentences.ISA_DOG_BIOLOGICAL_SPECIES_STRING;
+import java.io.IOException;
 
 // FIXME: TestSentences - nwinant
 
@@ -79,13 +80,9 @@ public class CycAssertionTest {
 
   @Test
   public void testHashCode() {
-    try {
-      final CycAssertion assertion2 = new CycAssertionImpl(assertion.getFormula(), assertion.getMt());
-      assertTrue(new HashSet<CycAssertion>(Arrays.asList(assertion)).contains(assertion2));
-      assertEquals(assertion.hashCode(), assertion2.hashCode());
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    final CycAssertion assertion2 = new CycAssertionImpl(assertion.getFormula(), assertion.getMt());
+    assertTrue(new HashSet<CycAssertion>(Arrays.asList(assertion)).contains(assertion2));
+    assertEquals(assertion.hashCode(), assertion2.hashCode());
   }
 
   @Test
@@ -97,22 +94,18 @@ public class CycAssertionTest {
   }
 
   @Test
-  public void testStringApiValue() {
+  public void testStringApiValue() throws CycConnectionException {
     // stringApiValue() on a random assertion
-    try {
-      testCycObjectRetrievable(assertion);
-      assertNotNull(assertion);
-      String assertionAsString = assertion.stringApiValue();
-      final Object assertionObject2 = getCyc().converse().converseObject(assertionAsString);
-      if (assertionObject2 instanceof CycAssertion) {
-        final CycAssertion assertion2 = (CycAssertion) assertionObject2;
-        assertEquals(assertion, assertion2);
-      } else {
-        System.err.println(
-                assertionAsString + "\ndoes not returns the following which is not the expected assertion:\n" + assertionObject2);
-      }
-    } catch (Exception e) {
-      failWithException(e);
+    testCycObjectRetrievable(assertion);
+    assertNotNull(assertion);
+    String assertionAsString = assertion.stringApiValue();
+    final Object assertionObject2 = getCyc().converse().converseObject(assertionAsString);
+    if (assertionObject2 instanceof CycAssertion) {
+      final CycAssertion assertion2 = (CycAssertion) assertionObject2;
+      assertEquals(assertion, assertion2);
+    } else {
+      System.err.println(
+              assertionAsString + "\ndoes not returns the following which is not the expected assertion:\n" + assertionObject2);
     }
   }
 
@@ -185,20 +178,15 @@ public class CycAssertionTest {
    * Tests the CycAssertionImpl class.
    */
   @Test
-  public void testCycAssertion() {
+  public void testCycAssertion() throws CycConnectionException, IOException {
     System.out.println("\n*** testCycAssertion ***");
 
-
     // toXMLString()() on a random assertion
-    try {
-      final CycAssertionImpl assertion = (CycAssertionImpl) getCyc().getLookupTool().getRandomAssertion();
-      assertNotNull(assertion);
-      final String assertionAsXML = assertion.toXMLString();
-      assertNotNull(assertionAsXML);
-      System.out.println();
-    } catch (Exception e) {
-      failWithException(e);
-    }
+    final CycAssertionImpl assertion = (CycAssertionImpl) getCyc().getLookupTool().getRandomAssertion();
+    assertNotNull(assertion);
+    final String assertionAsXML = assertion.toXMLString();
+    assertNotNull(assertionAsXML);
+    System.out.println();
 
     //TODO
         /*

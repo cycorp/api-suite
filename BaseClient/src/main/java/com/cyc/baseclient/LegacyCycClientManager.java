@@ -28,7 +28,7 @@ import com.cyc.session.SessionInitializationException;
 import com.cyc.session.internal.LegacyCycAccessManager;
 
 /**
- * @deprecated This class will be removed in 1.0.0-rc2
+ * @deprecated This class will be removed before final 1.0.0 release
  * @author nwinant
  */
 public class LegacyCycClientManager extends LegacyCycAccessManager {

@@ -39,6 +39,7 @@ import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.base.cycobject.NonAtomicTerm;
 import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.CycServerInfoImpl;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
@@ -67,12 +68,12 @@ import com.cyc.kb.exception.KBApiServerSideException;
 import com.cyc.kb.exception.KBTypeException;
 import com.cyc.kb.exception.StaleKBObjectException;
 import com.cyc.kb.quant.QuantifiedInstanceRestrictedVariable;
-import com.cyc.kb.quant.QuantifiedRestrictedVariable;
-import com.cyc.kb.quant.RestrictedVariable;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionManager;
 import com.cyc.session.SessionApiException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,7 +93,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  *
  * @author Vijay Raj
- * @version "$Id: KBObjectImpl.java 157225 2015-03-19 18:04:07Z nwinant $"
+ * @version "$Id: KBObjectImpl.java 159474 2015-07-03 21:10:12Z nwinant $"
  */
 public class KBObjectImpl implements KBObject {
   
@@ -944,6 +945,7 @@ public class KBObjectImpl implements KBObject {
     return convertToKBObject(cyco);
   }
 
+
   private static KBObject convertToKBObject(CycObject cyco) throws CreateException {
     try {
       if (cyco instanceof CycVariable) {
@@ -957,38 +959,15 @@ public class KBObjectImpl implements KBObject {
       }
 
       // Find most specific type, convert it to that and cast to T:
-      if (KBTermImpl.existsAsType(cyco)) {
-        if (KBCollectionImpl.existsAsType(cyco)) {
-          if (FirstOrderCollectionImpl.existsAsType(cyco)) {
-            return FirstOrderCollectionImpl.get(cyco);
-          } else if (SecondOrderCollectionImpl.existsAsType(cyco)) {
-            return SecondOrderCollectionImpl.get(cyco);
-          } else {
-            return KBCollectionImpl.get(cyco);
-          }
-        } else if (KBIndividualImpl.existsAsType(cyco)) {
-          if (ContextImpl.existsAsType(cyco)) {
-            return ContextImpl.get(cyco);
-          } else if (RelationImpl.existsAsType(cyco)) {
-            if (KBFunctionImpl.existsAsType(cyco)) {
-              return KBFunctionImpl.get(cyco);
-            } else if (KBPredicateImpl.existsAsType(cyco)) {
-              if (BinaryPredicateImpl.existsAsType(cyco)) {
-                return BinaryPredicateImpl.get(cyco);
-              } else {
-                return KBPredicateImpl.get(cyco);
-              }
-            } else if (QuantifierImpl.existsAsType(cyco)) {
-              return QuantifierImpl.get(cyco);
-            } else {
-              return RelationImpl.get(cyco);
-            }
-          } else {
-            return KBIndividualImpl.get(cyco);
-          }
-        } else {
-          return KBTermImpl.get(cyco);
-        }
+      CycObject tightCol = null;
+      try {
+        tightCol = getStaticAccess().getInspectorTool().categorizeTermWRTApi(cyco);
+      } catch (CycConnectionException cce) {
+        throw new KBApiRuntimeException(cce.getMessage(), cce);
+      }
+      
+      if (tightCol != null && KBObjectFactory.cycObjectToKBAPIClass.get(tightCol) != null) {
+        return KBObjectFactory.get(cyco, KBObjectFactory.cycObjectToKBAPIClass.get(tightCol));
       } else {
         return KBObjectImpl.get(cyco);
       }
@@ -1390,5 +1369,21 @@ public class KBObjectImpl implements KBObject {
     this.kboData = kboData;
   }
   
+  public URI toURI(KBURIType urlType) throws URISyntaxException {
+    // TODO: This should be moved somewhere else. It could be added to the KBObject interface
+    //       in the Core API Spec, or moved altogether to the KM API. - nwinant, 2015-07-03
+    final CycServerInfoImpl serverInfo = (CycServerInfoImpl) getAccess().getServerInfo();
+    
+    if (KBURIType.CYC_BROWSER.equals(urlType)) {
+      return new URI(serverInfo.getBaseBrowserUrl() + "/cgi-bin/cg?cb-cf&" + this.getId());
+    }
+    
+    throw new KBApiRuntimeException("No such " + KBURIType.class.getSimpleName() + " known: " + urlType);
+  }
+  
+  public static enum KBURIType {
+    // TODO: This could also include an API_WS, KEA, OWL, etc. - nwinant, 2015-07-03
+    CYC_BROWSER
+  }
   
 }

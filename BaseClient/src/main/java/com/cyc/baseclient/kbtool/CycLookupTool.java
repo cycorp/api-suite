@@ -62,6 +62,7 @@ import com.cyc.baseclient.datatype.StringUtils;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.nl.Paraphraser;
 import com.cyc.baseclient.util.Log;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
@@ -3860,12 +3861,12 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
   }
 
   @Override
-  public CycSentence getSimplifiedSentence(FormulaSentence sentence) throws CycConnectionException {
+  public CycSentence getSimplifiedSentence(FormulaSentence sentence) throws CycConnectionException, OpenCycUnsupportedFeatureException {
     return sentence.getSimplifiedSentence(getCyc());
   }
 
   @Override
-  public CycSentence getSimplifiedSentence(FormulaSentence sentence, ELMt mt) throws CycConnectionException {
+  public CycSentence getSimplifiedSentence(FormulaSentence sentence, ELMt mt) throws CycConnectionException, OpenCycUnsupportedFeatureException {
     return sentence.getSimplifiedSentence(getCyc(), mt);
   }
   

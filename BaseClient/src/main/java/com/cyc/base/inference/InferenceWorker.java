@@ -22,6 +22,10 @@ package com.cyc.base.inference;
  */
 
 //// External Imports
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
+import com.cyc.query.InferenceParameters;
+import com.cyc.query.InferenceIdentifier;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.CycTimeOutException;
@@ -36,7 +40,7 @@ import com.cyc.base.cycobject.CycList;
  *
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:40 AM
- * @version $Id: InferenceWorker.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: InferenceWorker.java 158569 2015-05-19 21:51:08Z daves $
  */
 public interface InferenceWorker extends Worker {
 

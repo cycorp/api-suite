@@ -1,5 +1,5 @@
 /**
- * Provides quantifications, not fully supported in 1.0.0-Preview release, and subject to change.
+ * Provides quantifications, not fully supported in current release, and subject to change.
  */
 package com.cyc.kb.quant;
 

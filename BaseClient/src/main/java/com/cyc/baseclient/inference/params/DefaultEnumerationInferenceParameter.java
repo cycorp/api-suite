@@ -24,8 +24,8 @@ package com.cyc.baseclient.inference.params;
 //// External Imports
 import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.cycobject.Fort;
-import com.cyc.base.inference.InferenceParameterValue;
-import com.cyc.base.inference.InferenceParameterValueDescription;
+import com.cyc.query.InferenceParameterValue;
+import com.cyc.query.InferenceParameterValueDescription;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -70,7 +70,7 @@ public class DefaultEnumerationInferenceParameter extends AbstractInferenceParam
     init((List) potentialValuesObj);
   }
 
-  DefaultEnumerationInferenceParameter(Object defaultValue, CycSymbolImpl keyword,
+  DefaultEnumerationInferenceParameter(Object defaultValue, String keyword,
           Fort id, String shortDescription, String longDescription,
           CycSymbolImpl isBasicParameter, CycSymbolImpl isQueryStaticParameter, CycArrayList alternateValue,
           List<InferenceParameterValueDescription> potentialValues) {
@@ -83,8 +83,13 @@ public class DefaultEnumerationInferenceParameter extends AbstractInferenceParam
   //// Public Area
   @Override
   public Object canonicalizeValue(Object value) {
-    if (value instanceof InferenceParameterValue) {
-      return ((InferenceParameterValue) value).getCycSymbol();
+    if (value instanceof com.cyc.query.InferenceParameterValue) {
+      String name = value.toString();
+      if (!name.startsWith(":")) {
+        name = ":" + name;
+      }
+      name = name.replace("_", "-");
+      return new CycSymbolImpl(name);
     } else {
       return super.canonicalizeValue(value);
     }
@@ -169,8 +174,8 @@ public class DefaultEnumerationInferenceParameter extends AbstractInferenceParam
               return false;
             }
           };
-  private final static CycSymbolImpl POTENTIAL_VALUES_SYMBOL = new CycSymbolImpl(":POTENTIAL-VALUES");
-  private final static CycSymbolImpl[] REQUIRED_SYMBOLS = {POTENTIAL_VALUES_SYMBOL};
+  private final static String POTENTIAL_VALUES_SYMBOL = ":POTENTIAL-VALUES";
+  private final static String[] REQUIRED_SYMBOLS = {POTENTIAL_VALUES_SYMBOL};
 
   //// Main
   /**

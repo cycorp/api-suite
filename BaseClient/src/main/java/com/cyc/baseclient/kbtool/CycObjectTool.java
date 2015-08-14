@@ -211,6 +211,7 @@ public class CycObjectTool extends AbstractKBTool implements ObjectTool {
    * @throws UnknownHostException if the Cyc server cannot be found
    * @throws CycApiException if the Cyc server returns an error
    */
+  @Override
   public Object getHLCycTerm(String string)
           throws CycConnectionException, com.cyc.base.CycApiException {
     return getConverse().converseObject("(canonicalize-term  '" + string + ")");
@@ -424,6 +425,9 @@ public class CycObjectTool extends AbstractKBTool implements ObjectTool {
     } else if (object instanceof String) {
       String elmtString = object.toString().trim();
       if (elmtString.startsWith("(")) {
+        if (!elmtString.contains("#$")) {
+          elmtString = getCyc().cyclifyString(elmtString);
+        }
         @SuppressWarnings("unchecked")
         CycList<Object> elmtCycList = makeCycList_inner(elmtString);
         return makeELMt_inner(elmtCycList);
@@ -505,6 +509,9 @@ public class CycObjectTool extends AbstractKBTool implements ObjectTool {
           throws CycConnectionException, CycApiException {
     elmtString = elmtString.trim();
     if (elmtString.startsWith("(")) {
+              if (!elmtString.contains("#$")) {
+          elmtString = getCyc().cyclifyString(elmtString);
+        }
       CycList elmtCycList = makeCycList_inner(elmtString);
       return makeELMt_inner(elmtCycList);
     } else {

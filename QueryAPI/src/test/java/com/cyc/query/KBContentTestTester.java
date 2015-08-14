@@ -23,11 +23,6 @@ package com.cyc.query;
 import java.io.IOException;
 import java.util.List;
 
-import com.cyc.base.CycApiException;
-import com.cyc.base.CycConnectionException;
-import com.cyc.base.CycTimeOutException;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
 import com.cyc.baseclient.export.PrintStreamExporter;
 import com.cyc.baseclient.inference.DefaultInferenceSuspendReason;
 import com.cyc.kb.Fact;
@@ -36,10 +31,17 @@ import com.cyc.kb.KBObject;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBTypeException;
 import com.cyc.km.query.answer.justification.ProofViewJustification;
+import static com.cyc.query.TestUtils.assumeCycSessionRequirements;
+import com.cyc.query.exception.QueryConstructionException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
+import com.cyc.session.exception.UnsupportedCycOperationException;
 import com.cyc.xml.query.ProofViewMarshaller;
 import java.util.Set;
+import javax.xml.bind.JAXBException;
 
 import static org.junit.Assert.*;
 
@@ -48,27 +50,29 @@ import static org.junit.Assert.*;
  *
  * @author baxter
  */
-public class KBContentTestTester extends QueryListener {
+public class KBContentTestTester extends QueryListenerImpl {
 
   private final QueryApiTestConstants testConstants;
   private final KBIndividual test;
   private Query query;
   long startTimeMillis;
 
-  public KBContentTestTester(KBIndividual test) throws Exception {
+  public KBContentTestTester(KBIndividual test) {
     testConstants = QueryApiTestConstants.getInstance();
     this.test = test;
   }
 
-  protected int getAnswerCount() throws CycConnectionException {
+  protected int getAnswerCount() {
     return query.getAnswerCount();
   }
 
-  public void test() throws Exception {
+  public void test() throws QueryConstructionException, KBApiException, UnsupportedCycOperationException {
     System.out.println("\nRunning " + test);
+    assumeCycSessionRequirements(QueryImpl.QUERY_LOADER_REQUIREMENTS);
+    Exception exception = null;
     final Fact qSpecFact = test.getFacts(testConstants.testQuerySpecification,
             1, Constants.inferencePSCMt()).iterator().next();
-    query = Query.load(qSpecFact.<KBIndividual>getArgument(2));
+    query = QueryFactory.getQuery(qSpecFact.<KBIndividual>getArgument(2));
     try {
       query.registerRequiredSKSModules();
       query.addListener(this);
@@ -86,7 +90,7 @@ public class KBContentTestTester extends QueryListener {
         final ProofViewMarshaller marshaller = new ProofViewMarshaller();
 
         @Override
-        protected void doExport() throws Exception {
+        protected void doExport() throws JAXBException, IOException, OpenCycUnsupportedFeatureException {
           marshaller.marshal(object.getProofView(), getPrintStream());
         }
       };
@@ -98,15 +102,19 @@ public class KBContentTestTester extends QueryListener {
         assertFalse("Justification for " + answer + " is empty!", xml.isEmpty());
       }
     } catch (Exception ex) {
+      exception = ex;
       ex.printStackTrace();
     } finally {
       System.out.println("Closing " + query);
       query.close();
+      if (exception != null) {
+        throw new RuntimeException(exception);
+      }
     }
   }
   private final int maxTime = 10;
 
-  private void verifyDesiredAnswerCountReturned() throws Exception {
+  private void verifyDesiredAnswerCountReturned() throws KBTypeException, CreateException {
     for (final Fact fact : test.getFacts(testConstants.testAnswersCardinalityExact, 1, Constants.inferencePSCMt())) {
       final int desiredAnswerCount = fact.<Integer>getArgument(2);
       System.out.println(
@@ -116,7 +124,7 @@ public class KBContentTestTester extends QueryListener {
     }
   }
 
-  private void verifyDesiredMinAnswerCountReturned() throws Exception {
+  private void verifyDesiredMinAnswerCountReturned() throws KBTypeException, CreateException {
     if (!DefaultInferenceSuspendReason.MAX_TIME.equals(query.getSuspendReason())) {
       for (final Fact fact : test.getFacts(testConstants.testAnswersCardinalityMin, 1, Constants.inferencePSCMt())) {
         final int desiredAnswerCount = fact.<Integer>getArgument(2);
@@ -128,7 +136,7 @@ public class KBContentTestTester extends QueryListener {
     }
   }
 
-  private void verifyExactBindingsReturned() throws Exception {
+  private void verifyExactBindingsReturned() throws KBTypeException, CreateException, IOException, SessionCommunicationException {
     for (final Fact fact : test.getFacts(testConstants.testAnswersCycLExact, 1, Constants.inferencePSCMt())) {
       final Set<Set> desiredBindingSets = fact.getArgument(2);
       assertEquals("Wrong number of answers for " + test,
@@ -140,7 +148,7 @@ public class KBContentTestTester extends QueryListener {
     }
   }
 
-  private void verifyDesiredBindingsReturned() throws Exception {
+  private void verifyDesiredBindingsReturned() throws KBTypeException, CreateException, IOException, SessionCommunicationException {
     for (final Fact fact : test.getFacts(testConstants.testAnswersCycLWanted, 1, Constants.inferencePSCMt())) {
       final Set desiredBindings = fact.getArgument(2);
       assertTrue(test + " failed to find " + desiredBindings, queryHasBindings(desiredBindings));
@@ -148,7 +156,7 @@ public class KBContentTestTester extends QueryListener {
   }
 
   protected boolean queryHasBindings(final Set desiredBindings) throws
-          IOException, CycApiException, CycTimeOutException, CycConnectionException {
+          IOException, SessionCommunicationException {
     for (final QueryAnswer answer : query.getAnswers()) {
       if (answerHasBindings(answer, desiredBindings)) {
         return true;
@@ -158,7 +166,7 @@ public class KBContentTestTester extends QueryListener {
   }
 
   private boolean answerHasBindings(QueryAnswer answer, Set<KBObject> desiredBindings)
-          throws IOException, CycConnectionException {
+          throws IOException {
     System.out.println("Checking " + answer + "\n for desired bindings.");
     for (final KBObject binding : desiredBindings) {
       try {
@@ -199,8 +207,7 @@ public class KBContentTestTester extends QueryListener {
   }
 
   @Override
-  public void notifyInferenceTerminated(Query query,
-          Exception e) {
+  public void notifyInferenceTerminated(Query query, Exception e) {
     System.out.println(
             "Inference terminated after " + (System.currentTimeMillis() - startTimeMillis) + "ms");
   }

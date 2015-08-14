@@ -25,6 +25,7 @@ import com.cyc.base.CycAccess;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.kb.ArgPosition;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import java.util.List;
 import java.util.Map;
 
@@ -59,9 +60,10 @@ public interface FormulaSentence extends Formula, CycSentence {
    * @param cyc the Cyc image that finds the candidate replacement terms.
    * @return a collection of candidate replacement terms.
    * @throws CycConnectionException if there is a problem talking to Cyc
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
   //@TODO -- Promote to CycFormula?
-  List<Object> getCandidateReplacements(ArgPosition position, ELMt mt, CycAccess cyc) throws CycConnectionException;
+  List<Object> getCandidateReplacements(ArgPosition position, ELMt mt, CycAccess cyc) throws CycConnectionException, OpenCycUnsupportedFeatureException;
 
   /**
    * Return a canonical version of this. If two different sentences yield the same
@@ -187,8 +189,9 @@ public interface FormulaSentence extends Formula, CycSentence {
    * @param access
    * @return the simplified version of this sentence
    * @throws CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  CycSentence getSimplifiedSentence(CycAccess access) throws CycConnectionException;
+  CycSentence getSimplifiedSentence(CycAccess access) throws CycConnectionException, OpenCycUnsupportedFeatureException;
 
   /**
    * Get a simplified version of this sentence.
@@ -197,8 +200,9 @@ public interface FormulaSentence extends Formula, CycSentence {
    * @param mt the microtheory to use for semantic requirements and checks
    * @return the simplified version of this sentence
    * @throws CycConnectionException
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  CycSentence getSimplifiedSentence(CycAccess access, ELMt mt) throws CycConnectionException;
+  CycSentence getSimplifiedSentence(CycAccess access, ELMt mt) throws CycConnectionException, OpenCycUnsupportedFeatureException;
 
   /**
    * Is this sentence inconsistent with any of its constraints (e.g. predicate argument constraints)? A false return value does not
@@ -232,8 +236,9 @@ public interface FormulaSentence extends Formula, CycSentence {
    * @param access
    * @return the new sentence
    * @throws CycConnectionException if there is a problem talking to Cyc
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  FormulaSentence splice(FormulaSentence toInsert, ArgPosition argPosition, CycAccess access) throws CycConnectionException;
+  FormulaSentence splice(FormulaSentence toInsert, ArgPosition argPosition, CycAccess access) throws CycConnectionException, OpenCycUnsupportedFeatureException;
 
   /**
    * Replace original with replacement in this sentence.

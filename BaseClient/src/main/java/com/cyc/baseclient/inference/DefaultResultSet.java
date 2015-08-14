@@ -31,7 +31,7 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.CycVariable;
-import com.cyc.base.inference.InferenceIdentifier;
+import com.cyc.query.InferenceIdentifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -89,7 +89,7 @@ import com.cyc.baseclient.cycobject.CycVariableImpl;
  * <p>
  * @author tbrussea
  * @date Mar 22, 2010, 11:55 AM
- * @version $Id: DefaultResultSet.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultResultSet.java 158569 2015-05-19 21:51:08Z daves $
  */
 @SuppressWarnings("deprecation")
 public final class DefaultResultSet extends AbstractResultSet {

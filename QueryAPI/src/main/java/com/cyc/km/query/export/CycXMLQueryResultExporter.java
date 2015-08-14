@@ -25,11 +25,11 @@ package com.cyc.km.query.export;
  * #L%
  */
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.inference.InferenceIdentifier;
+import com.cyc.query.InferenceIdentifier;
 import com.cyc.baseclient.api.SubLAPIHelper;
 import com.cyc.baseclient.export.ExportException;
 import com.cyc.baseclient.export.PrintStreamExporter;
-import com.cyc.query.Query;
+import com.cyc.query.QueryImpl;
 
 import java.io.PrintStream;
 
@@ -37,7 +37,7 @@ import java.io.PrintStream;
  * Exports the results of a query in XML to the specified string builder.
  * Delegates the XML generation to Cyc.
  */
-public class CycXMLQueryResultExporter extends PrintStreamExporter<Query> {
+public class CycXMLQueryResultExporter extends PrintStreamExporter<QueryImpl> {
 
   public CycXMLQueryResultExporter() {
     super();
@@ -49,7 +49,7 @@ public class CycXMLQueryResultExporter extends PrintStreamExporter<Query> {
 
   @Override
   protected void doExport() throws ExportException {
-    final Query query = object;
+    final QueryImpl query = object;
     try {
       final InferenceIdentifier inferenceIdentifier = query.getInferenceIdentifier();
       final String command = SubLAPIHelper.makeSubLStmt("get-suggested-query-results-in-xml",

@@ -22,12 +22,12 @@ package com.cyc.baseclient.inference.params;
  */
 
 //// Internal Imports
+import com.cyc.query.InferenceParameter;
 import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.CycApiException;
-import com.cyc.session.CycServer;
 import com.cyc.baseclient.CycObjectFactory;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
 import com.cyc.baseclient.api.DefaultSubLWorkerSynch;
@@ -36,9 +36,8 @@ import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.base.CycTimeOutException;
 import com.cyc.base.cycobject.CycList;
-import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.Fort;
-import com.cyc.base.inference.InferenceParameters;
+import com.cyc.query.InferenceParameters;
 
 //// External Imports
 import java.io.IOException;
@@ -61,9 +60,9 @@ import java.util.Map;
  *
  * @author zelal
  * @date August 9, 2005, 9:30 PM
- * @version $Id: DefaultInferenceParameterDescriptions.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultInferenceParameterDescriptions.java 158695 2015-05-27 21:41:57Z nwinant $
  */
-public class DefaultInferenceParameterDescriptions extends HashMap<CycSymbol, InferenceParameter>
+public class DefaultInferenceParameterDescriptions extends HashMap<String, InferenceParameter>
         implements InferenceParameterDescriptions {
 
   //// Public Area
@@ -80,19 +79,10 @@ public class DefaultInferenceParameterDescriptions extends HashMap<CycSymbol, In
    * @throws UnsupportedOperationException.
    */
   @Override
-  public InferenceParameter put(CycSymbol key, InferenceParameter value) {
+  public InferenceParameter put(String key, InferenceParameter value) {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   *
-   * @param m a map of values to add.
-   * @throws UnsupportedOperationException.
-   */
-  @Override
-  public void putAll(Map<? extends CycSymbol, ? extends InferenceParameter> m) {
-    throw new UnsupportedOperationException();
-  }
 
   /**
    *
@@ -153,9 +143,9 @@ public String stringApiValue() {
 
   public InferenceParameters getDefaultInferenceParameters() {
     DefaultInferenceParameters parameters = new DefaultInferenceParameters(cycAccess);
-    Iterator<CycSymbol> iterator = keySet().iterator();
+    Iterator<String> iterator = keySet().iterator();
     while (iterator.hasNext()) {
-      CycSymbol key = iterator.next();
+      String key = iterator.next();
       InferenceParameter parameter = (InferenceParameter) (get(key));
       parameters.put(key, parameter.getDefaultValue());
     }
@@ -165,19 +155,19 @@ public String stringApiValue() {
   @Override
   public String toString() {
     String str = "DefaultInferenceParameterDescriptions {\n";
-    Iterator<CycSymbol> iterator = keySet().iterator();
+    Iterator<String> iterator = keySet().iterator();
     while (iterator.hasNext()) {
-      CycSymbol key = iterator.next();
+      String key = iterator.next();
       InferenceParameter parameter = (InferenceParameter) (get(key));
       str += ("  " + parameter + "\n");
     }
     str += "}";
     return str;
   }
-
-  //// Protected Area
-  //// Private Area
-  //// Constructors
+  
+  
+  // Private
+  
   /** Creates a new instance of DefaultInferenceParameterDescriptions. */
   private DefaultInferenceParameterDescriptions(CycAccess cycAccess, long timeoutMsecs) throws CycConnectionException, CycTimeOutException, CycApiException {
     this.cycAccess = cycAccess;
@@ -187,48 +177,54 @@ public String stringApiValue() {
   private void init(final CycAccess cycAccess, long timeoutMsecs)
           throws CycConnectionException, CycTimeOutException, CycApiException {
     if (cycAccess.isOpenCyc()) {
-      doOpenCycInit();
+      //doOpenCycInit();
+      doInitFromKB(cycAccess, timeoutMsecs);
     } else {
-      String command = "(get-inference-parameter-information)";
-      SubLWorkerSynch worker = new DefaultSubLWorkerSynch(command, cycAccess, timeoutMsecs);
-      Object work = worker.getWork();
+      doInitFromKB(cycAccess, timeoutMsecs);
+    }
+  }
+  
+  private void doOpenCycInit() {
+    for (final OpenCycInferenceParameterEnum d : OpenCycInferenceParameterEnum.values()) {
+      final InferenceParameter ip = d.getInferenceParameter();
+      super.put(ip.toString(), ip);
+    }
+  }
+  
+  private void doInitFromKB(final CycAccess cycAccess, long timeoutMsecs) 
+          throws CycConnectionException, CycTimeOutException, CycApiException {
+    String command = "(get-inference-parameter-information)";
+    SubLWorkerSynch worker = new DefaultSubLWorkerSynch(command, cycAccess, timeoutMsecs);
+    Object work = worker.getWork();
 
-      if (!(isPossiblyEmptyCycList(work))) {
-        throw new CycApiException("When calling " + worker + "\n got unexpected result " + work);
-      }
+    if (!(isPossiblyEmptyCycList(work))) {
+      throw new CycApiException("When calling " + worker + "\n got unexpected result " + work);
+    }
 
-      if (work instanceof CycArrayList) {
-        CycArrayList result = (CycArrayList) work;
+    if (work instanceof CycArrayList) {
+      CycArrayList result = (CycArrayList) work;
 
-        for (Iterator iter = result.iterator(); iter.hasNext();) {
-          Object obj = iter.next();
-          if (!(obj instanceof CycSymbolImpl)) {
-            throw new CycApiException("When calling " + worker + "\n got unexpected result " + obj + " expected CycSymbol");
-          }
-          CycSymbolImpl inferenceParameterClass = (CycSymbolImpl) obj;
-          if (!(iter.hasNext())) {
-            throw new CycApiException("When calling " + worker + "\n got unexpected result " + obj + " not enough items");
-          }
-          obj = iter.next();
-          if (!(isPossiblyEmptyCycList(obj))) {
-            throw new CycApiException("When calling " + worker + "\n got unexpected result " + obj + " expected CycList");
-          }
-          if (obj instanceof CycArrayList) {
-            CycArrayList inferenceParameterDescriptionForClass = (CycArrayList) obj;
-            parseInferenceParameterDescriptionForClass(inferenceParameterClass, inferenceParameterDescriptionForClass);
-          }
+      for (Iterator iter = result.iterator(); iter.hasNext();) {
+        Object obj = iter.next();
+        if (!(obj instanceof CycSymbolImpl)) {
+          throw new CycApiException("When calling " + worker + "\n got unexpected result " + obj + " expected CycSymbol");
+        }
+        CycSymbolImpl inferenceParameterClass = (CycSymbolImpl) obj;
+        if (!(iter.hasNext())) {
+          throw new CycApiException("When calling " + worker + "\n got unexpected result " + obj + " not enough items");
+        }
+        obj = iter.next();
+        if (!(isPossiblyEmptyCycList(obj))) {
+          throw new CycApiException("When calling " + worker + "\n got unexpected result " + obj + " expected CycList");
+        }
+        if (obj instanceof CycArrayList) {
+          CycArrayList inferenceParameterDescriptionForClass = (CycArrayList) obj;
+          parseInferenceParameterDescriptionForClass(inferenceParameterClass, inferenceParameterDescriptionForClass);
         }
       }
     }
   }
-
-  private void doOpenCycInit() {
-    for (final OpenCycInferenceParameterEnum d : OpenCycInferenceParameterEnum.values()) {
-      final InferenceParameter ip = d.getInferenceParameter();
-      super.put(ip.getKeyword(), ip);
-    }
-  }
-
+  
   private static void cacheInferenceParameterDescriptions(CycAccess cycAccess, InferenceParameterDescriptions inferenceParameterDescriptions) {
     defaultInferenceParameterDescriptions.put(cycAccess, inferenceParameterDescriptions);
   }
@@ -237,7 +233,7 @@ public String stringApiValue() {
     InferenceParameterDescriptions inferenceParameterDescriptions = (InferenceParameterDescriptions) defaultInferenceParameterDescriptions.get(cycAccess);
     return inferenceParameterDescriptions;
   }
-
+  
   private boolean isPossiblyEmptyCycList(Object obj) {
     if ((obj instanceof CycArrayList) || (obj.equals(CycObjectFactory.nil))) {
       return true;
@@ -245,7 +241,7 @@ public String stringApiValue() {
     return false;
   }
 
-  private Map<CycSymbol, Object> constructNextPropertyMap(final Iterator iter) throws CycApiException {
+  private Map<String, Object> constructNextPropertyMap(final Iterator iter) throws CycApiException {
     Object obj = iter.next();
     if (!(obj instanceof Fort)) {
       throw new CycApiException("Expected a Cyc FORT; got " + obj);
@@ -260,7 +256,7 @@ public String stringApiValue() {
     }
     final CycArrayList propertyList = (CycArrayList) obj;
     try {
-      final Map<CycSymbol, Object> propertyMap = parsePropertyList(propertyList);
+      final Map<String, Object> propertyMap = parsePropertyList(propertyList);
       propertyMap.put(AbstractInferenceParameter.ID_SYMBOL, id);
       return propertyMap;
     } catch (RuntimeException xcpt) {
@@ -290,7 +286,7 @@ public String stringApiValue() {
     for (Iterator iter = inferenceParameterDescriptionForClass.iterator(); iter.hasNext();) {
       final Map propertyMap = constructNextPropertyMap(iter);
       try {
-        super.put((CycSymbolImpl) propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL),
+        super.put(propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL).toString(),
                 new DefaultBooleanInferenceParameter(propertyMap));
       } catch (RuntimeException xcpt) {
         final Fort id = (Fort) propertyMap.get(AbstractInferenceParameter.ID_SYMBOL);
@@ -305,7 +301,7 @@ public String stringApiValue() {
     for (Iterator iter = inferenceParameterDescriptionForClass.iterator(); iter.hasNext();) {
       final Map propertyMap = constructNextPropertyMap(iter);
       try {
-        super.put((CycSymbolImpl) propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL),
+        super.put(propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL).toString(),
                 new DefaultIntegerInferenceParameter(propertyMap));
       } catch (RuntimeException xcpt) {
         final Fort id = (Fort) propertyMap.get(AbstractInferenceParameter.ID_SYMBOL);
@@ -319,7 +315,7 @@ public String stringApiValue() {
     for (Iterator iter = inferenceParameterDescriptionForClass.iterator(); iter.hasNext();) {
       final Map propertyMap = constructNextPropertyMap(iter);
       try {
-        super.put((CycSymbolImpl) propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL),
+        super.put(propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL).toString(),
                 new DefaultFloatingPointInferenceParameter(propertyMap));
       } catch (RuntimeException xcpt) {
         final Fort id = (Fort) propertyMap.get(AbstractInferenceParameter.ID_SYMBOL);
@@ -334,7 +330,7 @@ public String stringApiValue() {
     for (Iterator iter = inferenceParameterDescriptionForClass.iterator(); iter.hasNext();) {
       final Map propertyMap = constructNextPropertyMap(iter);
       try {
-        super.put((CycSymbolImpl) propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL),
+        super.put(propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL).toString(),
                 new DefaultEnumerationInferenceParameter(propertyMap));
       } catch (RuntimeException xcpt) {
         final Fort id = (Fort) propertyMap.get(AbstractInferenceParameter.ID_SYMBOL);
@@ -349,7 +345,7 @@ public String stringApiValue() {
     for (Iterator iter = inferenceParameterDescriptionForClass.iterator(); iter.hasNext();) {
       final Map propertyMap = constructNextPropertyMap(iter);
       try {
-        super.put((CycSymbolImpl) propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL),
+        super.put(propertyMap.get(AbstractInferenceParameter.NAME_SYMBOL).toString(),
                 new DefaultUntypedInferenceParameter(propertyMap));
       } catch (RuntimeException xcpt) {
         final Fort id = (Fort) propertyMap.get(AbstractInferenceParameter.ID_SYMBOL);
@@ -358,7 +354,7 @@ public String stringApiValue() {
     }
   }
 
-  static Map<CycSymbol, Object> parsePropertyList(CycList propertyList)
+  static Map<String, Object> parsePropertyList(CycList propertyList)
           throws CycApiException {
     if ((propertyList == null) || (propertyList.size() == 0)) {
       return new HashMap();
@@ -367,7 +363,7 @@ public String stringApiValue() {
       throw new CycApiException("Expected an even number of items; got " + propertyList.size()
               + "\n Items: " + propertyList);
     }
-    Map result = new HashMap<CycSymbolImpl, Object>();
+    Map result = new HashMap<String, Object>();
     for (Iterator iter = propertyList.iterator(); iter.hasNext();) {
       Object key = iter.next();
       Object value = iter.next();
@@ -376,13 +372,15 @@ public String stringApiValue() {
       } else if (value.equals(REAL_PLUS_INFINITY)) {
         value = MAX_DOUBLE_VALUE;
       }
-      result.put(key, value);
+      result.put(key.toString(), value);
     }
     return result;
   }
+  
   //// Internal Rep
-  private static Map defaultInferenceParameterDescriptions = new HashMap();
-  private CycAccess cycAccess;
+  
+  final private static Map<CycAccess, InferenceParameterDescriptions> defaultInferenceParameterDescriptions = new HashMap();
+  final private CycAccess cycAccess;
   private final static CycSymbolImpl BOOLEAN_INFERENCE_PARAMETER_CLASS =
           makeCycSymbol(":BOOLEAN-INFERENCE-PARAMETERS");
   private final static CycSymbolImpl INTEGER_INFERENCE_PARAMETER_CLASS =

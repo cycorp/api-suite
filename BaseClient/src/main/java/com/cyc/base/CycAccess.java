@@ -179,14 +179,6 @@ public interface CycAccess {
   String maybeAddLoginRedirect(final String urlString, final Fort cyclist, final DenotationalTerm applicationTerm);
 
   /**
-   * Verify that this is not an OpenCyc image.
-   *
-   * @throws CycConnectionException if we can't communicate with Cyc.
-   * @throws UnsupportedOperationException if it is an OpenCyc image.
-   */
-  void requireNonOpenCyc() throws CycConnectionException;
-
-  /**
    * Sets the print-readable-narts feature on.
    *
    * @throws CycConnectionException if cyc server host not found on the network or the Cyc server cannot be found

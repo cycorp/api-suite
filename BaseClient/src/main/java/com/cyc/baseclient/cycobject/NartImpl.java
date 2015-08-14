@@ -24,7 +24,6 @@ package com.cyc.baseclient.cycobject;
 //// External Imports
 import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
-import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
@@ -36,7 +35,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ListIterator;
 import com.cyc.base.CycApiException;
-import com.cyc.baseclient.CycClientManager;
+import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.xml.XMLStringWriter;
 import com.cyc.baseclient.xml.XMLWriter;
@@ -45,7 +44,7 @@ import com.cyc.baseclient.xml.XMLWriter;
  * This class implements the behavior and attributes of a
  * a Base Client NART (Non Atomic Reified Term).
  *
- * @version $Id: NartImpl.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: NartImpl.java 158611 2015-05-21 16:49:58Z daves $
  * @author Stefano Bertolo
  * @author Stephen L. Reed
  */
@@ -164,8 +163,8 @@ public class NartImpl extends FortImpl implements Nart {
    * @return the functor of the <tt>NartImpl</tt>
    */
   @Override
-  public Fort getFunctor() {
-    return (Fort) formula.getOperator();
+  public DenotationalTerm getFunctor() {
+    return (DenotationalTerm) formula.getOperator();
   }
 
   @Override
@@ -371,7 +370,7 @@ public class NartImpl extends FortImpl implements Nart {
    * external forms in place of the <tt>CycConstantImpl</tt> names.
    */
   public String metaGuid() {
-    final Fort functor = getFunctor();
+    final DenotationalTerm functor = getFunctor();
     String functorGuid =
             (functor instanceof CycConstantImpl
             ? ((CycConstantImpl) functor).getGuid().toString() : ((NartImpl) functor).metaGuid());

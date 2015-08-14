@@ -46,6 +46,7 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.baseclient.cycobject.ELMtConstant;
 import com.cyc.baseclient.datatype.Pair;
+import static com.cyc.baseclient.subl.functions.SubLFunctions.CATEGORIZE_TERM_WRT_API;
 import com.cyc.baseclient.util.LRUCache;
 
 /**
@@ -196,6 +197,11 @@ public class CycInspectorTool extends AbstractKBTool implements InspectorTool {
             + collection.stringApiValue() + " " + makeELMt_inner(mt).stringApiValue() + ")";
 
     return getConverse().converseBoolean(command);
+  }
+  
+  @Override
+  public CycObject categorizeTermWRTApi (CycObject term) throws CycConnectionException {
+    return CATEGORIZE_TERM_WRT_API.eval(getCyc(), term);
   }
   
   /**
@@ -999,8 +1005,8 @@ public class CycInspectorTool extends AbstractKBTool implements InspectorTool {
   @Override
   public boolean isFunctionBound(CycSymbol cycSymbol)
           throws CycConnectionException, com.cyc.base.CycApiException {
-    String command = makeSubLStmt("boolean", makeNestedSubLStmt("fboundp"),
-            cycSymbol);
+    String command = makeSubLStmt("boolean", makeNestedSubLStmt("fboundp",
+            cycSymbol));
     return getConverse().converseBoolean(command);
   }
   

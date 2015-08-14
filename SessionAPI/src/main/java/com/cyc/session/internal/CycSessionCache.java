@@ -21,7 +21,7 @@ package com.cyc.session.internal;
  * #L%
  */
 
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
@@ -63,7 +63,7 @@ public class CycSessionCache<T extends CycSession> {
    * - https://bz.apache.org/bugzilla/show_bug.cgi?id=55554
    * - http://stackoverflow.com/questions/25705259/undefined-reference-concurrenthashmap-keyset-when-building-in-java-8
    */
-  private final Map<CycServer, T> cachedSessions = new ConcurrentHashMap();
+  private final Map<CycServerAddress, T> cachedSessions = new ConcurrentHashMap();
 
   
   // Public
@@ -72,14 +72,14 @@ public class CycSessionCache<T extends CycSession> {
     return this.cachedSessions.values();
   }
   
-  public T get(CycServer server) {
+  public T get(CycServerAddress server) {
     if (server == null) {
       return null;
     }
     return this.cachedSessions.get(server);
   }
   
-  public boolean hasSession(CycServer server) {
+  public boolean hasSession(CycServerAddress server) {
     return get(server) != null;
   }
   
@@ -92,11 +92,11 @@ public class CycSessionCache<T extends CycSession> {
   }
   
   synchronized public T remove(T session) {
-    CycServer server = this.lookupKey(session);
+    CycServerAddress server = this.lookupKey(session);
     return remove(server);
   }
   
-  synchronized public T remove(CycServer server) {
+  synchronized public T remove(CycServerAddress server) {
     if (server == null) {
       return null;
     }
@@ -122,7 +122,7 @@ public class CycSessionCache<T extends CycSession> {
             && (session.getServerInfo() != null)
             && (session.getServerInfo().getCycServer() != null)) {
       LOGGER.debug("Caching session {}", session);
-      final CycServer server = session.getServerInfo().getCycServer();
+      final CycServerAddress server = session.getServerInfo().getCycServer();
       this.cachedSessions.put(server, session);
     }
     return session;
@@ -144,12 +144,12 @@ public class CycSessionCache<T extends CycSession> {
   
   // Private
   
-  private CycServer lookupKey(T session) {
+  private CycServerAddress lookupKey(T session) {
     if (session == null) {
       return null;
     }
-    final Set<CycServer> keys = this.cachedSessions.keySet();
-    for (CycServer key : keys) {
+    final Set<CycServerAddress> keys = this.cachedSessions.keySet();
+    for (CycServerAddress key : keys) {
       final T cachedSession = this.get(key);
       if ((session.equals(cachedSession))) {
         return key;

@@ -70,7 +70,8 @@ public class TestEnvironmentProperties {
   public static final String INCLUDE_GUI_ELEMENT_TESTS_PROPERTY = "cyc.test.includeGuiElementTests";
   public static final String CONNECTION_FACTORY_EXPECTED_ON_CLASSPATH_PROPERTY = "cyc.test.connectionFactoryExpectedOnClassPath";
   public static final String EXPECTED_NUMBER_OF_CYC_OBJECT_LIBRARIES_PROPERTY = "cyc.test.expectedNumberOfCycObjectLibraries";
-  
+  public static final String FORCE_OPENCYC_TESTS_TO_RUN = "cyc.test.forceOpenCycTestsToRun";
+
   private static TestEnvironmentProperties ME;
   
   
@@ -102,10 +103,14 @@ public class TestEnvironmentProperties {
     return getIntegerProperty(EXPECTED_NUMBER_OF_CYC_OBJECT_LIBRARIES_PROPERTY, 0);
   }
   
+  public boolean areOpenCycTestsForcedToRun() {
+    return getBooleanProperty(FORCE_OPENCYC_TESTS_TO_RUN, false);
+  }
   
-  // Private
   
-  private boolean getBooleanProperty(String name, boolean defaultValue) {
+  // Protected
+  
+  protected boolean getBooleanProperty(String name, boolean defaultValue) {
     final String val = System.getProperty(name);
     if ((val == null) || val.trim().isEmpty()) {
       return defaultValue;
@@ -113,7 +118,7 @@ public class TestEnvironmentProperties {
     return Boolean.parseBoolean(val);
   }
   
-  private int getIntegerProperty(String name, int defaultValue) {
+  protected int getIntegerProperty(String name, int defaultValue) {
     final String val = System.getProperty(name);
     if ((val == null) || val.trim().isEmpty()) {
       return defaultValue;

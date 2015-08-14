@@ -33,6 +33,7 @@ import com.cyc.kb.KBPredicate;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.Symbol;
 import com.cyc.kb.Variable;
+import static com.cyc.kb.client.TestUtils.skipTest;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBTypeException;
@@ -40,7 +41,10 @@ import com.cyc.kb.quant.InstanceRestrictedVariable;
 import com.cyc.kb.quant.RestrictedVariable;
 import com.cyc.kb.quant.SpecializationRestrictedVariable;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -61,7 +65,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SentenceTest {
 
-  private static org.slf4j.Logger log = LoggerFactory.getLogger(SentenceTest.class.getCanonicalName());
+  final private static org.slf4j.Logger log = LoggerFactory.getLogger(SentenceTest.class.getCanonicalName());
 
   public SentenceTest() {
   }
@@ -246,10 +250,12 @@ public class SentenceTest {
 
   /**
    * Test of getTypeString method, of class Sentence.
+   * @throws com.cyc.kb.exception.KBApiException
    */
-  //@Test
+  @Test
   public void testGetTypeString() throws KBApiException {
     System.out.println("getTypeString");
+    skipTest(this, "testGetTypeString", "This test is not yet implemented.");
     SentenceImpl instance = new SentenceImpl("");
     String expResult = "";
     KBCollection result = (KBCollection) instance.getType();
@@ -324,5 +330,17 @@ public class SentenceTest {
 
     Sentence notS1 = SentenceImpl.SentenceOperatorImpl.NOT.wrap(s1);
     assertEquals(new SentenceImpl(LogicalConnectiveImpl.get("#$not"), s1), notS1);
+  }
+  
+  @Test
+  public void testJavaDateWrapping() throws ParseException, KBTypeException, CreateException {
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd HH:mm");
+    final Date date = sdf.parse("2014 03 15 10:20:23");
+    
+    final Sentence dateWrappingSentence = new SentenceImpl(date);
+    assertEquals("((MinuteFn 20 (HourFn 10 (DayFn 15 (MonthFn March (YearFn 2014))))))", dateWrappingSentence.toString());
+    
+    final Date innerDate = new SentenceImpl(date).getArgument(0);
+    assertEquals(date, innerDate);
   }
 }

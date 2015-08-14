@@ -4,17 +4,17 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-parent</artifactId>
-    <version>1.0.0-rc2</version>
+    <version>1.0.0-rc3-SNAPSHOT</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-suite</artifactId>
-  <version>1.0.0-rc2</version>
+  <version>1.0.0-rc3-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>Core API Suite Bundle</name>
   <description>Packages the Cyc Core API Suite, including APIs and implementation classes.</description>
-  <url>http://dev.cyc.com/cyc-api/</url>
+  <url>http://dev.cyc.com/api/core/</url>
   
   <scm>
     <connection>scm:git:git@github.com:cycorp/CycCoreAPI.git</connection>

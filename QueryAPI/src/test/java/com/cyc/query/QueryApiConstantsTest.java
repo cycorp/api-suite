@@ -21,11 +21,11 @@ package com.cyc.query;
  * #L%
  */
 
+import com.cyc.base.CycConnectionException;
 import com.cyc.baseclient.CycObjectLibraryLoader;
+import com.cyc.baseclient.CycObjectLibraryLoader.CycLibraryField;
 import com.cyc.kb.KBObject;
-import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.KBObjectLibraryLoader;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -57,14 +57,18 @@ public class QueryApiConstantsTest {
   }
 
   @Test
-  public void testKBObjectLibraryLoader() {
-    final KBObjectLibraryLoader loader = KBObjectLibraryLoader.get();
+  public void testKBObjectLibraryLoader() throws CycConnectionException {
+    final KBObjectLibraryLoader loader = new KBObjectLibraryLoader();
     final Collection<KBObject> allObj = loader.getAllKBObjectsForClass(QueryApiConstants.class);
     for (KBObject o : allObj) {
       System.out.println("  - " + o);
     }
     assertFalse(allObj.isEmpty());
-    assertEquals(8, allObj.size());
+    if (TestUtils.cyc.isOpenCyc()) {
+      assertEquals(7, allObj.size());
+    } else {
+      assertEquals(8, allObj.size());
+    }
     
     // Do a deeper inspection of constants classes by name:
     validateCycLibrary(loader, QueryApiConstants.class);
@@ -85,14 +89,14 @@ public class QueryApiConstantsTest {
       }
 
       @Override
-      public void onFieldEvaluation(Field field, String value, boolean hasAnnotation, String expectedValue, Boolean equivalent) {
+      public void onFieldEvaluation(CycLibraryField cycField, String value, Boolean equivalent) {
         numFields++;
-        final String fieldString = "  - " + field.getType().getSimpleName() + ": " + field.getName();
+        final String fieldString = "  - " + cycField.getField().getType().getSimpleName() + ": " + cycField.getField().getName();
         final String valueString = "    " + value;
-        if (hasAnnotation) {
+        if (cycField.isAnnotated()) {
           System.out.println(fieldString);
           System.out.println(valueString);
-          assertEquals(expectedValue, value);
+          assertEquals(cycField.getCycl(), value);
         } else {
           numUnannotatedFields++;
           System.out.println(fieldString + "      [WARNING! Field is not annotated]");
@@ -101,12 +105,12 @@ public class QueryApiConstantsTest {
       }
 
       @Override
-      public void onException(Field field, Exception ex) {
+      public void onException(CycLibraryField cycField, Exception ex) {
         throw new RuntimeException(ex);
       }
 
       @Override
-      public void onLibraryEvaluationEnd(Class libraryClass) {
+      public void onLibraryEvaluationEnd(Class libraryClass, Collection<CycLibraryField> processedFields) {
         System.out.println("  " + numFields + " fields evaluated.");
         if (numUnannotatedFields == 0) {
           System.out.println("  All fields annotated, which is good!");

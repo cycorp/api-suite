@@ -26,6 +26,7 @@ package com.cyc.baseclient.inference.params;
  * #L%
  */
 
+import com.cyc.query.InferenceParameter;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycSymbol;

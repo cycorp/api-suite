@@ -22,17 +22,19 @@ package com.cyc.baseclient.inference.params;
  */
 
 //// External Imports
+import com.cyc.query.InferenceParameter;
 import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceParameterValue;
-import com.cyc.base.inference.InferenceParameterValueDescription;
+import com.cyc.query.InferenceParameterValue;
+import com.cyc.query.InferenceParameterValueDescription;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Map;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObject;
 
 
 /**
@@ -44,7 +46,7 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
  *
  * @author zelal
  * @date August 9, 2005, 8:49 PM
- * @version $Id: AbstractInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: AbstractInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 public abstract class AbstractInferenceParameter implements InferenceParameter {
 
@@ -52,14 +54,14 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
   /** Creates a new instance of AbstractInferenceParameter.
    * @param propertyMap a map of inference parameters to their values.
    */
-  public AbstractInferenceParameter(Map<CycSymbol, Object> propertyMap) {
+  public AbstractInferenceParameter(Map<String, Object> propertyMap) {
     if (propertyMap == null) {
       throw new BaseClientRuntimeException("Got null parameter map");
     }
     if (propertyMap.size() < REQUIRED_SYMBOLS.length) {
       throw new BaseClientRuntimeException("Got too few symbols in map");
     }
-    for (final CycSymbol property : REQUIRED_SYMBOLS) {
+    for (final String property : REQUIRED_SYMBOLS) {
       if (!propertyMap.containsKey(property)) {
         throw new BaseClientRuntimeException("Expected key not found in map "
                 + property + " for inference Parameter " + propertyMap.get(ID_SYMBOL));
@@ -80,7 +82,7 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
       }
     }
     init(propertyMap.get(DEFAULT_VALUE_SYMBOL),
-            (CycSymbol) nameObj,
+            nameObj.toString(),
             (Fort) idObj,
             (String) shortDescObj,
             (String) longDescObj,
@@ -89,7 +91,7 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
             (CycList) alternateValueObj);
   }
 
-  protected AbstractInferenceParameter(Object defaultValue, CycSymbol keyword,
+  protected AbstractInferenceParameter(Object defaultValue, String keyword,
           Fort id, String shortDescription, String longDescription,
           CycSymbol isBasicParameter, CycSymbol isQueryStaticParameter, CycList alternateValue) {
     init(defaultValue, keyword, id, shortDescription, longDescription, isBasicParameter,
@@ -111,12 +113,6 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
     return value;
   }
 
-  @Override
-  public CycSymbol getKeyword() {
-    return keyword;
-  }
-
-  @Override
   public Fort getId() {
     return id;
   }
@@ -153,6 +149,10 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
       return value.toString();
     }
   }
+  
+  public CycSymbol toKeyword() {
+    return new CycSymbolImpl(keyword);
+  }
 
   @Override
   public boolean isBasicParameter() {
@@ -185,7 +185,7 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
 
   @Override
   public String toString() {
-    String str = getKeyword().toString()
+    String str = keyword
             + " shortDescription=\"" + getShortDescription() + "\""
             + " type=" + getClass().getName().replaceAll("^org\\.opencyc\\.inference\\.", "")
             + " isBasicParameter=" + isBasicParameter()
@@ -199,7 +199,7 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
 
   //// Protected Area
   //// Private Area
-  private void init(Object defaultValue, CycSymbol keyword,
+  private void init(Object defaultValue, String keyword,
           Fort id, String shortDescription, String longDescription,
           CycSymbol isBasicParameter, CycSymbol isQueryStaticParameter, CycList alternateValue) {
     this.defaultValue = canonicalizeValue(defaultValue);
@@ -230,27 +230,27 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
     }
   }
 
-  private Object verifyObjectType(Map<CycSymbol, Object> propertyMap, CycSymbol symbol, Class aClass) {
+  private Object verifyObjectType(Map<String, Object> propertyMap, String symbol, Class aClass) {
     return DefaultInferenceParameterValueDescription.verifyObjectType(propertyMap, symbol, aClass);
   }
   //// Internal Rep
   private Object defaultValue;
-  private CycSymbol keyword;
+  private String keyword;
   private Fort id;
   private String shortDescription;
   private String longDescription;
   private boolean isBasicParameter;
   private boolean isQueryStaticParameter;
   private InferenceParameterValueDescription alternateValue = null;
-  private final static CycSymbol DEFAULT_VALUE_SYMBOL = new CycSymbolImpl(":DEFAULT-VALUE");
-  final static CycSymbol NAME_SYMBOL = new CycSymbolImpl(":NAME");
-  final static CycSymbol ID_SYMBOL = new CycSymbolImpl(":ID");
-  final static CycSymbol SHORT_DESC_SYMBOL = new CycSymbolImpl(":SHORT-DESC");
-  final static CycSymbol LONG_DESC_SYMBOL = new CycSymbolImpl(":LONG-DESC");
-  private final static CycSymbol BASIC_PARAMETER_SYMBOL = new CycSymbolImpl(":BASIC?");
-  private final static CycSymbol QUERY_STATIC_PARAMETER_SYMBOL = new CycSymbolImpl(":QUERY-STATIC?");
-  private final static CycSymbol ALTERNATE_VALUE_SYMBOL = new CycSymbolImpl(":ALTERNATE-VALUE");
-  private final static CycSymbol[] REQUIRED_SYMBOLS = {DEFAULT_VALUE_SYMBOL,
+  private final static String DEFAULT_VALUE_SYMBOL = ":DEFAULT-VALUE";
+  final static String NAME_SYMBOL = ":NAME";
+  final static String ID_SYMBOL = ":ID";
+  final static String SHORT_DESC_SYMBOL = ":SHORT-DESC";
+  final static String LONG_DESC_SYMBOL = ":LONG-DESC";
+  private final static String BASIC_PARAMETER_SYMBOL = ":BASIC?";
+  private final static String QUERY_STATIC_PARAMETER_SYMBOL = ":QUERY-STATIC?";
+  private final static String ALTERNATE_VALUE_SYMBOL = ":ALTERNATE-VALUE";
+  private final static String[] REQUIRED_SYMBOLS = {DEFAULT_VALUE_SYMBOL,
     NAME_SYMBOL, ID_SYMBOL, SHORT_DESC_SYMBOL, LONG_DESC_SYMBOL,
     BASIC_PARAMETER_SYMBOL, QUERY_STATIC_PARAMETER_SYMBOL, ALTERNATE_VALUE_SYMBOL};
 
@@ -262,6 +262,6 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
   }
 
   public Object parameterValueCycListApiValue(final InferenceParameterValue val) {
-    return val.cycListApiValue();
+    return DefaultCycObject.cyclify(val);
   }
 }

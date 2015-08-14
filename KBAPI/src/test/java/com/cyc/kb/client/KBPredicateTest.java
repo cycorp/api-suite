@@ -113,16 +113,19 @@ public class KBPredicateTest {
     p.addArgGenl(2, "Product", "AppleProductMt");
     assertEquals(p.getArgGenl(2, "AppleProductMt").iterator().next().toString(), "Product");
   }
-
-//  @Test
-//  public void testChaining() throws KBTypeConflictException, InvalidNameException, KBApiException {
-//      BinaryPredicate p1 = BinaryPredicate.findOrCreate("iLikes34");
-//      testTerms.add(p1);
-//      BinaryPredicate p2 = p1.addArgGenl(1, "Person", "BaseKB").addGeneralization("likesAsFriend", "BaseKB");
-//      assertEquals("Chained methods did not return the original predicate", p1, p2);
-//      assertTrue("Chained methods did not return the original predicate", p2.getGeneralizations().contains(Predicate.get("likesAsFriend")));
-//              
-//  }
+  
+  /*
+  @Test
+  public void testChaining() throws KBTypeConflictException, InvalidNameException, KBApiException {
+      BinaryPredicate p1 = BinaryPredicate.findOrCreate("iLikes34");
+      testTerms.add(p1);
+      BinaryPredicate p2 = p1.addArgGenl(1, "Person", "BaseKB").addGeneralization("likesAsFriend", "BaseKB");
+      assertEquals("Chained methods did not return the original predicate", p1, p2);
+      assertTrue("Chained methods did not return the original predicate", p2.getGeneralizations().contains(Predicate.get("likesAsFriend")));
+              
+  }
+  */
+  
   @Test
   public void testDelete() {
     try {

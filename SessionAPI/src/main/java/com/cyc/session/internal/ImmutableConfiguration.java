@@ -36,6 +36,7 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   // Fields
   
   final private Class loaderClass;
+  final private DefaultSessionOptions options;
   private CycServer server = null;
   
   
@@ -44,6 +45,7 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   public ImmutableConfiguration(Properties properties, Class loaderClass) throws SessionConfigurationException {
     super(properties);
     this.loaderClass = loaderClass;
+    this.options = new DefaultSessionOptionsImpl();
     processProperties();
   }
   
@@ -62,13 +64,13 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   }
   
   @Override
-  public String getPolicyName() {
-    return properties.getProperty(POLICY_NAME_KEY);
+  public String getConfigurationLoaderName() {
+    return properties.getProperty(CONFIGURATION_LOADER_KEY);
   }
   
   @Override
-  public String getPolicyFileName() {
-    return properties.getProperty(POLICY_FILE_KEY);
+  public String getConfigurationFileName() {
+    return properties.getProperty(CONFIGURATION_FILE_KEY);
   }
   
   @Override
@@ -86,6 +88,17 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   public boolean isSessionCachingAllowed() {
     // TODO: this needs to be derived from a property.
     return true;
+  }
+  
+  @Override
+  public boolean isServerPatchingAllowed() {
+    return getBooleanProperty(SERVER_PATCHING_ALLOWED_KEY, false);
+  }
+  
+  @Override
+  public DefaultSessionOptions getDefaultSessionOptions() {
+    // TODO: this needs to be derived from properties.
+    return this.options;
   }
   
   @Override

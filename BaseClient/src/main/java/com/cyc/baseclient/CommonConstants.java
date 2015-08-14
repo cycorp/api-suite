@@ -20,6 +20,7 @@ package com.cyc.baseclient;
  * limitations under the License.
  * #L%
  */
+import com.cyc.base.CycAccessManager;
 import com.cyc.base.annotation.CycObjectLibrary;
 import com.cyc.base.annotation.CycTerm;
 import com.cyc.base.cycobject.CycObject;
@@ -517,7 +518,8 @@ public class CommonConstants {
   public static void main(String[] args) {
     try {
       System.out.println("Beginning...");
-      final Collection<CycObject> objs = CycObjectLibraryLoader.get().getAllCycObjectsForClass(CommonConstants.class);
+      final CycObjectLibraryLoader objLoader = new CycObjectLibraryLoader(CycAccessManager.getCurrentAccess());
+      final Collection<CycObject> objs = objLoader.getAllCycObjectsForClass(CommonConstants.class);
       System.out.println();
       System.out.println("==");
       for (CycObject obj : objs) {

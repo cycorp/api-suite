@@ -75,7 +75,7 @@ public interface KBFunction extends Relation {
 
   /**
    * Returns the <code>#$resultIsa</code>s of this <code>KBFunction</code> from
-   * the default context specified by {@link KBAPIDefaultContext#forQuery()}.
+   * the default context specified by {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    * Any functional term using this <code>KBFunction</code> will be an instance
    * of each of these Collections. The set of collections defines the Range of
    * this function.
@@ -153,7 +153,7 @@ public interface KBFunction extends Relation {
 
   /**
    * Returns the <code>#$resultGenl</code>s of this <code>KBFunction</code> from
-   * the default context specified by {@link KBAPIDefaultContext#forQuery()}.
+   * the default context specified by {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    * Any functional term using this <code>KBFunction</code> will be a
    * specialization of each of these <code>KBCollection</code>s. The set of
    * collections defines the Range of this function.

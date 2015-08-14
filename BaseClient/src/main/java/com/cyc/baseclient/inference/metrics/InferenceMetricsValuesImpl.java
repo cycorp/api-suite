@@ -21,6 +21,8 @@ package com.cyc.baseclient.inference.metrics;
  * #L%
  */
 
+import com.cyc.base.CycAccessSession;
+import com.cyc.query.StandardInferenceMetric;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycList;
 
@@ -29,9 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceIdentifier;
-import com.cyc.base.inference.metrics.InferenceMetric;
-import com.cyc.base.inference.metrics.InferenceMetricsValues;
+import com.cyc.query.InferenceIdentifier;
+import com.cyc.query.metrics.InferenceMetric;
+import com.cyc.query.metrics.InferenceMetricsValues;
 
 /**
  * A map containing data about an inference.
@@ -54,6 +56,11 @@ public Object getValue(final InferenceMetric metric) {
     return map.get(metric);
   }
 
+@Override
+public Object getValue(final String metric) {
+    return map.get(StandardInferenceMetric.fromName(metric));
+  }
+
   /**
    * Create a new inference metrics object populated from the specified inference.
    *
@@ -64,20 +71,20 @@ public Object getValue(final InferenceMetric metric) {
   static public InferenceMetricsValues fromInference(
           final InferenceIdentifier inferenceID) throws CycConnectionException {
     final InferenceMetricsValuesImpl metrics = new InferenceMetricsValuesImpl();
-    final CycList plist = inferenceID.getCycAccess().converse().converseList(
+    final CycList plist = ((CycAccessSession)(inferenceID.getSession())).getAccess().converse().converseList(
             "(inference-metrics " + inferenceID.stringApiValue() + ")");
     for (int i = 0; i < plist.size(); i++) {
       final CycSymbol name = (CycSymbol) plist.get(i);
       final Object value = plist.get(++i);
       InferenceMetric inferenceMetric;
-      inferenceMetric = StandardInferenceMetric.fromCycSymbol(name);
+      inferenceMetric = StandardInferenceMetric.fromName(name.toString());
       if (inferenceMetric == null) {
         System.out.println(
                 name + " does not correspond to a standard inference metric.");
         inferenceMetric = new InferenceMetric() {
           @Override
-          public CycSymbol getName() {
-            return name;
+          public String getName() {
+            return name.toString();
           }
         };
       }

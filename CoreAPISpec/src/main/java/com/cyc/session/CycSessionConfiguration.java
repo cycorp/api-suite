@@ -21,6 +21,7 @@ package com.cyc.session;
  * #L%
  */
 
+import com.cyc.kb.config.DefaultContext;
 import java.util.Properties;
 
 /**
@@ -33,9 +34,12 @@ public interface CycSessionConfiguration {
   
   /**
    * Returns the address of the Cyc server to be connected to.
-   * @return a CycServer address.
+   * 
+   * @see SessionConfigurationProperties#SERVER_KEY
+   * 
+   * @return a CycServerAddress address.
    */
-  CycServer getCycServer();
+  CycServerAddress getCycServer();
   
   /**
    * Returns the name of a requested SessionConfigurationLoader to be used to load a 
@@ -45,15 +49,20 @@ public interface CycSessionConfiguration {
    * A SessionConfigurationLoader's name may be determined via 
    * {@link SessionConfigurationLoader#getName()}.
    * 
+   * @see SessionConfigurationProperties#CONFIGURATION_LOADER_KEY
+   * 
    * @return the name of the requested SessionConfigurationLoader.
    */
-  String getPolicyName();
+  String getConfigurationLoaderName();
   
   /**
    * Returns the name of a file from which to load configuration information.
+   * 
+   * @see SessionConfigurationProperties#CONFIGURATION_FILE_KEY
+   * 
    * @return the configuration file name.
    */
-  String getPolicyFileName();
+  String getConfigurationFileName();
   
   /**
    * Does this configuration allow for the end-user to be prompted for configuration properties via
@@ -73,6 +82,7 @@ public interface CycSessionConfiguration {
    * set to false, the SessionManager will attempt to load a configuration for
    * each and every session it creates, which can be fantastically annoying if
    * it is doing so by interactively prompting the user.
+   * 
    * @return can configurations be cached?
    */
   boolean isConfigurationCachingAllowed();
@@ -82,6 +92,26 @@ public interface CycSessionConfiguration {
    * @return can sessions be cached?
    */
   boolean isSessionCachingAllowed();
+  
+  /**
+   * Are the APIs permitted to apply code patches to the Cyc server? Note that this setting only 
+   * determines whether the rules of the <em>CycSession</em> will allow code patches; patches may 
+   * still be prohibited by the Cyc server or the API implementation, regardless of this setting.
+   * Defaults to false.
+   * 
+   * @see SessionConfigurationProperties#SERVER_PATCHING_ALLOWED_KEY
+   * 
+   * @return can code patches be applied to the Cyc server?
+   */
+  boolean isServerPatchingAllowed();
+  
+  /**
+   * Returns an immutable set of options, which may provide the default values for 
+   * {@link CycSession#getOptions() }.
+   * 
+   * @return An immutable set of default options
+   */  
+  DefaultSessionOptions getDefaultSessionOptions();
   
   /**
    * Does this configuration share the same field values with another? Weaker
@@ -108,7 +138,7 @@ public interface CycSessionConfiguration {
    * initialized by a call to {@link System#getProperties()}.
    * 
    * <p>If the implementing class was <em>not</em> initialized by a Properties object, it is up to 
-   * the implementation to determine what to return; see the implemention's javadoc. 
+   * the implementation to determine what to return; see the implementation's javadoc. 
    * 
    * <p>Regardless of implementation, this method should <em>never</em> return null; it should 
    * always return, at least, an empty Properties object. Each call to this method will return a
@@ -119,4 +149,45 @@ public interface CycSessionConfiguration {
    * @return a non-null Properties object.
    */
   Properties getRawProperties();
+  
+  
+
+  
+  
+  /**
+   * An <b>immutable</b> set of options, including the name of the cyclist making assertions, and
+   * the project's KE purpose. This provides the defaults for the mutable SessionOptions interface.
+   *
+   * @author nwinant
+   */
+  public interface DefaultSessionOptions {
+
+    /**
+     * Returns the value of the Cyclist. If it has not been set, return null.
+     *
+     * @return the value of the Cyclist
+     */
+    String getCyclistName();
+
+    /**
+     * Returns the value of the project (KE purpose).
+     *
+     * @return the value of the project (KE purpose)
+     */
+    String getKePurposeName();
+
+    /**
+     * Will actions in the current thread that modify the KB be transcripted by the Cyc server?
+     *
+     * @return will KB operations from the current thread be transcripted?
+     */
+    boolean getShouldTranscriptOperations();
+
+    /**
+     * Returns the current default contexts
+     *
+     * @return the contents of the DefaultContest ThreadLocal
+     */
+    DefaultContext getDefaultContext();
+  }
 }

@@ -23,14 +23,9 @@ package com.cyc.query;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
-import com.cyc.base.CycTimeOutException;
 import com.cyc.base.cycobject.CycAssertion;
 import com.cyc.base.cycobject.CycConstant;
-import com.cyc.base.cycobject.CycObject;
-import com.cyc.base.inference.InferenceStatus;
-import com.cyc.base.inference.InferenceSuspendReason;
 import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.inference.DefaultInferenceStatus;
 import com.cyc.baseclient.inference.params.OpenCycInferenceParameterEnum;
 import com.cyc.kb.Fact;
 import com.cyc.kb.KBCollection;
@@ -39,14 +34,22 @@ import com.cyc.kb.KBObject;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.KBIndividualImpl;
-import com.cyc.kb.client.KBObjectImpl;
 import com.cyc.kb.client.SentenceImpl;
 import com.cyc.kb.client.VariableImpl;
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.DeleteException;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBApiRuntimeException;
-import com.cyc.query.Query.Category;
+import com.cyc.kb.exception.KBTypeException;
 import static com.cyc.query.QueryApiTestConstants.emu;
 import static com.cyc.query.QueryApiTestConstants.zebra;
+import static com.cyc.query.QueryImpl.QUERY_LOADER_REQUIREMENTS;
+import static com.cyc.query.TestUtils.assumeCycSessionRequirements;
+import static com.cyc.query.TestUtils.assumeKBObject;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.SessionConfigurationException;
+import com.cyc.session.SessionInitializationException;
+import com.cyc.session.exception.UnsupportedCycOperationException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -68,7 +71,7 @@ public class QueryTest {
   private static final String queryStringAbesAPresident = "(#$isa #$AbrahamLincoln #$UnitedStatesPresident)";
   private static final String queryStringConditional = "(implies " + queryStringAssembling + " " + queryStringAbesAPresident + ")";
   private Query q = null;
-  private KBInferenceResultSet r = null;
+  private QueryResultSet r = null;
 
   @BeforeClass
   public static void setUpClass() throws Exception {
@@ -87,111 +90,92 @@ public class QueryTest {
   }
 
   @Test
-  public void testGetInferenceIdentifier() throws IOException, QueryConstructionException {
+  public void testGetInferenceIdentifier() throws IOException, QueryConstructionException, SessionCommunicationException {
     System.out.println("testGetInferenceIdentifier");
-    q = new Query(testConstants().queryAnimals, Constants.inferencePSCMt());
-    try {
-      q.retainInference();
-      assertNull(q.getInferenceIdentifier());
-      q.addListener(new QueryListener() {
-        int problemStoreID;
+    q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
+    q.retainInference();
+    assertNull(q.getInferenceIdentifier());
+    q.addListener(new QueryListenerImpl() {
+      int problemStoreID;
 
-        @Override
-        public void notifyInferenceCreated(Query query) {
-          try {
-            assertNotNull(q.getInferenceIdentifier());
-            problemStoreID = q.getInferenceIdentifier().getProblemStoreID();
-            System.out.println("Problem store ID: " + problemStoreID);
-            assertTrue("Got problem store ID " + problemStoreID, problemStoreID > 1);
-          } catch (CycConnectionException ex) {
-            ex.printStackTrace();
-            fail("Caught exception.");
-          }
+      @Override
+      public void notifyInferenceCreated(Query query) {
+        try {
+          assertNotNull(q.getInferenceIdentifier());
+          problemStoreID = q.getInferenceIdentifier().getProblemStoreID();
+          System.out.println("Problem store ID: " + problemStoreID);
+          assertTrue("Got problem store ID " + problemStoreID, problemStoreID > 1);
+        } catch (SessionCommunicationException ex) {
+          ex.printStackTrace();
+          throw new RuntimeException(ex);
         }
-
-        @Override
-        public void notifyInferenceStatusChanged(InferenceStatus oldStatus, InferenceStatus newStatus, InferenceSuspendReason suspendReason, Query query) {
-          System.out.println(oldStatus + " -> " + newStatus);
-        }
-
-        @Override
-        public void notifyInferenceAnswersAvailable(Query query, List<QueryAnswer> newAnswers) {
-          try {
-            final int problemStoreID1 = q.getInferenceIdentifier().getProblemStoreID();
-            assertEquals("Inference answers available; problem store ID now " + problemStoreID1,
-                    problemStoreID, problemStoreID1);
-          } catch (CycConnectionException ex) {
-            ex.printStackTrace();
-            fail("Caught exception.");
-          }
-        }
-
-        @Override
-        public void notifyInferenceTerminated(Query query, Exception e) {
-          try {
-            final int problemStoreID1 = q.getInferenceIdentifier().getProblemStoreID();
-            assertEquals("Inference terminated; problem store ID now " + problemStoreID1,
-                    problemStoreID, problemStoreID1);
-          } catch (CycConnectionException ex) {
-            ex.printStackTrace();
-            fail("Caught exception.");
-          }
-        }
-      });
-      q.performInference();
-      assertNotNull(q.getInferenceIdentifier());
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      fail("Caught exception running testGetInferenceIdentifier");
-    }
-  }
-
-  @Test
-  public void testQueryString() {
-
-    try {
-      String queryStr = queryStringAssembling;
-      q = new Query(queryStr);
-      KBInferenceResultSet results = q.getResultSet();
-      while (results.next()) {
-        results.getObject("?COLL");
       }
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Failed to create a Query from a query string.");
-    }
+      @Override
+      public void notifyInferenceStatusChanged(InferenceStatus oldStatus, InferenceStatus newStatus, InferenceSuspendReason suspendReason, Query query) {
+        System.out.println(oldStatus + " -> " + newStatus);
+      }
+
+      @Override
+      public void notifyInferenceAnswersAvailable(Query query, List<QueryAnswer> newAnswers) {
+        try {
+          final int problemStoreID1 = q.getInferenceIdentifier().getProblemStoreID();
+          assertEquals("Inference answers available; problem store ID now " + problemStoreID1,
+                  problemStoreID, problemStoreID1);
+        } catch (SessionCommunicationException ex) {
+          ex.printStackTrace();
+          throw new RuntimeException(ex);
+        }
+      }
+
+      @Override
+      public void notifyInferenceTerminated(Query query, Exception e) {
+        try {
+          final int problemStoreID1 = q.getInferenceIdentifier().getProblemStoreID();
+          assertEquals("Inference terminated; problem store ID now " + problemStoreID1,
+                  problemStoreID, problemStoreID1);
+        } catch (SessionCommunicationException ex) {
+          ex.printStackTrace();
+          throw new RuntimeException(ex);
+        }
+      }
+    });
+    q.performInference();
+    assertNotNull(q.getInferenceIdentifier());
   }
 
   @Test
-  public void testBooleanQueryString() {
+  public void testQueryString() throws QueryConstructionException {
+      String queryStr = queryStringAssembling;
+      q = QueryFactory.getQuery(queryStr);
+      QueryResultSet results = q.getResultSet();
+      while (results.next()) {
+        results.getObject("?COLL", KBObject.class);
+      }
+  }
 
-    try {
+  @Test
+  public void testBooleanQueryString() throws QueryConstructionException {
       String queryStr = queryStringAbesAPresident;
-      q = new Query(queryStr);
+      q = QueryFactory.getQuery(queryStr);
       assertTrue(q.isTrue());
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Failed to create a Query from a query string.");
-    }
   }
 
   @Test
-  public void testCycAssertionAsBinding() throws Exception {
+  public void testCycAssertionAsBinding() throws KBApiException, QueryConstructionException, SessionCommunicationException, CycConnectionException {
     final VariableImpl var = new VariableImpl("AS");
-    q = new Query(new SentenceImpl(testConstants().assertionSentence, var,
+    q = QueryFactory.getQuery(new SentenceImpl(testConstants().assertionSentence, var,
             testConstants().genlsAnimalX), Constants.inferencePSCMt());
     q.setMaxNumber(1);
-    final Object binding = q.getAnswerCyc(0).getBinding(CycObjectFactory.makeCycVariable(var.getName()));
+    final Object binding = ((QueryImpl)q).getAnswerCyc(0).getBinding(CycObjectFactory.makeCycVariable(var.getName()));
     assertTrue("Wanted a CycAssertion, got " + binding.getClass().getSimpleName(),
             binding instanceof CycAssertion);
   }
 
   @Test
-  public void testFactAsBinding() throws Exception {
+  public void testFactAsBinding() throws KBApiException, QueryConstructionException, SessionCommunicationException {
     final VariableImpl var = new VariableImpl("AS");
-    q = new Query(new SentenceImpl(testConstants().assertionSentence, var,
+    q = QueryFactory.getQuery(new SentenceImpl(testConstants().assertionSentence, var,
             testConstants().genlsAnimalX), Constants.inferencePSCMt());
     q.setMaxNumber(1);
     final Object binding = q.getAnswer(0).getBinding(var);
@@ -200,18 +184,11 @@ public class QueryTest {
   }
 
   @Test
-  public void testQueryStringString() {
-
-    try {
-      r = new Query(testConstants().whatIsAbe.toString(), testConstants().peopleDataMt.toString()).getResultSet();
+  public void testQueryStringString() throws QueryConstructionException {
+      r = QueryFactory.getQuery(testConstants().whatIsAbe.toString(), testConstants().peopleDataMt.toString()).getResultSet();
       while (r.next()) {
         System.out.println("All types: " + r.getObject("?TYPE", KBCollection.class));
       }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Failed to create a Query from a query string.");
-    }
   }
 
   private QueryApiTestConstants testConstants() throws KBApiRuntimeException {
@@ -219,72 +196,58 @@ public class QueryTest {
   }
 
   @Test
-  public void testContinuableQuery() {
+  public void testContinuableQuery() throws QueryConstructionException {
     System.out.println("testContinuableQuery");
-    try {
-      q = new Query(testConstants().whatIsAbe, testConstants().peopleDataMt);
-      q.setInferenceMode(OpenCycInferenceParameterEnum.OpenCycInferenceMode.MINIMAL_MODE);
-      q.setMaxNumber(1);
-      q.setContinuable(true);
-      assertTrue("Query not continuable.", q.isContinuable());
-      int answerCount = q.getAnswerCount();
-      assertEquals("Expected one answer, got " + answerCount, 1, answerCount);
+    q = QueryFactory.getQuery(testConstants().whatIsAbe, testConstants().peopleDataMt);
+    q.setInferenceMode(OpenCycInferenceParameterEnum.OpenCycInferenceMode.MINIMAL_MODE);
+    q.setMaxNumber(1);
+    q.setContinuable(true);
+    assertTrue("Query not continuable.", q.isContinuable());
+    int answerCount = q.getAnswerCount();
+    assertEquals("Expected one answer, got " + answerCount, 1, answerCount);
+    q.continueQuery();
+    int updatedAnswerCount = q.getAnswerCount();
+    while (updatedAnswerCount > answerCount) {
+      answerCount = updatedAnswerCount;
       q.continueQuery();
-      int updatedAnswerCount = q.getAnswerCount();
-      while (updatedAnswerCount > answerCount) {
-        answerCount = updatedAnswerCount;
-        q.continueQuery();
-        updatedAnswerCount = q.getAnswerCount();
-      }
-      assertTrue("Found only " + answerCount + " answers.", answerCount > 1);
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Failed to create a Query from a query string.");
+      updatedAnswerCount = q.getAnswerCount();
     }
+    assertTrue("Found only " + answerCount + " answers.", answerCount > 1);
   }
-  
+
   @Test
-  public void testNonContinuableQuery() {
+  public void testNonContinuableQuery() throws QueryConstructionException {
     System.out.println("test setContinuable(false)");
-    try {
-      q = new Query(testConstants().whatIsAbe, testConstants().peopleDataMt);
+      q = QueryFactory.getQuery(testConstants().whatIsAbe, testConstants().peopleDataMt);
       q.setMaxNumber(1);
       q.setInferenceMode(OpenCycInferenceParameterEnum.OpenCycInferenceMode.SHALLOW_MODE);
       q.setContinuable(false);
       assertFalse("Query parameters are continuable.", q.getInferenceParameters().isContinuable());
       q.continueQuery();
       assertFalse("Query is continuable.", q.isContinuable());
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Failed to create a Query from a query string.");
-    }
   }
 
   @Test
-  public void testQueryStringStringString() {
-    try {
-
+  public void testQueryStringStringString() throws QueryConstructionException {
       String queryStr = testConstants().whatIsAbe.toString();
 
-      r = new Query(queryStr, testConstants().peopleDataMt.toString(),
+      r = QueryFactory.getQuery(queryStr, testConstants().peopleDataMt.toString(),
               ":INFERENCE-MODE :MINIMAL :MAX-TIME 1 :MAX-NUMBER 12").getResultSet();
       while (r.next()) {
         System.out.println("TYPE: " + r.getObject("?TYPE", KBObject.class));
       }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Failed to create a Query from a query string.");
-    }
   }
 
   /**
-   * Test of getId method, of class Query.
+   * Test of getId method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
+   * @throws com.cyc.session.SessionCommunicationException
    */
   @Test
-  public void testGetId() throws Exception {
+  public void testGetId() throws QueryConstructionException, KBApiException, SessionCommunicationException {
     System.out.println("getId and saveAs");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     final KBIndividual id = q.saveAs("TestQuery-AssemblingSlots");
     try {
       assertEquals(id, q.getId());
@@ -294,48 +257,43 @@ public class QueryTest {
   }
 
   /**
-   * Test of load method, of class Query.
+   * Test of load method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
+   * @throws com.cyc.session.SessionCommunicationException
    */
   @Test
-  public void testLoad() throws Exception {
+  public void testLoad() throws QueryConstructionException, KBApiException, SessionCommunicationException, UnsupportedCycOperationException {
     System.out.println("load");
-    //Query conceptFinder = Query.load(new KBIndividual("AURORAQuery-PredictAllFeaturesFromReifiedVideosUsingThisFeatureSet"));
-    q = new Query(queryStringAssembling);
+    //Query conceptFinder = QueryImpl.load(new KBIndividual("AURORAQuery-PredictAllFeaturesFromReifiedVideosUsingThisFeatureSet"));
+    assumeCycSessionRequirements(QUERY_LOADER_REQUIREMENTS);
+    q = QueryFactory.getQuery(queryStringAssembling);
     final KBIndividual id = q.saveAs("TestQuery-AssemblingSlots");
     try {
-      final Query loadedQuery = Query.load(id);
+      final Query loadedQuery = QueryFactory.getQuery(id);
       assertEquals("Query contexts are different.", q.getContext(),
               loadedQuery.getContext());
-      assertEquals("Query sentences are different.", q.getQuerySentenceCyc(),
-              loadedQuery.getQuerySentenceCyc());
+      assertEquals("Query sentences are different.", ((QueryImpl)q).getQuerySentenceCyc(),
+              ((QueryImpl)loadedQuery).getQuerySentenceCyc());
     } finally {
       id.delete();
     }
   }
 
-  //@Test Depends on #$TestKBQuery
-  public void testKBQ() throws Exception {
-    r = Query.load(KBIndividualImpl.get("TestKBQuery")).getResultSet();
-    while (r.next()) {
-      System.out.println("Dog: " + r.getObject(TestUtils.X.toString(),
-              KBIndividual.class));
-    }
-  }
-
   @Test
-  public void testKBQIndexical() throws Exception {
+  public void testKBQIndexical() throws QueryConstructionException, DeleteException, KBApiException, SessionCommunicationException, UnsupportedCycOperationException {
     System.out.println("testKBQIndexical");
-
-    q = new Query(testConstants().theAnimalIsAnAnimal, Constants.inferencePSCMt());
+    assumeCycSessionRequirements(QUERY_LOADER_REQUIREMENTS);
+    q = QueryFactory.getQuery(testConstants().theAnimalIsAnAnimal, Constants.inferencePSCMt());
     q.setMaxNumber(10);
-    q.saveAs("TestKBQueryIndexical-2012-01-16");
+    KBIndividual z = q.saveAs("TestKBQueryIndexical-2012-01-16"); 
 
     try {
-      Map<CycObject, Object> indexicals = new HashMap<CycObject, Object>();
-      indexicals.put(KBObjectImpl.getCore(testConstants().theAnimal),
+      Map<KBObject, Object> indexicals = new HashMap<KBObject, Object>();
+      indexicals.put(testConstants().theAnimal,
               CycObjectFactory.makeCycVariable("X"));
 
-      Query query = Query.loadCycObjectMap(KBIndividualImpl.get("TestKBQueryIndexical-2012-01-16"),
+      Query query = QueryFactory.getQuery(KBIndividualImpl.get("TestKBQueryIndexical-2012-01-16"),
               indexicals);
       r = query.getResultSet();
       while (r.next()) {
@@ -347,10 +305,10 @@ public class QueryTest {
   }
 
   @Test
-  public void testKBQIndexicalKBObject() throws Exception {
+  public void testKBQIndexicalKBObject() throws QueryConstructionException, KBApiException, SessionCommunicationException, UnsupportedCycOperationException {
     System.out.println("testKBQIndexicalKBObject");
-
-    q = new Query(testConstants().theAnimalIsAnAnimal, Constants.inferencePSCMt());
+    assumeCycSessionRequirements(QUERY_LOADER_REQUIREMENTS);
+    q = QueryFactory.getQuery(testConstants().theAnimalIsAnAnimal, Constants.inferencePSCMt());
     q.setMaxNumber(10);
     q.saveAs("TestKBQueryKBObject-2014-04-1");
 
@@ -358,7 +316,7 @@ public class QueryTest {
       Map<KBObject, Object> indexicals = new HashMap<KBObject, Object>();
       indexicals.put(testConstants().theAnimal, new VariableImpl("X"));
 
-      r = Query.load(KBIndividualImpl.get("TestKBQueryKBObject-2014-04-1"),
+      r = QueryFactory.getQuery(KBIndividualImpl.get("TestKBQueryKBObject-2014-04-1"),
               indexicals).getResultSet();
       while (r.next()) {
         System.out.println("Animal: " + r.getObject("?X", KBIndividual.class));
@@ -369,10 +327,10 @@ public class QueryTest {
   }
 
   @Test
-  public void testKBQIndexicalString() throws Exception {
+  public void testKBQIndexicalString() throws QueryConstructionException, KBApiException, SessionCommunicationException, UnsupportedCycOperationException {
     System.out.println("testKBQIndexicalString");
-
-    q = new Query(testConstants().theAnimalIsAnAnimal, Constants.inferencePSCMt());
+    assumeCycSessionRequirements(QUERY_LOADER_REQUIREMENTS);
+    q = QueryFactory.getQuery(testConstants().theAnimalIsAnAnimal, Constants.inferencePSCMt());
     q.setMaxNumber(10);
     q.saveAs("TestKBQuery-Vijay-2012-01-16");
     try {
@@ -381,7 +339,7 @@ public class QueryTest {
       Map<String, String> indexicals = new HashMap<String, String>();
       indexicals.put(testConstants().theAnimal.toString(), "?X");
 
-      r = Query.load("TestKBQuery-Vijay-2012-01-16", indexicals).getResultSet();
+      r = QueryFactory.getQuery("TestKBQuery-Vijay-2012-01-16", indexicals).getResultSet();
 
       while (r.next()) {
         System.out.println("Animal: " + r.getObject("?X", KBIndividual.class));
@@ -392,10 +350,11 @@ public class QueryTest {
   }
 
   @Test
-  public void testKBQIndexicalVarToConst() throws Exception {
+  public void testKBQIndexicalVarToConst() throws QueryConstructionException, KBTypeException, CreateException, KBApiException, SessionCommunicationException, UnsupportedCycOperationException {
     System.out.println("testKBQIndexicalVarToConst");
-
-    q = new Query(
+    assumeCycSessionRequirements(QUERY_LOADER_REQUIREMENTS);
+    
+    q = QueryFactory.getQuery(
             SentenceImpl.and(testConstants().xIsAnAnimal, testConstants().yOwnsX),
             Constants.everythingPSCMt());
     q.saveAs("TestKBQueryAnimalOwners-Vijay-2012-01-16");
@@ -403,7 +362,7 @@ public class QueryTest {
     try {
       Map<KBObject, Object> indexicals = new HashMap<KBObject, Object>();
       indexicals.put(new VariableImpl("Y"), testConstants().abrahamLincoln);
-      final Query loadedQuery = Query.load(KBIndividualImpl.get("TestKBQueryAnimalOwners-Vijay-2012-01-16"), indexicals);
+      final Query loadedQuery = QueryFactory.getQuery(KBIndividualImpl.get("TestKBQueryAnimalOwners-Vijay-2012-01-16"), indexicals);
       System.out.println("Result of replacing variable: " + loadedQuery);
       r = loadedQuery.getResultSet();
       System.out.println("Result set: " + r);
@@ -418,18 +377,17 @@ public class QueryTest {
 
   @Test
   //@TODO Replace this with a test using vocabulary in OpenCyc (or at least RCyc).
-  public void testKBQIndexicalAurora() throws Exception {
+  public void testKBQIndexicalAurora() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException, CycConnectionException, CreateException, KBTypeException, QueryConstructionException, KBApiException, UnsupportedCycOperationException {
     if (!CycAccessManager.getCurrentAccess().isOpenCyc()
             && CycAccessManager.getCurrentAccess().getLookupTool().find("AuroraConceptIDSourceStore") instanceof CycConstant) {
       System.out.println("testKBQIndexicalAurora");
-      Map<CycObject, Object> binding = new HashMap<CycObject, Object>();
-      binding.put(CycObjectFactory.makeCycVariable("?VIDEO-ID"), 27850);
+      Map<KBObject, Object> binding = new HashMap<KBObject, Object>();
+      binding.put(VariableImpl.get("?VIDEO-ID"), 27850);
       //Idiotically, need #$ here
-      binding.put(CycAccessManager.getCurrentAccess().getLookupTool().getKnownFortByName(
-              "(#$TheFn #$AuroraConceptIDSourceStore)"),
+      binding.put(KBIndividualImpl.findOrCreate("(#$TheFn #$AuroraConceptIDSourceStore)"),
               CycAccessManager.getCurrentAccess().getLookupTool().getKnownFortByName("MED12-SIN-Concept-List"));
 
-      q = Query.loadCycObjectMap(
+      q = QueryFactory.getQuery(
               KBIndividualImpl.get(
                       "AURORAQuery-PredictAllFeaturesFromReifiedVideosUsingThisFeatureSet"),
               binding);
@@ -443,169 +401,189 @@ public class QueryTest {
   }
 
   /**
-   * Test of getCategories method, of class Query.
+   * Test of getCategories method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testGetCategories() throws IOException, QueryConstructionException {
     System.out.println("getCategories");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     assertTrue(q.getCategories().isEmpty());
   }
 
   /**
-   * Test of addCategory method, of class Query.
+   * Test of addCategory method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testAddCategory() throws IOException, QueryConstructionException {
     System.out.println("addCategory");
-    q = new Query(queryStringAssembling);
-    Category cat = Category.get("Test Queries");
+    q = QueryFactory.getQuery(queryStringAssembling);
+    String cat = "Test Queries";
     q.addCategory(cat);
     assertTrue(q.getCategories().contains(cat));
   }
 
   /**
-   * Test of getAnswerCount method, of class Query.
+   * Test of getAnswerCount method, of class QueryImpl.
    *
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testGetAnswerCount() throws CycConnectionException, QueryConstructionException {
+  public void testGetAnswerCount() throws QueryConstructionException {
     System.out.println("getAnswerCount");
-    q = new Query(testConstants().queryAnimals, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
     assertEquals(2, q.getAnswerCount());
   }
 
   /**
-   * Test of getContext method, of class Query.
+   * Test of getContext method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testGetContext() throws Exception {
+  public void testGetContext() throws QueryConstructionException {
     System.out.println("getContext");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     assertEquals(Constants.inferencePSCMt(), q.getContext());
   }
 
   /**
-   * Test of getQuerySentence method, of class Query.
+   * Test of getQuerySentence method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testgetQuerySentenceCyc() throws Exception {
+  public void testgetQuerySentenceCyc() throws QueryConstructionException {
     System.out.println("getQuerySentence");
-    q = new Query(queryStringAssembling);
-    assertEquals(queryStringAssembling, q.getQuerySentenceCyc().cyclify());
+    q = QueryFactory.getQuery(queryStringAssembling);
+    assertEquals(queryStringAssembling, ((QueryImpl)q).getQuerySentenceCyc().cyclify());
   }
 
   /**
-   * Test of getQuerySentenceMainClauseCyc method, of class Query.
+   * Test of getQuerySentenceMainClauseCyc method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testgetQuerySentenceMainClauseCyc() throws IOException, QueryConstructionException {
     System.out.println("getQuerySentenceMainClauseCyc");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     assertEquals(queryStringAssembling,
-            q.getQuerySentenceMainClauseCyc().cyclify());
+            ((QueryImpl)q).getQuerySentenceMainClauseCyc().cyclify());
   }
 
   /**
-   * Test of getQuerySentenceHypothesizedClause method, of class Query.
+   * Test of getQuerySentenceHypothesizedClause method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testGetQuerySentenceHypothesizedClause() throws IOException, QueryConstructionException {
     System.out.println("getQuerySentenceHypothesizedClause");
-    q = new Query(queryStringConditional);
+    q = QueryFactory.getQuery(queryStringConditional);
     assertEquals(queryStringAssembling,
-            q.getQuerySentenceHypothesizedClauseCyc().cyclify());
+            ((QueryImpl)q).getQuerySentenceHypothesizedClauseCyc().cyclify());
     assertEquals(queryStringAbesAPresident,
-            q.getQuerySentenceMainClauseCyc().cyclify());
+            ((QueryImpl)q).getQuerySentenceMainClauseCyc().cyclify());
   }
 
   /**
-   * Test of getMaxTime method, of class Query.
+   * Test of getMaxTime method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testGetMaxTime() throws IOException, QueryConstructionException {
     System.out.println("getMaxTime");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     assertEquals(null, q.getMaxTime());
   }
 
   /**
-   * Test of getMaxNumber method, of class Query.
+   * Test of getMaxNumber method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testGetMaxNumber() throws IOException, QueryConstructionException {
     System.out.println("getMaxNumber");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     assertEquals(null, q.getMaxNumber());
   }
 
   /**
-   * Test of getInferenceMode method, of class Query.
+   * Test of getInferenceMode method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testGetInferenceMode() throws IOException, QueryConstructionException {
     System.out.println("getInferenceMode");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     assertEquals(null, q.getInferenceMode());
   }
 
   /**
-   * Test of getStatus method, of class Query.
+   * Test of getStatus method, of class QueryImpl.
    *
-   * @throws CycConnectionException
-   * @throws CycTimeOutException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testGetStatus() throws CycConnectionException, QueryConstructionException {
+  public void testGetStatus() throws QueryConstructionException {
     System.out.println("getStatus");
-    q = new Query(queryStringAssembling);
+    q = QueryFactory.getQuery(queryStringAssembling);
     q.performInference();
-    assertEquals(DefaultInferenceStatus.SUSPENDED, q.getStatus());
+    assertEquals(InferenceStatus.SUSPENDED, q.getStatus());
   }
 
   /**
-   * Test of get method, of class Query.
+   * Test of get method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
-  public void testGet() throws Exception {
+  public void testGet() throws QueryConstructionException, IllegalArgumentException, KBApiException {
     System.out.println("get");
-    r = new Query(testConstants().queryAnimals, Constants.inferencePSCMt()).getResultSet();
+    r = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt()).getResultSet();
     r.next();
-    final KBCollection animal = (KBCollection) r.getKBObject("?N");
+    final KBCollection animal = (KBCollection) r.getKBObject("?N", KBCollection.class);
     final List<KBCollection> emuAndZebra = Arrays.asList(emu(), zebra());
     assertTrue("Couldn't find " + animal + " (" + animal.getClass().getSimpleName()
             + ") in " + emuAndZebra, emuAndZebra.contains(animal));
   }
 
   /**
-   * Test of isTrue method, of class Query.
+   * Test of isTrue method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testIsTrue() throws Exception {
+  public void testIsTrue() throws QueryConstructionException {
     System.out.println("isTrue");
-    q = new Query(queryStringAbesAPresident);
+    q = QueryFactory.getQuery(queryStringAbesAPresident);
     assertTrue(q.isTrue());
   }
 
   /**
-   * Test of isProvable method, of class Query.
+   * Test of isProvable method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testIsProvable() throws Exception {
+  public void testIsProvable() throws QueryConstructionException {
     System.out.println("isProvable");
-    q = new Query(queryStringAbesAPresident);
+    q = QueryFactory.getQuery(queryStringAbesAPresident);
     assertTrue(q.isProvable());
     q.close();
-    q = new Query(testConstants().queryAnimals, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
     assertTrue(q.isProvable());
     q.getResultSet().afterLast();
     assertTrue(q.isProvable());
   }
 
   @Test
-  public void testClearResults() throws Exception {
+  public void testClearResults() throws QueryConstructionException, KBApiException, SessionCommunicationException, InterruptedException {
     System.out.println("clearResults");
-    q = new Query(testConstants().whatTimeIsIt, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().whatTimeIsIt, Constants.inferencePSCMt());
     final Variable var = q.getQuerySentence().getArgument(2);
     final Object firstTime = q.getAnswer(0).getBinding(var);
     assertEquals(firstTime, q.getAnswer(0).getBinding(var));
@@ -615,45 +593,53 @@ public class QueryTest {
   }
 
   /**
-   * Test of next method, of class Query.
+   * Test of next method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
-  public void testNext() throws Exception {
+  public void testNext() throws QueryConstructionException {
     System.out.println("next");
-    r = new Query(testConstants().queryAnimals, Constants.inferencePSCMt()).getResultSet();
+    r = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt()).getResultSet();
     assertTrue(r.next());
   }
 
   /**
-   * Test of close method, of class Query.
+   * Test of close method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
    */
   @Test
   public void testClose() throws IOException, QueryConstructionException {
     System.out.println("close");
-    q = new Query(testConstants().queryAnimals, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
     q.close();
   }
 
   /**
-   * Test of getResultSet method, of class Query.
+   * Test of getResultSet method, of class QueryImpl.
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws java.lang.Exception
    */
   @Test
-  public void testGetResultSet() throws Exception {
+  public void testGetResultSet() throws QueryConstructionException  {
     System.out.println("getResultSet");
-    q = new Query(testConstants().queryAnimals, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
     q.getResultSet();
   }
 
   /**
-   * Test of getQueryVariablesCyc method, of class Query.
+   * Test of getQueryVariablesCyc method, of class QueryImpl.
+   * @throws java.io.IOException
+   * @throws com.cyc.query.exception.QueryConstructionException
+   * @throws com.cyc.kb.exception.KBApiException
    */
   @Test
   public void testGetQueryVariables() throws IOException, QueryConstructionException, KBApiException {
     System.out.println("getQueryVariablesCyc");
-    q = new Query(testConstants().queryAnimals, Constants.inferencePSCMt());
+    q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
     assertTrue(q.getQueryVariables().contains(new VariableImpl("N")));
     q.close();
-    q = new Query(queryStringConditional);
+    q = QueryFactory.getQuery(queryStringConditional);
     assertTrue(q.getQueryVariables().isEmpty());
   }
 }

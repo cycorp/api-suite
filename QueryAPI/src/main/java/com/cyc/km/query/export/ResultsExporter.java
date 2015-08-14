@@ -27,6 +27,7 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.baseclient.export.ExportException;
 import com.cyc.baseclient.export.PrintWriterExporter;
 import com.cyc.query.Query;
+import com.cyc.query.QueryImpl;
 import com.cyc.query.QueryAnswer;
 
 import java.io.PrintStream;
@@ -34,14 +35,14 @@ import java.io.PrintWriter;
 import java.util.List;
 
 /**
- * An abstract class for exporting {@link Query} results.
+ * An abstract class for exporting {@link QueryImpl} results.
  * <p/>
  * As with any {@link PrintWriterExporter}, the output can be sent to a
  * {@link PrintWriter}, a {@link PrintStream}, or a {@link String}.
  * <p/>
  * The results are structured as a document that is sent to the specified
- * destination, and has sections for <ul><li>A header</li><li>Query
- * data</li><li>Query answers</li><li>A footer</li></ul>
+ * destination, and has sections for <ul><li>A header</li><li>QueryImpl
+ data</li><li>QueryImpl answers</li><li>A footer</li></ul>
  *
  * @author baxter
  */

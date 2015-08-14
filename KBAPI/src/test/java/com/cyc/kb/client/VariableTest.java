@@ -27,7 +27,6 @@ package com.cyc.kb.client;
 
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.kb.KBCollection;
-import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.exception.KBApiException;
 
 import java.util.logging.Level;

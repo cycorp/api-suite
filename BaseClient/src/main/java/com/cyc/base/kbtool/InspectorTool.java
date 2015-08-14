@@ -748,7 +748,22 @@ public interface InspectorTool {
    * @throws CycApiException if the api request results in a cyc server error
    */
   boolean isa(CycObject term, CycObject collection, CycObject mt) throws CycConnectionException, CycConnectionException, CycApiException;
-  
+
+  /**
+   * Find the most specific collection that <code>term</code> is an instance of in 
+   * the tree: (#$Thing
+			  (#$Collection
+			   (#$FirstOrderCollection #$SecondOrderCollection))
+			  (#$Individual
+			   (#$Microtheory
+			    (#$Relation #$Function-Denotational
+			     (#$Predicate #$BinaryPredicate))
+			    #$Quantifier))). 
+   * @param term  Any CycObject that needs to be categorized
+   * @return The most specific collection for the <code>term</code>
+   * @throws CycConnectionException 
+   */
+  CycObject categorizeTermWRTApi (CycObject term) throws CycConnectionException;
   
   
   

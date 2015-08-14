@@ -84,7 +84,7 @@ abstract public class CycAccessManager<T extends CycAccessSession> implements Se
   
   /**
    * Returns a LegacyCycClientManager, which behaves much like the old CycAccessManager.
-   * This method will be changed dramatically or removed in 1.0.0-rc2.
+   * This method will be changed dramatically or removed before final 1.0.0 release.
    * @return
    * @deprecated
    */

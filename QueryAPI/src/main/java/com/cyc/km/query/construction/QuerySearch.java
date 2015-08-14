@@ -31,22 +31,24 @@ import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.api.SubLAPIHelper;
 import com.cyc.baseclient.api.SubLAPIHelper.AsIsTerm;
 import com.cyc.baseclient.cycobject.NautImpl;
-import com.cyc.query.Query.Category;
 import com.cyc.km.modeling.task.CycBasedTask;
-import com.cyc.query.Query;
 import com.cyc.kb.KBObject;
-import com.cyc.query.QueryReader;
 import com.cyc.kb.client.KBCollectionImpl;
 import com.cyc.kb.client.KBIndividualImpl;
 import com.cyc.kb.client.KBObjectImpl;
 import com.cyc.nl.Span;
-import com.cyc.xml.query.FormulaTemplateUnmarshaller;
 import com.cyc.kb.exception.KBApiException;
+import com.cyc.query.Query;
+import com.cyc.query.QueryReader;
 import com.cyc.query.exception.QueryApiRuntimeException;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.SessionApiException;
+import com.cyc.session.compatibility.CycSessionRequirementList;
+import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import com.cyc.xml.query.CyclQuery;
 import com.cyc.xml.query.FormulaTemplate;
+import com.cyc.xml.query.FormulaTemplateUnmarshaller;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
@@ -60,16 +62,20 @@ import javax.xml.bind.JAXBException;
  * "fragment" queries using them are constructed. The results can be combined
  * interactively to construct a query corresponding to the overall input string.
  * <p>
- * Query searches are performed within the context of a {@link CycBasedTask},
+ QueryImpl searches are performed within the context of a {@link CycBasedTask},
  * which defines filters, etc., to guide the search results to task-relevant
  * terms.
  *
- * @see com.cyc.query.Query
+ * @see com.cyc.query.QueryImpl
  * @author David Baxter
  *
  */
 public class QuerySearch {
-
+  
+  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> QUERY_SEARCH_REQUIREMENTS = CycSessionRequirementList.fromList(
+          NotOpenCycRequirement.NOT_OPENCYC
+  );
+  
   /**
    * Creates a new query search with the specified search string and task.
    *
@@ -77,8 +83,9 @@ public class QuerySearch {
    * sort of request for information)
    * @param task Provides the context for interpreting searchString as a set of
    * queries.
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
-  public QuerySearch(String searchString, CycBasedTask task) {
+  public QuerySearch(String searchString, CycBasedTask task) throws OpenCycUnsupportedFeatureException {
     this(searchString, task, VariableFormat.DEFAULT);
   }
 
@@ -92,8 +99,10 @@ public class QuerySearch {
    * queries.
    * @param format The {@link VariableFormat} used for queries constructed by
    * the search.
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
-  public QuerySearch(String searchString, CycBasedTask task, VariableFormat format) {
+  public QuerySearch(String searchString, CycBasedTask task, VariableFormat format) throws OpenCycUnsupportedFeatureException {
+    QUERY_SEARCH_REQUIREMENTS.testCompatibilityWithRuntimeException();
     this.searchString = searchString;
     this.task = task;
     this.variableFormat = format;
@@ -174,10 +183,10 @@ public class QuerySearch {
   }
 
   /**
-   * Returns the locations of a <code>Query</code> identified with the search
+   * Returns the locations of a <code>QueryImpl</code> identified with the search
    * string.
    *
-   * @param query A particular <code>Query</code> that was found somewhere in
+   * @param query A particular <code>QueryImpl</code> that was found somewhere in
    * this <code>QuerySearch</code>
    * @return start, end indices for locations of query in search string.
    */
@@ -208,26 +217,20 @@ public class QuerySearch {
     return response;
   }
 
-  private void processOneFolder(final CycList folderData) throws KBApiException {
+  private void processOneFolder(final CycList folderData) throws KBApiException, QueryConstructionException {
     final String folderName = (String) folderData.getf(FOLDER);
     for (int i = 2; i < folderData.size(); i++) {
-      processQueryDataForFolder((CycList) folderData.get(i), Category.get(
-              folderName));
+      processQueryDataForFolder((CycList) folderData.get(i), folderName);
     }
   }
 
   private void processQueryDataForFolder(final CycList queryData,
-          final Category category) throws KBApiException {
+          final String category) throws KBApiException, QueryConstructionException {
     final Integer offset = (Integer) queryData.getf(OFFSET);
     final Integer end = (Integer) queryData.getf(END);
     for (final Object cyclQuery : extractQueriesAndFormulas(queryData)) {
       if (cyclQuery instanceof CyclQuery) {
-        try {
-          processOneQuery((CyclQuery) cyclQuery, category, offset, end);
-        } catch (QueryConstructionException ex) {
-          // @TODO Do something better here.
-          ex.printStackTrace(System.err);
-        }
+        processOneQuery((CyclQuery) cyclQuery, category, offset, end);
       }
     }
   }
@@ -245,7 +248,7 @@ public class QuerySearch {
   }
 
   private void processOneQuery(final CyclQuery cyclQuery,
-          final Category category,
+          final String category,
           final Integer offset, final Integer end) throws KBApiException,
           QueryConstructionException {
     final Query query = queryReader.get().convertQuery(cyclQuery);
@@ -322,11 +325,13 @@ public class QuerySearch {
      * Whatever the default for this Cyc is.
      */
     DEFAULT,
+    
     /**
      * Variable names are based on variable types, e.g. <nobr>?DOG</nobr>,
      * <nobr>?CAT</nobr>.
      */
     MNEMONIC,
+    
     /**
      * Variable names are single letters, e.g. ?X, ?Y, ?Z.
      */

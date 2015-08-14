@@ -21,7 +21,7 @@ package com.cyc.baseclient.datatype;
  * #L%
  */
 
-import com.cyc.base.cycobject.Fort;
+import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.baseclient.CommonConstants;
 import java.io.IOException;
@@ -397,7 +397,7 @@ public class DataTypeUnitTest {
   @Test
   public void testMoneyConverter() {
     System.out.println("** testMoneyConverter **");
-    final Fort currUSD = MoneyConverter.lookupCycCurrencyTerm(Currency.getInstance(
+    final DenotationalTerm currUSD = MoneyConverter.lookupCycCurrencyTerm(Currency.getInstance(
             "USD"));
     final BigDecimal amount = BigDecimal.valueOf(50.25);
     final Naut cycMoney = new NautImpl(currUSD, amount);

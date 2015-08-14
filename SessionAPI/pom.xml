@@ -5,17 +5,17 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-parent</artifactId>
-    <version>1.0.0-rc2</version>
+    <version>1.0.0-rc3-SNAPSHOT</version>
   </parent>
 
   <groupId>com.cyc</groupId>
   <artifactId>cyc-session</artifactId>
-  <version>1.0.0-rc2</version>
+  <version>1.0.0-rc3-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>Session API Implementation</name>
   <description>Java API for managing configurations and connections to Cyc servers.</description>
-  <url>http://dev.cyc.com/cyc-api/</url>
+  <url>http://dev.cyc.com/api/core/</url>
 
   <scm>
     <connection>scm:git:git@github.com:cycorp/CycCoreAPI.git</connection>
@@ -62,9 +62,7 @@
         <configuration>
           <services>
             <param>com.cyc.session.SessionConfigurationLoader</param>
-            <!--
-            <param>com.cyc.session.connection.SessionFactory</param>
-            -->
+            <param>com.cyc.session.SessionManager</param>
           </services>
         </configuration>
         <executions>

@@ -25,7 +25,6 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
-import com.cyc.base.inference.InferenceAnswerIdentifier;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.KBObjectImpl;
 import com.cyc.kb.exception.CreateException;

@@ -46,8 +46,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
- * This class locates and loads classes annotated as
- * {@link com.cyc.base.annotation.CycObjectLibrary}, and provides methods to 
+ * This class locates and loads classes cycFieldotated as
+ {@link com.cyc.base.annotation.CycObjectLibrary}, and provides methods to 
  * access their fields. This is useful for verifying that a Cyc server's KB 
  * meets your code's requirements.
  * 
@@ -55,46 +55,35 @@ import java.lang.reflect.Field;
  */
 public class CycObjectLibraryLoader {
 
+  // Fields
+  
+  private final Logger logger;
+  private boolean requireOptionalFields = false;
+  final private CycAccess access;
+  
+  
   // Constructor
   
-  protected CycObjectLibraryLoader() {
-    logger = LoggerFactory.getLogger(this.getClass().getName());
-  }
-
-  /**
-   * Returns the singleton instance of CycObjectLibraryLoader.
-   * @return singleton instance of CycObjectLibraryLoader
-   */
-  synchronized public static CycObjectLibraryLoader get() {
-    if (ME == null) {
-      ME = new CycObjectLibraryLoader();
-    }
-    return ME;
+  public CycObjectLibraryLoader(CycAccess access) {
+    this.access = access;
+    this.logger = LoggerFactory.getLogger(this.getClass().getName());
   }
   
 
   // Public
   
-  /**
-   * Returns all valid {@link java.lang.reflect.Field}s for a given class.
-   * @param clazz
-   * @return all valid {@link java.lang.reflect.Field}s for a given class
-   */
-  public Collection<Field> getAllFields(Class<?> clazz) {
-    final Collection<Field> results = new ArrayList<Field>();
-    Field[] fields = clazz.getDeclaredFields();
-    for (Field field : fields) {
-      if (isFieldValid(clazz, field)) {
-        results.add(field);
-      }
-    }
-    return results;
+  public boolean setRequireOptionalFields(boolean includeOptional) {
+    return this.requireOptionalFields = includeOptional;
+  }
+  
+  public boolean isRequiringOptionalFields() {
+    return this.requireOptionalFields;
   }
 
   /**
-   * Returns all classes annotated as 
-   * {@link com.cyc.base.annotation.CycObjectLibrary}.
-   * @return all classes annotated as {@link com.cyc.base.annotation.CycObjectLibrary}
+   * Returns all classes cycFieldotated as 
+ {@link com.cyc.base.annotation.CycObjectLibrary}.
+   * @return all classes cycFieldotated as {@link com.cyc.base.annotation.CycObjectLibrary}
    */
   public Collection<Class> getAllLibraries() {
     final Collection<Class> results = new ArrayList<Class>();
@@ -116,27 +105,22 @@ public class CycObjectLibraryLoader {
    * @return a list of the values for all valid fields on the class which
    * are instances of classFilter
    */
-  public <E extends Object> Collection<E> getAllObjectsForClass(Class libraryClass, Class<E> classFilter, boolean includeOptional) {
+  public <E extends Object> Collection<E> getAllObjectsForClass(Class libraryClass, Class<E> classFilter) {
     final Collection<E> results = new ArrayList<E>();
-    final Collection<Field> fields = getAllFields(libraryClass);
-    for (Field field : fields) {
+    final Collection<CycLibraryField> annfields = getAllCycLibraryFields(libraryClass);
+    for (CycLibraryField ann : annfields) {
       try {
-        final CycFieldAnnotationParser ann = new CycFieldAnnotationParser(field);
-        if (includeOptional || !ann.isOptional()) {
-          final Object o = field.get(getLibraryInstance(libraryClass));
+        if (isFieldToBeIncluded(ann)) {
+          final Object o = ann.getField().get(getLibraryInstance(libraryClass));
           if (classFilter.isInstance(o)) {
             results.add((E) o);
           }
         }
       } catch (Exception ex) {
-        handleException(field, ex);
+        handleException(ann, ex);
       }
     }
     return results;
-  }
-  
-  public <E extends Object> Collection<E> getAllObjectsForClass(Class libraryClass, Class<E> classFilter) {
-    return getAllObjectsForClass(libraryClass, classFilter, this.isIncludeOptionalFields());
   }
   
   /**
@@ -200,15 +184,19 @@ public class CycObjectLibraryLoader {
    */
   public <E extends Object> void processAllFieldsForClass(Class<E> libraryClass, CycLibraryFieldHandler handler) {
     handler.onLibraryEvaluationBegin(libraryClass);
-    Collection<Field> fields = getAllFields(libraryClass);
-    for (Field field : fields) {
-      try {
-        processCycTerm(libraryClass, field, handler);
-      } catch (Exception ex) {
-        handler.onException(field, ex);
+    final Collection<CycLibraryField> cycFields = getAllCycLibraryFields(libraryClass);
+    final Collection<CycLibraryField> processedFields = new ArrayList();
+    for (CycLibraryField cycField : cycFields) {
+      if (this.isFieldToBeIncluded(cycField)) {
+        try {
+          processCycTerm(libraryClass, cycField, handler);
+          processedFields.add(cycField);
+        } catch (Exception ex) {
+          handler.onException(cycField, ex);
+        }
       }
     }
-    handler.onLibraryEvaluationEnd(libraryClass);
+    handler.onLibraryEvaluationEnd(libraryClass, processedFields);
   }
   
   /**
@@ -218,17 +206,16 @@ public class CycObjectLibraryLoader {
    * 
    * @param <E>
    * @param objects
-   * @param access
    * @return a Collection of all the CycObjects which are
    * <strong>not</strong> present in said KB
    * @throws CycConnectionException
    * @throws CycApiException 
    */
-  public <E extends CycObject> Collection<E> findMissingCycObjects(Collection<E> objects, CycAccess access)
+  public <E extends CycObject> Collection<E> findMissingCycObjects(Collection<E> objects)
           throws CycConnectionException, CycApiException {
     final Collection<E> results = new ArrayList<E>();
     for (E obj : objects) {
-      if (!isCycObjectInKB(access, obj)) {
+      if (!isCycObjectInKB(obj)) {
         results.add(obj);
       }
     }
@@ -243,17 +230,16 @@ public class CycObjectLibraryLoader {
    * 
    * @param <E>
    * @param classFilter
-   * @param access
    * @return a Collection of the values for all valid fields which are instances of classFilter (for
    * all {@link com.cyc.base.annotation.CycObjectLibrary} classes) which are <strong>not</strong>
    * present in the KB of the Cyc specified by the {@link CycAccess} object
    * @throws CycConnectionException
    * @throws CycApiException 
    */
-  public <E extends CycObject> Collection<E> findMissingCycObjects(Class<E> classFilter, CycAccess access)
+  public <E extends CycObject> Collection<E> findMissingCycObjects(Class<E> classFilter)
           throws CycConnectionException, CycApiException {
     final Collection<E> objs = this.getAllObjects(classFilter);
-    return findMissingCycObjects(objs, access);
+    return findMissingCycObjects(objs);
   }
   
   /**
@@ -261,24 +247,82 @@ public class CycObjectLibraryLoader {
    * all {@link com.cyc.base.annotation.CycObjectLibrary} classes which are <strong>not</strong>
    * present in the KB of the Cyc specified by the {@link CycAccess} object.
    * 
-   * @param access
    * @return a Collection of the {@link com.cyc.base.cycobject.CycObject}s for
    * all {@link com.cyc.base.annotation.CycObjectLibrary} classes which are <strong>not</strong>
    * present in the KB of the Cyc specified by the {@link CycAccess} object
    * @throws CycConnectionException
    * @throws CycApiException 
    */
-  public Collection<CycObject> findMissingCycObjects(CycAccess access)
+  public Collection<CycObject> findMissingCycObjects()
           throws CycConnectionException, CycApiException {
-    return findMissingCycObjects(CycObject.class, access);
+    return findMissingCycObjects(CycObject.class);
+  }
+  
+  /**
+   * Returns a collections of all valid {@link CycLibraryField}s for a given class.
+   * 
+   * @param clazz
+   * @return a collection of CycLibraryFields for a given class
+   */
+  public Collection<CycLibraryField> getAllCycLibraryFields(Class<?> clazz) {
+    final Collection<CycLibraryField> results = new ArrayList<CycLibraryField>();
+    Field[] fields = clazz.getDeclaredFields();
+    for (Field field : fields) {
+      CycLibraryField cycField = new CycLibraryField(field);
+      if (isFieldValid(clazz, cycField)) {
+        results.add(cycField);
+      }
+    }
+    return results;
   }
   
 
   // Protected
   
-  protected boolean isCycObjectInKB(CycAccess access, CycObject obj)
+  protected CycAccess getAccess() {
+    return this.access;
+  }
+    
+  protected String getObjectCycLValue(Object o) {
+    if (CycObject.class.isInstance(o)) {
+      return ((CycObject) o).cyclify();
+    } else if (o != null) {
+      return o.toString();
+    }
+    return null;
+  }
+
+    
+  // Private
+  
+  /**
+   * Determines whether a field is suitable for inclusion. May be overridden
+   * with more (or less) restrictive criteria.
+   * 
+   * @param field
+   * @return true if a field is suitable for inclusion
+   */
+  private boolean isFieldValid(Class libraryClass, CycLibraryField cycField) {
+    final CycObjectLibrary lib = (CycObjectLibrary) libraryClass.getAnnotation(CycObjectLibrary.class);
+    return Modifier.isFinal(cycField.getField().getModifiers())
+            && Modifier.isPublic(cycField.getField().getModifiers())
+            && (cycField.isAnnotated() || !lib.requireFieldAnnotations());
+  }
+  
+  private boolean isFieldToBeIncluded(CycLibraryField cycField) {
+    if (!isRequiringOptionalFields() && cycField.isOptional()) {
+      System.out.println("Skipping field " + cycField + ": Optional.");
+      return false;
+    } else if (isOpenCyc() && !cycField.includedInOpenCycKB) {
+      System.out.println("Skipping field " + cycField + ": Not included in OpenCyc.");
+      return false;
+    }
+    return true;
+  }
+  
+  private boolean isCycObjectInKB(CycObject obj)
           throws CycConnectionException, CycApiException {
-    final InspectorTool inspector = access.getInspectorTool();
+    final InspectorTool inspector = getAccess().getInspectorTool();
     if (ELMt.class.isInstance(obj)) {
       return inspector.isELMtInKB((ELMt) obj);
     } else if (CycConstant.class.isInstance(obj)) {
@@ -291,36 +335,19 @@ public class CycObjectLibraryLoader {
     return false;
   }
   
-  protected void processCycTerm(Class libraryClass, Field field, CycLibraryFieldHandler handler) throws IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-    final CycFieldAnnotationParser ann = new CycFieldAnnotationParser(field);    
-    String expected = null;
+  private void processCycTerm(Class libraryClass, CycLibraryField cycField, CycLibraryFieldHandler handler) throws IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
     Boolean equivalent = null;
-    final Object o = field.get(getLibraryInstance(libraryClass));
+    final Object o = cycField.getField().get(getLibraryInstance(libraryClass));
     final String value = getObjectCycLValue(o);
-    //if (ann.isAnnotated() && !ann.isOptional()) {
-    if (ann.isAnnotated()) {
-      expected = ann.getCycl();
+    //if (cycField.isAnnotated() && !cycField.isOptional()) {
+    if (cycField.isAnnotated()) {
+      final String expected = cycField.getCycl();
       equivalent = (expected != null) ? expected.equals(value) : (value == null);
     }
-    handler.onFieldEvaluation(field, value, ann.isAnnotated(), expected, equivalent);
+    handler.onFieldEvaluation(cycField, value, equivalent);
   }
   
-  /**
-   * Determines whether a field is suitable for inclusion. May be overridden
-   * with more (or less) restrictive criteria.
-   * 
-   * @param field
-   * @return true if a field is suitable for inclusion
-   */
-  protected boolean isFieldValid(Class libraryClass, Field field) {
-    final CycFieldAnnotationParser ann = new CycFieldAnnotationParser(field);    
-    final CycObjectLibrary lib = (CycObjectLibrary) libraryClass.getAnnotation(CycObjectLibrary.class);
-    return Modifier.isFinal(field.getModifiers())
-            && Modifier.isPublic(field.getModifiers())
-            && (ann.isAnnotated() || !lib.requireFieldAnnotations());
-  }
-  
-  protected Object getLibraryInstance(Class libraryClass) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  private Object getLibraryInstance(Class libraryClass) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final CycObjectLibrary lib = (CycObjectLibrary) libraryClass.getAnnotation(CycObjectLibrary.class);
     if ((lib.accessor() != null) && !lib.accessor().isEmpty()) {
       String accessorName = getSingletonAccessMethodName(libraryClass);
@@ -345,16 +372,7 @@ public class CycObjectLibraryLoader {
     return null;
   }
   
-  protected String getObjectCycLValue(Object o) {
-    if (CycObject.class.isInstance(o)) {
-      return ((CycObject) o).cyclify();
-    } else if (o != null) {
-      return o.toString();
-    }
-    return null;
-  }
-  
-  protected String getSingletonAccessMethodName(Class libraryClass) {
+  private String getSingletonAccessMethodName(Class libraryClass) {
     final CycObjectLibrary lib = (CycObjectLibrary) libraryClass.getAnnotation(CycObjectLibrary.class);
     return lib.accessor();
   }
@@ -367,34 +385,41 @@ public class CycObjectLibraryLoader {
    * @param field
    * @param ex 
    */
-  protected void handleException(Field field, Exception ex) {
-    String msg = "Error accessing field " + field.getName();
+  private void handleException(CycLibraryField cycField, Exception ex) {
+    String msg = "Error accessing field " + cycField.getField().getName();
     logger.error(msg, ex);
     throw new BaseClientRuntimeException(msg, ex);
   }
+    
+  protected boolean isOpenCyc() {
+    try {
+      return getAccess().isOpenCyc();
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    }
+  }
   
-  protected boolean isIncludeOptionalFields() { return false; }
   
-  
-  // Internal
-  
+  // Inner classes
+    
   /**
    * Interface for an object which handles the results of a 
    * {@link CycObjectLibraryLoader#processAllFieldsForClass(java.lang.Class, com.cyc.baseclient.CycObjectLibraryLoader.CycLibraryFieldHandler) CycObjectLibraryLoader#processAllFieldsForClass}
    */
   public interface CycLibraryFieldHandler {
     void onLibraryEvaluationBegin(Class libraryClass);
-    void onFieldEvaluation(Field field, String cyclValue, boolean hasAnnotation, String expectedCycLValue, Boolean equivalent);
-    void onException(Field field, Exception ex);
-    void onLibraryEvaluationEnd(Class libraryClass);
+    void onFieldEvaluation(CycLibraryField cycField, String cyclValue, Boolean equivalent);
+    void onException(CycLibraryField cycField, Exception ex);
+    void onLibraryEvaluationEnd(Class libraryClass, Collection<CycLibraryField> processedFields);
   }
   
   /**
-   * Wrapper for {@link CycTerm}, {@link CycFormula}, and any other related annotations a field might have.
+   * Wrapper for a field describing a Cyc object, along with any cycFieldotations ({@link CycTerm}, 
+   * {@link CycFormula}, etc.) which it might have.
    */
-  public class CycFieldAnnotationParser {
+  public class CycLibraryField {
     
-    public CycFieldAnnotationParser(Field field) {
+    public CycLibraryField(Field field) {
       this.field = field;
       if (field.getAnnotation(CycTerm.class) != null) {
         process(field.getAnnotation(CycTerm.class));
@@ -407,12 +432,14 @@ public class CycObjectLibraryLoader {
       this.ann = term;
       this.cycl = term.cycl();
       this.optional = term.optional();
+      this.includedInOpenCycKB = term.includedInOpenCycKB();
     }
     
     final protected void process(CycFormula formula) {
       this.ann = formula;
       this.cycl = formula.cycl();
       this.optional = formula.optional();
+      this.includedInOpenCycKB = formula.includedInOpenCycKB();
     }
     
     public Field getField() {
@@ -435,15 +462,14 @@ public class CycObjectLibraryLoader {
       return optional;
     }
     
+    public boolean isIncludedInOpenCycKB() {
+      return includedInOpenCycKB;
+    }
+    
     final private Field field;
     private Annotation ann = null;
     private String cycl = null;
     private boolean optional = false;
+    private boolean includedInOpenCycKB = true;
   }
-  
-  
-  
-  
-  private static CycObjectLibraryLoader ME;
-  private final Logger logger;
 }

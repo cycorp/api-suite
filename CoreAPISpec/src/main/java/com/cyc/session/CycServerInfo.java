@@ -43,9 +43,9 @@ public interface CycServerInfo {
    * been initialized (i.e., <code>getStatus().equals(SessionStatus.UNINITIALIZED)</code>)
    * this method should return <code>null</code>.
    * 
-   * @return CycServer address of server connected to, or null if CycSession is uninitialized.
+   * @return CycServerAddress of server connected to, or null if CycSession is uninitialized.
    */
-  CycServer getCycServer();
+  CycServerAddress getCycServer();
     
   /**
    * Returns the browser URL for the Cyc image that this CycSession is connected
@@ -57,7 +57,17 @@ public interface CycServerInfo {
    * @return browser URL
    */
   String getBrowserUrl();
-
+  
+  /**
+   * Returns an enum representing the Cyc server type. E.g., OpenCyc, ResearchCyc, EnterpriseCyc, 
+   * etc.
+   * 
+   * @return an instance of CycServerReleaseType describing the Cyc server type.
+   * @throws SessionCommunicationException
+   * @throws SessionCommandException 
+   */
+  CycServerReleaseType getSystemReleaseType() throws SessionCommunicationException, SessionCommandException;
+  
   /**
    * Returns the KB version string (KBNum.OperationCount) for the Cyc server.
    *
@@ -77,18 +87,33 @@ public interface CycServerInfo {
    * @throws SessionCommandException if an error occurs in issuing a command to the Cyc server.
    */
   String getCycRevisionString() throws SessionCommunicationException, SessionCommandException;
-
+  
   /**
-   * Determines whether the server is expected to be fully compatible with this API.
-   * Note that there are a number of factors which may effect compatibility, so
-   * this answer should be construed as an expectation, not a guarantee. Likewise, a result
-   * of false does not mean that the server is completely incompatible with the API,
-   * but some functionality may be missing or broken.
+   * Returns the Cyc minor revision number (akin to the patch number).
+   *
+   * @return the Cyc minor revision number for the Cyc server.
+   *
+   * @throws SessionCommunicationException if a communications error occurs or the Cyc server cannot be found.
+   * @throws SessionCommandException if an error occurs in issuing a command to the Cyc server.
+   */
+  int getCycMinorRevisionNumber() throws SessionCommunicationException, SessionCommandException;
+  
+  /**
+   * Determines whether the server is expected to be able to support basic API functionality
+   * (assertions, lookups, queries, etc.) A result of true does not ensure total compatibility, and
+   * some functionality may be missing or broken.
+   * 
+   * <p>Note that there are a number of factors which may effect compatibility, so
+   * this answer should be construed as an expectation, not a guarantee. For more specific 
+   * information about what functionality is support by a particular server, see 
+   * {@link UnsupportedCycServerException}.
    * 
    * @return boolean
    * 
    * @throws SessionCommunicationException if a communications error occurs or the Cyc server cannot be found.
    * @throws SessionCommandException if an error occurs in issuing a command to the Cyc server.
+   * 
+   * @see com.cyc.session.exception.UnsupportedCycServerException
    */
   boolean isAPICompatible() throws SessionCommunicationException, SessionCommandException;
   

@@ -26,7 +26,7 @@ import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycSymbol;
-import com.cyc.base.inference.InferenceParameterValueDescription;
+import com.cyc.query.InferenceParameterValueDescription;
 import java.util.Map;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
@@ -41,14 +41,14 @@ import com.cyc.baseclient.cycobject.CycSymbolImpl;
  *
  * @author zelal
  * @date August 9, 2005, 9:09 PM
- * @version $Id: DefaultIntegerInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultIntegerInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class DefaultIntegerInferenceParameter extends AbstractInferenceParameter
         implements IntegerInferenceParameter {
 
   //// Constructors
   /** Creates a new instance of DefaultBooleanInferenceParameter. */
-  public DefaultIntegerInferenceParameter(Map<CycSymbol, Object> propertyMap) {
+  public DefaultIntegerInferenceParameter(Map<String, Object> propertyMap) {
     super(propertyMap);
     for (int i = 0, size = REQUIRED_SYMBOLS.length; i < size; i++) {
       if (propertyMap.get(REQUIRED_SYMBOLS[i]) == null) {
@@ -62,7 +62,7 @@ public class DefaultIntegerInferenceParameter extends AbstractInferenceParameter
     init(((Number) maxValObj).longValue(), ((Number) minValObj).longValue());
   }
 
-  protected DefaultIntegerInferenceParameter(Object defaultValue, CycSymbol keyword,
+  protected DefaultIntegerInferenceParameter(Object defaultValue, String keyword,
           Fort id, String shortDescription, String longDescription,
           CycSymbol isBasicParameter, CycSymbol isQueryStaticParameter, CycList alternateValue,
           Number minValue, Number maxValue) {
@@ -149,9 +149,9 @@ public class DefaultIntegerInferenceParameter extends AbstractInferenceParameter
   //// Internal Rep
   private long maxValue;
   private long minValue;
-  private final static CycSymbol MAX_VALUE_SYMBOL = new CycSymbolImpl(":MAX-VALUE");
-  private final static CycSymbol MIN_VALUE_SYMBOL = new CycSymbolImpl(":MIN-VALUE");
-  private final static CycSymbol[] REQUIRED_SYMBOLS = {MAX_VALUE_SYMBOL,
+  private final static String MAX_VALUE_SYMBOL = ":MAX-VALUE";
+  private final static String MIN_VALUE_SYMBOL = ":MIN-VALUE";
+  private final static String[] REQUIRED_SYMBOLS = {MAX_VALUE_SYMBOL,
     MIN_VALUE_SYMBOL};
   public static final CycSymbol POSITIVE_INFINITY = CycObjectFactory.makeCycSymbol(":POSITIVE-INFINITY");
 }

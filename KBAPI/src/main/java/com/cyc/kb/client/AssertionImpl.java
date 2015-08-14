@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 157022 2015-03-11 16:19:37Z nwinant $
+ * @version $Id: AssertionImpl.java 158340 2015-05-08 16:53:45Z arebguns $
  * @since 1.0
  */
 public class AssertionImpl extends StandardKBObject implements Assertion {
@@ -627,12 +627,13 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
     } else {
       try {
         getAccess().getUnassertTool().blastAssertion((CycAssertion)(this.getCore()), true, KBAPIConfiguration.getShouldTranscriptOperations());
+        setIsValid(false);
       } catch (CycConnectionException ex) {
         log.warn("Unable to forcefully delete assertion {}", this);
-         throw new KBApiRuntimeException("Couldn't forcefully delete fact: " + core.toString(), ex);
+        throw new KBApiRuntimeException("Couldn't forcefully delete fact: " + core.toString(), ex);
       } catch (CycApiException ex) {
         log.warn("Unable to forcefully delete assertion {}", this);
-         throw new KBApiRuntimeException("Couldn't forcefully delete fact: " + core.toString(), ex);
+        throw new KBApiRuntimeException("Couldn't forcefully delete fact: " + core.toString(), ex);
       }
   }
   }

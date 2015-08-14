@@ -32,6 +32,7 @@ import org.junit.AfterClass;
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class RelationTest {
 
@@ -47,7 +48,7 @@ public class RelationTest {
   public static void tearDown() throws Exception {
   }
 
-  //@Test
+  @Test
   public void testArity() throws KBApiException, UnknownHostException, IOException, Exception {
     KBPredicateImpl p = KBPredicateImpl.get("isa");
     assertTrue(p.getArityMin() == 2);

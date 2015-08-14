@@ -46,7 +46,7 @@ public interface KBObject {
    * @param p	the Predicate of the returned fact
    * @param thisArgPos	the position where <code>this</code> is found in the fact
    * @param ctx the Context. If null, returns facts from the default context
-   * {@link KBAPIDefaultContext#forQuery()}
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}
    *
    * @return a collection of facts, empty if none are found
    */
@@ -68,7 +68,7 @@ public interface KBObject {
    * @param <O> the type of the objects returned
    * @param ctxStr the string representation of the context. If set to "",
    * returns facts from the default context
-   * {@link KBAPIDefaultContext#forQuery()}
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}
    *
    * @return a collection of objects of type O
    *
@@ -93,7 +93,7 @@ public interface KBObject {
    * candidate facts
    * @param <O> the type of the objects returned
    * @param ctx the context where the facts are found. If null, returns facts
-   * from the default context {@link KBAPIDefaultContext#forQuery()}
+   * from the default context {@link com.cyc.kb.config.DefaultContext#forQuery()}
    *
    * @return a collection of objects of type O
    *
@@ -120,7 +120,7 @@ public interface KBObject {
    * @param matchArgPos	the argument position that must be filled with matchArg
    * @param <O>	the type of the objects returned
    * @param ctx	the context. If null, returns facts from the default context
-   * {@link KBAPIDefaultContext#forQuery()}
+   * {@link com.cyc.kb.config.DefaultContext#forQuery()}
    *
    * @return a collection of objects of type O
    */
@@ -475,7 +475,7 @@ public interface KBObject {
 
   /**
    * gets all the comments for <code>this</code> visible from the default
-   * context {@link KBAPIDefaultContext#forQuery()}
+   * context {@link com.cyc.kb.config.DefaultContext#forQuery()}
    * <p>
    *
    * @return comment strings

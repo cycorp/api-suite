@@ -32,7 +32,7 @@ public interface KBIndividual extends KBTerm {
 
   /**
    * finds the types this KBIndividual is asserted to be an instance of, from
-   * the default context specified by {@link KBAPIDefaultContext#forQuery()}.
+   * the default context specified by {@link com.cyc.kb.config.DefaultContext#forQuery()}.
    * Essentially, this returns the asserted bindings for <code>?X</code> from
    * <code>(#$isa this ?X)</code>.
    *

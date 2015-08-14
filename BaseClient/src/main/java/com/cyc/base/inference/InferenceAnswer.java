@@ -21,6 +21,7 @@ package com.cyc.base.inference;
  * #L%
  */
 
+import com.cyc.query.InferenceAnswerIdentifier;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycVariable;
 

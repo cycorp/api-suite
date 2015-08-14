@@ -21,24 +21,10 @@ package com.cyc.base;
  * #L%
  */
 
-import com.cyc.baseclient.testing.TestUtils;
-import com.cyc.base.CycAccess;
-import com.cyc.base.CycAccessManager;
-import com.cyc.base.cycobject.FormulaSentence;
-import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-import com.cyc.baseclient.cycobject.CycVariableImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
-import com.cyc.base.cycobject.ELMt;
-import com.cyc.base.inference.InferenceParameters;
-import com.cyc.base.inference.InferenceResultSet;
 import com.cyc.baseclient.CycClientManager;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Test;
-import static com.cyc.baseclient.CommonConstants.*;
-import static com.cyc.baseclient.testing.TestConstants.*;
 import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSession.SessionStatus;
 import com.cyc.session.CycSessionConfiguration;
@@ -55,7 +41,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
 
 public class CycAccessManagerIT  {
 
@@ -126,7 +111,7 @@ public class CycAccessManagerIT  {
   public void testLegacyCycAccessManager() throws SessionApiException {
     final CycSession session1 = CycSessionManager.getCurrentSession();
     final CycAccess cyc1 = CycAccessManager.getCurrentAccess();
-    final CycServer server1 = cyc1.getServerInfo().getCycServer();
+    final CycServerAddress server1 = cyc1.getServerInfo().getCycServer();
     assertEquals(session1, cyc1.getCycSession());
     assertEquals(server1, session1.getServerInfo().getCycServer());
      
@@ -154,4 +139,22 @@ public class CycAccessManagerIT  {
     assertEquals(cyc2, CycAccessManager.getCurrentAccess());
   }
   
+  //@Test
+  public void testCloseCycAccessOnFail() throws SessionConfigurationException, SessionInitializationException, InterruptedException{
+    try {
+      final CycServer server = new CycServer("nonexisting-host", 3600);
+      CycAccessManager.get().setCurrentSession(new CycServer("nonexisting-host", 3600));
+      CycAccessManager.getCurrentAccess();
+    } catch (SessionCommunicationException ex) {
+      ex.printStackTrace(System.out);
+    }
+    for (int i=0; i<=70; i++) {
+      System.out.print(".");
+      if ((i + 1) % 10 == 0) {
+        System.out.println("  " + (i + 1));
+      }
+      Thread.sleep(1000);
+    }
+    System.out.println("... Should have thrown a CycTimeOutException by now.");
+  }
 }

@@ -151,7 +151,9 @@ public class TestConstants {
     flying2Pred1.addGeneralization(KBPredicateImpl.get("doneBy"), Constants.uvMt());
         
     // objectActedOn is on self in Flying-Move
-    
+    BinaryPredicate destinationList = BinaryPredicateImpl.findOrCreate("flightDestinationList");
+    destinationList.addArgIsa(2, "(ListOfTypeFn GeopoliticalEntity)", "BaseKB");
+    destinationList.addArgIsa(1, "FlyingAnObject-Operate", "BaseKB");
     
     FirstOrderCollection flying3Col = FirstOrderCollectionImpl.findOrCreate("Flying-Travel");
     FirstOrderCollectionImpl travel = FirstOrderCollectionImpl.get("Travel-TripEvent");
@@ -253,7 +255,7 @@ public class TestConstants {
     sandlist.add(s4);
     Sentence sand = SentenceImpl.and(sandlist);
 
-    SentenceImpl rule = new SentenceImpl(KBIndividualImpl.get("implies"), sand, s6);
+    SentenceImpl rule = new SentenceImpl(LogicalConnectiveImpl.get("implies"), sand, s6);
     
     // flyingRule = AssertionImpl.findOrCreate(rule, Constants.baseKbMt(), null, Direction.FORWARD);
     // flyingRule = RuleImpl.findOrCreate(SentenceImpl.implies(sandlist, s6), Constants.baseKbMt(), KBAPIEnums.Strength.AUTO, Direction.FORWARD);

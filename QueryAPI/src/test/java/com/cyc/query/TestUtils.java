@@ -26,14 +26,29 @@ import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.kb.Context;
+import com.cyc.kb.KBStatus;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
+import com.cyc.kb.client.KBObjectFactory;
+import com.cyc.kb.client.KBObjectImpl;
 import com.cyc.kb.client.SentenceImpl;
 import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.config.KBAPIConfiguration;
 import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBApiRuntimeException;
+import com.cyc.session.CycSession;
+import com.cyc.session.CycSessionManager;
+import com.cyc.session.SessionApiException;
+import com.cyc.session.SessionCommunicationException;
+import com.cyc.session.SessionConfigurationException;
+import com.cyc.session.SessionInitializationException;
+import com.cyc.session.compatibility.CycSessionRequirement;
+import com.cyc.session.compatibility.CycSessionRequirementList;
+import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.internal.TestEnvironmentProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -55,6 +70,7 @@ public class TestUtils {
   public static Variable X;
   public static Sentence xIsaEmu;
   public static Context inferencePSC;
+  private static final Logger LOG = LoggerFactory.getLogger("Query API test suite");
 
   private static boolean initialized = false;
 
@@ -63,7 +79,7 @@ public class TestUtils {
       try {
         KBAPIConfiguration.setShouldTranscriptOperations(false);
         cyc = CycAccessManager.getCurrentAccess();
-        System.out.println("current cyc: " + cyc);
+        System.out.println("Current Cyc: * * *  " + cyc.getServerInfo().getCycServer() + "  * * *");
         X = new VariableImpl("?X");
         xIsaEmu = new SentenceImpl(Constants.isa(), X, testConstants().emu());
         inferencePSC = Constants.inferencePSCMt();
@@ -76,7 +92,7 @@ public class TestUtils {
 
   static Query constructXIsaBirdQuery() throws QueryConstructionException {
     try {
-      return new Query(xIsaBird(), inferencePSC);
+      return QueryFactory.getQuery(xIsaBird(), inferencePSC);
     } catch (KBApiException ex) {
       throw new QueryConstructionException(ex);
     }
@@ -87,4 +103,46 @@ public class TestUtils {
       q.close();
     }
   }
+  
+  public static void assumeKBObject(String nameOrId, Class<? extends KBObjectImpl> clazz) {
+    // TODO: this should be moved into a CycSessionRequirement.
+    org.junit.Assume.assumeTrue(KBObjectFactory.getStatus(nameOrId, clazz).equals(KBStatus.EXISTS_AS_TYPE));
+  }
+  
+  public static void assumeCycSessionRequirement(CycSessionRequirement requirement) {
+    // TODO: move this into some central test library
+    try {
+      org.junit.Assume.assumeTrue(requirement.isCompatible(getSession()));
+    } catch (SessionApiException ex) {
+      ex.printStackTrace(System.err);
+      throw new RuntimeException(ex);
+    }
+  }
+  
+  public static void assumeCycSessionRequirements(CycSessionRequirementList requirements) {
+    // TODO: move this into some central test library
+    try {
+      org.junit.Assume.assumeTrue(requirements.isCompatible());
+    } catch (SessionApiException ex) {
+      ex.printStackTrace(System.err);
+      throw new RuntimeException(ex);
+    }
+  }
+  
+  public static void assumeNotOpenCyc() {
+    // TODO: move this into some central test library
+    
+    // To toggle #areOpenCycTestsForcedToRun, edit "cyc.test.forceOpenCycTestsToRun" in the pom.xml
+    if (!TestEnvironmentProperties.get().areOpenCycTestsForcedToRun()) {
+      assumeCycSessionRequirement(NotOpenCycRequirement.NOT_OPENCYC);
+    }
+  }
+  
+  private static CycSession getSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
+    if (cyc != null) {
+      return cyc.getCycSession();
+    }
+    return CycSessionManager.getCurrentSession();
+  }
+  
 }

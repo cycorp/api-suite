@@ -79,7 +79,7 @@ public class ConfigurationLoaderManager {
    * Order of precedence:
    * <ul>
    * <li>If the CycSessionConfiguration is sufficiently configured, use it.</li>
-   * <li>Load a policy file, if specified.</li>
+   * <li>Load a configuration file, if specified.</li>
    * <li>Use a {@link SessionConfigurationLoader}, if one is specified.</li>
    * <li>Poll the user interactively via a GUI prompt, if allowed and if in a graphical environment.</li>
    * <li>Otherwise, return the original (presumably insufficient) configuration to be dealt with somehow.</li>
@@ -99,11 +99,11 @@ public class ConfigurationLoaderManager {
       LOGGER.debug("Found a sufficient configuration: {}", config);
       return config;
     }
-    if (config.getPolicyFileName() != null) {
-      return expandConfiguration(loadConfigurationViaPolicyFileName(config.getPolicyName(), environment), environment);
+    if (config.getConfigurationFileName() != null) {
+      return expandConfiguration(loadConfigurationViaConfigFileName(config.getConfigurationLoaderName(), environment), environment);
     }
-    if (config.getPolicyName() != null) {
-      return expandConfiguration(loadConfigurationViaPolicyName(config.getPolicyName(), environment), environment);
+    if (config.getConfigurationLoaderName() != null) {
+      return expandConfiguration(loadConfigurationViaConfigLoaderName(config.getConfigurationLoaderName(), environment), environment);
     }
     if (isGuiAllowed(config, environment)) {
       return expandConfiguration(loadConfigurationViaGUI(environment), environment);
@@ -123,21 +123,21 @@ public class ConfigurationLoaderManager {
     return loader.getConfiguration();
   }
   
-  public CycSessionConfiguration loadConfigurationViaPolicyName(String policyName, EnvironmentConfiguration environment) throws SessionConfigurationException {
-    LOGGER.debug("Attempting to load configuration named '{}'...", policyName);
-    if (EnvironmentConfigurationLoader.NAME.equals(policyName)) {
+  public CycSessionConfiguration loadConfigurationViaConfigLoaderName(String configLoaderName, EnvironmentConfiguration environment) throws SessionConfigurationException {
+    LOGGER.debug("Attempting to load configuration named '{}'...", configLoaderName);
+    if (EnvironmentConfigurationLoader.NAME.equals(configLoaderName)) {
       // Internal EnvironmentConfigurationLoader always gets precedence
       return loadConfiguration(new EnvironmentConfigurationLoader(), environment);
     }
-    if (getConfigurationLoaders().containsKey(policyName)) {
-      final SessionConfigurationLoader loader = getConfigurationLoaders().get(policyName);
+    if (getConfigurationLoaders().containsKey(configLoaderName)) {
+      final SessionConfigurationLoader loader = getConfigurationLoaders().get(configLoaderName);
       return loadConfiguration(loader, environment);
     }
-    throw new SessionConfigurationException("Configuration policy named '" + policyName + "' was requested, but no such policy could be found.");
+    throw new SessionConfigurationException("SessionConfigurationLoader named '" + configLoaderName + "' was requested, but no such loader could be found.");
   }
   
-  public CycSessionConfiguration loadConfigurationViaPolicyFileName(String filename, EnvironmentConfiguration environment) throws SessionConfigurationException {
-    LOGGER.debug("Attempting to load configuration via policy file {}...", filename);
+  public CycSessionConfiguration loadConfigurationViaConfigFileName(String filename, EnvironmentConfiguration environment) throws SessionConfigurationException {
+    LOGGER.debug("Attempting to load configuration via config file {}...", filename);
     return loadConfiguration(new PropertiesConfigurationLoader(), environment);
   }
   

@@ -24,15 +24,16 @@ package com.cyc.km.query.construction;
  * limitations under the License.
  * #L%
  */
-import com.cyc.base.CycConnectionException;
 import com.cyc.nl.Span;
-import com.cyc.query.Query;
 import com.cyc.km.modeling.task.CycBasedTask;
 import com.cyc.query.TestUtils;
 import com.cyc.kb.KBObject; 
 import com.cyc.kb.KBPredicate;
 import com.cyc.kb.exception.KBApiException;
+import com.cyc.query.Query;
 import com.cyc.query.QueryApiTestConstants;
+import static com.cyc.query.TestUtils.assumeNotOpenCyc;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Collection;
@@ -56,7 +57,8 @@ public class QuerySearchTest {
   }
 
   @BeforeClass
-  public static void setUpClass() throws KBApiException, IOException, CycConnectionException {
+  public static void setUpClass() throws KBApiException, IOException, OpenCycUnsupportedFeatureException {
+    assumeNotOpenCyc();
     TestUtils.ensureConstantsInitialized();
     task = new CycBasedTask(QueryApiTestConstants.getInstance().generalCycKE);
     plant = QueryApiTestConstants.getInstance().plant;
@@ -123,32 +125,19 @@ public class QuerySearchTest {
 
   /**
    * Test of getQueries method, of class QuerySearch.
-   * 
-   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
-   * all Cyc releases.
    */
-  @Deprecated
-  //@Test
+  @Test
   public void testGetQueries() {
     System.out.println("getQueries");
     Collection<Query> result = Collections.emptyList();
-    try {
-      result = querySearch.getQueries();
-    } catch (Exception ex) {
-      ex.printStackTrace(System.err);
-      fail("Got exception getting queries.");
-    }
+    result = querySearch.getQueries();
     assertFalse("Found no queries.", result.isEmpty());
   }
 
   /**
    * Test of getQueryLocations method, of class QuerySearch.
-   * 
-   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
-   * all Cyc releases.
    */
-  @Deprecated
-  //@Test
+  @Test
   public void testGetQueryLocations() throws KBApiException {
     System.out.println("getQueryLocations");
     final Collection<Query> queries = querySearch.getQueries();
@@ -170,12 +159,8 @@ public class QuerySearchTest {
 
   /**
    * Test of getSituatedQueries method, of class QuerySearch.
-   * 
-   * This test is <strong>disabled</strong> until it can be rewritten to use vocabulary present in
-   * all Cyc releases.
    */
-  @Deprecated
-  //@Test
+  @Test
   public void testGetSituatedQueries() throws KBApiException {
     System.out.println("getSituatedQueries");
     final Collection<Query> queries = querySearch.getQueries();

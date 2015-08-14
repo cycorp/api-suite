@@ -39,7 +39,7 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author zelal
  * @date August 9, 2005, 9:09 PM
- * @version $Id: DefaultBooleanInferenceParameter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultBooleanInferenceParameter.java 158569 2015-05-19 21:51:08Z daves $
  */
 public class DefaultBooleanInferenceParameter extends AbstractInferenceParameter implements BooleanInferenceParameter {
 
@@ -47,11 +47,11 @@ public class DefaultBooleanInferenceParameter extends AbstractInferenceParameter
   /** Creates a new instance of DefaultBooleanInferenceParameter.
    * @param propertyMap a map of parameters to their values.
    */
-  public DefaultBooleanInferenceParameter(Map<CycSymbol, Object> propertyMap) {
+  public DefaultBooleanInferenceParameter(Map<String, Object> propertyMap) {
     super(propertyMap);
   }
 
-  protected DefaultBooleanInferenceParameter(Boolean defaultValue, CycSymbol keyword,
+  protected DefaultBooleanInferenceParameter(Boolean defaultValue, String keyword,
           Fort id, String shortDescription, String longDescription,
           CycSymbol isBasicParameter, CycSymbol isQueryStaticParameter, CycList alternateValue) {
     super(defaultValue, keyword, id, shortDescription, longDescription, isBasicParameter,
