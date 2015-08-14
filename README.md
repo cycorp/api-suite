@@ -1,9 +1,9 @@
 Cyc Core API Suite
 ==================
 
-**Latest release:** [1.0.0-rc3](https://github.com/cycorp/CycCoreAPI/releases)
+**Latest release:** [1.0.0-rc2](https://github.com/cycorp/CycCoreAPI/releases)
 
-**Current snapshot version:** 1.0.0-rc4-SNAPSHOT  
+**Current snapshot version:** 1.0.0-rc3-SNAPSHOT  
 **License:** [Apache 2.0](LICENSE)  
 **Changes:** See the [CHANGELOG](CHANGELOG.md)  
 **Documentation:** [Cyc Developer Center](http://dev.cyc.com/api/core/)  
@@ -41,7 +41,7 @@ Requirements
 * [Apache Maven](http://maven.apache.org/) version `3.2` or higher to build the sources. If you are
   new to Maven, you may wish to view the [quick start](http://maven.apache.org/run-maven/index.html).
 
-The APIs may be used without Maven via the `cyc-core-suite-1.0.0-rc3-jar-with-dependencies.jar`.
+The APIs may be used without Maven via the `cyc-core-suite-1.0.0-rc2-jar-with-dependencies.jar`.
 See [Standalone Bundle](#standalone-bundle), below.
 
 ### Cyc Server
@@ -63,7 +63,7 @@ For inquiries about obtaining a suitable version of Cyc, please visit the
 
 ### Server Code Patching
 
-As of version 1.0.0-rc3, the Core API Suite requires SubL code patches which are not present in
+As of version 1.0.0-rc2, the Core API Suite requires SubL code patches which are not present in
 _ResearchCyc 4.0q_ or _EnterpriseCyc 1.7-preview_. These patches can be applied manually, or they
 can be automatically applied by the API bundle itself.
 
@@ -80,7 +80,7 @@ To use the Cyc Core APIs in a Maven project, add the following dependency to you
     <dependency>
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-suite</artifactId>
-      <version>1.0.0-rc3</version>
+      <version>1.0.0-rc2</version>
     </dependency>
 
 The Core APIs use the [SLF4J](http://www.slf4j.org/) logging API. This does not come with a logging
@@ -103,7 +103,7 @@ implementation, but instead allows you to specify your own. For example, to use
 If you're not using Apache Maven, or can't allow Maven to retrieve dependencies from the Internet,
 you may download this release in a standalone bundle containing:
 
-* A compiled `cyc-core-suite-1.0.0-rc3-jar-with-dependencies.jar`
+* A compiled `cyc-core-suite-1.0.0-rc2-jar-with-dependencies.jar`
 * A `CoreAPITests` project containing the source code for all of the unit tests from the Core API
   Suite, and the dependencies necessary to run them. This project may be run in Maven or as a native
   Eclipse project.
@@ -111,10 +111,10 @@ you may download this release in a standalone bundle containing:
 * The CoreAPIUseCases source code (requires Maven to compile)
 
 The bundle is available from the
-[releases page](https://github.com/cycorp/CycCoreAPI/releases/tag/v1.0.0-rc3) as a tar or zip file:
+[releases page](https://github.com/cycorp/CycCoreAPI/releases/tag/v1.0.0-rc2) as a tar or zip file:
 
-* cyc-core-suite-standalone-1.0.0-rc3.tar.gz
-* cyc-core-suite-standalone-1.0.0-rc3.zip
+* cyc-core-suite-standalone-1.0.0-rc2.tar.gz
+* cyc-core-suite-standalone-1.0.0-rc2.zip
 
 To use a standalone jar in a Maven project, use the "jar-with-dependencies" classifier when 
 specifying the dependency:
@@ -122,7 +122,7 @@ specifying the dependency:
     <dependency>
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-suite</artifactId>
-      <version>1.0.0-rc3</version>
+      <version>1.0.0-rc2</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
 
