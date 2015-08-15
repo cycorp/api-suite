@@ -4,6 +4,10 @@ Cyc Core API Suite CHANGELOG
 For more information, view the [README](README.md) bundled with this release or visit the
 [Cyc Developer Center](http://dev.cyc.com/api/core/). 
 
+**Important note about _backwards-compatibility:_** It is expected that more release candidates will
+follow. Until the final 1.0.0 release, it is expected that future release candidates will break
+backwards compatibility.
+
 1.0.0-rc3 - 2015-08-14
 ----------------------
 
@@ -11,19 +15,22 @@ The third release candidate of Cycorp's new Java API suite. 1.0.0-rc3 is _not ba
 with earlier releases. Note that _ResearchCyc 4.0q_ and _EnterpriseCyc 1.7-preview_ require 
 [server code patching](server-patching.md) for compatibility with the 1.0.0-rc3 release.
 
-#### New: Support for upcoming OpenCyc
+#### New: Support for upcoming OpenCyc release
 
 Adds support for the planned upcoming release of **OpenCyc 5.0-preview**. Note that the OpenCyc 
-server will not have support for some advanced features; see the 
-[README's Requirements section](README.md#requirements) for details. There are no plans to support
-previous versions of OpenCyc.
+server will not have support for advanced features such as QuerySearch or ProofViewJustification. 
+Classes and methods which are not supported by OpenCyc will reflect this in their javadoc 
+description and in their signature by declaring that they throw a 
+`com.cyc.session.exception.OpenCycUnsupportedServerException`.
+
+There are no plans to support previous versions of OpenCyc.
 
 #### Improved: Core API Specification
 
-* _Query API_ interfaces moved into CoreAPISpec.
+* _Query API_ interfaces moved into CoreAPISpec Maven module.
 * Adds the QueryFactory (`com.cyc.query.QueryFactory`) to facilitate query construction.
-* Compatibility with Cyc servers is now better-documented via the `UnsupportedCycOperationException`
-  and `OpenCycUnsupportedFeatureException` exceptions.
+* Compatibility with different Cyc server editions and versions is now better-documented via the 
+  `UnsupportedCycOperationException` and `OpenCycUnsupportedFeatureException` exceptions.
 
 #### Other changes
 

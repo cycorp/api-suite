@@ -4,7 +4,7 @@
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-parent</artifactId>
-  <version>1.0.0-rc3-SNAPSHOT</version>
+  <version>1.0.0-rc3</version>
   <packaging>pom</packaging>
   
   <name>Core API Parent</name>
