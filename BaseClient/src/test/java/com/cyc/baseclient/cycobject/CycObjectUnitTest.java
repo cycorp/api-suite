@@ -192,17 +192,8 @@ public class CycObjectUnitTest {
             ":not-there")));
   }
 
-  /**
-   * Tests the test harness itself.
-   */
   @Test
-  public void testTestHarness() {
-    System.out.println("\n*** testTestHarness ***");
-    assertTrue(true);
-    System.out.println("*** testTestHarness OK ***");
-  }
-
-  public static void testCycNumber() {
+  public void doTestCycNumber() {
     System.out.println("\n*** testCycNumber ***");
     final CycNumberImpl one = new CycNumberImpl(1);
     assertTrue(one instanceof DenotationalTerm);
@@ -437,7 +428,7 @@ public class CycObjectUnitTest {
     assertEquals(cycSymbol.toString(), cycSymbol4.toString());
     assertEquals(cycSymbol, cycSymbol4);
     
-    testCycObjectRetrievable(cycSymbol);
+    doTestCycObjectRetrievable(cycSymbol);
 
     // compareTo
     ArrayList symbols = new ArrayList();
@@ -611,7 +602,7 @@ public class CycObjectUnitTest {
       assertEquals(TAME_ANIMAL.toString(), cycConstant3.toString());
       assertEquals(TAME_ANIMAL.cyclify(), cycConstant3.cyclify());
       assertEquals(TAME_ANIMAL, cycConstant3);
-      testCycObjectRetrievable(TAME_ANIMAL);
+      doTestCycObjectRetrievable(TAME_ANIMAL);
 
 
       // compareTo
@@ -827,8 +818,8 @@ public class CycObjectUnitTest {
     CycVariable cycVariable1000 = new CycVariableImpl(":X");
     assertNotSame(cycVariable1, cycVariable1000);
 
-    testCycObjectRetrievable(VAR_0);
-    testCycObjectRetrievable(VAR_X);
+    doTestCycObjectRetrievable(VAR_0);
+    doTestCycObjectRetrievable(VAR_X);
 
     // makeUniqueCycVariable
     CycVariableImpl x = (CycVariableImpl) VAR_X;
@@ -861,14 +852,6 @@ public class CycObjectUnitTest {
     }
 
     System.out.println("*** testCycVariable OK ***");
-  }
-
-  static void testCycObjectRetrievable(final CycObject obj) throws CycConnectionException {
-    final String command = "(IDENTITY " + obj.stringApiValue() + ")";
-    final CycObject retrievedVersion = getCyc().converse().converseCycObject(command);
-    assertEquals(
-            "Retrieved version of " + obj + " is not 'equals' to the original.",
-            obj, retrievedVersion);
   }
 
   /**
@@ -1081,7 +1064,7 @@ public class CycObjectUnitTest {
     assertTrue(cycList19c.cyclify().indexOf("330000000000") > -1);
     assertTrue(
             DefaultCycObject.cyclify(cycList19c).indexOf("330000000000") > -1);
-    testCycListAdd();
+    doTestCycListAdd();
 
     // subst
     cycList18 = getCyc().getObjectTool().makeCycList("(b)");
@@ -1314,27 +1297,9 @@ public class CycObjectUnitTest {
     final String xml = ((CycArrayList) CycArrayList.makeCycList(2, 3, "foo")).toXMLString();
     assertNotNull(xml);
 
-    testUnmodifiableCycList();
+    //testUnmodifiableCycList();
 
     System.out.println("*** testCycList OK ***");
-  }
-
-  private static void testCycListAdd() {
-
-    // add
-    CycArrayList<Long> longList = new CycArrayList<Long>();
-    long n = 16;
-    longList.add(n);
-    assertEquals(new CycArrayList<Long>(n), longList);
-
-    CycArrayList<Boolean> booleanList = new CycArrayList<Boolean>();
-    booleanList.add(false);
-    assertEquals(new CycArrayList<Boolean>(false), booleanList);
-
-    CycArrayList<Float> floatList = new CycArrayList<Float>();
-    float f = 16.0f;
-    floatList.add(f);
-    assertEquals(new CycArrayList<Float>(f), floatList);
   }
 
   /**
@@ -1543,15 +1508,6 @@ public class CycObjectUnitTest {
     System.out.println("*** testUnicodeString OK ***");
   }
 
-  private void checkPrettyStringDetail(Map<ArgPositionImpl, Span> map,
-          ArgPositionImpl curPos,
-          int expectedBegin, int expectedEnd) {
-    Span span = map.get(curPos);
-    assertNotNull(span);
-    assertEquals(expectedBegin, span.getStart());
-    assertEquals(expectedEnd, span.getEnd());
-  }
-
   /**
    * Test the CycList pretty printer
    */
@@ -1602,42 +1558,13 @@ public class CycObjectUnitTest {
     System.out.println("*** testCycListPrettyStringDetails OK ***");
   }
 
-  private void testUnmodifiableCycList() {
-    testEmptyCycListAdd();
+  @Test
+  public void testUnmodifiableCycList() {
+    doTestEmptyCycListAdd();
     final CycArrayList<Integer> frozenList = new CycArrayList.UnmodifiableCycList<Integer>(CycArrayList.makeCycList(
             1, 3, 2));
-    testUnmodifiableCycListAdd(frozenList);
-    testUnmodifiableCycListSort(frozenList);
-  }
-
-  private void testEmptyCycListAdd() {
-    UnsupportedOperationException x = null;
-    try {
-      CycArrayList.EMPTY_CYC_LIST.add(4);
-    } catch (UnsupportedOperationException e) {
-      x = e;
-    }
-    assertNotNull(x);
-  }
-
-  private void testUnmodifiableCycListAdd(final CycList frozenList) {
-    UnsupportedOperationException x = null;
-    try {
-      frozenList.add(4);
-    } catch (UnsupportedOperationException e) {
-      x = e;
-    }
-    assertNotNull(x);
-  }
-
-  private void testUnmodifiableCycListSort(final CycList frozenList) {
-    UnsupportedOperationException x = null;
-    try {
-      Collections.sort(frozenList);
-    } catch (UnsupportedOperationException e) {
-      x = e;
-    }
-    assertNotNull(x);
+    doTestUnmodifiableCycListAdd(frozenList);
+    doTestUnmodifiableCycListSort(frozenList);
   }
 
   @Test
@@ -1711,4 +1638,76 @@ public class CycObjectUnitTest {
     System.out.println("*** testEqualsAtEL OK ***");
   }
 
+  
+  // Static helper methods
+  
+  static void doTestCycObjectRetrievable(final CycObject obj) throws CycConnectionException {
+    final String command = "(IDENTITY " + obj.stringApiValue() + ")";
+    final CycObject retrievedVersion = getCyc().converse().converseCycObject(command);
+    assertEquals(
+            "Retrieved version of " + obj + " is not 'equals' to the original.",
+            obj, retrievedVersion);
+  }
+  
+  
+  // Private helper methods
+
+  private void doTestCycListAdd() {
+    // add
+    CycArrayList<Long> longList = new CycArrayList<Long>();
+    long n = 16;
+    longList.add(n);
+    assertEquals(new CycArrayList<Long>(n), longList);
+
+    CycArrayList<Boolean> booleanList = new CycArrayList<Boolean>();
+    booleanList.add(false);
+    assertEquals(new CycArrayList<Boolean>(false), booleanList);
+
+    CycArrayList<Float> floatList = new CycArrayList<Float>();
+    float f = 16.0f;
+    floatList.add(f);
+    assertEquals(new CycArrayList<Float>(f), floatList);
+  }
+  
+  private void checkPrettyStringDetail(Map<ArgPositionImpl, Span> map,
+          ArgPositionImpl curPos,
+          int expectedBegin, int expectedEnd) {
+    Span span = map.get(curPos);
+    assertNotNull(span);
+    assertEquals(expectedBegin, span.getStart());
+    assertEquals(expectedEnd, span.getEnd());
+  }
+  
+  
+  private void doTestEmptyCycListAdd() {
+    UnsupportedOperationException x = null;
+    try {
+      CycArrayList.EMPTY_CYC_LIST.add(4);
+    } catch (UnsupportedOperationException e) {
+      x = e;
+    }
+    assertNotNull(x);
+  }
+
+  private void doTestUnmodifiableCycListAdd(final CycList frozenList) {
+    UnsupportedOperationException x = null;
+    try {
+      frozenList.add(4);
+    } catch (UnsupportedOperationException e) {
+      x = e;
+    }
+    assertNotNull(x);
+  }
+
+  private void doTestUnmodifiableCycListSort(final CycList frozenList) {
+    // FIXME: make this pass under Java 8. - nwinant, 2015-10-05
+    UnsupportedOperationException x = null;
+    try {
+      Collections.sort(frozenList);
+    } catch (UnsupportedOperationException e) {
+      x = e;
+    }
+    assertNotNull("This test passes under Java 7, but not Java 8.", x);
+  }
+  
 }

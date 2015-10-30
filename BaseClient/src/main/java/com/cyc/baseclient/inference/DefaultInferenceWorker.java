@@ -66,7 +66,7 @@ import com.cyc.baseclient.parser.CycLParserUtil;
  <p>
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:55 AM
- * @version $Id: DefaultInferenceWorker.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: DefaultInferenceWorker.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 public class DefaultInferenceWorker extends DefaultSubLWorker implements InferenceWorker {
 
@@ -780,7 +780,7 @@ public class DefaultInferenceWorker extends DefaultSubLWorker implements Inferen
    */
   public static void main(String[] args) {
     try {
-      CycAccess access = CycAccessManager.getAccess();
+      CycAccess access = CycAccessManager.getCurrentAccess();
       InferenceWorker worker = new DefaultInferenceWorker("(#$isa ?X #$Dog)",
               CommonConstants.INFERENCE_PSC, null, access, 10000);
       worker.addInferenceListener(new InferenceWorkerListener() {

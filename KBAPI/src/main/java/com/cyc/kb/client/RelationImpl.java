@@ -64,7 +64,7 @@ import java.util.Map;
  * should be used in virtually all cases.
  * 
  * @author Vijay Raj
- * @version $Id: RelationImpl.java 157022 2015-03-11 16:19:37Z nwinant $
+ * @version $Id: RelationImpl.java 160801 2015-09-08 19:12:41Z vijay $
  */
 public class RelationImpl extends KBIndividualImpl implements Relation {
 
@@ -616,7 +616,7 @@ public class RelationImpl extends KBIndividualImpl implements Relation {
     try {
       Context ctx = Constants.uvMt();
       String command = SubLAPIHelper.makeSubLStmt(WITH_MT, ctx.getCore(),
-              SubLAPIHelper.makeNestedSubLStmt("min-arity", this.getCore()));
+              SubLAPIHelper.makeNestedSubLStmt(SubLConstants.getInstance().minArity.stringApiValue(), this.getCore()));
       Object object = getAccess().converse().converseObject(command);
       if (object == null || object.equals(CycObjectFactory.nil)) {
         throw new IllegalArgumentException("No known min-arity for " + this);
@@ -636,7 +636,7 @@ public class RelationImpl extends KBIndividualImpl implements Relation {
     try {
       Context ctx = Constants.uvMt();
       String command = SubLAPIHelper.makeSubLStmt(WITH_MT, ctx.getCore(),
-              SubLAPIHelper.makeNestedSubLStmt("max-arity", this.getCore()));
+              SubLAPIHelper.makeNestedSubLStmt(SubLConstants.getInstance().maxArity.stringApiValue(), this.getCore()));
       Object object = getAccess().converse().converseObject(command);
       if (object == null || object.equals(CycObjectFactory.nil)) {
         throw new IllegalArgumentException("No known max-arity for " + this);

@@ -25,8 +25,6 @@ package com.cyc.xml.query;
  * #L%
  */
 
-import com.cyc.base.CycAccess;
-import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ELMt;
@@ -47,13 +45,8 @@ import com.cyc.session.SessionApiException;
  */
 public class Utils {
 
-  static CycAccess cyc = null;
-
   public static void setup() throws CycConnectionException, QueryConstructionException, KBTypeException, CreateException,
           KBApiException, SessionApiException {
-    if (cyc == null) {
-      cyc = CycAccessManager.getAccess();
-    }
     QueryImpl query = new QueryImpl(QueryApiTestConstants.getInstance().genlsEmuBird, Constants.inferencePSCMt());
     query.retainInference();
     answer = query.getAnswer(0);

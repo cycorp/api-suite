@@ -21,17 +21,19 @@ package com.cyc.session.connection;
  * #L%
  */
 
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.SessionInitializationException;
+import java.io.Closeable;
 
 /**
  * Responsible for creating and initializing implementations of {@link CycSession}.
  * @param <T> - CycSession implementation
  */
-public interface SessionFactory<T extends CycSession> {
+public interface SessionFactory<T extends CycSession> extends Closeable {
   
   /**
    * Creates an uninitialized CycSession instance.
@@ -51,5 +53,20 @@ public interface SessionFactory<T extends CycSession> {
    * @throws SessionInitializationException 
    */
   T initializeSession(T session) throws SessionCommunicationException, SessionInitializationException;
+  
+  /**
+   * Releases any server-related resources which a SessionFactory might be maintaining.
+   * @param server 
+   */
+  void releaseResourcesForServer(CycServerAddress server);
+  
+  //void releaseResourcesForSession(T session);
+  
+  /**
+   * Returns whether the SessionFactory is closed.
+   * 
+   * @return whether SessionFactory is closed
+   */
+  public boolean isClosed();
   
 }

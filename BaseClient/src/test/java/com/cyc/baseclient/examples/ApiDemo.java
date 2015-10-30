@@ -37,8 +37,9 @@ import com.cyc.base.cycobject.Nart;
 import com.cyc.baseclient.CycClient;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-import com.cyc.baseclient.nl.Paraphraser;
+import com.cyc.baseclient.nl.ParaphraserFactory;
 import com.cyc.baseclient.util.Log;
+import com.cyc.nl.Paraphraser;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 // FIXME: TestSentences - nwinant ? ? ? ? ? 
@@ -46,7 +47,7 @@ import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 /**
  * Provides a simple demo of the Base Client.<p>
  *
- * @version $Id: ApiDemo.java 159483 2015-07-03 23:49:46Z nwinant $
+ * @version $Id: ApiDemo.java 161607 2015-10-16 21:54:03Z nwinant $
  * @author Stephen L. Reed
  */
 
@@ -61,7 +62,7 @@ public class ApiDemo {
     Log.makeLog();
     Log.current.println("Initializing Cyc server connection, and caching frequently used terms.");
     try {
-      cycAccess = CycAccessManager.getAccess();
+      cycAccess = CycAccessManager.getCurrentAccess();
     }
     catch (Exception e) {
       Log.current.errorPrintln(e.getMessage());
@@ -242,7 +243,7 @@ public class ApiDemo {
   protected void demo9() throws CycConnectionException, CycApiException {
     Log.current.println("Demonstrating getParaphrase api function.\n");
     FormulaSentence formula = cycAccess.getObjectTool().makeCycSentence("(#$forAll ?THING (#$isa ?Thing #$Thing))");
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
     String paraphrase = p.paraphrase(formula).getString();
     Log.current.println("\nThe obtained paraphrase for\n" + formula + "\nis:\n" + paraphrase);
   }
@@ -262,7 +263,7 @@ public class ApiDemo {
       "  (#$and\n" +
       "    (#$isa ?PLANET #$Planet)\n" +
       "    (#$orbits ?PLANET #$Sun)))");
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
     String paraphrase = p.paraphrase(formula).getString();
     Log.current.println("\nThe obtained paraphrase for\n" + formula + "\nis:\n" + paraphrase);
   }

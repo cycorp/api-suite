@@ -29,7 +29,7 @@ import java.io.*;
 
 /**
  * Loads and executes the Cyclops (Cyc Logical Operations) benchmark.<p>
- * @version $Id: CyclopsBenchmark.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CyclopsBenchmark.java 161606 2015-10-16 21:52:46Z nwinant $
  * @author Stephen L. Reed
  */
 public class CyclopsBenchmark {
@@ -56,7 +56,7 @@ public class CyclopsBenchmark {
     public void execute () {
         Double cyclops = null;
         try {
-            CycAccess cycAccess = CycAccessManager.getAccess();
+            CycAccess cycAccess = CycAccessManager.getCurrentAccess();
             System.out.println("Loading benchmarks.lisp");
             String script = "(load \"" + benchmarkFilePath + "\")";
             cycAccess.converse().converseVoid(script);

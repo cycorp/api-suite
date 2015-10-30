@@ -60,8 +60,9 @@ import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.StringUtils;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-import com.cyc.baseclient.nl.Paraphraser;
+import com.cyc.baseclient.nl.ParaphraserFactory;
 import com.cyc.baseclient.util.Log;
+import com.cyc.nl.Paraphraser;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -1304,7 +1305,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
    *
    * @return the list of all of the direct and indirect genls for a Fort SPEC which are also
  specs of Fort GENL
-   * @throws IOException if a data communication error occurs
+   * @throws com.cyc.base.CycConnectionException
    * @throws CycApiException if the api request results in a cyc server error
    */
   @Override
@@ -1325,7 +1326,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
    *
    * @return the list of all of the direct and indirect genls for a Fort SPEC which are also
  specs of Fort GENL
-   * @throws IOException if a data communication error occurs
+   * @throws com.cyc.base.CycConnectionException
    * @throws CycApiException if the api request results in a cyc server error
    */
   @Override
@@ -1651,7 +1652,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
 
     CycList iter = listAnswer;
 
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
     for (int i = 0; i < listAnswer.size(); i++) {
       CycList assertion = (CycList) ((CycList) listAnswer.get(
               i)).first();
@@ -1662,7 +1663,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
   }
 
   /**
-   * Gets the English parapharse of the justifications of why Fort SPEC is a SPEC of Fort
+   * Gets the English paraphrase of the justifications of why Fort SPEC is a SPEC of Fort
  GENL. getWhyGenlParaphrase("Dog", "Animal") --> "a dog is a kind of canine" "a canine is a
    * kind of non-human animal" "a non-human animal is a kind of animal"
    *
@@ -1693,7 +1694,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
 
     CycList iter = listAnswer;
 
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
     for (int i = 0; i < listAnswer.size(); i++) {
       CycList assertion = (CycList) ((CycList) listAnswer.get(
               i)).first();
@@ -1780,7 +1781,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
     }
 
     CycList iter = listAnswer;
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
     for (int i = 0; i < listAnswer.size(); i++) {
       CycList assertion = (CycList) ((CycList) listAnswer.get(
@@ -1826,7 +1827,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
     }
 
     CycList iter = listAnswer;
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
     for (int i = 0; i < listAnswer.size(); i++) {
       CycList assertion = (CycList) ((CycList) listAnswer.get(
@@ -2248,7 +2249,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
     if (listAnswer.size() == 0) {
       return answerPhrases;
     }
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
     for (int i = 0; i < listAnswer.size(); i++) {
       CycList assertion = (CycList) ((CycList) listAnswer.get(
@@ -2287,7 +2288,7 @@ public class CycLookupTool extends AbstractKBTool implements LookupTool {
     if (listAnswer.size() == 0) {
       return answerPhrases;
     }
-    Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
     for (int i = 0; i < listAnswer.size(); i++) {
       CycList assertion = (CycList) ((CycList) listAnswer.get(

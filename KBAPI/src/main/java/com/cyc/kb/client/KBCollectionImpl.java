@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * of a #$Collection is context dependent. 
  *
  * @author Vijay Raj
- * @version $Id: KBCollectionImpl.java 157022 2015-03-11 16:19:37Z nwinant $
+ * @version $Id: KBCollectionImpl.java 160801 2015-09-08 19:12:41Z vijay $
  */
 public class KBCollectionImpl extends KBTermImpl implements KBCollection {
 
@@ -477,8 +477,10 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
       for (KBCollection col : cols) {
         cl.add(KBObjectImpl.getCore(col));
       }
-      CycObject co = getStaticAccess().converse().converseCycObject("(with-all-mts (min-col " + cl.stringApiValue()
-              + "))");
+      String command = "(" + SubLConstants.getInstance().withAllMts.stringApiValue() 
+              + " (" + SubLConstants.getInstance().minCol.stringApiValue() + " " + cl.stringApiValue() + "))";
+      
+      CycObject co = getStaticAccess().converse().converseCycObject(command);
       return KBCollectionImpl.get(co);
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e.getMessage(), e);
@@ -518,11 +520,13 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
     Set<KBCollection> results = new HashSet<KBCollection>();
     try {
       if (ctx != null) {
-        cycResults = getAccess().converse().converseList(
-                "(all-specs " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + ")");
+        String command = "(" + SubLConstants.getInstance().allSpecs.stringApiValue() + " " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + ")";
+        cycResults = getAccess().converse().converseList(command);
       } else {
-        cycResults = getAccess().converse().converseList("(remove-duplicates (with-all-mts (all-specs "
-                + this.getCore().stringApiValue() + ")))");
+        String command = "(" + SubLConstants.getInstance().removeDuplicates.stringApiValue()
+                + " (" + SubLConstants.getInstance().withAllMts.stringApiValue()
+                + " (" + SubLConstants.getInstance().allSpecs.stringApiValue() + " " + this.getCore().stringApiValue() + ")))";
+        cycResults = getAccess().converse().converseList(command);
       }
 
       for (Object o : cycResults) {
@@ -637,11 +641,15 @@ public class KBCollectionImpl extends KBTermImpl implements KBCollection {
     Set<KBCollection> results = new HashSet<KBCollection>();
     try {
       if (ctx != null) {
-        cycResults = (CycList<Object>) getAccess().converse().converseList(
-                "(remove-duplicates (all-genls " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + "))");
+        String command = "(" + SubLConstants.getInstance().removeDuplicates.stringApiValue() 
+                + " (" + SubLConstants.getInstance().allGenls.stringApiValue() 
+                + " " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + "))";
+        cycResults = (CycList<Object>) getAccess().converse().converseList(command);
       } else {
-        cycResults = getAccess().converse().converseList("(remove-duplicates (with-all-mts (all-genls "
-                + this.getCore().stringApiValue() + ")))");
+        String command = "(" + SubLConstants.getInstance().removeDuplicates.stringApiValue() 
+                + " (" + SubLConstants.getInstance().withAllMts + " (" + SubLConstants.getInstance().allGenls + " " 
+                + this.getCore().stringApiValue() + ")))";
+        cycResults = getAccess().converse().converseList(command);
       }
 
       for (Object o : cycResults) {

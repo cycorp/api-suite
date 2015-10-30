@@ -38,40 +38,21 @@ package com.cyc.session.compatibility;
  */
 
 import com.cyc.session.CycServerReleaseType;
-import com.cyc.session.CycSession;
-import com.cyc.session.SessionCommandException;
-import com.cyc.session.SessionCommunicationException;
-import com.cyc.session.exception.UnsupportedCycOperationException;
 
 /**
  *
  * @author nwinant
  */
-public class NotResearchCycRequirement implements CycSessionRequirement {
+public class NotResearchCycRequirement extends NotCycServerReleaseTypeRequirement implements CycSessionRequirement {
   
   public static final NotResearchCycRequirement NOT_RESEARCHCYC = new NotResearchCycRequirement();
-  
-  final private String msg;
-  
+
   public NotResearchCycRequirement(String msg) {
-    this.msg = msg;
+    super(CycServerReleaseType.RESEARCHCYC, msg);
   }
   
   public NotResearchCycRequirement() {
     this("This feature is not supported in ResearchCyc.");
-  }
-  
-  @Override
-  public boolean isCompatible(CycSession session) throws SessionCommunicationException, SessionCommandException {
-    return !CycServerReleaseType.RESEARCHCYC.equals(
-            session.getServerInfo().getSystemReleaseType());
-  }
-  
-  @Override
-  public void testCompatibility(CycSession session) throws UnsupportedCycOperationException, SessionCommunicationException, SessionCommandException {
-    if (!isCompatible(session)) {
-      throw new UnsupportedCycOperationException(msg);
-    }
   }
   
 }

@@ -95,7 +95,7 @@ public class QueryTest {
     q = QueryFactory.getQuery(testConstants().queryAnimals, Constants.inferencePSCMt());
     q.retainInference();
     assertNull(q.getInferenceIdentifier());
-    q.addListener(new QueryListenerImpl() {
+    q.addListener(new QueryListener() {
       int problemStoreID;
 
       @Override

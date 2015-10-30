@@ -31,14 +31,19 @@ import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.CycTimeOutException;
 import com.cyc.base.cycobject.CycVariable;
+import com.cyc.base.cycobject.InformationSource;
 import com.cyc.base.inference.InferenceAnswer;
 import com.cyc.baseclient.api.DefaultSubLWorkerSynch;
 import com.cyc.baseclient.api.SubLWorkerSynch;
+import com.cyc.baseclient.cycobject.InformationSourceImpl;
 import com.cyc.baseclient.inference.CycBackedInferenceAnswer;
 import com.cyc.baseclient.inference.DefaultProofIdentifier;
 import com.cyc.baseclient.util.CycTaskInterruptedException;
+import com.cyc.kb.KBTerm;
 import com.cyc.kb.Variable;
+import com.cyc.kb.client.KBObjectFactory;
 import com.cyc.kb.client.KBObjectImpl;
+import com.cyc.kb.client.KBTermImpl;
 import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KBTypeException;
@@ -240,6 +245,29 @@ public class InferenceAnswerBackedQueryAnswer implements QueryAnswer {
   @Override
   public String toString() {
     return answerCyc.toString();
+  }
+
+  @Override
+  public Set<KBTerm> getSources() {
+    Set<KBTerm> sources = new HashSet<KBTerm>();
+    if (answerCyc.getId() == null) {
+      throw new UnsupportedOperationException("Sources can not be retrieved from an inference that has been destroyed.  "
+              + "The inference must be retained until after getSources() has been called.");
+    }
+    try {
+      for (InformationSource source : answerCyc.getSources(InformationSourceImpl.CycCitationGenerator.DEFAULT)) {
+        try {
+          sources.add(KBObjectFactory.get(source.getCycL(), KBTermImpl.class));
+        } catch (KBTypeException ex) {
+          throw new QueryApiRuntimeException("Unable to turn source " + source.getCycL() + " into a KB Object");
+        } catch (CreateException ex) {
+          throw new QueryApiRuntimeException("Unable to turn source " + source.getCycL() + " into a KB Object");
+        }        
+      }      
+    } catch (CycConnectionException ex) {
+      throw new QueryApiRuntimeException("Unable to get source for inference answer " + answerCyc.toString());
+    }
+    return sources;
   }
 
 }

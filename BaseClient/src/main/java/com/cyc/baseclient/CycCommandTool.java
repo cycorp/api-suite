@@ -307,8 +307,15 @@ public class CycCommandTool implements CommandTool {
   @Override
   public String wrapCyclistAndPurpose(String command, String cyclistName,
           String projectName) {
+    // TODO: is *require-case-insensitive-name-uniqueness* necessary, and why? - nwinant, 2015-10-07
+    /*
     return "(clet ((*require-case-insensitive-name-uniqueness* nil)\n"
             + "       (*the-cyclist* " + cyclistName + ")\n"
+            + "       (*ke-purpose* " + projectName + "))\n"
+            + "    " + command
+            + "\n)";
+    */
+    return "(clet ((*the-cyclist* " + cyclistName + ")\n"
             + "       (*ke-purpose* " + projectName + "))\n"
             + "    " + command
             + "\n)";

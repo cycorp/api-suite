@@ -92,7 +92,7 @@ abstract public class AbstractSubLSingleArgFunction<T extends Object, V extends 
    * @throws CycApiException if the argument is invalid per {@link #isArgValid(java.lang.Object...) }.
    * @return the SubL command string
    */
-  protected String buildCommand(T arg) throws CycApiException {
+  public String buildCommand(T arg) throws CycApiException {
     if (!isArgValid(arg)) {
       handleInvalidArg(arg);
     }

@@ -71,7 +71,7 @@ public class CycSessionManagerTest extends TestCase {
    * @throws com.cyc.session.SessionConfigurationException
    */
   protected void runCanInstantiateTest() throws CycSessionManagerInitializationError, SessionConfigurationException {
-    SessionManager sessionMgr = CycSessionManager.get();
+    SessionManager sessionMgr = CycSessionManager.getInstance();
     System.out.println("Found SessionManager: " + sessionMgr);
     assertNotNull(sessionMgr);
   }
@@ -85,11 +85,11 @@ public class CycSessionManagerTest extends TestCase {
   protected void runCannotInstantiateTest() throws SessionConfigurationException {
     SessionManager sessionMgr = null;
     try {
-      sessionMgr = CycSessionManager.get();
+      sessionMgr = CycSessionManager.getInstance();
       fail("Should have thrown an exception, but did not.");
     } catch (CycSessionManagerInitializationError ex) {
-      System.out.println("Good news! Test captured an expected exception: " + ex.getMessage());
-      ex.printStackTrace(System.err);
+      System.out.println("Good news! Test captured an expected exception: \"" + ex.getMessage() + "\"");
+      //ex.printStackTrace(System.err);
       assertEquals(ServiceConfigurationError.class, ex.getException().getClass());
     }
     assertNull(sessionMgr);

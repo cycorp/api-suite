@@ -152,7 +152,6 @@ public class PropertiesConfigurationLoaderTest {
   public void testFileProperties() throws SessionConfigurationException {
     assumeEmptyEnvironment();
     try {
-      // TODO: some of these variable names could be clarified, but otherwise the test is fine.
       final CycSessionConfiguration config = envloader.getConfiguration();
       assertNull(config.getCycServer());
       assertNull(config.getConfigurationFileName());

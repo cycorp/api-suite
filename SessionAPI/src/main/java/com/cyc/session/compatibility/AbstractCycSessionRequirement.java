@@ -48,11 +48,11 @@ import com.cyc.session.exception.UnsupportedCycOperationException;
  * @param <T> The type of UnsupportedCycOperationException which should be thrown if incompatible.
  */
 abstract public class AbstractCycSessionRequirement<T extends UnsupportedCycOperationException> implements CycSessionRequirement<T> {
+    
+  final private String defaultErrorMsg;
   
-  final private String msg;
-  
-  protected AbstractCycSessionRequirement(String msg) {
-    this.msg = msg;
+  protected AbstractCycSessionRequirement(String defaultErrorMsg) {
+    this.defaultErrorMsg = defaultErrorMsg;
   }
   
   protected AbstractCycSessionRequirement() {
@@ -63,9 +63,10 @@ abstract public class AbstractCycSessionRequirement<T extends UnsupportedCycOper
   // Public
   
   @Override
-  public void testCompatibility(CycSession session) throws UnsupportedCycOperationException, SessionCommunicationException, SessionCommandException {
-    final String errMsg = getErrorMessage(session);
-    if (!isCompatible(session)) {
+  public void throwExceptionIfIncompatible(CycSession session) throws UnsupportedCycOperationException, SessionCommunicationException, SessionCommandException {
+    final CompatibilityResults results = checkCompatibility(session);
+    if (!results.isCompatible()) {
+      final String errMsg = results.getExceptionMessage();
       if (errMsg != null) {
         throw new UnsupportedCycOperationException(errMsg);
       } else {
@@ -74,7 +75,10 @@ abstract public class AbstractCycSessionRequirement<T extends UnsupportedCycOper
     }
   }
   
-  public String getErrorMessage(CycSession session) throws UnsupportedCycOperationException, SessionCommunicationException, SessionCommandException {
-    return this.msg;
+  
+  // Protected
+  
+  protected String getDefaultErrorMessage() {
+    return this.defaultErrorMsg;
   }
 }

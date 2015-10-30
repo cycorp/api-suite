@@ -29,7 +29,7 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.conn.Worker;
 import com.cyc.base.conn.CycConnectionInterface;
 import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
+//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -53,7 +53,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.GuidImpl;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameterDescriptions;
-import com.cyc.baseclient.util.Log;
+//import com.cyc.baseclient.util.Log;
 import com.cyc.baseclient.util.PasswordManager;
 import com.cyc.base.conn.LeaseManager;
 import com.cyc.base.cycobject.Fort;
@@ -73,6 +73,10 @@ import com.cyc.baseclient.subl.SubLResourceLoader;
 import com.cyc.baseclient.subl.SubLSourceFile;
 import com.cyc.baseclient.subl.functions.SubLFunctions;
 import com.cyc.session.CycServerAddress;
+import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.CycSessionManager;
+import com.cyc.session.SessionApiException;
+import com.cyc.session.exception.SessionApiRuntimeException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +88,7 @@ import org.slf4j.LoggerFactory;
  Collaborates with the <tt>CycConnection</tt> class which manages the api connections.
  </p>
  *
- * @version $Id: CycClient.java 159949 2015-07-27 19:12:45Z nwinant $
+ * @version $Id: CycClient.java 162021 2015-10-30 00:01:02Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {
@@ -189,7 +193,7 @@ public class CycClient implements CycAccess {
       return null;
     }
   };
-  
+  /*
   @Deprecated
   private static ThreadLocal<CycClientOptions> currentOptions = new ThreadLocal<CycClientOptions>() {
     @Override
@@ -197,7 +201,7 @@ public class CycClient implements CycAccess {
       return null;
     }
   };
-    
+  */
   /**
    * Dictionary of CycClient instances, indexed by thread so that the application does not have to
  keep passing around a CycClient object reference.
@@ -215,27 +219,27 @@ public class CycClient implements CycAccess {
   private static final String UTF8 = "UTF-8";
 
   private static final String CYC_IMAGE_ID_EXPRESSION = makeSubLStmt("cyc-image-id");
-    
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(CycClient.class);
   
   
   // Instance fields
   
-  final private CycClientSession session;
-    
+  //  final private CycClientSession session;
+  
   /** 
-   * The indicator that this CycClient object is using a SOAP connection to cunicate with Cyc.
+   * The indicator that this CycClient object is using a SOAP connection to communicate with Cyc.
    */
   final private boolean isSOAPConnection = false;
   
   /** 
    * The indicator that API request forms should be logged to a file api-requests.lisp in the 
- working directory.
+   * working directory.
    */
-  final private boolean areAPIRequestsLoggedToFile = false;
+  //final private boolean areAPIRequestsLoggedToFile = false;
   
   // TODO: should this be replaced with SLF4J?
-  private FileWriter apiRequestLog = null;
+  //private FileWriter apiRequestLog = null;
   
   /**
    * Parameter indicating whether the Base Client should use one TCP socket for the entire session,
@@ -309,15 +313,14 @@ public class CycClient implements CycAccess {
    * Constructs a new CycAccess object from a CycConnectionInterface.
    *
    * @param conn the Cyc connection object (in persistent, binary mode)
-   * @param session
    * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  public CycClient(CycConnectionInterface conn, CycClientSession session)
+  public CycClient(CycConnectionInterface conn)
           throws CycConnectionException, CycApiException {
     this.hostName = conn.getHostName();
     this.port = conn.getBasePort();
-    this.session = session;
+    //this.session = session;
     this.cycConnection = conn;
     commonInitialization();
   }
@@ -335,7 +338,7 @@ public class CycClient implements CycAccess {
     final CycServerAddress server = session.getConfiguration().getCycServer();
     this.hostName = server.getHostName();
     this.port = server.getBasePort();
-    this.session = session;
+    //this.session = session;
     this.cycConnection = new CycConnection(server, this);
     commonInitialization();
   }
@@ -347,10 +350,10 @@ public class CycClient implements CycAccess {
    * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  public CycClient(CycServer server) throws CycConnectionException, CycApiException {
+  public CycClient(CycServerAddress server) throws CycConnectionException, CycApiException {
     this.hostName = server.getHostName();
     this.port = server.getBasePort();
-    this.session = null;
+    //this.session = null;
     this.cycConnection = new CycConnection(server, this);
     commonInitialization();
   }
@@ -358,15 +361,14 @@ public class CycClient implements CycAccess {
   /**
    * Constructs a new CycAccess object given a Comm implementation and a CycSession.
    * @param comm
-   * @param session
    * @throws CycConnectionException
    * @throws CycApiException 
    */
-  public CycClient(Comm comm, CycClientSession session)
+  public CycClient(Comm comm)
           throws CycConnectionException, CycApiException {
     System.out.println("Cyc Access with Comm object: " + comm.toString());
     System.out.flush();
-    this.session = session;
+    //this.session = session;
     this.comm = comm;
     this.cycConnection = new CycConnection(comm, this);
     this.comm.setCycConnection(cycConnection);
@@ -375,26 +377,33 @@ public class CycClient implements CycAccess {
     //}
   }
   
-  public CycClient(CycConnectionInterface conn)
-          throws CycConnectionException, CycApiException {
-    this(conn, null);
-  }
-  
-  public CycClient(Comm c)
-          throws CycConnectionException, CycApiException {
-    this(c, null);
-  }
-  
   
   // Public
   
   @Override
   public CycClientSession getCycSession() {
-    return this.session;
+    // TODO: Can this method be made more robust? - nwinant, 2015-10-14
+    
+    //return this.session;
+    final CycServerAddress server = this.getCycServer();
+    try {
+      final CycClientSession session = CycClientManager.get().getSession(server);
+      if (session.getAccess() != this) {
+        throw new SessionApiRuntimeException(
+                "Expected to receive a " + CycClientSession.class.getSimpleName()
+                        + " tied to this " + CycClient.class.getSimpleName() + " (" + this.toString() + ")"
+                        + " but received one tied to " + this.toString());
+      }
+      return session;
+    } catch (SessionApiException ex) {
+      throw new SessionApiRuntimeException(ex);
+    }
   }
   
   @Override
   public CycClientOptions getOptions() {
+    return this.getCycSession().getOptions();
+    /*
     if (this.getCycSession() != null) {
       return this.getCycSession().getOptions();
     }
@@ -404,6 +413,7 @@ public class CycClient implements CycAccess {
       currentOptions.set(new CycClientOptions(this));
     }
     return currentOptions.get();
+    */
   }
 
   /**
@@ -413,10 +423,11 @@ public class CycClient implements CycAccess {
    */
   @Override
   public String toString() {
+    final String name = this.getClass().getSimpleName();
     if (cycConnection == null) {
-      return "CycAccess: no valid connection";
+      return name + ": no valid connection " + this.hashCode();
     }
-    return cycConnection.connectionInfo();
+    return name + ": " + cycConnection.connectionInfo() + " " + this.hashCode();
   }
 
   /**
@@ -469,7 +480,8 @@ public class CycClient implements CycAccess {
    * @return a CycServer object
    */
   @Override
-  public CycServer getCycServer() {
+  public CycServerAddress getCycServer() {
+    // TODO: this could be improved - nwinant, 2015-10-14
     return new CycServer(getHostName(), getBasePort());
   }
   
@@ -528,8 +540,7 @@ public class CycClient implements CycAccess {
     try {
       maybeReEstablishCycConnection();
     } catch (CycConnectionException ex) {
-      Log.current.println(
-              "Couldn't re-establish Cyc connection.\n" + ex.getLocalizedMessage());
+      LOGGER.warn("Couldn't re-establish Cyc connection.\n{}", ex.getLocalizedMessage());
     }
     return cycConnection;
   }
@@ -566,6 +577,7 @@ public class CycClient implements CycAccess {
     if (cycConnection != null) {
       cycConnection.close();
     }
+    /*
     if (areAPIRequestsLoggedToFile) {
       try {
         apiRequestLog.close();
@@ -573,6 +585,7 @@ public class CycClient implements CycAccess {
         LOGGER.error("Error when closing apiRequestLog: {}", e);
       }
     }
+    */
     cycAccessInstances.remove(Thread.currentThread());
     // make sure it's not ever used again for setting as the 'current' CycClient.
     /*
@@ -932,8 +945,7 @@ public class CycClient implements CycAccess {
    */
   private synchronized void reEstablishCycConnection() 
           throws CycConnectionException, CycApiException {
-    Log.current.println(
-            "Trying to re-establish a closed Cyc connection to " + this);
+    LOGGER.warn("Trying to re-establish a closed Cyc connection: {}", this);
     
     //new Throwable().printStackTrace(System.err); // Uncomment this to get a stack trace.
     
@@ -941,10 +953,10 @@ public class CycClient implements CycAccess {
     cycConnection.close();
     
     if (this.comm == null) {
-      Log.current.println ("Connect using host: " + hostName + " and port: " + port);
+      LOGGER.warn("Connect using host: {} and port: {}", hostName, port);
       cycConnection = new CycConnection(hostName, port, this);
     } else {
-      Log.current.println ("Connect using comm object: " + comm.toString());
+      LOGGER.warn("Connect using comm object: {}", comm.toString());
       cycConnection = new CycConnection(comm, this);
       comm.setCycConnection(cycConnection);
       
@@ -963,7 +975,7 @@ public class CycClient implements CycAccess {
     }
 
     if (!(cycImageID.equals(getCycImageID()))) {
-      Log.current.println("New Cyc image detected, resetting caches.");
+      LOGGER.warn("New Cyc image detected, resetting caches.");
       CycObjectFactory.resetCaches();
     }
   }
@@ -1041,10 +1053,10 @@ public class CycClient implements CycAccess {
           throws CycConnectionException, CycApiException {
     LOGGER.debug("* * * Initializing * * *");
     this.persistentConnection = PERSISTENT_CONNECTION;
+    /*
     if (Log.current == null) {
       Log.makeLog("cyc-api.log");
     }
-    
     final String apiRequestLogFile = "api-requests.lisp";
     if (areAPIRequestsLoggedToFile) {
       try {
@@ -1053,6 +1065,7 @@ public class CycClient implements CycAccess {
         throw new CycConnectionException("Could not write file " + apiRequestLogFile, ioe);
       }
     }
+    */
     cycAccessInstances.put(Thread.currentThread(), this);
 
     /* if (sharedCycAccessInstance == null) {
@@ -1147,10 +1160,10 @@ public class CycClient implements CycAccess {
         String msg = "This server is not compatible with this release of the Core API Suite and cannot be patched; skipping. " + forMoreInfo;
         LOGGER.error(msg);
         throw new BaseClientRuntimeException(msg);
-      } else if (!getCycSession().getConfiguration().isServerPatchingAllowed()) {
-        LOGGER.warn("Loading SubL patches is not allowed (CycSessionConfiguration#isServerPatchingAllowed() == false); skipping. " + forMoreInfo);
+      } else if (!CycSessionManager.getInstance().getConfiguration().isServerPatchingAllowed()) {  // TODO: Is this the best solution for getting config info? - nwinant, 2015-10-16
         final List<SubLSourceFile> missing = loader.findMissingRequiredResources(SubLFunctions.SOURCES);
         if (!missing.isEmpty()) {
+          LOGGER.warn("Auto-loading SubL patches is not allowed (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == false); skipping. " + forMoreInfo);
           String numResources = (missing.size() >= 2) ? missing.size() + " required resources" : "required resource";
           String msg = "Cyc server " + getServerInfo().getCycServer() + " is missing " + numResources + ": " + missing.toString() + ". " + forMoreInfo;
           LOGGER.error(msg);
@@ -1158,7 +1171,7 @@ public class CycClient implements CycAccess {
         }
       } else {
         // TODO: we may also want Cyc to be able to disallow server patching.
-        
+        LOGGER.info("Auto-loading SubL patches is enabled (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == true). " + forMoreInfo);
         loader.loadMissingResources(SubLFunctions.SOURCES);
       }
     } catch (BaseClientRuntimeException ex) {
@@ -1178,8 +1191,7 @@ public class CycClient implements CycAccess {
 //      }
 //      else
       if (!((CycConnection) cycConnection).isValidBinaryConnection()) {
-        Log.current.println(
-                "Re-establishing an invalid Cyc connection  to " + this);
+        LOGGER.warn("Re-establishing an invalid Cyc connection  to {}", this);
         reEstablishCycConnection();
       }
     }
@@ -1192,19 +1204,22 @@ public class CycClient implements CycAccess {
    * @throws IOException if an I/O error occurs
    */
   private void maybeLogCommand(Object command) throws CycApiException, IOException {
-    if (trace > CycConnection.API_TRACE_NONE || areAPIRequestsLoggedToFile) {
+    //if (trace > CycConnection.API_TRACE_NONE || areAPIRequestsLoggedToFile) {
+    if (trace > CycConnection.API_TRACE_NONE) {
       final CycList commandCycList = (command instanceof CycList) ? (CycList) command : getObjectTool().makeCycList(
               (String) command);
       final String prettyCommandCycList = commandCycList.toPrettyCyclifiedString(
               "");
       final String escapedCommandCycList = commandCycList.toPrettyEscapedCyclifiedString(
               "");
+      /*
       if (areAPIRequestsLoggedToFile) {
         apiRequestLog.write(escapedCommandCycList);
         apiRequestLog.write('\n');
       }
+      */
       if (trace > CycConnection.API_TRACE_NONE) {
-        Log.current.println(prettyCommandCycList + "\n--> cyc");
+        LOGGER.warn("{}\n--> cyc", prettyCommandCycList);
       }
     }
   }
@@ -1220,7 +1235,7 @@ public class CycClient implements CycAccess {
       } else {
         responseString = response[1].toString();
       }
-      Log.current.println("cyc --> " + responseString);
+      LOGGER.warn("cyc --> {}", responseString);
     }
   }
 

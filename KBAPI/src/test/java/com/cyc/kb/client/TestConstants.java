@@ -127,7 +127,7 @@ public class TestConstants {
     flyingAPlaneTemp.instantiates((KBCollection)FirstOrderCollectionImpl.getClassType());
     FirstOrderCollection flyingAPlane = flying1Fun.findOrCreateFunctionalTerm(FirstOrderCollectionImpl.class, cPlane);
     
-    BinaryPredicate flying1Pred1 = BinaryPredicateImpl.findOrCreate("flyingAnObject-Operate", KBCollectionImpl.get("ActorSlot"));
+    BinaryPredicate flying1Pred1 = BinaryPredicateImpl.findOrCreate("flyingAnObject-Operate-Predicate", KBCollectionImpl.get("ActorSlot"));
     flying1Pred1.addArgIsa(1, flying1Col, Constants.uvMt());
     // flying1Pred1.addArgIsa(2, KBCollection.get("PhysicalDevice"), Constants.uvMt());
     SentenceImpl sargisa2 = new SentenceImpl (KBPredicateImpl.get("argIsa"), flying1Pred1, 2, KBCollectionImpl.get("PhysicalDevice"));
@@ -172,6 +172,7 @@ public class TestConstants {
     
     // Setup a context hierarchy
     Context airlineLogMt = ContextImpl.findOrCreate("SomeAirlineLogMt");
+    airlineLogMt.addInheritsFrom("CurrentWorldDataCollectorMt");
     Context airlineEmpMt = ContextImpl.findOrCreate("SomeAirlineEmployeeMt");
     Context airlineEquipMt = ContextImpl.findOrCreate("SomeAirlineEquipmentMt");
     
@@ -280,7 +281,7 @@ public class TestConstants {
     
     FlyingAnObject-Operate;
     
-    flyingAnObject-Operate FlyingAnObject-Operate AnObject;
+    flyingAnObject-Operate-Predicate FlyingAnObject-Operate AnObject;
     
     flyingDoneBySomething-Operate FlyingAnObject-Operate Something;
     */

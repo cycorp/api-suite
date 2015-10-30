@@ -163,7 +163,7 @@ public class CycObjectLibraryTest {
   }
 
   @Test
-  public void testTestGuids() throws CycConnectionException, CycApiException {
+  public void testTestGuids() throws CycConnectionException, CycApiException, SessionApiException {
     final TestGuids library = new TestGuids();
     final Collection<String> allFields = objLoader.getAllObjectsForClass(TestGuids.class, String.class);
     printFields(allFields);

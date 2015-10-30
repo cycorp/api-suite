@@ -31,12 +31,13 @@ package com.cyc.baseclient.util;
  *
  * user -Dcom.cyc.baseclient.util.log=file  to enable writing to a file.
  *
- * @version $Id: Log.java 159482 2015-07-03 23:37:56Z nwinant $
+ * @version $Id: Log.java 162021 2015-10-30 00:01:02Z nwinant $
  * @author Stephen L. Reed
  */
 
 import java.io.*;
 
+@Deprecated
 public class Log {
     /**
      * Current log instance.  For convenience in calling, an instance of the Log

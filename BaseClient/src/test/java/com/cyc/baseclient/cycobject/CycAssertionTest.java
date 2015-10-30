@@ -96,7 +96,7 @@ public class CycAssertionTest {
   @Test
   public void testStringApiValue() throws CycConnectionException {
     // stringApiValue() on a random assertion
-    testCycObjectRetrievable(assertion);
+    doTestCycObjectRetrievable(assertion);
     assertNotNull(assertion);
     String assertionAsString = assertion.stringApiValue();
     final Object assertionObject2 = getCyc().converse().converseObject(assertionAsString);

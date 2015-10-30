@@ -60,7 +60,7 @@ public class CycServerPanel extends JPanel {
   }
   
   public CycServerPanel() {
-    this(DEFAULT_CYC_SERVER);
+    this(DEFAULT_SERVER);
   }
   
   
@@ -98,7 +98,7 @@ public class CycServerPanel extends JPanel {
   /**
    * This is the default location of a Cyc server, but you should be very wary of assuming it.
    */
-  private static final CycServer DEFAULT_CYC_SERVER = new CycServer("localhost", 3600);
+  private static final CycServer DEFAULT_SERVER = new CycServer("localhost", 3600);
   
   
   // Static

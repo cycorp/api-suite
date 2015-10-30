@@ -21,12 +21,13 @@ package com.cyc.session.internal;
  * #L%
  */
 
-import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
-import java.util.Collection;
-import java.util.Map;
+import com.cyc.session.SessionApiException;
+import com.cyc.session.selection.SessionSelector;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,65 +45,44 @@ public class CycSessionCache<T extends CycSession> {
   // Fields
   
   private static final Logger LOGGER = LoggerFactory.getLogger(CycSessionCache.class);
+  private final Set<T> cachedSessions;
   
-  /**
-   * Keep this field defined as a Map for Java 8 compatibility.
-   * 
-   * In Java 8, ConcurrentHashMap.keySet() changed from returning Set<K> to returning 
-   * ConcurrentHashMap.KeySetView<K,V>. This can cause exceptions like the following:
-   * 
-   * java.lang.NoSuchMethodError: java.util.concurrent.ConcurrentHashMap.keySet()Ljava/util/concurrent/ConcurrentHashMap$KeySetView;
-   * 
-   * Using the Map interface sidesteps coupling to the Java 8 KeySetView return type and allows the
-   * code to be compiled with Java 8 and run on Java 7.
-   * 
-   * - nwinant, 2015-03-04
-   * 
-   * See:
-   * - https://gist.github.com/nwinant/3508d0160c0d8b06a34d (via https://gist.github.com/AlainODea/1375759b8720a3f9f094)
-   * - https://bz.apache.org/bugzilla/show_bug.cgi?id=55554
-   * - http://stackoverflow.com/questions/25705259/undefined-reference-concurrenthashmap-keyset-when-building-in-java-8
-   */
-  private final Map<CycServerAddress, T> cachedSessions = new ConcurrentHashMap();
-
+  
+  // Constructors
+  
+  public CycSessionCache() {
+    this.cachedSessions = Collections.newSetFromMap(new ConcurrentHashMap());
+    // TODO: Consider using a ConcurrentSkipListSet instead. - nwinant, 2015-10-20
+    //       http://stackoverflow.com/questions/6720396/different-types-of-thread-safe-sets-in-java
+  }
+  
   
   // Public
   
-  public Collection<T> getAll() {
-    return this.cachedSessions.values();
+  public Set<T> getAll() {
+    return Collections.unmodifiableSet(this.cachedSessions);
   }
   
-  public T get(CycServerAddress server) {
-    if (server == null) {
-      return null;
+  public Set<T> getAll(SessionSelector criteria) throws SessionApiException {
+    final Set<T> results = new HashSet();
+    for (T session : getAll()) {
+      if (criteria.matchesSession(session)) {
+        results.add(session);
+      }
     }
-    return this.cachedSessions.get(server);
+    return results;
   }
   
-  public boolean hasSession(CycServerAddress server) {
-    return get(server) != null;
+  public boolean contains(T session) {
+    return cachedSessions.contains(session);
   }
   
-  public boolean hasSession(CycSession session) {
-    if ((session == null)
-            || (session.getServerInfo() == null)) {
-      return false;
+  public boolean remove(T session) {
+    if (cachedSessions.remove(session)) {
+      LOGGER.debug("Removed session {}", session);
+      return true;
     }
-    return hasSession(session.getServerInfo().getCycServer());
-  }
-  
-  synchronized public T remove(T session) {
-    CycServerAddress server = this.lookupKey(session);
-    return remove(server);
-  }
-  
-  synchronized public T remove(CycServerAddress server) {
-    if (server == null) {
-      return null;
-    }
-    T session = this.cachedSessions.remove(server);
-    LOGGER.debug("Removed session {}", session);
-    return session;
+    return false;
   }
   
   /**
@@ -116,16 +96,18 @@ public class CycSessionCache<T extends CycSession> {
    * @param environment
    * @return the session
    */
-  synchronized public T put(T session, EnvironmentConfiguration environment) {
-    if ((session != null)
-            && !hasSession(session)
-            && (session.getServerInfo() != null)
-            && (session.getServerInfo().getCycServer() != null)) {
+  public boolean add(T session, EnvironmentConfiguration environment) {
+    if (session == null) {
+      throw new NullPointerException("Cannot cache null session");
+    } else if (contains(session)) {
+      LOGGER.warn("Being asked to re-cache session: {}", session);
+    } else if (!isCacheable(session, environment)) {
+      LOGGER.warn("Caching of session {} not permitted by EnvironmentConfiguration {}", session, environment);
+    } else {
       LOGGER.debug("Caching session {}", session);
-      final CycServerAddress server = session.getServerInfo().getCycServer();
-      this.cachedSessions.put(server, session);
+      return this.cachedSessions.add(session);
     }
-    return session;
+    return false;
   }
   
   public boolean isCachingAllowed(CycSessionConfiguration config, EnvironmentConfiguration environment) {
@@ -141,20 +123,4 @@ public class CycSessionCache<T extends CycSession> {
     return this.cachedSessions.size();
   }
   
-  
-  // Private
-  
-  private CycServerAddress lookupKey(T session) {
-    if (session == null) {
-      return null;
-    }
-    final Set<CycServerAddress> keys = this.cachedSessions.keySet();
-    for (CycServerAddress key : keys) {
-      final T cachedSession = this.get(key);
-      if ((session.equals(cachedSession))) {
-        return key;
-      }
-    }
-    return null;
-  }
 }

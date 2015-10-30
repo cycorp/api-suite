@@ -66,7 +66,6 @@ public class TestUtils {
   private static QueryApiTestConstants testConstants() throws KBApiRuntimeException {
     return QueryApiTestConstants.getInstance();
   }
-  public static CycAccess cyc = null;
   public static Variable X;
   public static Sentence xIsaEmu;
   public static Context inferencePSC;
@@ -78,8 +77,7 @@ public class TestUtils {
     if (initialized == false) {
       try {
         KBAPIConfiguration.setShouldTranscriptOperations(false);
-        cyc = CycAccessManager.getCurrentAccess();
-        System.out.println("Current Cyc: * * *  " + cyc.getServerInfo().getCycServer() + "  * * *");
+        System.out.println("Current Cyc: * * *  " + getCyc().getServerInfo().getCycServer() + "  * * *");
         X = new VariableImpl("?X");
         xIsaEmu = new SentenceImpl(Constants.isa(), X, testConstants().emu());
         inferencePSC = Constants.inferencePSCMt();
@@ -112,7 +110,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirement(CycSessionRequirement requirement) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirement.isCompatible(getSession()));
+      org.junit.Assume.assumeTrue(requirement.checkCompatibility(getSession()).isCompatible());
     } catch (SessionApiException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);
@@ -122,7 +120,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirements(CycSessionRequirementList requirements) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirements.isCompatible());
+      org.junit.Assume.assumeTrue(requirements.checkCompatibility().isCompatible());
     } catch (SessionApiException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);
@@ -139,10 +137,15 @@ public class TestUtils {
   }
   
   private static CycSession getSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
-    if (cyc != null) {
-      return cyc.getCycSession();
-    }
     return CycSessionManager.getCurrentSession();
   }
-  
+
+  public static CycAccess getCyc() {
+    try {
+      return CycAccessManager.getCurrentAccess();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed retrieve current CycAccess.", e);
+    }
+  }
+
 }

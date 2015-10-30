@@ -101,7 +101,7 @@ public class CycRKFTool extends AbstractKBTool {
    * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
   public CycList rkfPhraseReader(String text, Fort parsingMt, Fort domainMt) throws CycConnectionException, CycApiException, OpenCycUnsupportedFeatureException {
-    RKF_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    RKF_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     String command = makeSubLStmt("rkf-phrase-reader", text, parsingMt, domainMt);
     return getConverse().converseList(command);
   }

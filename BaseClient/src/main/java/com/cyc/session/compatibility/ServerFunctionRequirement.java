@@ -56,8 +56,12 @@ public class ServerFunctionRequirement extends AbstractCycClientRequirement {
   }
   
   @Override
-  public boolean isCompatible(CycClient client) throws CycApiException, CycConnectionException {
-    return requiredFunction.isBound(client);
+  public CompatibilityResults checkCompatibility(CycClient client) throws CycApiException, CycConnectionException {
+    if (requiredFunction.isBound(client)) {
+      return new CompatibilityResultsImpl(true);
+    } else {
+      return new CompatibilityResultsImpl(false, getDefaultErrorMessage());
+    }
   }
   
 }

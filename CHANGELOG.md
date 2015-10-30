@@ -2,25 +2,59 @@ Cyc Core API Suite CHANGELOG
 ============================
 
 For more information, view the [README](README.md) bundled with this release or visit the
-[Cyc Developer Center](http://dev.cyc.com/api/core/). 
+[Cyc Developer Center](http://dev.cyc.com/api/core/).
 
 **Important note about _backwards-compatibility:_** It is expected that more release candidates will
 follow. Until the final 1.0.0 release, it is expected that future release candidates will break
 backwards compatibility.
 
+
+1.0.0-rc4 - 2015-10-29
+----------------------
+
+The fourth release candidate of Cycorp's new Java API suite. 1.0.0-rc4 is _not backwards-compatible_
+with earlier API releases. Note that _ResearchCyc 4.0q_ and _EnterpriseCyc 1.7-preview_ require
+[server code patching](server-patching.md) for compatibility with the 1.0.0-rc4 release.
+
+#### Query API
+
+* Instead of creating Query objects directly, call QueryFactory.getQuery(...)
+* Query API no longer uses BaseClient CycObjects.
+
+#### Natural language
+
+* Adds com.cyc.nl package to Core API Specification to support upcoming release of NL API.
+* Split `com.cyc.baseclient.nl.Paraphraser` class into `com.cyc.nl.Paraphraser` interface (in Core
+  API Spec) and `com.cyc.baseclient.nl.ParaphraserFactory` class (in Base Client).
+
+#### Session API
+
+* Adds API support for closing CycSessions and SessionManagers. See 
+  [Session API Connection Management](http://dev.cyc.com/api/core/session/connection-management/) 
+  for details.
+* Significant improvements to session resource management, especially CycAccess management.
+* Bug fixes for threading issues.
+
+#### Other changes
+
+* Critical bug fixes related to obfuscated functions in the planned upcoming release of
+  OpenCyc 5.0-preview.
+* Assorted bug fixes.
+
+
 1.0.0-rc3 - 2015-08-14
 ----------------------
 
 The third release candidate of Cycorp's new Java API suite. 1.0.0-rc3 is _not backwards-compatible_
-with earlier releases. Note that _ResearchCyc 4.0q_ and _EnterpriseCyc 1.7-preview_ require 
+with earlier API releases. Note that _ResearchCyc 4.0q_ and _EnterpriseCyc 1.7-preview_ require
 [server code patching](server-patching.md) for compatibility with the 1.0.0-rc3 release.
 
 #### New: Support for upcoming OpenCyc release
 
-Adds support for the planned upcoming release of **OpenCyc 5.0-preview**. Note that the OpenCyc 
-server will not have support for advanced features such as QuerySearch or ProofViewJustification. 
-Classes and methods which are not supported by OpenCyc will reflect this in their javadoc 
-description and in their signature by declaring that they throw a 
+Adds support for the planned upcoming release of **OpenCyc 5.0-preview**. Note that the OpenCyc
+server will not have support for advanced features such as QuerySearch or ProofViewJustification.
+Classes and methods which are not supported by OpenCyc will reflect this in their javadoc
+description and in their signature by declaring that they throw a
 `com.cyc.session.exception.OpenCycUnsupportedServerException`.
 
 There are no plans to support previous versions of OpenCyc.
@@ -29,7 +63,7 @@ There are no plans to support previous versions of OpenCyc.
 
 * _Query API_ interfaces moved into CoreAPISpec Maven module.
 * Adds the QueryFactory (`com.cyc.query.QueryFactory`) to facilitate query construction.
-* Compatibility with different Cyc server editions and versions is now better-documented via the 
+* Compatibility with different Cyc server editions and versions is now better-documented via the
   `UnsupportedCycOperationException` and `OpenCycUnsupportedFeatureException` exceptions.
 
 #### Other changes
@@ -48,7 +82,8 @@ There are no plans to support previous versions of OpenCyc.
 ----------------------
 
 The second release candidate of Cycorp's new Java API suite for interacting with the Cyc inference
-engine and knowledge base. Note that 1.0.0-rc2 is _not backwards-compatible_ with earlier releases.
+engine and knowledge base. Note that 1.0.0-rc2 is _not backwards-compatible_ with earlier API
+releases.
 
 #### New: Core API Suite Bundle
 
@@ -82,7 +117,7 @@ consolidate and clarify the interfaces which define the Core API Suite. Details:
 ----------------------
 
 First release candidate of Cycorp's new Java API suite for interacting with the Cyc inference engine
-and knowledge base. Note that 1.0.0-rc1 is _not backwards-compatible_ with earlier releases.
+and knowledge base. Note that 1.0.0-rc1 is _not backwards-compatible_ with earlier API releases.
 
 Details:
 
@@ -107,5 +142,3 @@ Details:
 * Introduces the **KB API**, which streamlines the manipulation of CycL-based Java objects.
 * Introduces the **Query API**, which streamlines asking queries and handling answers.
 * Introduces the **Base API**, the successor to the OpenCyc API.
-
-

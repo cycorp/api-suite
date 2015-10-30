@@ -45,7 +45,7 @@ import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
-import com.cyc.baseclient.nl.Paraphraser;
+import com.cyc.baseclient.nl.ParaphraserFactory;
 import com.cyc.kb.Assertion;
 import com.cyc.kb.BinaryPredicate;
 import com.cyc.kb.Context;
@@ -68,6 +68,7 @@ import com.cyc.kb.exception.KBApiServerSideException;
 import com.cyc.kb.exception.KBTypeException;
 import com.cyc.kb.exception.StaleKBObjectException;
 import com.cyc.kb.quant.QuantifiedInstanceRestrictedVariable;
+import com.cyc.nl.Paraphraser;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionManager;
 import com.cyc.session.SessionApiException;
@@ -93,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  *
  * @author Vijay Raj
- * @version "$Id: KBObjectImpl.java 159474 2015-07-03 21:10:12Z nwinant $"
+ * @version "$Id: KBObjectImpl.java 161187 2015-09-25 15:03:11Z daves $"
  */
 public class KBObjectImpl implements KBObject {
   
@@ -300,11 +301,11 @@ public class KBObjectImpl implements KBObject {
     try {
       final String ctxStr = (ctx == null) ? KBAPIConfiguration.getDefaultContext().forQuery().stringApiValue() //"#$BaseKB"
               : ctx.stringApiValue();
-      String command = "(with-inference-mt-relevance " + ctxStr
-              + " (GATHER-GAF-ARG-INDEX "
+      String command = "(" + SubLConstants.getInstance().withInferenceMtRelevance.stringApiValue() + " " + ctxStr
+              + " (" + SubLConstants.getInstance().gatherGafArgIndex.stringApiValue() + " "
               + matchArg.stringApiValue() + " " + matchArgPos + " "
               + pred.stringApiValue() + "))";
-
+      
       log.trace("getfacts: {}", command);
       Object res = getAccess().converse().converseObject(command);
       log.trace("getfacts response: {}", res);
@@ -1222,13 +1223,9 @@ public class KBObjectImpl implements KBObject {
    */
   @Override
   public String toNLString() throws SessionApiException {
-    Paraphraser p = Paraphraser
-            .getInstance(Paraphraser.ParaphrasableType.KBOBJECT);
-    try {
-      return p.paraphrase(core).getString();
-    } catch (CycConnectionException ex) {
-      throw new SessionApiException(ex);
-    }
+    Paraphraser p = ParaphraserFactory
+            .getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
+    return p.paraphrase(this).getString();
   }
 
   /* (non-Javadoc)

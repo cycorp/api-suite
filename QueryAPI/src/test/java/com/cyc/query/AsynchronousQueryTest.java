@@ -346,16 +346,13 @@ public class AsynchronousQueryTest {
   private static void waitForQueryToFinish() throws InterruptedException {
     Thread.sleep(1000);
   }
-
-  private static class TestQueryListener extends QueryListenerImpl {
-
+  
+  private static class TestQueryListener implements QueryListener {
+    // TODO: use some of these fields for verifying test results.
     private boolean created = false;
     private boolean terminated = false;
     private final List<InferenceStatus> statuses = new ArrayList<InferenceStatus>();
     private final List answers = new ArrayList();
-
-    public TestQueryListener() {
-    }
 
     @Override
     public void notifyInferenceCreated(Query query) {
@@ -386,7 +383,7 @@ public class AsynchronousQueryTest {
       terminated = true;
     }
   }
-
+  
   /**
    * Test of bindVariable method, of class Query.
    * @throws java.io.IOException
@@ -440,7 +437,7 @@ public class AsynchronousQueryTest {
             StandardInferenceMetric.TIME_TO_LAST_ANSWER, StandardInferenceMetric.TOTAL_TIME, StandardInferenceMetric.WASTED_TIME_AFTER_LAST_ANSWER);
     // Add them all to our query:
     q.getMetrics().addAll(metricsList);
-    if (!TestUtils.cyc.isOpenCyc()) {
+    if (!TestUtils.getCyc().isOpenCyc()) {
       q.getMetrics().add(StandardInferenceMetric.SKSI_QUERY_START_TIMES);
       q.getMetrics().add(StandardInferenceMetric.SKSI_QUERY_TOTAL_TIME);
     }

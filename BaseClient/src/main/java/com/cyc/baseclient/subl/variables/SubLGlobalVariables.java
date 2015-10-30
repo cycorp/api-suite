@@ -53,10 +53,4 @@ public class SubLGlobalVariables {
   
   public static final SubLGlobalVariable KE_PURPOSE = new BasicSubLGlobalVariable("*ke-purpose*");
   
-  public static final SubLGlobalVariable IMAGE_PURPOSE = new BasicSubLGlobalVariable("*image-purpose*");
-  
-  public static final BasicSubLGlobalVariable SYSTEM_CODE_VERSION_STRING = new BasicSubLGlobalVariable("*system-code-version-string*");
-  
-  public static final BasicSubLGlobalVariable SYSTEM_CODE_RELEASE_STRING = new BasicSubLGlobalVariable("*system-code-release-string*");
-  
 }

@@ -21,9 +21,10 @@ package com.cyc.session.internal;
  * #L%
  */
 
+import com.cyc.session.CycServer;
 import static com.cyc.session.SessionConfigurationProperties.*;
 import com.cyc.session.SessionConfigurationException;
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSessionConfiguration;
 import java.util.Properties;
 
@@ -36,8 +37,8 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   // Fields
   
   final private Class loaderClass;
-  final private DefaultSessionOptions options;
-  private CycServer server = null;
+  final private DefaultSessionOptions defaultOptions;
+  private CycServerAddress server = null;
   
   
   // Constructor
@@ -45,11 +46,11 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   public ImmutableConfiguration(Properties properties, Class loaderClass) throws SessionConfigurationException {
     super(properties);
     this.loaderClass = loaderClass;
-    this.options = new DefaultSessionOptionsImpl();
+    this.defaultOptions = new DefaultSessionOptionsImpl();
     processProperties();
   }
   
-  public ImmutableConfiguration(CycServer server, Class loaderClass) throws SessionConfigurationException {
+  public ImmutableConfiguration(CycServerAddress server, Class loaderClass) throws SessionConfigurationException {
     this(new Properties(), loaderClass);
     this.properties.put(SERVER_KEY, server.toString());
     processProperties();
@@ -59,7 +60,7 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   // Public
   
   @Override
-  public CycServer getCycServer() {
+  public CycServerAddress getCycServer() {
     return this.server;
   }
   
@@ -98,7 +99,7 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   @Override
   public DefaultSessionOptions getDefaultSessionOptions() {
     // TODO: this needs to be derived from properties.
-    return this.options;
+    return this.defaultOptions;
   }
   
   @Override
@@ -134,7 +135,7 @@ public class ImmutableConfiguration extends AbstractSessionConfigurationProperti
   public String toString() {
     return "[" + this.getClass().getSimpleName() + "#" + this.hashCode()
             + " (via " + this.loaderClass.getSimpleName() + ")]"
-            +  " -> [" + CycServer.class.getSimpleName() + "=" + getCycServer() + "]";
+            +  " -> [" + CycServerAddress.class.getSimpleName() + "=" + getCycServer() + "]";
   }
   
   

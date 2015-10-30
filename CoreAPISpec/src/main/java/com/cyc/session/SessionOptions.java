@@ -62,11 +62,6 @@ public interface SessionOptions {
   void setCyclistName(String cyclistName) throws SessionCommunicationException, SessionConfigurationException;
   
   /**
-   * Clear the current cyclist value.  If the current CycSessionConfiguration has a default Cyclist, that cyclist will now become the current cyclist.
-   */
-  void clearCyclist();
-  
-  /**
    * Sets the value of the KE purpose, whose project name will be attached via #$myCreationPurpose
    * bookkeeping assertions to new KB entities created in this session.
    *
@@ -106,7 +101,27 @@ public interface SessionOptions {
   DefaultContext getDefaultContext();
   
   /**
-   * Clears all values, reverting to any defaults specified in CycSessionConfiguration.
+   * Resets the current cyclist value to the default specified in the current CycSessionConfiguration.
+   */
+  void resetCyclist();
+  
+  /**
+   * Resets the current KB purpose value to the default specified in the current CycSessionConfiguration.
+   */
+  void resetKePurpose();
+  
+  /**
+   * Resets the current DefaultContext value to the default specified in the current CycSessionConfiguration.
+   */
+  void resetDefaultContext();
+  
+  /**
+   * Resets the current shouldTranscriptOperations value to the default specified in the current CycSessionConfiguration.
+   */
+  void resetShouldTranscriptOperations();
+  
+  /**
+   * Clears all values, reverting to the defaults specified in CycSessionConfiguration.
    */
   void reset();
 }

@@ -64,7 +64,7 @@ public class QueryApiConstantsTest {
       System.out.println("  - " + o);
     }
     assertFalse(allObj.isEmpty());
-    if (TestUtils.cyc.isOpenCyc()) {
+    if (TestUtils.getCyc().isOpenCyc()) {
       assertEquals(7, allObj.size());
     } else {
       assertEquals(8, allObj.size());

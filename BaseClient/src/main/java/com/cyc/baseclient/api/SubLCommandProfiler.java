@@ -26,9 +26,7 @@ package com.cyc.baseclient.api;
 //// External Imports
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.session.CycServer;
 import com.cyc.baseclient.DefaultSubLWorker;
-import com.cyc.baseclient.CycClient;
 import com.cyc.base.conn.WorkerListener;
 import com.cyc.base.conn.WorkerStatus;
 import com.cyc.base.conn.Worker;
@@ -39,7 +37,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.io.*;
-import com.cyc.baseclient.cycobject.CycArrayList;
 
 /**
  * <P>SubLCommandProfiler profiles SubL commands.
@@ -49,7 +46,7 @@ import com.cyc.baseclient.cycobject.CycArrayList;
  * <P>Use is subject to license terms.
  * @author reed
   date September 2, 2005, 7:37 AM
- * @version $Id: SubLCommandProfiler.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: SubLCommandProfiler.java 161696 2015-10-20 22:42:31Z nwinant $
  */
 public class SubLCommandProfiler implements WorkerListener {
   
@@ -260,7 +257,7 @@ public class SubLCommandProfiler implements WorkerListener {
   public static void main(final String[] args) {
     DefaultSubLWorker.startProfiling();
     try {
-      final CycAccess access = CycAccessManager.getAccess();
+      final CycAccess access = CycAccessManager.getCurrentAccess();
       SubLWorkerSynch worker = new DefaultSubLWorkerSynch("(+ 1 1)", access);
       Object work = worker.getWork();
       System.out.println("Got worker: " + worker + "\nGot result: " + work + ".");
@@ -274,7 +271,7 @@ public class SubLCommandProfiler implements WorkerListener {
       e.printStackTrace();
     }
     try {
-      final CycAccess access = CycAccessManager.getAccess();
+      final CycAccess access = CycAccessManager.getCurrentAccess();
       Thread workerThread = new Thread() {
         public void run() {
           try {

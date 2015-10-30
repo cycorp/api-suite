@@ -37,6 +37,8 @@ public class ConfigurationCache {
   
   // Fields
   
+  // FIXME: what fresh hell is this? - nwinant, 2015-10,26
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationCache.class); 
   private EnvironmentConfiguration cachedEnvironment = null;
   private CycSessionConfiguration cachedConfiguration = null;

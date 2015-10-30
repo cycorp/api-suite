@@ -34,6 +34,7 @@ import com.cyc.base.kbtool.InspectorTool;
 import com.cyc.base.kbtool.LookupTool;
 import com.cyc.base.kbtool.ObjectTool;
 import com.cyc.base.kbtool.UnassertTool;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycSession;
 
@@ -87,10 +88,10 @@ public interface CycAccess {
   LeaseManager getCycLeaseManager();
 
   /**
-   * Gets the CycServer description of the server to which this CycAccess is connected.
-   * @return a CycServer object
+   * Gets the CycServerAddress description of the server to which this CycAccess is connected.
+   * @return a CycServerAddress object
    */
-  CycServer getCycServer();
+  CycServerAddress getCycServer();
   
   /**
    * Gets the hostname of the connection

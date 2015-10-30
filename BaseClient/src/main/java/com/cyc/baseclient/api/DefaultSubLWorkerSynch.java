@@ -66,7 +66,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * @author tbrussea
  * @date March 25, 2004, 2:01 PM
- * @version $Id: DefaultSubLWorkerSynch.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultSubLWorkerSynch.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 public class DefaultSubLWorkerSynch
     extends DefaultSubLWorker
@@ -347,7 +347,7 @@ public class DefaultSubLWorkerSynch
    */
   public static void main(String[] args) {
     try {
-      CycAccess access = CycAccessManager.getAccess();
+      CycAccess access = CycAccessManager.getCurrentAccess();
       SubLWorkerSynch worker = new DefaultSubLWorkerSynch("(+ 1 1)", access);
       Object work = worker.getWork();
       System.out.println("Got worker: " + worker + "\nGot result: " + work + ".");
@@ -355,7 +355,7 @@ public class DefaultSubLWorkerSynch
       e.printStackTrace();
     }
     try {
-      final CycAccess access = CycAccessManager.getAccess();
+      final CycAccess access = CycAccessManager.getCurrentAccess();
       Thread workerThread = new Thread() {
         public void run() {
           try {

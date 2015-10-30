@@ -59,7 +59,7 @@ import java.util.Map;
 public class BaseApiOverview {
   
   protected CycAccess getCyc() throws SessionApiException {
-    return CycAccessManager.getAccess();
+    return CycAccessManager.getCurrentAccess();
   }
   
   

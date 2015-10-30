@@ -37,6 +37,7 @@ package com.cyc.session.compatibility;
  * #L%
  */
 
+import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.CycSession;
 import com.cyc.session.SessionCommandException;
 import com.cyc.session.SessionCommunicationException;
@@ -46,29 +47,24 @@ import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
  *
  * @author nwinant
  */
-public class NotOpenCycRequirement implements CycSessionRequirement<OpenCycUnsupportedFeatureException> {
+public class NotOpenCycRequirement extends NotCycServerReleaseTypeRequirement<OpenCycUnsupportedFeatureException> implements CycSessionRequirement<OpenCycUnsupportedFeatureException> {
   
-  public static final NotOpenCycRequirement NOT_OPENCYC = new NotOpenCycRequirement();
-  
-  final private String msg;
+  final static public NotOpenCycRequirement NOT_OPENCYC = new NotOpenCycRequirement();
+  final static private String MSG = "This feature is not supported in OpenCyc.";
   
   public NotOpenCycRequirement(String msg) {
-    this.msg = msg;
+    super(CycServerReleaseType.OPENCYC, msg);
   }
   
   public NotOpenCycRequirement() {
-    this("This feature is not supported in OpenCyc.");
+    this(MSG);
   }
   
   @Override
-  public boolean isCompatible(CycSession session) throws SessionCommunicationException, SessionCommandException {
-    return !session.getServerInfo().isOpenCyc();
-  }
-  
-  @Override
-  public void testCompatibility(CycSession session) throws OpenCycUnsupportedFeatureException, SessionCommunicationException, SessionCommandException {
-    if (!isCompatible(session)) {
-      throw new OpenCycUnsupportedFeatureException(msg);
+  public void throwExceptionIfIncompatible(CycSession session) throws OpenCycUnsupportedFeatureException, SessionCommunicationException, SessionCommandException {
+    CompatibilityResults results = checkCompatibility(session);
+    if (!results.isCompatible()) {
+      throw new OpenCycUnsupportedFeatureException(results.getExceptionMessage());
     }
   }
   

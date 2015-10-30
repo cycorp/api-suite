@@ -27,6 +27,7 @@ import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.baseclient.subl.functions.SubLFunctions;
 import static com.cyc.baseclient.subl.functions.SubLFunctions.CATEGORIZE_TERM_WRT_API;
+import com.cyc.baseclient.testing.TestUtils;
 import com.cyc.session.SessionApiException;
 import java.io.File;
 import java.util.List;
@@ -108,5 +109,6 @@ public class SubLResourceLoaderTest {
    */
   private void assumeTestLoadingAllowed() throws CycApiException, CycConnectionException {
     org.junit.Assume.assumeTrue(loader.findMissingResources(SubLFunctions.SOURCES).isEmpty());
+    TestUtils.assumeNotObfuscated();
   }
 }

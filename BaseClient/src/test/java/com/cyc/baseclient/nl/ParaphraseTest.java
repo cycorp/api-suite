@@ -25,6 +25,7 @@ package com.cyc.baseclient.nl;
  * #L%
  */
 
+import com.cyc.nl.Paraphrase;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,14 +62,14 @@ public class ParaphraseTest {
   }
 
   /**
-   * Test of compareTo method, of class Paraphrase.
+   * Test of compareTo method, of class ParaphraseImpl.
    */
   @Test
   public void testCompareTo() {
     System.out.println("compareTo");
-    final Paraphrase<Integer> firstOne = new Paraphrase<Integer>("one", 1);
-    final Paraphrase<Integer> secondOne = new Paraphrase<Integer>("one", 1);
-    final Paraphrase<Integer> two = new Paraphrase<Integer>("two", 2);
+    final Paraphrase<Integer> firstOne = new ParaphraseImpl<Integer>("one", 1);
+    final Paraphrase<Integer> secondOne = new ParaphraseImpl<Integer>("one", 1);
+    final Paraphrase<Integer> two = new ParaphraseImpl<Integer>("two", 2);
     assertEquals(0, firstOne.compareTo(secondOne));
     final List<Paraphrase<Integer>> paraphrases = Arrays.asList(two, firstOne);
     Collections.sort(paraphrases);

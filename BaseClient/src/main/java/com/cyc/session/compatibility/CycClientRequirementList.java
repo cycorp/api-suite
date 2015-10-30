@@ -54,7 +54,7 @@ public class CycClientRequirementList extends ArrayList<CycClientRequirement> im
   
   // Fields
   
-  private static Logger LOGGER = LoggerFactory.getLogger(CycClientRequirementList.class);
+  final private static Logger LOGGER = LoggerFactory.getLogger(CycClientRequirementList.class);
   
   
   // Static
@@ -73,19 +73,28 @@ public class CycClientRequirementList extends ArrayList<CycClientRequirement> im
   // Basic test methods
   
   @Override
-  public boolean isCompatible(CycClient client) throws CycApiException, CycConnectionException {
+  public CompatibilityResults checkCompatibility(CycClient client) throws CycApiException, CycConnectionException {
+    final List<String> errorMessages = new ArrayList<String>();
     boolean compatible = true;
-    for (CycClientRequirement check : this) {
-      //LOGGER.info("Checking {}", check.getClass());
-      final boolean result = check.isCompatible(client);
-      if (!result) {
+    for (CycClientRequirement requirement : this) {
+      //LOGGER.info("Checking {}", requirement.getClass());
+      final CompatibilityResults reqResult = requirement.checkCompatibility(client);
+      if (!reqResult.isCompatible()) {
         compatible = false;
-        LOGGER.warn("{}: {}", check.getClass().getSimpleName(), result);
+        errorMessages.addAll(reqResult.getCompatibilityErrorMessages());
+        for (String errMsg : reqResult.getCompatibilityErrorMessages()) {
+          LOGGER.error("{}: {}", requirement.getClass().getSimpleName(), errMsg);
+        }
+        //LOGGER.warn("{}: {}", requirement.getClass().getSimpleName(), reqResult.isCompatible());
       } else {
-        LOGGER.info("{}: {}", check.getClass().getSimpleName(), result);
+        LOGGER.info("{}: {}", requirement.getClass().getSimpleName(), reqResult.isCompatible());
       }
     }
-    return compatible;
+    if (compatible) {
+      return new CompatibilityResultsImpl(compatible);
+    } else {
+      return new CompatibilityResultsImpl(compatible, errorMessages);
+    }
   }
 
 }

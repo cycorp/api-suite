@@ -29,16 +29,17 @@ import static com.cyc.baseclient.subl.functions.SubLFunctions.CYC_REVISION_STRIN
 import static com.cyc.baseclient.subl.functions.SubLFunctions.CYC_SYSTEM_CODE_STRING;
 import static com.cyc.baseclient.subl.functions.SubLFunctions.KB_VERSION_STRING;
 import com.cyc.session.CycServerReleaseType;
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.SessionCommandException;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.compatibility.AbstractCycClientRequirement;
+import com.cyc.session.compatibility.CompatibilityResults;
+import com.cyc.session.compatibility.CompatibilityResultsImpl;
 import com.cyc.session.compatibility.CycClientRequirementList;
 import com.cyc.session.compatibility.MinimumPatchRequirement;
 import com.cyc.session.compatibility.ServerFunctionRequirement;
 import com.cyc.session.exception.SessionApiRuntimeException;
-import com.cyc.session.exception.UnsupportedCycOperationException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,17 +85,17 @@ public class CycServerInfoImpl implements CycServerInfo {
    */
   public static final AbstractCycClientRequirement MAJOR_REVISION_REQUIREMENT = new AbstractCycClientRequirement() {
     @Override
-    public boolean isCompatible(CycClient client) throws CycApiException, CycConnectionException {
+    public CompatibilityResults checkCompatibility(CycClient client) throws CycApiException, CycConnectionException {
       final CycServerInfoImpl info = client.getServerInfo();
-      return info.getCycMajorRevisionNumber() == REQUIRED_MAJOR_REVISION;
+      final int actualMajorRev = info.getCycMajorRevisionNumber();
+      if (actualMajorRev == REQUIRED_MAJOR_REVISION) {
+        return new CompatibilityResultsImpl(true);
+      } else {
+        return new CompatibilityResultsImpl(false,
+                "This API implementation requires servers at System " + REQUIRED_MAJOR_REVISION + ","
+                + " but " + client.getCycServer() + " is at System " + actualMajorRev + ".");
+      }
     }
-    @Override
-    public String getErrorMessage(CycClient client) throws UnsupportedCycOperationException, CycApiException, CycConnectionException {
-      final int serverMajorRevisionNumber = client.getServerInfo().getCycMajorRevisionNumber();
-      final CycServer server = client.getCycServer();
-      return "This API implementation requires servers at System " + REQUIRED_MAJOR_REVISION + ", but " + server + " is at System " + serverMajorRevisionNumber + ".";
-    }
-    
   };
   
   public static final CycClientRequirementList BASELINE_API_REQUIREMENTS = CycClientRequirementList.fromList(
@@ -110,7 +111,7 @@ public class CycServerInfoImpl implements CycServerInfo {
   );
     
   final private CycAccess cyc;
-  final private CycServer server;
+  final private CycServerAddress server;
   private boolean openCyc;
   private List<Integer> cycRevisionNumbers;
   
@@ -147,7 +148,7 @@ public class CycServerInfoImpl implements CycServerInfo {
   }
   
   @Override
-  public CycServer getCycServer() {
+  public CycServerAddress getCycServer() {
     return this.server;
   }
   
@@ -227,7 +228,11 @@ public class CycServerInfoImpl implements CycServerInfo {
   
   @Override
   public CycServerReleaseType getSystemReleaseType() throws SessionCommunicationException, SessionCommandException {
-    return CycServerReleaseType.fromString(getSystemReleaseTypeString());
+    final String releaseString = getSystemReleaseTypeString();
+    if (releaseString == null) {
+      return null;
+    }
+    return CycServerReleaseType.fromString(releaseString);
   }
   
   public int getCycMajorRevisionNumber()
@@ -245,6 +250,9 @@ public class CycServerInfoImpl implements CycServerInfo {
   
   protected String getSystemReleaseTypeString() throws SessionCommunicationException, SessionCommandException {
     try {
+      if (!CYC_SYSTEM_CODE_STRING.isBound(getCyc())) {
+        return null;
+      }
       return CYC_SYSTEM_CODE_STRING.eval(getCyc());
     } catch (CycConnectionException ex) {
       ex.throwAsSessionException();
@@ -290,14 +298,14 @@ public class CycServerInfoImpl implements CycServerInfo {
       return false;
     }
     */
-    return BASELINE_API_REQUIREMENTS.isCompatible((CycClient) getCyc());
+    return BASELINE_API_REQUIREMENTS.checkCompatibility((CycClient) getCyc()).isCompatible();
     
     
     // TODO: clean up this cruft - nwinant, 2015-06-25
     
     
     /*
-    if (!BASELINE_API_REQUIREMENTS.isCompatible(getCyc().getCycSession())) {
+    if (!BASELINE_API_REQUIREMENTS.checkCompatibility(getCyc().getCycSession())) {
       return false;
     }*/
     

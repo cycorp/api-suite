@@ -1,8 +1,10 @@
 package com.cyc.baseclient.nl;
 
+import com.cyc.nl.Paraphrase;
+
 /*
  * #%L
- * File: Paraphrase.java
+ * File: ParaphraseImpl.java
  * Project: Base Client
  * %%
  * Copyright (C) 2013 - 2015 Cycorp, Inc.
@@ -26,7 +28,7 @@ package com.cyc.baseclient.nl;
  *
  * @author baxter
  */
-public class Paraphrase<E> implements Comparable<Paraphrase<? extends Object>> {
+public class ParaphraseImpl<E> implements Comparable<Paraphrase<? extends Object>>, Paraphrase<E>  {
 
   /**
    * Creates a new Paraphrase with the specified term and nl.
@@ -34,7 +36,7 @@ public class Paraphrase<E> implements Comparable<Paraphrase<? extends Object>> {
    * @param nl
    * @param term
    */
-  public Paraphrase(String nl, E term) {
+  public ParaphraseImpl(String nl, E term) {
     this.nl = nl;
     this.term = term;
   }
@@ -47,7 +49,7 @@ public class Paraphrase<E> implements Comparable<Paraphrase<? extends Object>> {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final Paraphrase other = (Paraphrase) obj;
+    final ParaphraseImpl other = (ParaphraseImpl) obj;
     if ((this.nl == null) ? (other.nl != null) : !this.nl.equals(other.nl)) {
       return false;
     }
@@ -69,7 +71,7 @@ public class Paraphrase<E> implements Comparable<Paraphrase<? extends Object>> {
   @Override
   public int compareTo(Paraphrase<? extends Object> o) {
     final String thisString = this.nl == null ? "" : this.nl;
-    final String oString = o == null || o.nl == null ? "" : o.nl;
+    final String oString = o == null || o.getString() == null ? "" : o.getString();
     return thisString.compareTo(oString);
   }
 
@@ -103,4 +105,5 @@ public class Paraphrase<E> implements Comparable<Paraphrase<? extends Object>> {
    *
    */
   protected final E term;
+
 }

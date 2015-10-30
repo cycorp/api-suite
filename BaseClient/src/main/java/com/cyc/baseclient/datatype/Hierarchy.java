@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import com.cyc.base.cycobject.DenotationalTerm;
-import com.cyc.baseclient.nl.Paraphrase;
+import com.cyc.baseclient.nl.ParaphraseImpl;
 import com.cyc.baseclient.datatype.Hierarchy.Walker.Mode;
 
 /**
@@ -101,7 +101,7 @@ public class Hierarchy<T> {
     String indentString = "";
     for (final SortedWalker walker = new SortedWalker(this,
             Walker.Mode.DEPTHFIRST); walker.hasNext();) {
-      final Node<Paraphrase<DenotationalTerm>> node = walker.next();
+      final Node<ParaphraseImpl<DenotationalTerm>> node = walker.next();
       final int depth = node.getDepth();
       if (indentString.length() > depth) {
         indentString = indentString.substring(0, depth);

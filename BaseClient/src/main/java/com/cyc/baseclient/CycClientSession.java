@@ -24,96 +24,74 @@ package com.cyc.baseclient;
 import com.cyc.base.CycAccessSession;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.internal.AbstractCycSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwinant
  */
-public class CycClientSession implements CycAccessSession<CycClient> {
+public class CycClientSession extends AbstractCycSession<CycClientOptions> implements CycAccessSession<CycClient> {
+        
+  // Fields
   
-  final private CycSessionConfiguration config;
-  private CycClientOptions options;
+  static final private Logger LOGGER = LoggerFactory.getLogger(CycClientSession.class);
   private CycClient client;
 
+  
+  // Constructors
+  
   public CycClientSession(CycSessionConfiguration config) {
-    this.config = config;
-  }
-
-  @Override
-  public SessionStatus getStatus() {
-    if (this.getAccess() == null) {
-      return SessionStatus.UNINITIALIZED;
-    } else if (this.getAccess().isClosed()) {
-      return SessionStatus.CLOSED;
-    }
-    return SessionStatus.CONNECTED;
+    super(config);
   }
   
-  @Override
-  public CycClientOptions getOptions() {
-    return this.options;
-  }
   
-  @Override
-  public CycSessionConfiguration getConfiguration() {
-    return this.config;
-  }
-  
-  protected void setAccess(CycClient client) {
-    this.client = client;
-    setOptions(client);
-  }
+  // Public
   
   @Override
   public CycClient getAccess() {
     return this.client;
   }
-
+  
+  @Override
+  public ConnectionStatus getConnectionStatus() {
+    if (getAccess() == null) {
+      return ConnectionStatus.UNINITIALIZED;
+    } else if (getAccess().isClosed()) {
+      return ConnectionStatus.DISCONNECTED;
+    }
+    return ConnectionStatus.CONNECTED;
+  }
+  
   @Override
   public CycServerInfo getServerInfo() {
-    if (SessionStatus.UNINITIALIZED.equals(getStatus())) {
+    if (ConnectionStatus.UNINITIALIZED.equals(getConnectionStatus())) {
       return null;
     }
     return this.getAccess().getServerInfo();
   }
-
+  /*
+  //TODO: This causes an NPE to be thrown when SessionManagerImpl#releaseCycServerIfAppropriate 
+  //      calls CycClientSession#getServerInfo()#getCycServer() - nwinant, 2015-10-28
   @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 11 * hash + (this.config != null ? this.config.hashCode() : 0);
-    hash = 11 * hash + (this.client != null ? this.client.hashCode() : 0);
-    return hash;
+  public void close() {
+    final boolean alreadyClosed = isClosed();
+    super.close();
+    if (!alreadyClosed) {
+      LOGGER.debug("Session {} releasing {}", this, getAccess());
+      setAccess(null);
+    }
+  }
+  */
+  
+  // Protected
+  
+  protected void setAccess(CycClient client) {
+    this.client = client;
+    if (client != null) {
+      setOptions(new CycClientOptions(this));
+    }
   }
   
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final CycClientSession other = (CycClientSession) obj;
-    if (this.config != other.config && (this.config == null || !this.config.equals(other.config))) {
-      return false;
-    }
-    if (this.client != other.client && (this.client == null || !this.client.equals(other.client))) {
-      return false;
-    }
-    return true;
-  }
-  
-  @Override
-  public String toString() {
-    return "[" + this.getClass().getSimpleName()
-            + "#" + this.hashCode() + "]"
-            + " -> " + CycSessionConfiguration.class.getSimpleName() + "=" + this.getConfiguration();
-  }
-  
-  
-  // Private
-  
-  private void setOptions(CycClient client) {
-    this.options = new CycClientOptions(client);
-  }
 }

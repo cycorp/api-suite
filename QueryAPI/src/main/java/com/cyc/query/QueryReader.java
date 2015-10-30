@@ -61,6 +61,8 @@ import com.cyc.xml.query.QueryID;
 import com.cyc.xml.query.QueryInferenceProperties;
 import com.cyc.xml.query.QueryInferenceProperty;
 import com.cyc.xml.query.QueryMt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Support for reading in a QueryImpl from XML.
@@ -69,7 +71,8 @@ import com.cyc.xml.query.QueryMt;
  * @author baxter
  */
 public class QueryReader {
-
+  
+  static private final Logger LOGGER = LoggerFactory.getLogger(QueryReader.class);
   final CyclQueryUnmarshaller unmarshaller;
 
   /**
@@ -126,6 +129,7 @@ public class QueryReader {
                     CycObjectFactory.makeCycSymbol("T"));
     try {
       final String xmlString = CycAccessManager.getCurrentAccess().converse().converseString(command);
+      LOGGER.debug("Query XML:\n{}", xmlString);
       return queryFromXML(new ByteArrayInputStream(xmlString.getBytes()));
     } catch (KBApiException e) {
       throw e;

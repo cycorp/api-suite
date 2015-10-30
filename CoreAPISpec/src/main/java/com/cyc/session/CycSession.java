@@ -1,5 +1,7 @@
 package com.cyc.session;
 
+import java.io.Closeable;
+
 /*
  * #%L
  * File: CycSession.java
@@ -26,22 +28,68 @@ package com.cyc.session;
  * Implementation is provided by a SessionFactory.
  * @author nwinant
  */
-public interface CycSession {
+public interface CycSession extends Closeable {
   
   /**
    * The connection status of a {@link CycSession}.
    */
-  public enum SessionStatus {
+  public enum ConnectionStatus {
+    
+    /**
+     * Session has not been connected to the Cyc server.
+     */
     UNINITIALIZED,
+    
+    /**
+     * Session is currently connected to the Cyc server.
+     */
     CONNECTED,
-    CLOSED
+    
+    /**
+     * Session has been disconnected from the Cyc server.
+     */
+    DISCONNECTED
+  }
+  
+  /*
+  public enum SessionStatusChangeReason {
+    CHANGED_BY_APPLICATION("Status changed by application"),
+    CHANGED_BY_USER ("Status changed by user"),
+    CHANGED_BY_CYC_SERVER("Status changed by Cyc server"),
+    OTHER("Other reason"),
+    UNKNOWN("Unknown reason");
+    
+    private String description;
+    
+    private SessionStatusChangeReason(String description) {
+      this.description = description;
+    }
+    
+    public void setDescription(String description) {
+      this.description = description;
+    }
+    
+    public String getDescription() {
+      return this.description;
+    }
+  }
+  */
+  
+  /**
+   * Provides notifications about changes to a CycSession. 
+   * 
+   * @see CycSession#addListener(com.cyc.session.CycSession.SessionListener) 
+   */
+  public interface SessionListener {
+    //public void onStatusChange(SessionStatus oldStatus, SessionStatus newStatus, SessionStatusChangeReason reason);
+    public void onClose(Thread closingThread);
   }
   
   /**
-   * Returns the current status of the session.
+   * Returns the current status of the session's connection.
    * @return the current SessionStatus
    */
-  SessionStatus getStatus();
+  ConnectionStatus getConnectionStatus();
   
   /**
    * Returns a set of modifiable options, including the name of the cyclist
@@ -71,4 +119,41 @@ public interface CycSession {
    * @return CycServerInfo for the session's server, or null if CycSession is uninitialized.
    */
   CycServerInfo getServerInfo();
+  
+  /* *
+   * The SessionCriteria by which this session was created, if any.
+   * @return the criteria by which this session was created.
+   */
+  //public SessionCriteria getCreationCriteria();
+  
+  /**
+   * Closes a session, and releases it from the local thread. This method should always be called 
+   * when you know that you are finished with a particular session.
+   * 
+   * <p>Note that this method will not necessarily close the <em>underlying connection</em> to the 
+   * Cyc server; such details are handled by the SessionManager, which may allow resources to be 
+   * shared between sessions. Calling this method informs the SessionManager that a particular 
+   * session is closed, allowing the manager to make better decisions about resource management.
+   * 
+   * @see <a href="http://dev.cyc.com/api/core/session/connection-management/">Session API 
+   * Connection Management</a>
+   */
+  @Override
+  void close();
+  
+  /**
+   * Returns whether the CycSession is closed.
+   * 
+   * @return whether CycSession is closed
+   */
+  public boolean isClosed();
+  
+  /**
+   * Adds a {@link SessionListener} to this session.
+   * 
+   * @param listener 
+   * @return the SessionListener which was added to the session
+   */
+  SessionListener addListener(SessionListener listener);
+  
 }

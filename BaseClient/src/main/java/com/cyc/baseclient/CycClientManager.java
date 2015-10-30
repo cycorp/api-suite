@@ -30,6 +30,8 @@ import com.cyc.session.EnvironmentConfiguration;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionInitializationException;
 import com.cyc.session.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -40,11 +42,8 @@ public class CycClientManager<T extends CycClientSession> extends CycAccessManag
 
   // Fields
   
+  static final private Logger LOGGER = LoggerFactory.getLogger(CycClientManager.class);
   static private CycClientManager ME;
-  
-  public CycClientManager(SessionManager<T> sessionMgr) {
-    super(sessionMgr);
-  }
   
   public CycClientManager() {
     super();
@@ -59,20 +58,20 @@ public class CycClientManager<T extends CycClientSession> extends CycAccessManag
   
   
   // Public
-
+  /*
   static public CycClient getClient() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     return CycClientManager.getClientManager().getSession().getAccess();
   }
-
+  */
   static public CycClient getCurrentClient() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     return CycClientManager.getClientManager().getCurrentSession().getAccess();
   }
-  
+  /*
   @Override
   public T getSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     return this.getSessionMgr().getSession();
   }
-
+  */
   @Override
   public T getCurrentSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     return this.getSessionMgr().getCurrentSession();

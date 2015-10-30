@@ -21,11 +21,14 @@ package com.cyc.baseclient.testing;
  * #L%
  */
 
+//import com.cyc.base.TestUtils;
 import com.cyc.base.CycAccess;
+import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.base.annotation.CycObjectLibrary;
 import com.cyc.baseclient.CycObjectLibraryLoader;
+import com.cyc.session.SessionApiException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -44,7 +47,10 @@ public class TestGuids {
   public static final String BIOLOGY_VOCABULARY_MT_GUID_STRING = "bdd51776-9c29-11b1-9dad-c379636f7270";
   public static final String BRAZIL_GUID_STRING = "bd588f01-9c29-11b1-9dad-c379636f7270";
   public static final String BURNING_BUSH_GUID_STRING = "be846866-9c29-11b1-9dad-c379636f7270";
+  public static final String BUSH_DOG_GUID_STRING = "9cb46f54-ad16-11de-9e34-00219b49082c";
   public static final String CANINE_ANIMAL_GUID_STRING = "bd58d044-9c29-11b1-9dad-c379636f7270";
+  public static final String CARNIVORE_ORDER_GUID_STRING = "bd58f431-9c29-11b1-9dad-c379636f7270";
+  public static final String CARNIVORE_GUID_STRING = "bd5904f5-9c29-11b1-9dad-c379636f7270";
   public static final String CITY_NAMED_FN_GUID_STRING = "bd6870a6-9c29-11b1-9dad-c379636f7270";
   public static final String CONSTANT_NAME_GUID_STRING = "bd7183b0-9c29-11b1-9dad-c379636f7270";
   public static final String COUNTRY_GUID_STRING = "bd588879-9c29-11b1-9dad-c379636f7270";
@@ -84,7 +90,6 @@ public class TestGuids {
   public static final String SIBLINGS_GUID_STRING = "bd58e3e9-9c29-11b1-9dad-c379636f7270";
   public static final String SINGLE_PURPOSE_DEVICE_GUID_STRING = "bd5897aa-9c29-11b1-9dad-c379636f7270";
   public static final String SWAZILAND_GUID_STRING = "bd588a92-9c29-11b1-9dad-c379636f7270";
-  public static final String TAME_ANIMAL_GUID_STRING = "c0fcd4a1-9c29-11b1-9dad-c379636f7270";
   public static final String TARGET_GUID_STRING = "c10afaed-9c29-11b1-9dad-c379636f7270";
   public static final String TIMEPOINT_GUID_STRING = "bd58ca05-9c29-11b1-9dad-c379636f7270";
   public static final String TREATY_OAK_GUID_STRING = "bfc0aa80-9c29-11b1-9dad-c379636f7270";
@@ -97,9 +102,9 @@ public class TestGuids {
   public static final String ENGLISHMT_GUID_STRING = "bd588089-9c29-11b1-9dad-c379636f7270";
   
   public Collection<String> findMissingGuids(CycAccess access)
-          throws CycConnectionException, CycApiException {
+          throws CycConnectionException, CycApiException, SessionApiException {
     final Collection<String> results = new ArrayList<String>();
-    final CycObjectLibraryLoader objLoader = new CycObjectLibraryLoader(TestUtils.getCyc());
+    final CycObjectLibraryLoader objLoader = new CycObjectLibraryLoader(CycAccessManager.getCurrentAccess());
     final Collection<String> objs = objLoader.getAllObjectsForClass(TestGuids.class, String.class);
     for (String str : objs) {
       boolean exists = false;

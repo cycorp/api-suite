@@ -27,6 +27,7 @@ import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.baseclient.subl.SubLGlobalVariable;
 import static com.cyc.baseclient.subl.variables.SubLGlobalVariables.*;
+import com.cyc.baseclient.testing.TestUtils;
 import com.cyc.session.SessionApiException;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -49,9 +50,12 @@ public class SubLGlobalVariablesTest {
   public void testExistence() throws Exception {
     assertVariableExistsAndIsBound("*KE-PURPOSE*", KE_PURPOSE);
     assertVariableExistsAndIsBound("*THE-CYCLIST*", THE_CYCLIST);
+  }
+  
+  @Test
+  public void testExistenceObfuscated() throws Exception {
+    TestUtils.assumeNotObfuscated();
     assertVariableExistsAndIsBound("*REQUIRE-CASE-INSENSITIVE-NAME-UNIQUENESS*", REQUIRE_CASE_INSENSITIVE_NAME_UNIQUENESS);
-    assertVariableExistsAndIsBound("*SYSTEM-CODE-VERSION-STRING*", SYSTEM_CODE_VERSION_STRING);
-    assertVariableExistsAndIsBound("*SYSTEM-CODE-RELEASE-STRING*", SYSTEM_CODE_RELEASE_STRING);
   }
   
   @Test

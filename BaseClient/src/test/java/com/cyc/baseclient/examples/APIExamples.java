@@ -38,7 +38,6 @@ import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.base.cycobject.CycObject;
-import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.base.cycobject.Nart;
@@ -52,12 +51,12 @@ import com.cyc.baseclient.inference.DefaultInferenceWorkerSynch;
 import com.cyc.base.inference.InferenceWorker;
 import com.cyc.base.inference.InferenceWorkerListener;
 import com.cyc.base.inference.InferenceWorkerSynch;
-import com.cyc.baseclient.nl.Paraphraser;
+import com.cyc.baseclient.nl.ParaphraserFactory;
 import com.cyc.baseclient.parser.CycLParserUtil;
 import static com.cyc.baseclient.CommonConstants.*;
 import static com.cyc.baseclient.testing.TestConstants.*;
+import com.cyc.nl.Paraphraser;
 import com.cyc.session.SessionApiException;
-import com.cyc.session.SessionConfigurationException;
 
 //// External Imports
 /**
@@ -72,7 +71,7 @@ import com.cyc.session.SessionConfigurationException;
 
  Created on : May 1, 2009, 11:13:55 AM Author : tbrussea
  *
- * @version $Id: APIExamples.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: APIExamples.java 161607 2015-10-16 21:54:03Z nwinant $
  */
 public class APIExamples {
 
@@ -276,7 +275,7 @@ public class APIExamples {
       assert !isValid : "Good grief! Our assertion didn't get removed from the KB.";
 
       // Generating NL for an assertion
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+      Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
       String nl = p.paraphrase(gaf).getString();
       System.out.println("Got generation for assertion, " + gaf + "\n" + nl);
@@ -294,7 +293,7 @@ public class APIExamples {
   public static final void exampleNartManipulations() {
     System.out.println("Starting Cyc NART examples.");
     try {
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.KBOBJECT);
+      Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
 
       CycConstant cycAdministrator = access.getLookupTool().getKnownConstantByName("CycAdministrator");
       CycConstant generalCycKE = access.getLookupTool().getKnownConstantByName("GeneralCycKE");
@@ -364,7 +363,7 @@ public class APIExamples {
   public static final void exampleContantsManipulations() {
     System.out.println("Starting Cyc constant manipulation examples.");
     try {
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+      Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
       CycConstant cycAdministrator = access.getLookupTool().getKnownConstantByName("CycAdministrator");
       CycConstant generalCycKE = access.getLookupTool().getKnownConstantByName("GeneralCycKE");
@@ -427,7 +426,7 @@ public class APIExamples {
 
   public static final void helloWorldExample() {
     try {
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.FORMULA);
+      Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.FORMULA);
 
       CycConstantImpl planetInSolarSystem = (CycConstantImpl) DefaultCycObject.fromCompactExternalId("Mx4rWIie-jN6EduAAADggVbxzQ", access);
       CycList planets = access.getLookupTool().getAllInstances(planetInSolarSystem);
@@ -468,7 +467,7 @@ public class APIExamples {
   //// Main
   public static void main(String[] args) {
     try {
-      access = CycAccessManager.getAccess();
+      access = CycAccessManager.getCurrentAccess();
       helloWorldExample();
       exampleConnectingToCyc();
       exampleContantsManipulations();

@@ -71,7 +71,7 @@ public class InspectorToolTest {
   
   @BeforeClass
   public static void setUpClass() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    access = CycAccessManager.getAccess();
+    access = CycAccessManager.getCurrentAccess();
   }
   
   @AfterClass
@@ -85,16 +85,16 @@ public class InspectorToolTest {
   @After
   public void tearDown() {
   }
-  
     
   /**
-   * Test of categorizeTermWRTApi method, of class InspectorTool.
+   * Test of InspectorTool#categorizeTermWRTApi().
    */
   @Test
   public void testCategorizeTermWRTApi() throws Exception {
     System.out.println("categorizeTermWRTApi");
+    final InspectorTool instance = access.getInspectorTool();
+
     CycObject isa = new CycConstantImpl("isa", new GuidImpl("bd588104-9c29-11b1-9dad-c379636f7270"));
-    InspectorTool instance = access.getInspectorTool();
     CycObject binaryPredicate = new CycConstantImpl("BinaryPredicate", new GuidImpl("bd588102-9c29-11b1-9dad-c379636f7270"));
     CycObject result = instance.categorizeTermWRTApi(isa);
     assertEquals(binaryPredicate, result);
@@ -116,17 +116,7 @@ public class InspectorToolTest {
     result = instance.categorizeTermWRTApi(obama);
     assertEquals(ind, result);
     
-    FormulaSentence isaPredicate = CycFormulaSentence.makeCycSentence(access, "(#$isa #$isa #$Predicate)");
     CycObject logicalTruthMt = new CycConstantImpl("LogicalTruthMt", new GuidImpl("c0604f82-9c29-11b1-9dad-c379636f7270"));
-    CycAssertionImpl caIsaPredicate = new CycAssertionImpl(isaPredicate, logicalTruthMt);
-    result = instance.categorizeTermWRTApi(caIsaPredicate);
-    CycObject thing = new CycConstantImpl("Thing", new GuidImpl("bd5880f4-9c29-11b1-9dad-c379636f7270"));
-    if (!isEnterpriseCyc()) {
-      assertEquals(thing, result);
-    } else {
-      assertEquals(ind, result); // TODO: is this correct? - nwinant, 2015-06-30
-    }
-
     CycObject mt = new CycConstantImpl("Microthoery", new GuidImpl("bd5880d5-9c29-11b1-9dad-c379636f7270"));
     result = instance.categorizeTermWRTApi(logicalTruthMt);
     assertEquals(mt, result);
@@ -140,16 +130,41 @@ public class InspectorToolTest {
     CycObject fruit = new CycConstantImpl("FruitFn", new GuidImpl("bd58a976-9c29-11b1-9dad-c379636f7270"));
     result = instance.categorizeTermWRTApi(fruit);
     assertEquals(func, result);
-            
+    
+    CycObject thing = new CycConstantImpl("Thing", new GuidImpl("bd5880f4-9c29-11b1-9dad-c379636f7270"));
     CycSymbol cs = new CycSymbolImpl("SOMEKEYWORD");
     result = instance.categorizeTermWRTApi(cs);
     assertEquals(thing, result);
+  }
+  
+  /**
+   * Test categorization of sentences by InspectorTool#categorizeTermWRTApi().
+   * 
+   * <p><strong>Currently disabled.</strong> #categorizeTermWRTApi() is currently used only for the
+   * KB API, and the KB API never uses that method to process sentences; they are checked at the 
+   * Java level as instances of FormulaSentence.
+   */
+  //@Test
+  public void testCategorizeSentence() throws Exception {
+    final InspectorTool instance = access.getInspectorTool();
+    final CycObject ind = new CycConstantImpl("Individual", new GuidImpl("bd58da02-9c29-11b1-9dad-c379636f7270"));
+    final CycObject thing = new CycConstantImpl("Thing", new GuidImpl("bd5880f4-9c29-11b1-9dad-c379636f7270"));
     
-    result = instance.categorizeTermWRTApi(isaPredicate);
+    final FormulaSentence isaPredicate = CycFormulaSentence.makeCycSentence(access, "(#$isa #$isa #$Predicate)");
+    final CycObject resultIsaPredicate = instance.categorizeTermWRTApi(isaPredicate);
     if (access.isOpenCyc() || isEnterpriseCyc()) {
-      assertEquals(ind, result);
+      assertEquals(ind, resultIsaPredicate);
     } else {
-      assertEquals(thing, result);
+      assertEquals(thing, resultIsaPredicate);
+    }
+    
+    final CycObject logicalTruthMt = new CycConstantImpl("LogicalTruthMt", new GuidImpl("c0604f82-9c29-11b1-9dad-c379636f7270"));
+    final CycAssertionImpl caIsaPredicate = new CycAssertionImpl(isaPredicate, logicalTruthMt);
+    CycObject resultCaIsaPredicate = instance.categorizeTermWRTApi(caIsaPredicate);
+    if (!isEnterpriseCyc()) {
+      assertEquals(thing, resultCaIsaPredicate);
+    } else {
+      assertEquals(ind, resultCaIsaPredicate);
     }
   }
   

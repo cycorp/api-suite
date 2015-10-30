@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  *
  * @author baxter
  */
-public class KBContentTestTester extends QueryListenerImpl {
+public class KBContentTestTester implements QueryListener {
 
   private final QueryApiTestConstants testConstants;
   private final KBIndividual test;

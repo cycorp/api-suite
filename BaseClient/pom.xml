@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-parent</artifactId>
-    <version>1.0.0-rc3</version>
+    <version>1.0.0-rc4</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-base-client</artifactId>
-  <version>1.0.0-rc3</version>
+  <version>1.0.0-rc4</version>
   <packaging>jar</packaging>
   
   <name>Base Client</name>

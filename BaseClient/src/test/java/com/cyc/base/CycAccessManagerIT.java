@@ -26,7 +26,7 @@ import org.junit.Test;
 import com.cyc.session.CycServer;
 import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSession.SessionStatus;
+import com.cyc.session.CycSession.ConnectionStatus;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.CycSessionManager;
 import com.cyc.session.SessionApiException;
@@ -68,7 +68,7 @@ public class CycAccessManagerIT  {
   
   @Test
   public void testGetAccess() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException, SessionCommandException {
-    final CycAccess access = CycAccessManager.getAccess();
+    final CycAccess access = CycAccessManager.getCurrentAccess();
     assertNotNull(access);
     final String kbVersion = access.getServerInfo().getCycKBVersionString();
     System.out.println("KB version:  " + kbVersion);
@@ -82,10 +82,10 @@ public class CycAccessManagerIT  {
   
   @Test
   public void testAccessGetCycSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException, SessionCommandException {
-    final CycAccess access = CycAccessManager.getAccess();
+    final CycAccess access = CycAccessManager.getCurrentAccess();
     final CycSession session = access.getCycSession();
     assertNotNull(session);
-    assertEquals(SessionStatus.CONNECTED, session.getStatus());
+    assertEquals(ConnectionStatus.CONNECTED, session.getConnectionStatus());
     assertEquals(access.getCycServer(), session.getServerInfo().getCycServer());
     
     final String kbVersion = session.getServerInfo().getCycKBVersionString();

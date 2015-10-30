@@ -102,7 +102,7 @@ public class QuerySearch {
    * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
   public QuerySearch(String searchString, CycBasedTask task, VariableFormat format) throws OpenCycUnsupportedFeatureException {
-    QUERY_SEARCH_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    QUERY_SEARCH_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     this.searchString = searchString;
     this.task = task;
     this.variableFormat = format;

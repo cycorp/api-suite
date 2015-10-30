@@ -28,17 +28,10 @@ import com.cyc.kb.FirstOrderCollection;
 import com.cyc.kb.KBCollection;
 import com.cyc.kb.KBIndividual;
 import com.cyc.kb.KBStatus;
-import com.cyc.kb.client.ContextImpl;
-import com.cyc.kb.client.FirstOrderCollectionImpl;
-import com.cyc.kb.client.KBCollectionImpl;
-import com.cyc.kb.client.KBIndividualImpl;
-import com.cyc.kb.client.KBPredicateImpl;
-import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
+import com.cyc.kb.exception.KBApiException;
 import com.cyc.kb.exception.KBTypeConflictException;
 import com.cyc.kb.exception.KBTypeException;
-import com.cyc.kb.exception.KBApiException;
-
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -48,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import org.junit.AfterClass;
 
 import static org.junit.Assert.*;
@@ -108,7 +100,7 @@ public class KBCollectionTest {
 
   @Test
   public void testSpecs() throws KBApiException {
-    final String iProductString = "IProduct";
+    final String iProductString = "iProduct";
     KBCollectionImpl c = KBCollectionImpl.findOrCreate(iProductString);
     assertEquals(c.toString(), iProductString);
     final String IPadString = "IPad-APITest";
@@ -129,8 +121,8 @@ public class KBCollectionTest {
   @Test
   public void testGenls() throws KBApiException {
 
-    KBCollectionImpl c = KBCollectionImpl.findOrCreate("IProduct");
-    assertEquals(c.toString(), "IProduct");
+    KBCollectionImpl c = KBCollectionImpl.findOrCreate("iProduct");
+    assertEquals(c.toString(), "iProduct");
     final String productString = "Product";
 
     // Internally genls(mt, c) will be run, so not additional test needed.
@@ -148,8 +140,8 @@ public class KBCollectionTest {
   
   @Test
   public void testGenlsWithDefaultContext() throws KBApiException {
-	  KBCollectionImpl c = KBCollectionImpl.findOrCreate("IProduct");
-	    assertEquals(c.toString(), "IProduct");
+	  KBCollectionImpl c = KBCollectionImpl.findOrCreate("iProduct");
+	    assertEquals(c.toString(), "iProduct");
 	    final String productString = "Product";
 
 	    // Internally genls(mt, c) will be run, so not additional test needed.

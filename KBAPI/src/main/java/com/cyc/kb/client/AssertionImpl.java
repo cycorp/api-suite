@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 158340 2015-05-08 16:53:45Z arebguns $
+ * @version $Id: AssertionImpl.java 160807 2015-09-08 20:07:55Z vijay $
  * @since 1.0
  */
 public class AssertionImpl extends StandardKBObject implements Assertion {
@@ -503,7 +503,7 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
   public Collection<Assertion> getSupportingAssertions() throws KBTypeException, CreateException {
     try {
 
-      String command = "(assertion-asserted-assertion-supports " + this.getCore().stringApiValue() + ")";
+      String command = SubLConstants.getInstance().assertionAssertedAssertionSupports.buildCommand(this.getCore());
       CycList<?> result = getAccess().converse().converseList(command);
       Collection<Assertion> asserts = new ArrayList<Assertion>();
       for (Object o : result) {
@@ -533,7 +533,7 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
   @Override
   public boolean isDeducedAssertion() {
     try {
-      String command = "(deduced-assertion? " + this.getCore().stringApiValue() + ")";
+      String command = SubLConstants.getInstance().deducedAssertionQ.buildCommand(this.getCore());
       return getAccess().converse().converseBoolean(command);
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e);
@@ -554,7 +554,7 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
   @Override
   public boolean isAssertedAssertion() {
     try {
-      String command = "(asserted-assertion? " + this.getCore().stringApiValue() + ")";
+      String command = SubLConstants.getInstance().assertedAssertionQ.buildCommand(this.getCore());
       return getAccess().converse().converseBoolean(command);
     } catch (CycConnectionException e) {
       throw new KBApiRuntimeException(e);
@@ -566,26 +566,26 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
    */
   @Override
   public Direction getDirection() {
-	    try {
-	      String command = "(assertion-direction " + this.getCore().stringApiValue() + ")";
-	      CycObject co = getAccess().converse().converseCycObject(command);
-	      if (co instanceof CycSymbol){
-	    	  CycSymbol cs = (CycSymbol) co;
-	    	  if (cs.equals(new CycSymbolImpl(":BACKWARD"))){
-	    		  return Direction.BACKWARD;
-	    	  } else if (cs.equals(new CycSymbolImpl(":FORWARD"))){
-	    		  return Direction.FORWARD;
-	    	  } else {
-	    	    // This should never happen for CycAssertion, so a runtime exception
-	    		  throw new KBApiRuntimeException("Unknown or :CODE Direction");
-	    	  }
-	      } else {
-	    	  throw new KBApiRuntimeException("Unknown Direction");
-	      }
-	    } catch (CycConnectionException e) {
-	      throw new KBApiRuntimeException(e.getMessage(), e);
-	    }
-	  }
+    try {
+      String command = SubLConstants.getInstance().assertionDirection.buildCommand(this.getCore());
+      CycObject co = getAccess().converse().converseCycObject(command);
+      if (co instanceof CycSymbol){
+          CycSymbol cs = (CycSymbol) co;
+          if (cs.equals(new CycSymbolImpl(":BACKWARD"))){
+              return Direction.BACKWARD;
+          } else if (cs.equals(new CycSymbolImpl(":FORWARD"))){
+              return Direction.FORWARD;
+          } else {
+            // This should never happen for CycAssertion, so a runtime exception
+              throw new KBApiRuntimeException("Unknown or :CODE Direction");
+          }
+      } else {
+          throw new KBApiRuntimeException("Unknown Direction");
+      }
+    } catch (CycConnectionException e) {
+      throw new KBApiRuntimeException(e.getMessage(), e);
+    }
+  }
 
   @Override
   public Assertion changeDirection(Direction d) throws KBApiException {
@@ -600,9 +600,9 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
         throw new KBApiException("Set the Cyclist using KBAPIConfiguration.setCurrentCyclist()");
       }
       
-      String command = "(progn "
-              + "(set-the-cyclist " + KBAPIConfiguration.getCurrentCyclist().stringApiValue() + ") "
-              + "(ke-change-assertion-direction " + this.getCore().stringApiValue() + " :" + d.name() + "))";
+      String command = "(clet "
+              + "((*the-cyclist* " + KBAPIConfiguration.getCurrentCyclist().stringApiValue() + ")) "
+              + "(" + SubLConstants.getInstance().keChangeAssertionDirection.stringApiValue() + " " + this.getCore().stringApiValue() + " :" + d.name() + "))";
       CycObject co = getAccess().converse().converseCycObject(command);
       if (co instanceof CycAssertion){
         log.debug("Changed the assertion direction of " + this + " to: " + d);
@@ -834,9 +834,9 @@ static CycAssertion assertSentence(FormulaSentence factSentence, Context ctx, St
    * Need to decide what we want to do
    */
   static CycAssertion findAssertion(FormulaSentence factSentence, ELMt ctx) {
-          String command;
-      command = "(WITH-INFERENCE-MT-RELEVANCE " + ctx.stringApiValue() + " (FIND-ASSERTION-CYCL " + factSentence.stringApiValue() + " ))";
-
+          
+    String command = "(" + SubLConstants.getInstance().withInferenceMtRelevance.stringApiValue() + " " + ctx.stringApiValue() 
+            + " (" + SubLConstants.getInstance().findAssertionCycl.stringApiValue() + " " + factSentence.stringApiValue() + " ))";
     log.trace("Find Fact: {}", command);
     Object res;
     try {

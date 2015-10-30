@@ -41,7 +41,7 @@ import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycApiException;
 import com.cyc.base.CycConnectionException;
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,7 +105,7 @@ public class SubLResourceLoader {
   public List<SubLSourceFile> loadMissingResources(List<SubLSourceFile> resources) throws CycApiException, CycConnectionException {
     final List<SubLSourceFile> missing = findMissingResources(resources);
     final List<SubLSourceFile> loaded = new ArrayList();
-    final CycServer server = access.getCycServer();
+    final CycServerAddress server = access.getCycServer();
     if (missing.isEmpty()) {
       LOGGER.info("All expected resources are present on " + server);
     } else {

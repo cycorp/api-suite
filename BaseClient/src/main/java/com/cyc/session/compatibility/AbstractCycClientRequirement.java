@@ -35,10 +35,6 @@ package com.cyc.session.compatibility;
  * limitations under the License.
  * #L%
  */
-import com.cyc.base.CycApiException;
-import com.cyc.base.CycConnectionException;
-import com.cyc.baseclient.CycClient;
-import com.cyc.session.exception.UnsupportedCycOperationException;
 
 /**
  *
@@ -46,18 +42,20 @@ import com.cyc.session.exception.UnsupportedCycOperationException;
  */
 abstract public class AbstractCycClientRequirement implements CycClientRequirement {
   
-  final private String msg;
+  final private String defaultErrorMsg;
   
-  protected AbstractCycClientRequirement(String msg) {
-    this.msg = msg;
+  protected AbstractCycClientRequirement(String defaultErrorMsg) {
+    this.defaultErrorMsg = defaultErrorMsg;
   }
   
   protected AbstractCycClientRequirement() {
     this(null);
   }
-
-  public String getErrorMessage(CycClient client) throws UnsupportedCycOperationException, CycApiException, CycConnectionException {
-    return this.msg;
-  }
   
+  
+  // Protected
+  
+  protected String getDefaultErrorMessage() {
+    return this.defaultErrorMsg;
+  }
 }

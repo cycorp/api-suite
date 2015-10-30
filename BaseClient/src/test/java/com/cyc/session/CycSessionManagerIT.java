@@ -21,14 +21,12 @@ package com.cyc.session;
  * #L%
  */
 
-import com.cyc.base.CycAccess;
-import com.cyc.base.CycAccessManager;
-import static com.cyc.baseclient.testing.TestConstants.CYC_ADMINISTRATOR;
-import static com.cyc.baseclient.testing.TestConstants.LENAT;
+import com.cyc.baseclient.CycClient;
+import com.cyc.baseclient.CycClientSession;
 import static com.cyc.baseclient.testing.TestUtils.skipTest;
 import com.cyc.session.internal.SessionManagerImpl;
 import junit.framework.TestCase;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 
 /**
@@ -51,10 +49,96 @@ public class CycSessionManagerIT extends TestCase {
     super.tearDown();
   }
 
+  @Test
   public void testSingletonAccessor() throws Exception {
-    SessionManager result = CycSessionManager.get();
+    SessionManager result = CycSessionManager.getInstance();
     assertNotNull(result);
+    System.out.println("SessionManager implementation: " + result.getClass().getName());
     assertTrue(SessionManagerImpl.class.isInstance(result));
+  }
+  
+  @Test
+  public void testReloadSessionManager() throws SessionServiceException, SessionConfigurationException {
+    final SessionManager mgr1 = CycSessionManager.getInstance();
+    assertNotNull(mgr1);
+    assertFalse(mgr1.isClosed());
+    
+    CycSessionManager.reloadInstance();
+    
+    final SessionManager mgr2 = CycSessionManager.getInstance();
+    assertNotNull(mgr2);
+    assertNotEquals(mgr1, mgr2);
+    assertTrue(mgr1.isClosed());
+    assertFalse(mgr2.isClosed());
+  }
+  
+  /*
+  @Test
+  public void testSessionClosingViaTryWithResources() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    // Sources are still expected to build to Java 6, so this test is currently disabled. However,
+    // it does pass when sources are built as Java 7.
+    // TODO: re-enable once APIs have moved to Java 7.
+    final CycSession session1;
+    try (CycSession session = CycSessionManager.getCurrentSession()) {
+      session1 = session;
+      assertFalse(session1.isClosed());
+    }
+    assertTrue(session1.isClosed());
+    CycSession session2 = CycSessionManager.getCurrentSession();
+    assertFalse(session2.isClosed());
+  }
+  */
+  
+  @Test
+  public void testClientClosing() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    final CycClientSession session1 = (CycClientSession) CycSessionManager.getCurrentSession();
+    final CycClient client1 = session1.getAccess();
+    assertFalse(client1.isClosed());
+    assertFalse(session1.isClosed());
+    client1.close();
+    assertTrue(client1.isClosed());
+    assertFalse(session1.isClosed()); // CycSession does not yet know that its CycAccess is closed.
+    
+    // TODO: CycSessions really ought to have a listener to self-update when their CycAccess is closed. - nwinant, 2015-10-27
+    
+    // Retrieving a new session forces the SessionManager to recognize that the underlying CycAccess
+    // is closed, and to close & replace the session:
+    final CycClientSession session2 = (CycClientSession) CycSessionManager.getCurrentSession();
+    final CycClient client2 = session2.getAccess();
+    assertFalse(client2.isClosed());
+    assertFalse(session2.isClosed());
+    
+    assertTrue(client1.isClosed());
+    assertTrue(session1.isClosed());
+    
+    assertNotEquals(session1, session2);
+    assertNotEquals(client1, client2);
+    
+    assertNotEquals(session1, CycSessionManager.getCurrentSession());
+    assertEquals(session2, CycSessionManager.getCurrentSession());
+  }
+  
+  @Test 
+  public void testSessionReaping() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    // TODO: Could be fleshed out a bit more, with some multithreaded tests, 
+    //       possibly broken out into a separate test class. - nwinant, 2015-10-16
+    
+    final CycSession session1 = CycSessionManager.getCurrentSession();
+    final int h1 = session1.hashCode();
+    System.out.println("Hash for session 1: " + h1);
+    session1.close();
+    
+    final CycSession session2 = CycSessionManager.getCurrentSession();
+    final int h2 = session2.hashCode();
+    System.out.println("Hash for session 2: " + h2);
+    session2.close();
+    assertNotEquals(h1, h2);
+    
+    final CycSession session3 = CycSessionManager.getCurrentSession();
+    final int h3 = session3.hashCode();
+    System.out.println("Hash for session 3: " + h3);
+    session3.close();
+    assertNotEquals(h2, h3);
   }
   
   /*
@@ -111,66 +195,4 @@ public class CycSessionManagerIT extends TestCase {
     assertEquals(expectedServer, CycSessionManager.get().getSession().getServerInfo().getCycServer());
   }
   */
-  
-  @Test
-  public void testSetCyclist() throws Exception {
-    System.out.println("\n**** testSetCyclist ****");
-    
-    final CycSession session = CycSessionManager.getCurrentSession();
-    final CycAccess cyc = CycAccessManager.getCurrentAccess();
-    
-    session.getOptions().reset();
-    assertNotNull(session.getOptions());
-    assertNull(session.getOptions().getCyclistName());
-    assertNotNull(cyc.getOptions());
-    assertNull(cyc.getOptions().getCyclistName());
-    
-    // Set via CycSession w/ String toString
-    session.getOptions().setCyclistName(CYC_ADMINISTRATOR.toString());
-    assertEquals("CycAdministrator", session.getOptions().getCyclistName());
-    assertEquals(session.getOptions().getCyclistName(),
-            cyc.getOptions().getCyclistName());
-    assertEquals("CycAdministrator", cyc.getOptions().getCyclistName());
-    assertEquals(CYC_ADMINISTRATOR, cyc.getOptions().getCyclist());
-
-    // Set via CycAccess w/ String toString
-    cyc.getOptions().setCyclistName(LENAT.toString());
-    assertEquals("Lenat", cyc.getOptions().getCyclistName());
-    assertEquals(LENAT, cyc.getOptions().getCyclist());
-    assertEquals(session.getOptions().getCyclistName(),
-            cyc.getOptions().getCyclistName());
-    assertEquals("Lenat", session.getOptions().getCyclistName());
-    
-    // Clear cyclist via CycSession
-    session.getOptions().clearCyclist();
-    assertNull(session.getOptions().getCyclistName());
-    assertNull(cyc.getOptions().getCyclistName());
-    
-    // Set via CycAccess w/ Fort
-    cyc.getOptions().setCyclist(CYC_ADMINISTRATOR);
-    assertEquals("CycAdministrator", session.getOptions().getCyclistName());
-    assertEquals(session.getOptions().getCyclistName(),
-            cyc.getOptions().getCyclistName());
-    assertEquals("CycAdministrator", cyc.getOptions().getCyclistName());
-    assertEquals(CYC_ADMINISTRATOR, cyc.getOptions().getCyclist());
-    
-    // Clear cyclist via CycAccess
-    cyc.getOptions().clearCyclist();
-    assertNull(cyc.getOptions().getCyclistName());
-    assertNull(session.getOptions().getCyclistName());
-    
-    // Set via CycSession w/ String stringApiValue
-    session.getOptions().setCyclistName(LENAT.stringApiValue());
-    assertEquals("Lenat", session.getOptions().getCyclistName());
-    assertEquals(session.getOptions().getCyclistName(),
-            cyc.getOptions().getCyclistName());
-    assertEquals("Lenat", cyc.getOptions().getCyclistName());
-    assertEquals(LENAT, cyc.getOptions().getCyclist());
-
-    session.getOptions().reset();
-    assertNull(session.getOptions().getCyclistName());
-    assertNull(cyc.getOptions().getCyclistName());
-    
-    System.out.println("**** testSetCyclist OK ****");
-  }
 }

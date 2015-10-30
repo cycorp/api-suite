@@ -37,6 +37,7 @@ package com.cyc.baseclient.subl.functions;
  * #L%
  */
 import com.cyc.baseclient.subl.SubLSourceFile;
+import com.cyc.baseclient.subl.subtypes.BasicSubLFunction;
 import com.cyc.baseclient.subl.subtypes.SubLBooleanNoArgFunction;
 import com.cyc.baseclient.subl.subtypes.SubLCycListNoArgFunction;
 import com.cyc.baseclient.subl.subtypes.SubLStringNoArgFunction;
@@ -78,10 +79,12 @@ public class SubLFunctions {
   public static final SubLCycListNoArgFunction CYC_REVISION_NUMBERS = new SubLCycListNoArgFunction("cyc-revision-numbers");
 
   public static final SubLStringNoArgFunction CYC_REVISION_STRING = new SubLStringNoArgFunction("cyc-revision-string");
-  
+
+  public static final BasicSubLFunction DEFINE_EXTERNAL = new BasicSubLFunction("define-external");
+
   public static final SubLStringNoArgFunction KB_VERSION_STRING = new SubLStringNoArgFunction("kb-version-string");
   
-  public static final ProbeFileFunction PROBE_FILE = new ProbeFileFunction();
+  public static final ProbeFileFunction PROBE_FILE = new ProbeFileFunction();  
   
   
   

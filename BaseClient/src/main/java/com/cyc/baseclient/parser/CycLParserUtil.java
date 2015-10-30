@@ -49,7 +49,7 @@ import java.util.*;
  * <P>CycLParserUtil is designed to be the main entry point into parsing
  * CycL expressions.
  *
- * @version $Id: CycLParserUtil.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycLParserUtil.java 161606 2015-10-16 21:52:46Z nwinant $
  * @author Tony Brusseau
  */
 public class CycLParserUtil {
@@ -336,7 +336,7 @@ public class CycLParserUtil {
   
   protected static void sanityCheck() {
     try {
-      CycAccess access = CycAccessManager.getAccess();
+      CycAccess access = CycAccessManager.getCurrentAccess();
       Object obj = parseCycLConstant("Dog", true, access);
       System.out.println("Got result: " + obj);
       obj = parseCycLConstant("#G\"bd590573-9c29-11b1-9dad-c379636f7270\"", true, access);

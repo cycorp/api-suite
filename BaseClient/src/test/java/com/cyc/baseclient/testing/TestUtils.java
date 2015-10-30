@@ -21,13 +21,14 @@ package com.cyc.baseclient.testing;
  * #L%
  */
 
+import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.BaseClientRuntimeException;
 import com.cyc.base.CycConnectionException;
 import com.cyc.baseclient.CycClient;
+import com.cyc.baseclient.subl.functions.SubLFunctions;
 import com.cyc.session.CycServerReleaseType;
-import static com.cyc.session.CycSessionManager.getSession;
+import static com.cyc.session.CycSessionManager.getCurrentSession;
 import com.cyc.session.SessionApiException;
 import com.cyc.session.compatibility.CycClientRequirement;
 import com.cyc.session.compatibility.CycClientRequirementList;
@@ -47,8 +48,7 @@ public class TestUtils {
   private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
   private static final KBPopulator populator = new KBPopulator();
-  
-  synchronized public static void ensureKBPopulated(CycAccess access) throws CycConnectionException {
+    synchronized public static void ensureKBPopulated(CycAccess access) throws CycConnectionException {
     if (!populator.isAlreadyCalledForKB(access)){
       populator.populate(access);
     }
@@ -78,7 +78,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirement(CycSessionRequirement requirement) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirement.isCompatible(getSession()));
+      org.junit.Assume.assumeTrue(requirement.checkCompatibility(getCurrentSession()).isCompatible());
     } catch (SessionApiException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);
@@ -88,7 +88,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirements(CycSessionRequirementList requirements) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirements.isCompatible());
+      org.junit.Assume.assumeTrue(requirements.checkCompatibility().isCompatible());
     } catch (SessionApiException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);
@@ -98,7 +98,7 @@ public class TestUtils {
   public static void assumeCycClientRequirement(CycClientRequirement requirement) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirement.isCompatible((CycClient) getCyc()));
+      org.junit.Assume.assumeTrue(requirement.checkCompatibility((CycClient) getCyc()).isCompatible());
     } catch (CycConnectionException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);
@@ -108,7 +108,18 @@ public class TestUtils {
   public static void assumeCycClientRequirements(CycClientRequirementList requirements) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirements.isCompatible((CycClient) getCyc()));
+      org.junit.Assume.assumeTrue(requirements.checkCompatibility((CycClient) getCyc()).isCompatible());
+    } catch (CycConnectionException ex) {
+      ex.printStackTrace(System.err);
+      throw new RuntimeException(ex);
+    }
+  }
+  
+  public static void assumeNotObfuscated() {
+    // TODO: move this into some central test library
+    try {
+      // DEFINE-EXTERNAL is likely to be obfuscated in obfuscated images. - nwinant, 2015-09-29
+      org.junit.Assume.assumeTrue(SubLFunctions.DEFINE_EXTERNAL.isBound(getCyc()));
     } catch (CycConnectionException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);

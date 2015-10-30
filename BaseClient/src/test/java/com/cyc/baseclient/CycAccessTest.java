@@ -77,7 +77,7 @@ public class CycAccessTest  {
   
   @Test 
   public void testGetOptions() throws SessionApiException {
-    final CycAccess access = CycAccessManager.getAccess();
+    final CycAccess access = CycAccessManager.getCurrentAccess();
     assertNotNull(access.getOptions());
     assertNull(access.getOptions().getCyclistName());
     assertNull(access.getOptions().getKePurposeName());
@@ -95,7 +95,7 @@ public class CycAccessTest  {
     boolean errorFree = false;
     try {
       final List answers = new ArrayList();
-      final CycAccess access = CycAccessManager.getAccess();
+      final CycAccess access = CycAccessManager.getCurrentAccess();
       
       final CycVariableImpl var1 = new CycVariableImpl("?var");
       final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
@@ -136,7 +136,7 @@ public class CycAccessTest  {
   @Test
   public void testSetCyclist() throws Exception {
     System.out.println("\n**** testSetCyclist ****");
-    CycAccess cyc = CycAccessManager.getAccess();
+    CycAccess cyc = CycAccessManager.getCurrentAccess();
     assertTrue(cyc.getOptions().getCyclistName() == null);
     
     cyc.getOptions().setCyclistName(CYC_ADMINISTRATOR.toString());
@@ -148,7 +148,7 @@ public class CycAccessTest  {
     cyc.getOptions().setCyclistName(LENAT.toString());
     assertTrue(cyc.getOptions().getCyclistName().toString().equals("Lenat"));
     
-    cyc.getOptions().clearCyclist();
+    cyc.getOptions().resetCyclist();
     assertNull(cyc.getOptions().getCyclistName());
     
     System.out.println("**** testSetCyclist OK ****");

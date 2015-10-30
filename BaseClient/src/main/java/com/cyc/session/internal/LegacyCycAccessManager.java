@@ -22,7 +22,7 @@ package com.cyc.session.internal;
  */
 
 import com.cyc.baseclient.CycClientSession;
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSessionManager;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionConfigurationException;
@@ -38,17 +38,13 @@ import com.cyc.session.SessionInitializationException;
 @Deprecated
 abstract public class LegacyCycAccessManager<T extends CycClientSession> {
   
-  private final SessionManagerImpl<T> sessionMgr;
   
-  public LegacyCycAccessManager() {
-     // Casting on these fields is sloppy, but adequate for now.
-    this.sessionMgr = (SessionManagerImpl) CycSessionManager.get();
-  }
+  public LegacyCycAccessManager() { }
   
   
   // Protected
   
-  protected T createSession(CycServer server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+  protected T createSession(CycServerAddress server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     ImmutableConfiguration config = new ImmutableConfiguration(server, this.getClass());
     return this.getSessionMgr().createSession(config);
   }
@@ -57,22 +53,17 @@ abstract public class LegacyCycAccessManager<T extends CycClientSession> {
     return this.getSessionMgr().setCurrentSession(session);
   }
   
-  protected boolean hasSession(CycServer server) {
-    return this.getSessionMgr().hasSession(server);
-  }
-  
   protected boolean hasCurrentSession() {
     return this.getSessionMgr().hasCurrentSession();
   }
   
-  protected T retrieveSession(CycServer server) {
-    return this.getSessionMgr().getSession(server);
+  protected T getCurrentSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
+    return this.getSessionMgr().getCurrentSession();
   }
-  
   
   // Private
   
   private SessionManagerImpl<T> getSessionMgr() {
-    return this.sessionMgr;
+    return (SessionManagerImpl) CycSessionManager.getInstance();
   }
 }

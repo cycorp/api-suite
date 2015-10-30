@@ -26,6 +26,7 @@ import com.cyc.base.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycVariable;
+import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.kbtool.InspectorTool;
 import com.cyc.baseclient.cycobject.CycFormulaSentence;
@@ -178,7 +179,8 @@ abstract class StandardKBObject extends KBObjectImpl {
       if (cycObject instanceof CycVariable) {
         return true;
       } else {
-        String command = "(quick-quiet-has-type? " + cycObject.stringApiValue() + " " + getTypeString() + ")";
+        String command = "(" + SubLConstants.getInstance().quickQuietHasTypeQ.stringApiValue() 
+                + " " + cycObject.stringApiValue() + " " + getTypeString() + ")";
         return CycAccessManager.getCurrentAccess().converse().converseBoolean(command);
       }
     } catch (CycApiException e) {
@@ -263,6 +265,21 @@ abstract class StandardKBObject extends KBObjectImpl {
           } else {
             try {
               tempCore = makeCycConstant(cyclifiedStr);
+              // If this was indeed a constant that we were supposed to make
+              // Then cyclifiedString is not really cyclified (Well unless user gave a #$<String>
+              if (!((CycConstant)tempCore).getName().equals(cyclifiedStr) &&
+                      !("#$" + ((CycConstant)tempCore).getName()).equals(cyclifiedStr)) {
+                // For various reasons, we don't want change the fi-create behavior to not
+                // create terms with numbers appended, when a case-insensitive duplicate 
+                // is in the KB. So we handle it in the API.
+                String msg = "Could not create a constant with exact name specified: " 
+                        + cyclifiedStr + " instead got: " + tempCore.stringApiValue() 
+                        + ". This happens when another constant shares the same name case-insensitively.";
+                if (tempCore instanceof Fort) {
+                  getAccess().getUnassertTool().kill((Fort)tempCore, true, KBAPIConfiguration.getShouldTranscriptOperations());
+                }
+                throw new CreateException(msg);
+              }
             } catch (CycApiException ex) {
               if (ex.getMessage().contains("Cannot create new constant")) {
                 throw new InvalidNameException(
@@ -311,6 +328,8 @@ abstract class StandardKBObject extends KBObjectImpl {
       throw onfe;
     } catch (InvalidNameException ine) {
       throw ine;
+    } catch (CreateException ce){
+      throw ce;
     } catch (Exception e) {
       throw new CreateException("Failed to create new " + getTypeString()
               + " named " + nameOrIdOrVar, e);

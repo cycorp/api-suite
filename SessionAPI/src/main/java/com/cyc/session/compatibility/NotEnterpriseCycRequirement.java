@@ -38,40 +38,21 @@ package com.cyc.session.compatibility;
  */
 
 import com.cyc.session.CycServerReleaseType;
-import com.cyc.session.CycSession;
-import com.cyc.session.SessionCommandException;
-import com.cyc.session.SessionCommunicationException;
-import com.cyc.session.exception.UnsupportedCycOperationException;
 
 /**
  *
  * @author nwinant
  */
-public class NotEnterpriseCycRequirement implements CycSessionRequirement {
+public class NotEnterpriseCycRequirement extends NotCycServerReleaseTypeRequirement implements CycSessionRequirement {
   
   public static final NotEnterpriseCycRequirement NOT_ENTERPRISECYC = new NotEnterpriseCycRequirement();
   
-  final private String msg;
-  
   public NotEnterpriseCycRequirement(String msg) {
-    this.msg = msg;
+    super(CycServerReleaseType.ENTERPRISECYC, msg);
   }
   
   public NotEnterpriseCycRequirement() {
     this("This feature is not supported in EnterpriseCyc.");
-  }
-  
-  @Override
-  public boolean isCompatible(CycSession session) throws SessionCommunicationException, SessionCommandException {
-    return !CycServerReleaseType.ENTERPRISECYC.equals(
-            session.getServerInfo().getSystemReleaseType());
-  }
-  
-  @Override
-  public void testCompatibility(CycSession session) throws UnsupportedCycOperationException, SessionCommunicationException, SessionCommandException {
-    if (!isCompatible(session)) {
-      throw new UnsupportedCycOperationException(msg);
-    }
   }
   
 }

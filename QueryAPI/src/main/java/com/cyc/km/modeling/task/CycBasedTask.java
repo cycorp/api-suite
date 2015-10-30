@@ -101,7 +101,7 @@ public class CycBasedTask {
    * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
    */
   public CycBasedTask(KBIndividual taskTerm) throws OpenCycUnsupportedFeatureException {
-    CYC_BASED_TASK_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    CYC_BASED_TASK_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     this.taskTerm = taskTerm;
   }
 
@@ -243,8 +243,7 @@ public class CycBasedTask {
     try {
       Map<KBObject, Object> substitutions = new HashMap<KBObject, Object>();
       final Fort taskTermFort = getFort();
-      // @TODO Use KBObjects:
-      substitutions.put(KBIndividualImpl.get(QueryApiConstants.getInstance().taskIndexical), KBIndividualImpl.get(taskTermFort));
+      substitutions.put(KBObjectImpl.get(QueryApiConstants.getInstance().taskIndexical), KBIndividualImpl.get(taskTermFort));
       final Query query = QueryFactory.getQuery(kbQuery, substitutions);
       query.setMaxNumber(1);
       return query.getAnswerCount() >= 1

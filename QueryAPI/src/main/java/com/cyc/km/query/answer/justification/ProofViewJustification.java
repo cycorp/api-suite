@@ -84,7 +84,7 @@ public class ProofViewJustification implements Justification {
    * @see ProofViewJustification#populate()
    */
   public ProofViewJustification(QueryAnswer answer) throws CycConnectionException, OpenCycUnsupportedFeatureException {
-    PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     
     this.answer = answer;
     final InferenceAnswerIdentifier answerID = answer.getId();
@@ -121,7 +121,7 @@ public class ProofViewJustification implements Justification {
   @Override
   public void populate() throws OpenCycUnsupportedFeatureException {
     synchronized (lock) {
-      PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.testCompatibilityWithRuntimeException();
+      PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
       requireNotPopulated();
       try {
         converseVoid(makeSubLStmt("proof-view-id-populate", proofViewId));
@@ -620,7 +620,7 @@ public class ProofViewJustification implements Justification {
   }
 
   private void ensureProofViewInitialized() throws RuntimeException, OpenCycUnsupportedFeatureException {
-    PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     synchronized (lock) {
       if (!isPopulated) {
         populate();

@@ -64,8 +64,6 @@ import static com.cyc.baseclient.CycObjectFactory.*;
 import static com.cyc.baseclient.testing.TestConstants.*;
 import static com.cyc.baseclient.testing.TestGuids.*;
 import static com.cyc.baseclient.testing.TestSentences.*;
-import com.cyc.baseclient.comm.SocketComm;
-import com.cyc.baseclient.comm.SocketCommRoundRobin;
 import com.cyc.baseclient.cycobject.ByteArray;
 import com.cyc.base.cycobject.CycAssertion;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
@@ -75,7 +73,6 @@ import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.CycVariableImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.query.InferenceParameters;
@@ -99,10 +96,11 @@ import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.parser.CycLParserUtil;
 import com.cyc.baseclient.datatype.StringUtils;
 import com.cyc.baseclient.kbtool.CycObjectTool;
-import com.cyc.baseclient.nl.Paraphraser;
+import com.cyc.baseclient.nl.ParaphraserFactory;
 import com.cyc.baseclient.testing.TestConstants;
 import com.cyc.baseclient.testing.TestSentences;
 import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
+import com.cyc.nl.Paraphraser;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -117,8 +115,7 @@ import org.junit.Before;
 public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener {
 
   /**
-   * Indicates the use of a local CycConnection object to connect with a Cyc
-   * server.
+   * Indicates the use of a local CycConnection object to connect with a Cyc server.
    */
   public static final int LOCAL_CYC_CONNECTION = 1;
   /*
@@ -152,19 +149,19 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   private static CycAccess getCycAccess() throws CycConnectionException, CycApiException, IOException {
     CycAccess cycAccess = TestUtils.getCyc();
     /*
-    if (connectionMode == LOCAL_CYC_CONNECTION) {
-      cycAccess = InteractiveCycAccessManager.get().getAccess(host, port);
-      System.out.println(cycAccess.getCycConnection().connectionInfo());
-    } else if (connectionMode == SOCKET_COMM_CYC_CONNECTION) {
-      cycAccess = new CycClient(new SocketComm(host, port));
-    } else if (connectionMode == ROUND_ROBIN_SOCKET_COMM_CYC_CONNECTION) {
-      // SocketCommRoundRobin will create two socket connections to two 
-      // Cyc servers on 3600 and 3620. This is hardcoded in SocketCommRoundRobin
-      cycAccess = new CycClient(new SocketCommRoundRobin());
-    } else {
-      fail("Invalid connection mode " + connectionMode);
-    }
-    */
+     if (connectionMode == LOCAL_CYC_CONNECTION) {
+     cycAccess = InteractiveCycAccessManager.get().getAccess(host, port);
+     System.out.println(cycAccess.getCycConnection().connectionInfo());
+     } else if (connectionMode == SOCKET_COMM_CYC_CONNECTION) {
+     cycAccess = new CycClient(new SocketComm(host, port));
+     } else if (connectionMode == ROUND_ROBIN_SOCKET_COMM_CYC_CONNECTION) {
+     // SocketCommRoundRobin will create two socket connections to two 
+     // Cyc servers on 3600 and 3620. This is hardcoded in SocketCommRoundRobin
+     cycAccess = new CycClient(new SocketCommRoundRobin());
+     } else {
+     fail("Invalid connection mode " + connectionMode);
+     }
+     */
     return cycAccess;
   }
 
@@ -176,8 +173,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Compares expected object to the test object without causing a unit test
-   * failure, reporting if the parameters are not equal.
+   * Compares expected object to the test object without causing a unit test failure, reporting if
+   * the parameters are not equal.
    *
    * @param expectedObject the expected object
    * @param testObject the test object
@@ -191,8 +188,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Reports if the given boolean expression is false, without causing a unit
-   * test failure.
+   * Reports if the given boolean expression is false, without causing a unit test failure.
    *
    * @param testExpression the test expression
    * @param message the message to display when the test fails
@@ -204,10 +200,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     }
   }
 
-  public static boolean isBasicParaphraser(Paraphraser p) {
+  public static boolean isBasicParaphraser(Paraphraser p) throws CycConnectionException {
     if (p != null) {
       // Checking the string value is a little hacky, but Paraphraser$BasicParaphraser is a private class... - nwinant, 2014-04-16
-      return "com.cyc.baseclient.nl.Paraphraser$BasicParaphraser".equals(p.getClass().getName());
+      return p.getClass().getName().endsWith("$BasicParaphraser");
     }
     return false;
   }
@@ -367,8 +363,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Tests the fundamental aspects of the binary (cfasl) api connection to the
-   * OpenCyc server.
+   * Tests the fundamental aspects of the binary (cfasl) api connection to the OpenCyc server.
    */
   @Test
   public void testBinaryCycConnection1() {
@@ -459,14 +454,14 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     } catch (Throwable e) {
       fail(e.toString());
     }
-    assertTrue(response[1].toString().indexOf("NIL") > -1);
+    assertTrue(response[1].toString().contains("NIL"));
 
     System.out.println("**** testBinaryCycConnection1 OK ****");
   }
 
   /**
-   * Tests the fundamental aspects of the binary (cfasl) api connection to the
-   * OpenCyc server. CycAccess is set to null;
+   * Tests the fundamental aspects of the binary (cfasl) api connection to the OpenCyc server.
+   * CycAccess is set to null;
    */
   @Test
   public void testBinaryCycConnection2() {
@@ -563,12 +558,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       fail(e.toString());
     }
 
-    if (response[1].toString().indexOf("NIL") == -1) {
+    if (!response[1].toString().contains("NIL")) {
       System.out.println(response[1]);
     }
 
     // various error messages to effect that NIL is not defined in the API.
-    assertTrue(response[1].toString().indexOf("NIL") > -1);
+    assertTrue(response[1].toString().contains("NIL"));
 
     System.out.println("**** testBinaryCycConnection2 OK ****");
   }
@@ -694,325 +689,152 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests a portion of the CycAccess methods using the binary api connection.
    */
   @Test
-  public void testBinaryCycAccess2() {
+  public void testBinaryCycAccess2() throws CycConnectionException {
     long startMilliseconds = System.currentTimeMillis();
     System.out.println(cycAccess.getCycConnection().connectionInfo());
     resetCycConstantCaches();
 
     // getGenls.
-    List genls = null;
-
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      genls = cycAccess.getLookupTool().getGenls(dog);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
+    List genls = cycAccess.getLookupTool().getGenls(dog);
     assertNotNull(genls);
     assertTrue(genls instanceof CycArrayList);
     genls = ((CycArrayList) genls).sort();
-    assertTrue(genls.toString().indexOf("CanisGenus") > -1);
-    assertTrue(genls.toString().indexOf("DomesticatedAnimal") > -1);
+    assertTrue(genls.toString().contains("CanisGenus"));
 
     // getGenlPreds.
-    List genlPreds = null;
-
-    try {
-      CycConstant target = cycAccess.getLookupTool().getKnownConstantByGuid(TARGET_GUID_STRING);
-      genlPreds = cycAccess.getLookupTool().getGenlPreds(target);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant target = cycAccess.getLookupTool().getKnownConstantByGuid(TARGET_GUID_STRING);
+    List genlPreds = cycAccess.getLookupTool().getGenlPreds(target);
     assertNotNull(genlPreds);
     assertTrue((genlPreds.toString().equals("(preActors)")) || (genlPreds.toString().equals(
             "(actors)")));
 
     // getAllGenlPreds.
-    List allGenlPreds = null;
-
-    try {
-      CycConstant target = cycAccess.getLookupTool().getKnownConstantByGuid(TARGET_GUID_STRING);
-      allGenlPreds = cycAccess.getLookupTool().getAllGenlPreds(target);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    List allGenlPreds = cycAccess.getLookupTool().getAllGenlPreds(target);
     assertNotNull(allGenlPreds);
     assertTrue(allGenlPreds.size() > 2);
 
     // getArg1Formats.
-    List arg1Formats = null;
-
-    try {
-      CycConstant target = cycAccess.getLookupTool().getKnownConstantByGuid(TARGET_GUID_STRING);
-      arg1Formats = cycAccess.getLookupTool().getArg1Formats(target);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    List arg1Formats = cycAccess.getLookupTool().getArg1Formats(target);
     assertNotNull(arg1Formats);
     assertEquals("(SetTheFormat)", arg1Formats.toString());
 
     // getArg1Formats.
-    arg1Formats = null;
-
-    try {
-      CycConstant constantName = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CONSTANT_NAME_GUID_STRING);
-      arg1Formats = cycAccess.getLookupTool().getArg1Formats(constantName);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant constantName = cycAccess.getLookupTool().getKnownConstantByGuid(
+            CONSTANT_NAME_GUID_STRING);
+    arg1Formats = cycAccess.getLookupTool().getArg1Formats(constantName);
     assertNotNull(arg1Formats);
     assertEquals("(singleEntryFormatInArgs)", arg1Formats.toString());
 
     // getArg2Formats.
-    List arg2Formats = null;
-
-    try {
-      CycConstant internalParts = cycAccess.getLookupTool().getKnownConstantByGuid(
-              INTERNAL_PARTS_GUID_STRING);
-      arg2Formats = cycAccess.getLookupTool().getArg2Formats(internalParts);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant internalParts = cycAccess.getLookupTool().getKnownConstantByGuid(
+            INTERNAL_PARTS_GUID_STRING);
+    List arg2Formats = cycAccess.getLookupTool().getArg2Formats(internalParts);
     assertNotNull(arg2Formats);
     assertEquals("(SetTheFormat)", arg2Formats.toString());
 
     // getDisjointWiths.
-    List disjointWiths = null;
-
-    try {
-      CycConstant vegetableMatter = cycAccess.getLookupTool().getKnownConstantByGuid(
+    CycConstant vegetableMatter = cycAccess.getLookupTool().getKnownConstantByGuid(
               VEGETABLE_MATTER_GUID_STRING);
-      disjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    List disjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
     assertNotNull(disjointWiths);
-    assertTrue(disjointWiths.toString().indexOf(
-            "AnimalBLO") > 0);
+    assertTrue(disjointWiths.toString().indexOf("AnimalBLO") > 0);
 
     // getArg1Isas.
-    List arg1Isas = null;
-
-    try {
-      CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
-      arg1Isas = cycAccess.getLookupTool().getArg1Isas(doneBy);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
+    List arg1Isas = cycAccess.getLookupTool().getArg1Isas(doneBy);
     assertNotNull(arg1Isas);
     assertEquals("(Event)", arg1Isas.toString());
 
     // getArg2Isas.
-    List arg2Isas = null;
-
-    try {
-      CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
-      arg2Isas = cycAccess.getLookupTool().getArg2Isas(doneBy);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    List arg2Isas = cycAccess.getLookupTool().getArg2Isas(doneBy);
     assertNotNull(arg2Isas);
-
     assertTrue(arg2Isas.contains(SOMETHING_EXISTING));
 
     // getArgNIsas.
-    List argNIsas = null;
-
-    try {
-      CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
-      argNIsas = cycAccess.getLookupTool().getArgNIsas(doneBy, 1);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    List argNIsas = cycAccess.getLookupTool().getArgNIsas(doneBy, 1);
     assertNotNull(argNIsas);
     assertEquals("(Event)", argNIsas.toString());
 
     // getArgNGenls.
-    List argGenls = null;
-
-    try {
-      CycConstant superTaxons = cycAccess.getLookupTool().getKnownConstantByGuid(
+    CycConstant superTaxons = cycAccess.getLookupTool().getKnownConstantByGuid(
               SUPERTAXONS_GUID_STRING);
-      argGenls = cycAccess.getLookupTool().getArgNGenls(superTaxons, 2);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    List argGenls = cycAccess.getLookupTool().getArgNGenls(superTaxons, 2);
     assertNotNull(argGenls);
     assertEquals("(Organism-Whole)", argGenls.toString());
 
     // isCollection.
-    boolean answer = false;
-
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      answer = cycAccess.getInspectorTool().isCollection(dog);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
+    assertTrue(cycAccess.getInspectorTool().isCollection(dog));
 
     // isCollection.
-    answer = true;
-
-    try {
-      CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
-      answer = cycAccess.getInspectorTool().isCollection(doneBy);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(!answer);
+    assertFalse(cycAccess.getInspectorTool().isCollection(doneBy));
 
     // isCollection on a NAUT
-    answer = false;
-
-    try {
-      CycConstant fruitFn = cycAccess.getLookupTool().getKnownConstantByGuid(
-              FRUIT_FN_GUID_STRING);
-      CycConstant appleTree = cycAccess.getLookupTool().getKnownConstantByGuid(
-              APPLE_TREE_GUID_STRING);
-      Naut fruitFnAppleTreeNaut = new NautImpl(fruitFn, appleTree);
-      answer = cycAccess.getInspectorTool().isCollection(fruitFnAppleTreeNaut);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
+    CycConstant fruitFn = cycAccess.getLookupTool().getKnownConstantByGuid(
+            FRUIT_FN_GUID_STRING);
+    CycConstant appleTree = cycAccess.getLookupTool().getKnownConstantByGuid(
+            APPLE_TREE_GUID_STRING);
+    Naut fruitFnAppleTreeNaut = new NautImpl(fruitFn, appleTree);
+    assertTrue(cycAccess.getInspectorTool().isCollection(fruitFnAppleTreeNaut));
 
     // isCollection on a NAUT
-    answer = true;
-
-    try {
-      CycConstant cityNamedFn = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CITY_NAMED_FN_GUID_STRING);
-      CycConstant swaziland = cycAccess.getLookupTool().getKnownConstantByGuid(
-              SWAZILAND_GUID_STRING);
-      Naut cityNamedFnNaut = new NautImpl(cityNamedFn, "swaziville", swaziland);
-      answer = cycAccess.getInspectorTool().isCollection(cityNamedFnNaut);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(!answer);
+    CycConstant cityNamedFn = cycAccess.getLookupTool().getKnownConstantByGuid(
+            CITY_NAMED_FN_GUID_STRING);
+    CycConstant swaziland = cycAccess.getLookupTool().getKnownConstantByGuid(
+            SWAZILAND_GUID_STRING);
+    Naut cityNamedFnNaut = new NautImpl(cityNamedFn, "swaziville", swaziland);
+    assertFalse(cycAccess.getInspectorTool().isCollection(cityNamedFnNaut));
 
     // isCollection on a non-CycObject
-    answer = true;
+    assertFalse(cycAccess.getInspectorTool().isCollection(7));
 
-    try {
-      answer = cycAccess.getInspectorTool().isCollection(7);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    // isBinaryPredicate doneBy.
+    assertTrue(cycAccess.getInspectorTool().isBinaryPredicate(doneBy));
 
-    assertTrue(!answer);
-
-    // isBinaryPredicate.
-    answer = false;
-
-    try {
-      CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
-      answer = cycAccess.getInspectorTool().isBinaryPredicate(doneBy);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
-
-    // isBinaryPredicate.
-    answer = true;
-
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      answer = cycAccess.getInspectorTool().isBinaryPredicate(dog);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(!answer);
+    // isBinaryPredicate dog.
+    assertFalse(cycAccess.getInspectorTool().isBinaryPredicate(dog));
 
     // getGeneratedPhrase.
-    String phrase = null;
-
-    try {
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.KBOBJECT);
-
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      phrase = p.paraphrase(dog).getString();
-      assertNotNull(phrase);
-      if (isBasicParaphraser(p)) {
-        assertEquals("Dog", phrase);
-      } else {
-        assertEquals("Canis familiaris", phrase);
-      }
-    } catch (Throwable e) {
-      fail(e.toString());
+    
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
+    String phrase = p.paraphrase(dog).getString();
+    assertNotNull(phrase);
+    if (isBasicParaphraser(p)) {
+      assertEquals("Dog", phrase);
+    } else {
+      assertEquals("Canis familiaris", phrase);
     }
 
     // getSingularGeneratedPhrase.
-    phrase = null;
-
-    try {
-      CycConstant brazil = cycAccess.getLookupTool().getKnownConstantByGuid(BRAZIL_GUID_STRING);
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.KBOBJECT);
-      phrase = p.paraphrase(brazil).getString();
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    CycConstant brazil = cycAccess.getLookupTool().getKnownConstantByGuid(
+            BRAZIL_GUID_STRING);
+    phrase = p.paraphrase(brazil).getString();
 
     //@todo this should check to see what kind of paraphraser it got.  If basic, we can expect "#$Dog" back or perhaps "Dog"
     assertNotNull(phrase);
-    assertTrue(phrase.toLowerCase().indexOf("bra") > -1);
-
+    assertTrue(phrase.toLowerCase().contains("bra"));
+    
+    
     // getGeneratedPhrase.
-    phrase = null;
-
-    try {
-      Paraphraser p = Paraphraser.getInstance(Paraphraser.ParaphrasableType.KBOBJECT);
-      CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
-      phrase = p.paraphrase(doneBy).getString();
-      assertNotNull(phrase);
-      if (isBasicParaphraser(p)) {
-        assertTrue(phrase.indexOf("doneBy") > -1);
-      } else {
-        assertTrue(phrase.indexOf("doer") > -1);
-      }
-    } catch (Throwable e) {
-      fail(e.toString());
+    phrase = p.paraphrase(doneBy).getString();
+    assertNotNull(phrase);
+    if (isBasicParaphraser(p)) {
+      assertTrue(phrase.contains("doneBy"));
+    } else {
+      assertTrue(phrase.contains("doer"));
     }
 
     // denots-of-string
-    try {
-      String denotationString = "Brazil";
-      CycList denotations = cycAccess.getLookupTool().getDenotsOfString(denotationString);
-      System.out.println(denotations.cyclify());
-      assertTrue(denotations.contains(cycAccess.getLookupTool().getKnownConstantByGuid(
-              TestConstants.BRAZIL.getGuid().getGuidString())));
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
-    try {
-      String denotationString = "South Dakota";
-      CycList denotations = cycAccess.getLookupTool().getDenotsOfString(denotationString);
-      System.out.println(denotations.cyclify());
-      assertTrue(denotations.contains(SOUTH_DAKOTA));
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
+    String brazilDenotationString = "Brazil";
+    CycList brazilDenotations = cycAccess.getLookupTool().getDenotsOfString(brazilDenotationString);
+    System.out.println(brazilDenotations.cyclify());
+    assertTrue(brazilDenotations.contains(cycAccess.getLookupTool().getKnownConstantByGuid(
+            TestConstants.BRAZIL.getGuid().getGuidString())));
+
+    String sDakotaDenotationString = "South Dakota";
+    CycList sDakotaDenotations = cycAccess.getLookupTool().getDenotsOfString(sDakotaDenotationString);
+    System.out.println(sDakotaDenotations.cyclify());
+    assertTrue(sDakotaDenotations.contains(SOUTH_DAKOTA));
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
@@ -1023,6 +845,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    *
    * @param evt the the given Cyc API services lease event
    */
+  @Override
   public void notifyCycLeaseEvent(
           LeaseEventObject evt) {
     System.out.println("Notified of: " + evt.toString());
@@ -1032,24 +855,18 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    * Tests a portion of the CycAccess methods using the binary api connection.
    */
   @Test
-  public void testBinaryCycAccess3() {
-    System.out.println("\n**** testBinaryCycAccess 3 ****");
+  public void testBinaryCycAccess3_1() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 3.1 ****");
 
     long startMilliseconds = System.currentTimeMillis();
     resetCycConstantCaches();
 
     // getComment.
-    String comment = null;
-
-    try {
-      CycConstant brazil = cycAccess.getLookupTool().getKnownConstantByGuid(BRAZIL_GUID_STRING);
-      comment = cycAccess.getLookupTool().getComment(brazil);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant brazil = cycAccess.getLookupTool().getKnownConstantByGuid(BRAZIL_GUID_STRING);
+    assertEquals("#$Brazil", brazil.cyclify());
+    String comment = cycAccess.getLookupTool().getComment(brazil);
     assertNotNull(comment);
-    assertEquals("An instance of #$IndependentCountry.  " + brazil + " is the "
+    assertEquals("An instance of #$IndependentCountry.  #$Brazil is the "
             + "largest country in South America, and is bounded on the "
             + "northwest by #$Colombia; on the north by #$Venezuela, "
             + "#$Guyana, #$Suriname, and #$FrenchGuiana; on the east by "
@@ -1057,50 +874,37 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             + "southwest by #$Argentina and #$Paraguay; and on the west "
             + "by #$Bolivia and #$Peru.",
             comment);
-
+    
     // getIsas.
-    List isas = null;
-
-    try {
-      CycConstant brazil = cycAccess.getLookupTool().getKnownConstantByGuid(BRAZIL_GUID_STRING);
-      isas = cycAccess.getLookupTool().getIsas(brazil);
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
+    List isas = cycAccess.getLookupTool().getIsas(brazil);
 
     assertNotNull(isas);
     assertTrue(isas instanceof CycArrayList);
     assertTrue(isas.toString().indexOf("IndependentCountry") > 0);
     isas = ((CycArrayList) isas).sort();
     assertTrue(isas.toString().indexOf("IndependentCountry") > 0);
+    
+    System.out.println("**** testBinaryCycAccess 3.1 OK ****");
+  }
+  
+  @Test
+  public void testBinaryCycAccess3_2() throws CycConnectionException {
+    System.out.println("\n**** testBinaryCycAccess 3.2 ****");
+    long startMilliseconds = System.currentTimeMillis();
+    resetCycConstantCaches();
 
     // getGenls.
-    List genls = null;
-
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      genls = cycAccess.getLookupTool().getGenls(dog);
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
+    CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
+    List genls = cycAccess.getLookupTool().getGenls(dog);
 
     assertNotNull(genls);
     assertTrue(genls instanceof CycArrayList);
     genls = ((CycArrayList) genls).sort();
-    assertTrue(genls.toString().indexOf("CanisGenus") > -1);
-    assertTrue(genls.toString().indexOf("DomesticatedAnimal") > -1);
+    assertTrue(genls.toString().contains("CanisGenus"));
 
     // getMinGenls.
-    List minGenls = null;
-
-    try {
-      CycConstant lion = cycAccess.getLookupTool().getKnownConstantByGuid(LION_GUID_STRING);
-      minGenls = cycAccess.getLookupTool().getMinGenls(lion);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    CycConstant lion = cycAccess.getLookupTool().getKnownConstantByGuid(LION_GUID_STRING);
+    List minGenls = cycAccess.getLookupTool().getMinGenls(lion);
 
     assertNotNull(minGenls);
     assertTrue(minGenls instanceof CycArrayList);
@@ -1110,15 +914,9 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     // getMinGenls mt.
     minGenls = null;
 
-    try {
-      CycConstant lion = cycAccess.getLookupTool().getKnownConstantByGuid(LION_GUID_STRING);
-
-      // #$BiologyVocabularyMt
-      minGenls = cycAccess.getLookupTool().getMinGenls(lion,
-              cycAccess.getLookupTool().getKnownConstantByGuid(BIOLOGY_VOCABULARY_MT_GUID_STRING));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    // #$BiologyVocabularyMt
+    minGenls = cycAccess.getLookupTool().getMinGenls(lion,
+            cycAccess.getLookupTool().getKnownConstantByGuid(BIOLOGY_VOCABULARY_MT_GUID_STRING));
 
     assertNotNull(minGenls);
     assertTrue(minGenls instanceof CycArrayList);
@@ -1126,15 +924,9 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertEquals("(FelidaeFamily)", minGenls.toString());
 
     // getSpecs.
-    List specs = null;
-
-    try {
-      CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CANINE_ANIMAL_GUID_STRING);
-      specs = cycAccess.getLookupTool().getSpecs(canineAnimal);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
+            CANINE_ANIMAL_GUID_STRING);
+    List specs = cycAccess.getLookupTool().getSpecs(canineAnimal);
 
     assertNotNull(specs);
     assertTrue(specs instanceof CycArrayList);
@@ -1145,15 +937,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     }
 
     // getMaxSpecs.
-    List maxSpecs = null;
-
-    try {
-      CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CANINE_ANIMAL_GUID_STRING);
-      maxSpecs = cycAccess.getLookupTool().getMaxSpecs(canineAnimal);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    List maxSpecs = cycAccess.getLookupTool().getMaxSpecs(canineAnimal);
 
     assertNotNull(maxSpecs);
     assertTrue(maxSpecs instanceof CycArrayList);
@@ -1162,17 +946,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(maxSpecs.toString().indexOf("Fox") > 0);
 
     // getGenlSiblings.
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      List genlSiblings = cycAccess.getLookupTool().getGenlSiblings(dog);
-      assertNotNull(genlSiblings);
-      assertTrue(genlSiblings instanceof CycArrayList);
-      genlSiblings = ((CycArrayList) genlSiblings).sort();
-      assertTrue(genlSiblings.toString().indexOf("JuvenileAnimal") > -1);
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
+    List genlSiblings = cycAccess.getLookupTool().getGenlSiblings(dog);
+    assertNotNull(genlSiblings);
+    assertTrue(genlSiblings instanceof CycArrayList);
+    genlSiblings = ((CycArrayList) genlSiblings).sort();
+    assertTrue(genlSiblings.toString().contains("JuvenileAnimal"));
 
 
     /* long running.
@@ -1209,83 +987,53 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
      }
      */
     // getAllGenls.
-    try {
-      CycConstant existingObjectType = cycAccess.getLookupTool().getKnownConstantByGuid(
-              EXISTING_OBJECT_TYPE_GUID_STRING);
-      List allGenls = cycAccess.getLookupTool().getAllGenls(existingObjectType);
-      assertNotNull(allGenls);
-      assertTrue(allGenls instanceof CycArrayList);
+    CycConstant existingObjectType = cycAccess.getLookupTool().getKnownConstantByGuid(
+            EXISTING_OBJECT_TYPE_GUID_STRING);
+    List allGenls = cycAccess.getLookupTool().getAllGenls(existingObjectType);
+    assertNotNull(allGenls);
+    assertTrue(allGenls instanceof CycArrayList);
 
-      CycConstant objectType = cycAccess.getLookupTool().getKnownConstantByGuid(
-              OBJECT_TYPE_GUID_STRING);
+    CycConstant objectType = cycAccess.getLookupTool().getKnownConstantByGuid(
+            OBJECT_TYPE_GUID_STRING);
 
-      assertTrue(allGenls.contains(objectType));
-      assertTrue(allGenls.contains(THING));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    assertTrue(allGenls.contains(objectType));
+    assertTrue(allGenls.contains(THING));
 
     // getAllSpecs.
-    try {
-      CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CANINE_ANIMAL_GUID_STRING);
-      List allSpecs = cycAccess.getLookupTool().getAllSpecs(canineAnimal);
-      assertNotNull(allSpecs);
-      assertTrue(allSpecs instanceof CycArrayList);
+    List allSpecs = cycAccess.getLookupTool().getAllSpecs(canineAnimal);
+    assertNotNull(allSpecs);
+    assertTrue(allSpecs instanceof CycArrayList);
 
-      CycConstant jackal = cycAccess.getLookupTool().getKnownConstantByGuid(JACKAL_GUID_STRING);
-      assertTrue(allSpecs.contains(jackal));
+    CycConstant jackal = cycAccess.getLookupTool().getKnownConstantByGuid(JACKAL_GUID_STRING);
+    assertTrue(allSpecs.contains(jackal));
 
-      CycConstant retrieverDog = cycAccess.getLookupTool().getKnownConstantByGuid(
-              RETRIEVER_DOG_GUID_STRING);
-      assertTrue(allSpecs.contains(retrieverDog));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    CycConstant retrieverDog = cycAccess.getLookupTool().getKnownConstantByGuid(
+            RETRIEVER_DOG_GUID_STRING);
+    assertTrue(allSpecs.contains(retrieverDog));
 
     // getAllGenlsWrt.
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      List allGenlsWrt = cycAccess.getLookupTool().getAllGenlsWrt(dog, animal);
-      assertNotNull(allGenlsWrt);
-      assertTrue(allGenlsWrt instanceof CycArrayList);
+    CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    List allGenlsWrt = cycAccess.getLookupTool().getAllGenlsWrt(dog, animal);
+    assertNotNull(allGenlsWrt);
+    assertTrue(allGenlsWrt instanceof CycArrayList);
 
-      CycConstant tameAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              TAME_ANIMAL_GUID_STRING);
-      assertTrue(allGenlsWrt.contains(tameAnimal));
+    CycConstant carnivore = cycAccess.getLookupTool().getKnownConstantByGuid(
+            CARNIVORE_ORDER_GUID_STRING);
+    assertTrue(allGenlsWrt.contains(carnivore));
 
-      CycConstant airBreathingVertebrate = cycAccess.getLookupTool().getKnownConstantByGuid(
-              AIR_BREATHING_VERTEBRATE_GUID_STRING);
-      assertTrue(allGenlsWrt.contains(airBreathingVertebrate));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant airBreathingVertebrate = cycAccess.getLookupTool().getKnownConstantByGuid(
+            AIR_BREATHING_VERTEBRATE_GUID_STRING);
+    assertTrue(allGenlsWrt.contains(airBreathingVertebrate));
+    
     // getAllDependentSpecs.
-    try {
-      CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CANINE_ANIMAL_GUID_STRING);
-      List allDependentSpecs = cycAccess.getLookupTool().getAllDependentSpecs(canineAnimal);
-      assertNotNull(allDependentSpecs);
-
-      CycConstant fox = cycAccess.getLookupTool().getKnownConstantByGuid(FOX_GUID_STRING);
-      assertTrue(allDependentSpecs instanceof CycArrayList);
-      assertTrue(allDependentSpecs.contains(fox));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    List allCanineAnimalDependentSpecs = cycAccess.getLookupTool().getAllDependentSpecs(canineAnimal);
+    assertNotNull(allCanineAnimalDependentSpecs);
+    assertTrue(allCanineAnimalDependentSpecs instanceof CycArrayList);
+    CycConstant bushDog = cycAccess.getLookupTool().getKnownConstantByGuid(BUSH_DOG_GUID_STRING);
+    assertTrue(allCanineAnimalDependentSpecs.contains(bushDog));
 
     // getSampleLeafSpecs.
-    List sampleLeafSpecs = null;
-
-    try {
-      CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CANINE_ANIMAL_GUID_STRING);
-      sampleLeafSpecs = cycAccess.getLookupTool().getSampleLeafSpecs(canineAnimal, 3);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    List sampleLeafSpecs = cycAccess.getLookupTool().getSampleLeafSpecs(canineAnimal, 3);
 
     assertNotNull(sampleLeafSpecs);
     assertTrue(sampleLeafSpecs instanceof CycArrayList);
@@ -1294,51 +1042,25 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(sampleLeafSpecs.size() > 0);
 
     // isSpecOf.
-    boolean answer = true;
-
-    try {
-      CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
-      CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      answer = cycAccess.getInspectorTool().isSpecOf(dog, animal);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
+    assertTrue(cycAccess.getInspectorTool().isSpecOf(dog, animal));
 
     // isGenlOf.
-    answer = true;
-
-    try {
-      CycConstant wolf = cycAccess.getLookupTool().getKnownConstantByGuid(WOLF_GUID_STRING);
-      CycConstant canineAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              CANINE_ANIMAL_GUID_STRING);
-      answer = cycAccess.getInspectorTool().isGenlOf(canineAnimal, wolf);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
+    CycConstant wolf = cycAccess.getLookupTool().getKnownConstantByGuid(WOLF_GUID_STRING);
+    assertTrue(cycAccess.getInspectorTool().isGenlOf(canineAnimal, wolf));
 
     //cycAccess.traceOn();
-    try {
-      CycConstant domesticatedAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              DOMESTICATED_ANIMAL_GUID_STRING);
-      CycConstant tameAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
-              TAME_ANIMAL_GUID_STRING);
-      answer = cycAccess.getComparisonTool().areIntersecting(domesticatedAnimal, tameAnimal);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
+    CycConstant domesticatedAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
+            DOMESTICATED_ANIMAL_GUID_STRING);
+    CycConstant tameAnimal = cycAccess.getLookupTool().getKnownConstantByGuid(
+            CARNIVORE_GUID_STRING);
+    assertTrue(cycAccess.getComparisonTool().areIntersecting(domesticatedAnimal, tameAnimal));
 
     // cycAccess.getLookupTool().getCycLeaseManager().removeListener(this);
     for (Map.Entry<InputStream, LeaseManager> kv : cycAccess.getCycConnection().getCycLeaseManagerCommMap().entrySet()) {
       kv.getValue().removeListener(this);
     }
 
-    System.out.println("**** testBinaryCycAccess 3 OK ****");
+    System.out.println("**** testBinaryCycAccess 3.2 OK ****");
   }
 
   /**
@@ -1393,8 +1115,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println("whyCollectionsIntersect " + whyCollectionsIntersect);
 
     CycList expectedWhyCollectionsIntersect = cycAccess.getObjectTool().makeCycList(
-            "(((" + genls + " " + domesticatedAnimalString + " " + tameAnimal + ") :TRUE) "
-            + "((" + genls + " " + tameAnimal + " " + nonPersonAnimalString + ") :TRUE))");
+            "(((" + GENLS_STRING + " " + DOMESTICATED_ANIMAL_STRING + " " + TAME_ANIMAL_STRING + ") :TRUE) "
+            + "((" + GENLS_STRING + " " + TAME_ANIMAL_STRING + " " + NON_PERSON_ANIMAL_STRING + ") :TRUE))");
 
     /**
      * assertEquals(expectedWhyCollectionsIntersect.toString(), whyCollectionsIntersect.toString());
@@ -1409,9 +1131,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     // areDisjoint.
     CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
-    boolean answer = cycAccess.getComparisonTool().areDisjoint(animal, plant);
-
-    assertTrue(answer);
+    assertTrue(cycAccess.getComparisonTool().areDisjoint(animal, plant));
 
     // getMinIsas.
     CycConstant wolf = cycAccess.getLookupTool().getKnownConstantByGuid(WOLF_GUID_STRING);
@@ -1431,11 +1151,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(((CycArrayList) instances).contains(plato));
 
     // getAllIsa.
-      //cycAccess.traceOn();
+    //cycAccess.traceOn();
     // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
     List allIsas = cycAccess.getLookupTool().getAllIsa(animal);
 
-      //System.out.println(allIsas);
+    //System.out.println(allIsas);
     //CycConstant organismClassificationType = cycAccess.getLookupTool().getKnownConstantByGuid(
     //        ORGANISM_CLASSIFICATION_TYPE_GUID_STRING);
     assertTrue(allIsas.contains(organismClassificationType));
@@ -1446,7 +1166,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
     System.out.println("**** testBinaryCycAccess 4.1 OK ****");
   }
-  
+
   /**
    * Tests a portion of the CycAccess methods using a CycAccess connection.
    */
@@ -1459,7 +1179,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
     boolean answer = cycAccess.getComparisonTool().areDisjoint(animal, plant);
 
-      // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
+    // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
     //CycConstant plant = cycAccess.getLookupTool().getKnownConstantByGuid(PLANT_GUID_STRING);
     List allPlants = cycAccess.getLookupTool().getAllInstances(plant);
 
@@ -1477,17 +1197,16 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(answer);
 
     final CycConstant term1 = cycAccess.getLookupTool().getKnownConstantByName(
-            nthSubSituationTypeOfTypeFn);
+            NTH_SUB_SITUATION_TYPE_OF_TYPE_FN_STRING);
     final CycConstant term2 = cycAccess.getLookupTool().getKnownConstantByName(
-            preparingFoodItemFn);
+            PREPARING_FOOD_ITEM_FN_STRING);
     final CycConstant term3 = cycAccess.getLookupTool().getKnownConstantByName(
-            spaghettiMarinara);
+            SPAGHETTI_MARINARA_STRING);
     final CycConstant term4 = cycAccess.getLookupTool().getKnownConstantByName(
-            fluidFlowComplete);
-    final CycConstant collection = cycAccess.getLookupTool().getKnownConstantByName(
-            collectionString);
+            FLUID_FLOW_COMPLETE_STRING);
+    final CycConstant collection = cycAccess.getLookupTool().getKnownConstantByName(COLLECTION_STRING);
     final CycConstant mt = cycAccess.getLookupTool().getKnownConstantByName(
-            humanActivitiesMt);
+            HUMAN_ACTIVITIES_MT_STRING);
     final Nart nart1 = new NartImpl(term2, term3);
     final CycArrayList nartList = new CycArrayList();
     nartList.add(term1);
@@ -1561,9 +1280,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       fail(e.toString());
     }
   }
-  
+
   /**
    * Tests a portion of the CycAccess methods using the given api connection.
+   *
+   * @throws com.cyc.base.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess5_1() throws CycConnectionException {
@@ -1573,166 +1294,56 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     //cycAccess.traceOn();
     // findOrCreateNewPermanent.
-    CycConstant cycConstant = null;
     //cycAccess.traceNamesOn();
-
-    try {
-      cycAccess.getOptions().setCyclist(CYC_ADMINISTRATOR);
-      cycAccess.getOptions().setKePurpose(GENERAL_CYC_KE);
-      cycConstant = cycAccess.getAssertTool().findOrCreateNewPermanent("CycAccessTestConstant");
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
-
+    cycAccess.getOptions().setCyclist(CYC_ADMINISTRATOR);
+    cycAccess.getOptions().setKePurpose(GENERAL_CYC_KE);
+    CycConstant cycConstant = cycAccess.getAssertTool().findOrCreateNewPermanent("CycAccessTestConstant");
     assertNotNull(cycConstant);
     assertEquals("CycAccessTestConstant", cycConstant.getName());
 
     // kill.
-    try {
-      cycAccess.getUnassertTool().kill(cycConstant);
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
+    cycAccess.getUnassertTool().kill(cycConstant);
 
     // assertComment.
-    cycConstant = null;
-
-    try {
-      cycConstant = cycAccess.getAssertTool().findOrCreateNewPermanent("CycAccessTestConstant");
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.toString());
-    }
-
+    cycConstant = cycAccess.getAssertTool().findOrCreateNewPermanent("CycAccessTestConstant");
     assertNotNull(cycConstant);
     assertEquals("CycAccessTestConstant", cycConstant.getName());
 
-    CycConstant baseKb = null;
-
-    try {
-      baseKb = cycAccess.getLookupTool().getConstantByName(CommonConstants.BASE_KB.stringApiValue());
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant baseKb = cycAccess.getLookupTool().getConstantByName(CommonConstants.BASE_KB.stringApiValue());
     assertNotNull(baseKb);
     assertEquals("BaseKB", baseKb.getName());
 
     String assertedComment = "A test comment";
-
-    try {
-      cycAccess.getAssertTool().assertComment(cycConstant, assertedComment, baseKb);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    String comment = null;
-
-    try {
-      comment = cycAccess.getLookupTool().getComment(cycConstant);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    cycAccess.getAssertTool().assertComment(cycConstant, assertedComment, baseKb);
+    String comment = cycAccess.getLookupTool().getComment(cycConstant);
     assertEquals(assertedComment, comment);
 
-    try {
-      cycAccess.getUnassertTool().kill(cycConstant);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    try {
-      assertNull(cycAccess.getLookupTool().getConstantByName("CycAccessTestConstant"));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
+    cycAccess.getUnassertTool().kill(cycConstant);
+    assertNull(cycAccess.getLookupTool().getConstantByName("CycAccessTestConstant"));
 
     // isValidConstantName.
-    boolean answer = true;
-
-    try {
-      answer = cycAccess.getInspectorTool().isValidConstantName("abc");
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
-
-    answer = true;
-
-    try {
-      answer = cycAccess.getInspectorTool().isValidConstantName(" abc");
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(!answer);
-
-    answer = true;
-
-    try {
-      answer = cycAccess.getInspectorTool().isValidConstantName("[abc]");
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(!answer);
+    assertTrue(cycAccess.getInspectorTool().isValidConstantName("abc"));
+    assertFalse(cycAccess.getInspectorTool().isValidConstantName(" abc"));
+    assertFalse(cycAccess.getInspectorTool().isValidConstantName("[abc]"));
 
     // isConstantNameAvailable
-    answer = true;
-
-    try {
-      answer = cycAccess.getInspectorTool().isConstantNameAvailable(AGENT_PARTIALLY_TANGIBLE.getName());
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(!answer);
-
-    answer = false;
-
-    try {
-      answer = cycAccess.getInspectorTool().isConstantNameAvailable("myAgent");
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    assertTrue(answer);
+    assertFalse(cycAccess.getInspectorTool().isConstantNameAvailable(AGENT_PARTIALLY_TANGIBLE.getName()));
+    assertTrue(cycAccess.getInspectorTool().isConstantNameAvailable("myAgent"));
 
     // describeMicrotheory.
-    CycConstant mt = null;
     ArrayList genlMts = new ArrayList();
-
-    try {
-      CycConstant modernMilitaryMt = cycAccess.getLookupTool().getKnownConstantByGuid(
-              MODERN_MILITARY_MT_GUID_STRING);
-      CycConstant microtheory = cycAccess.getLookupTool().getKnownConstantByGuid(
-              MICROTHEORY_GUID_STRING);
-      genlMts.add(modernMilitaryMt);
-      mt = cycAccess.getAssertTool().createMicrotheory("CycAccessTestMt",
-              "a unit test comment for the CycAccessTestMt microtheory.",
-              microtheory, genlMts);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    CycConstant modernMilitaryMt = cycAccess.getLookupTool().getKnownConstantByGuid(
+            MODERN_MILITARY_MT_GUID_STRING);
+    CycConstant microtheory = cycAccess.getLookupTool().getKnownConstantByGuid(
+            MICROTHEORY_GUID_STRING);
+    genlMts.add(modernMilitaryMt);
+    CycConstant mt = cycAccess.getAssertTool().createMicrotheory("CycAccessTestMt",
+            "a unit test comment for the CycAccessTestMt microtheory.",
+            microtheory, genlMts);
     assertNotNull(mt);
-
-    try {
-      cycAccess.getUnassertTool().kill(mt);
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
-    try {
-      assertNull(cycAccess.getLookupTool().getConstantByName("CycAccessTestMt"));
-    } catch (Throwable e) {
-      fail(e.toString());
-    }
-
+    cycAccess.getUnassertTool().kill(mt);
+    assertNull(cycAccess.getLookupTool().getConstantByName("CycAccessTestMt"));
+    
     // countAllInstances
     CycConstant country = cycAccess.getLookupTool().getKnownConstantByGuid(COUNTRY_GUID_STRING);
     CycConstant worldGeographyMt = cycAccess.getLookupTool().getKnownConstantByGuid(
@@ -1740,7 +1351,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(cycAccess.getInspectorTool().countAllInstances(country, worldGeographyMt) > 0);
     System.out.println("**** testBinaryCycAccess 5.1 OK ****");
   }
-  
+
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
    */
@@ -1759,7 +1370,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             cycAccess.getObjectTool().makeELMt(mt), queryProperties1, 20000);
     assertNotNull(response1);
 
-      //System.out.println("query: " + query + "\n  response: " + response);
+    //System.out.println("query: " + query + "\n  response: " + response);
     //queryProperties.setMaxNumber(4);
     queryProperties1.put(":max-time", 30);
     response1 = cycAccess.getInferenceTool().executeQuery(query1, cycAccess.getObjectTool().makeELMt(mt),
@@ -1822,7 +1433,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             universeDataMt, queryProperties4);
     assertNotNull(response4);
 
-      // isQueryTrue
+    // isQueryTrue
     //cycAccess.traceOn();
     FormulaSentence query5 = cycAccess.getObjectTool().makeCycSentence(
             UT_AUSTIN_IN_AUSTIN.cyclify()
@@ -1839,7 +1450,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
   }
-  
+
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
    *
@@ -1858,35 +1469,35 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertNotNull(obj);
     assertTrue(obj instanceof CycConstantImpl);
     assertEquals(obj, COLLECTION);
-    
-    // Test isBackchainRequired, isBackchainEncouraged, isBackchainDiscouraged, isBackchainForbidden
-      CycConstant keRequirement = cycAccess.getLookupTool().getKnownConstantByGuid(
-              KE_REQUIREMENT_GUID_STRING);
-      assertTrue(cycAccess.getInspectorTool().isBackchainRequired(keRequirement, BASE_KB));
-      assertTrue(!cycAccess.getInspectorTool().isBackchainEncouraged(keRequirement, BASE_KB));
-      assertTrue(!cycAccess.getInspectorTool().isBackchainDiscouraged(keRequirement, BASE_KB));
-      assertTrue(!cycAccess.getInspectorTool().isBackchainForbidden(keRequirement, BASE_KB));
 
-      CycConstant nearestIsa = cycAccess.getLookupTool().getKnownConstantByGuid(
-              NEAREST_ISA_GUID_STRING);
-      assertTrue(!cycAccess.getInspectorTool().isBackchainRequired(nearestIsa, BASE_KB));
-      assertTrue(!cycAccess.getInspectorTool().isBackchainEncouraged(nearestIsa, BASE_KB));
-      assertTrue(!cycAccess.getInspectorTool().isBackchainDiscouraged(nearestIsa, BASE_KB));
-      assertTrue(cycAccess.getInspectorTool().isBackchainForbidden(nearestIsa, BASE_KB));
+    // Test isBackchainRequired, isBackchainEncouraged, isBackchainDiscouraged, isBackchainForbidden
+    CycConstant keRequirement = cycAccess.getLookupTool().getKnownConstantByGuid(
+            KE_REQUIREMENT_GUID_STRING);
+    assertTrue(cycAccess.getInspectorTool().isBackchainRequired(keRequirement, BASE_KB));
+    assertTrue(!cycAccess.getInspectorTool().isBackchainEncouraged(keRequirement, BASE_KB));
+    assertTrue(!cycAccess.getInspectorTool().isBackchainDiscouraged(keRequirement, BASE_KB));
+    assertTrue(!cycAccess.getInspectorTool().isBackchainForbidden(keRequirement, BASE_KB));
+
+    CycConstant nearestIsa = cycAccess.getLookupTool().getKnownConstantByGuid(
+            NEAREST_ISA_GUID_STRING);
+    assertTrue(!cycAccess.getInspectorTool().isBackchainRequired(nearestIsa, BASE_KB));
+    assertTrue(!cycAccess.getInspectorTool().isBackchainEncouraged(nearestIsa, BASE_KB));
+    assertTrue(!cycAccess.getInspectorTool().isBackchainDiscouraged(nearestIsa, BASE_KB));
+    assertTrue(cycAccess.getInspectorTool().isBackchainForbidden(nearestIsa, BASE_KB));
 
     // isWellFormedFormula
     assertTrue(cycAccess.getInspectorTool().isWellFormedFormula(cycAccess.getObjectTool().makeCycSentence(
-            "(" + genls + " " + dog + " " + animal + ")")));
+            "(" + GENLS_STRING + " " + DOG_STRING + " " + ANIMAL_STRING + ")")));
 
     // Not true, but still well formed.
     assertTrue(cycAccess.getInspectorTool().isWellFormedFormula(cycAccess.getObjectTool().makeCycSentence(
-            "(" + genls + " " + dog + " " + plant + " )")));
+            "(" + GENLS_STRING + " " + DOG_STRING + " " + PLANT_STRING + " )")));
     assertTrue(cycAccess.getInspectorTool().isWellFormedFormula(cycAccess.getObjectTool().makeCycSentence(
-            "(" + genls + " ?X " + animal + ")")));
+            "(" + GENLS_STRING + " ?X " + ANIMAL_STRING + ")")));
     assertTrue(!cycAccess.getInspectorTool().isWellFormedFormula(
-            cycAccess.getObjectTool().makeCycSentence("(" + genls + " " + dog + " " + brazil + ")")));
+            cycAccess.getObjectTool().makeCycSentence("(" + GENLS_STRING + " " + DOG_STRING + " " + BRAZIL_STRING + ")")));
     assertTrue(!cycAccess.getInspectorTool().isWellFormedFormula(
-            cycAccess.getObjectTool().makeCycSentence("(" + genls + " ?X " + brazil + ")")));
+            cycAccess.getObjectTool().makeCycSentence("(" + GENLS_STRING + " ?X " + BRAZIL_STRING + ")")));
 
     // isEvaluatablePredicate
     assertTrue(cycAccess.getInspectorTool().isEvaluatablePredicate(DIFFERENT));
@@ -1902,7 +1513,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               ALGERIA_GUID_STRING);
       CycConstant percentOfRegionIs = cycAccess.getLookupTool().getKnownConstantByGuid(
               PERCENT_OF_REGION_IS_GUID_STRING);
-      
+
       assertTrue(cycAccess.getLookupTool().hasSomePredicateUsingTerm(
               percentOfRegionIs,
               algeria,
@@ -1962,829 +1573,857 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
    *
-   * TODO associated the Cyc user state with the java client uuid, then put
-   * these tests back.
-   * 
-   * N O T E be sure that the test system is clean of the special symbols
-   * introduced in the test. E.G. MY-MACRO, A, B, C
+   * TODO associated the Cyc user state with the java client uuid, then put these tests back.
+   *
+   * N O T E be sure that the test system is clean of the special symbols introduced in the test.
+   * E.G. MY-MACRO, A, B, C
    */
   @Test
-  public void testBinaryCycAccess7() throws CycConnectionException {
+  public void testBinaryCycAccess7_1() throws CycConnectionException {
     long startMilliseconds = System.currentTimeMillis();
     resetCycConstantCaches();
 
     //cycAccess.traceOn();
     // SubL scripts
-
-        //cycAccess.traceNamesOn();
-        String script = null;
-        // Java ByteArray  and SubL byte-vector are used only in the binary api.
-        script = "(csetq my-byte-vector (vector 0 1 2 3 4 255))";
-
-        Object responseObject = cycAccess.converse().converseObject(script);
-        assertNotNull(responseObject);
-        assertTrue(responseObject instanceof ByteArray);
-
-        byte[] myBytes = {0, 1, 2, 3, 4, -1};
-        ByteArray myByteArray = new ByteArray(myBytes);
-        assertEquals(myByteArray, responseObject);
-
-        CycArrayList command = new CycArrayList();
-        command.add(makeCycSymbol("equalp"));
-        command.add(makeCycSymbol("my-byte-vector"));
-
-        CycArrayList command1 = new CycArrayList();
-        command.add(command1);
-        command1.add(quote);
-        command1.add(myByteArray);
-        assertTrue(cycAccess.converse().converseBoolean(command));
-        
-      CycList responseList;
-      String responseString;
-      boolean responseBoolean;
-
-      // definition
-      script = "(define my-copy-tree (tree) \n" + "  (ret \n" + "    (fif (atom tree) \n"
-              + "         tree \n" + "         ;; else \n"
-              + "         (cons (my-copy-tree (first tree)) \n"
-              + "               (my-copy-tree (rest tree))))))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-copy-tree"));
-      script = "(define my-floor (x y) \n" + "  (clet (results) \n"
-              + "    (csetq results (multiple-value-list (floor x y))) \n"
-              + "    (ret results)))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-floor"));
-      script = "(my-floor 5 3)";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-      script = "(defmacro my-macro (a b c) \n" + "  (ret `(list ,a ,b ,c)))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-macro"));
-      script = "(my-macro " + dog + " " + plant + "  " + brazil + ")";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-              "(" + dog + " " + plant + "  " + brazil + ")"));
-
-      script = "(defmacro my-floor-macro (x y) \n" + "  (ret `(floor ,x ,y)))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-floor-macro"));
-      script = "(define my-floor-macro-test (x y) \n" + "    (ret (multiple-value-list (my-floor-macro x y))))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-floor-macro-test"));
-      script = "(my-floor-macro-test 5 3)";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-      script = "(defmacro my-floor-macro (x y) \n" + "  (ret `(floor ,x ,y)))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-floor-macro"));
-      script = "(my-floor-macro-test 5 3)";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-      /**
-       * TODO: Use of the task processor means that CSETQ statements appear
-       * inside of a CLET wrapper. Need a way to set global variables. Current
-       * method removes the effect of CSETQ if setting a new variable.
-       *
-       */
-        script = "(csetq a '(1 " + dog + " " + plant + " ))";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'a)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(1 " + dog + " " + plant + " )"));
-
-        script = "(csetq a -1)";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'a)";
-        testObjectScript(cycAccess, script, -1);
-
-        script = "(csetq a '(1 " + dog + " " + plant + " ) \n" + "       b '(2 " + dog + " " + plant + " ) \n" + "       c 3)";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'a)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(1 " + dog + " " + plant + " )"));
-        script = "(symbol-value 'b)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(2 " + dog + " " + plant + " )"));
-        script = "(symbol-value 'c)";
-        testObjectScript(cycAccess, script, 3);
-
-        script = "(clet ((a 0)) (cinc a) a)";
-        assertEquals(1, cycAccess.converse().converseObject(script));
-
-        script = "(clet ((a 0)) (cinc a 10) a)";
-        assertEquals(10, cycAccess.converse().converseObject(script));
-
-        script = "(clet ((a 0)) (cdec a) a)";
-        assertEquals(-1, cycAccess.converse().converseObject(script));
-
-        script = "(clet ((a 0)) (cdec a 10) a)";
-        assertEquals(-10, cycAccess.converse().converseObject(script));
-
-        script = "(cpush 4 a)";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'a)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(4 1 " + dog + " " + plant + " )"));
-
-        script = "(cpop a)";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'a)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(1 " + dog + " " + plant + " )"));
-
-        script = "(fi-set-parameter 'my-parm '(1 " + dog + " " + plant + " ))";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'my-parm)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(1 " + dog + " " + plant + " )"));
-
-        script = "(clet (a b) \n" + "  (csetq a '(1 2 3)) \n" + "  (csetq b (cpop a)) \n" + "  (list a b))";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((2 3) (2 3))"));
-
-      // boundp
-        final Random random = new Random();
-        CycSymbolImpl symbol = makeCycSymbol(
-                "test-symbol-for-value-binding" + random.nextInt());
-        assertTrue(!cycAccess.converse().converseBoolean("(boundp '" + symbol + ")"));
-        cycAccess.converse().converseVoid("(csetq " + symbol + " nil)");
-        assertTrue(cycAccess.converse().converseBoolean("(boundp '" + symbol + ")"));
-
-      // fi-get-parameter
-        script = "(csetq my-parm '(2 " + dog + " " + plant + " ))";
-        cycAccess.converse().converseVoid(script);
-        script = "(fi-get-parameter 'my-parm)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                "(2 " + dog + " " + plant + " )"));
-
-      // eval
-      script = "(eval '(csetq a 4))";
-      testObjectScript(cycAccess, script, 4);
-      script = "(eval 'a)";
-      testObjectScript(cycAccess, script, 4);
-
-      script = "(eval (list 'csetq 'a 5))";
-      testObjectScript(cycAccess, script, 5);
-      script = "(eval 'a)";
-      testObjectScript(cycAccess, script, 5);
-
-      // apply
-      script = "(apply #'+ '(1 2 3))";
-      testObjectScript(cycAccess, script, 6);
-
-      script = "(apply #'+ 1 2 '(3 4 5))";
-      testObjectScript(cycAccess, script, 15);
-
-      script = "(apply (function +) '(1 2 3))";
-      testObjectScript(cycAccess, script, 6);
-
-      script = "(apply (function +) 1 2 '(3 4 5))";
-      testObjectScript(cycAccess, script, 15);
-
-      script = "(apply #'my-copy-tree '((1 (2 (3)))))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 (2 (3)))"));
-
-      // funcall
-      script = "(funcall #'+ 1 2 3)";
-      testObjectScript(cycAccess, script, 6);
-
-      script = "(funcall (function +) 1 2 3)";
-      final int expected = 6;
-      testObjectScript(cycAccess, script, expected);
-
-      script = "(funcall #'first '(1 (2 (3))))";
-      responseObject = cycAccess.converse().converseObject(script);
-      assertEquals("1", responseObject.toString());
-
-      script = "(funcall #'my-copy-tree '(1 (2 (3))))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 (2 (3)))"));
-
-      // multiple values
-      script = "(multiple-value-list (floor 5 3))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-
-        script = "(cmultiple-value-bind (a b) \n" + "    (floor 5 3) \n" + "  (csetq answer (list a b)))";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-        script = "(symbol-value 'answer)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-        script = "(define my-multiple-value-fn (arg1 arg2) \n"
-                + "  (ret (values arg1 arg2 (list arg1 arg2) 0)))";
-        testObjectScript(cycAccess, script, makeCycSymbol(
-                "my-multiple-value-fn"));
-
-        script = "(my-multiple-value-fn " + brazil + " " + dog + ")";
-        testObjectScript(cycAccess, script, cycAccess.getLookupTool().getKnownConstantByGuid(
-                BRAZIL_GUID_STRING));
-
-        script = "(cmultiple-value-bind (a b c d) \n" + "    (my-multiple-value-fn " + brazil + " " + dog + ") \n"
-                + "  (csetq answer (list a b c d)))";
-        testListScript(
-                cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                        "(" + brazil + " " + dog + " (" + brazil + " " + dog + ") 0)"));
-        script = "(symbol-value 'answer)";
-        testListScript(
-                cycAccess, script, cycAccess.getObjectTool().makeCycList(
-                        "(" + brazil + " " + dog + " (" + brazil + " " + dog + ") 0)"));
-
-      // arithmetic
-      script = "(add1 2)";
-      testObjectScript(cycAccess, script, 3);
-
-      script = "(eq (add1 2) 3)";
-      assertTrue(cycAccess.converse().converseBoolean(script));
-
-      script = "(sub1 10)";
-      testObjectScript(cycAccess, script, 9);
-
-      script = "(eq (sub1 10) 9)";
-      assertTrue(cycAccess.converse().converseBoolean(script));
-
-      // sequence
-      script = "(csetq a nil)";
-      testObjectScript(cycAccess, script, nil);
-
-      script = "(progn (csetq a nil) (csetq a (list a)) (csetq a (list a)))";
-      cycAccess.converse().converseVoid(script);
-      script = "(symbol-value 'a)";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((nil))"));
-
-      // sequence with variable bindings
-      script = "(clet (a b) " + "  (csetq a 1) " + "  (csetq b (+ a 3)) " + "  b)";
-      testObjectScript(cycAccess, script, 4);
-
-      script = "(clet ((a nil)) " + "  (cpush 1 a) " + "  a)";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1)"));
-
-      script = "(clet (a b) " + "  (csetq a '(1 2 3)) " + "  (csetq b (cpop a)) " + "  (list a b))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((2 3) (2 3))"));
-
-      script = "(clet ((a 1) " + "       (b (add1 a)) " + "       (c (sub1 b))) " + "  c)";
-      testObjectScript(cycAccess, script, 1);
-
-      // boolean expressions
-      script = "(cand t nil t)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(!responseBoolean);
-
-      script = "(cand t t t)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      script = "(cand t)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      script = "(cand nil)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(!responseBoolean);
-
-      script = "(cand t " + dog + ")";
-      testObjectScript(cycAccess, script, t);
-
-      script = "(cor t nil t)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      script = "(cor nil nil nil)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(!responseBoolean);
-
-      script = "(cor t)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      script = "(cor nil)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(!responseBoolean);
-
-      script = "(cor nil " + plant + " )";
-      testObjectScript(cycAccess, script, t);
-
-      script = "(cnot nil)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      script = "(cnot t)";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(!responseBoolean);
-
-      script = "(cnot (cand t nil))";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      script = "(cand (cnot nil) (cor t nil))";
-      responseBoolean = cycAccess.converse().converseBoolean(script);
-      assertTrue(responseBoolean);
-
-      // conditional sequencing
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(pcond ((eq 0 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
-                + "       ((> 1 4) \n" + "        (csetq answer \"clause 2 true\")) \n"
-                + "       (t \n" + "        (csetq answer \"clause 3 true\")))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-
-        script = "(pcond ((eq 1 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
-                + "       ((> 5 4) \n" + "        (csetq answer \"clause 2 true\")) \n"
-                + "       (t \n" + "        (csetq answer \"clause 3 true\")))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-
-        script = "(pcond ((eq 1 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
-                + "       ((> 1 4) \n" + "        (csetq answer \"clause 2 true\")) \n"
-                + "       (t \n" + "        (csetq answer \"clause 3 true\")))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 3 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 3 true",
-                responseString);
-
-        script = "(pif (string= \"abc\" \"abc\") \n" + "     (csetq answer \"clause 1 true\") \n"
-                + "     ;; else \n" + "     (csetq answer \"clause 2 true\"))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-
-        script = "(pif (string> \"abc\" \"abc\") \n" + "     (csetq answer \"clause 1 true\") \n"
-                + "     ;; else \n" + "     (csetq answer \"clause 2 true\"))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-
-        script = "(csetq answer \n" + "       (fif (string= \"abc\" \"abc\") \n"
-                + "            \"clause 1 true\" \n" + "            ;; else \n"
-                + "            \"clause 2 true\"))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-
-        script = "(csetq answer \n" + "       (fif (string> \"abc\" \"abc\") \n"
-                + "            \"clause 1 true\" \n" + "            ;; else \n" + "            \"clause 2 true\"))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-
-        script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
-                + "  (pwhen (string= \"abc\" \"abc\") \n"
-                + "         (csetq answer \"clause 2 true\")))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-
-        script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
-                + "  (pwhen (string> \"abc\" \"abc\") \n"
-                + "         (csetq answer \"clause 2 true\")))";
-        testObjectScript(cycAccess, script, nil);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-
-        script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
-                + "  (punless (string> \"abc\" \"abc\") \n"
-                + "           (csetq answer \"clause 2 true\")))";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 2 true",
-                responseString);
-
-        script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
-                + "  (punless (string= \"abc\" \"abc\") \n"
-                + "           (csetq answer \"clause 2 true\")))";
-        testObjectScript(cycAccess, script, nil);
-        script = "(symbol-value 'answer)";
-        responseString = cycAccess.converse().converseString(script);
-        assertEquals("clause 1 true",
-                responseString);
-
-      // iteration
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-
-        script = "(clet ((i 11)) \n" + "  (csetq answer -10) \n"
-                + "  ;;(break \"environment\") \n" + "  (while (> i 0) \n"
-                + "    (cdec i) \n" + "    (cinc answer)))";
-        cycAccess.converse().converseVoid(script);
-        script = "(symbol-value 'answer)";
-        testObjectScript(cycAccess, script, 1);
-
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(progn \n" + "  (cdo ((x 0 (add1 x)) \n" + "        (y (+ 0 1) (+ y 2)) \n"
-                + "        (z -10 (- z 1))) \n" + "       ((> x 3)) \n"
-                + "    (cpush (list 'x x 'y y 'z z) answer)) \n" + "  (csetq answer (nreverse answer)))";
-        testListScript(cycAccess, script,
-                cycAccess.getObjectTool().makeCycList("((x 0 y 1 z -10) " + " (x 1 y 3 z -11) "
-                        + " (x 2 y 5 z -12) " + " (x 3 y 7 z -13))"));
-
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(progn \n" + "  (clet ((x '(1 2 3))) \n" + "    (cdo nil ((null x) (csetq x 'y)) \n"
-                + "      (cpush x answer) \n" + "      (cpop x)) \n" + "    x) \n"
-                + "  (csetq answer (reverse answer)))";
-        testListScript(cycAccess, script,
-                cycAccess.getObjectTool().makeCycList("((1 2 3) " + " (2 3) " + " (3))"));
-
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(cdolist (x '(1 2 3 4)) \n" + "  (cpush x answer))";
-        assertEquals(nil, cycAccess.converse().converseObject(script));
-        script = "(symbol-value 'answer)";
-        testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(4 3 2 1)"));
-
-      // mapping
-      script = "(mapcar #'list '(a b c))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((a) (b) (c))"));
-
-      script = "(mapcar #'list '(a b c) '(d e f))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
-              "((a d) (b e) (c f))"));
-
-      script = "(mapcar #'eq '(a b c) '(d b f))";
-      testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(nil t nil)"));
-
-        script = "(csetq answer nil)";
-        testObjectScript(cycAccess, script, nil);
-
-        script = "(csetq my-small-dictionary nil)";
-        testObjectScript(cycAccess, script, nil);
-
-        // Wrap the dictionary assignment in a progn that returns nil, to avoid sending the
-        // dictionary itself back to the client, where it is not supported.
-        cycAccess.converse().converseVoid(
-                "(progn (csetq my-small-dictionary (new-dictionary #'eq 3)) nil)");
-        script = "(progn \n" + "  (dictionary-enter my-small-dictionary 'a 1) \n"
-                + "  (dictionary-enter my-small-dictionary 'b 2) \n"
-                + "  (dictionary-enter my-small-dictionary 'c 3))";
-        testObjectScript(cycAccess, script, makeCycSymbol("c"));
-        script = "(define my-mapdictionary-fn (key value) \n"
-                + "  (cpush (list key value) answer) \n"
-                + "  (ret nil))";
-        testObjectScript(cycAccess, script, makeCycSymbol("my-mapdictionary-fn"));
-
-        script = "(mapdictionary my-small-dictionary #'my-mapdictionary-fn)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(symbol-value 'answer)";
-        responseList = cycAccess.converse().converseList(script);
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(a 1)")));
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(b 2)")));
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(c 3)")));
-
-        script = "(csetq my-large-dictionary nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(progn (csetq my-large-dictionary (new-dictionary #'eq 200)) nil)";
-        responseObject = cycAccess.converse().converseObject(script);
-        script = "(clet ((cities (remove-duplicates \n" + "                 (with-all-mts \n"
-                + "                   (instances " + independentCountry + ")))) \n"
-                + "        capital-city) \n" + "  (cdolist (city cities) \n"
-                + "    (csetq capital-city (pred-values-in-any-mt city " + capitalCity + ")) \n"
-                + "    (dictionary-enter my-large-dictionary \n" + "                      city \n"
-                + "                      (fif (consp capital-city) \n"
-                + "                           (first capital-city) \n"
-                + "                           ;; else \n" + "                           nil))))";
-        responseObject = cycAccess.converse().converseObject(script);
-
-        script = "(mapdictionary my-large-dictionary #'my-mapdictionary-fn)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(symbol-value 'answer)";
-        responseList = cycAccess.converse().converseList(script);
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
-                "(" + france + " " + paris + ")")));
-
-        script = "(define my-parameterized-mapdictionary-fn (key value args) \n"
-                + "  (cpush (list key value args) answer) \n" + "  (ret nil))";
-        testObjectScript(cycAccess, script, makeCycSymbol(
-                "my-parameterized-mapdictionary-fn"));
-
-        script = "(mapdictionary-parameterized my-small-dictionary #'my-parameterized-mapdictionary-fn '(\"x\"))";
-        testObjectScript(cycAccess, script, nil);
-        script = "(symbol-value 'answer)";
-        responseList = cycAccess.converse().converseList(script);
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(a 1 (\"x\"))")));
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(b 2 (\"x\"))")));
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(c 3 (\"x\"))")));
-
-        script = "(mapdictionary-parameterized my-large-dictionary #'my-parameterized-mapdictionary-fn '(1 2))";
-        testObjectScript(cycAccess, script, nil);
-        script = "(symbol-value 'answer)";
-        responseList = cycAccess.converse().converseList(script);
-        assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
-                "(" + france + " " + paris + " (1 2))")));
-
-      // ccatch and throw
-      script = "(define my-super () \n" + "  (clet (result) \n" + "    (ccatch :abort \n"
-              + "      result \n" + "      (my-sub) \n" + "      (csetq result 0)) \n"
-              + "  (ret result)))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-super"));
-
-      script = "(define my-sub () \n" + "  (clet ((a 1) (b 2)) \n" + "  (ignore a b) \n"
-              + "  (ret (throw :abort 99))))";
-      testObjectScript(cycAccess, script, makeCycSymbol("my-sub"));
-      script = "(my-super)";
-      testObjectScript(cycAccess, script, 99);
-
-      // ignore-errors, cunwind-protect
-      //cycAccess.traceOn();
-      script = "(clet (result) \n" + "  (ignore-errors \n" + "    (cunwind-protect \n"
-              + "	(/ 1 0) \n" + "      (csetq result \"protected\"))) \n"
-              + "  result)";
-      testObjectScript(cycAccess, script, "protected");
-
-      // get-environment
-        script = "(csetq a nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(csetq b -1)";
-        testObjectScript(cycAccess, script, -1);
-
-      // cdestructuring-bind
-      script = "(cdestructuring-bind () '() (print 'foo))";
-      testObjectScript(cycAccess, script, makeCycSymbol("foo"));
-
-      script = "(cdestructuring-bind (&whole a) () (print 'foo))";
-      testObjectScript(cycAccess, script, makeCycSymbol("foo"));
-
-      script = "(cdestructuring-bind (&whole a b c) '(1 2) (print (list a b c)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1 2) 1 2)"));
-
-      script = "(cdestructuring-bind (a b . c) '(1 2 3 4) (print (list a b c)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2 (3 4))"));
-
-      script = "(cdestructuring-bind (&optional a) '(1) (print (list a)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1)"));
-
-      script = "(cdestructuring-bind (a &optional b) '(1 2) (print (list a b)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-      script = "(cdestructuring-bind (&whole a &optional b) '(1) (print (list a b)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1) 1)"));
-
-      script = "(cdestructuring-bind (&rest a) '(1 2) (print (list a)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1 2))"));
-
-      script = "(cdestructuring-bind (&whole a b &rest c) '(1 2 3) (print (list a b c)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1 2 3) 1 (2 3))"));
-
-      script = "(cdestructuring-bind (&key a b) '(:b 2 :a 1) (print (list a b)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-      script = "(cdestructuring-bind (&key a b) '(:b 2 :allow-other-keys t :a 1 :c 3) (print (list a b)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2)"));
-
-      script = "(cdestructuring-bind (&key ((key a) 23 b)) '(key 1) (print (list a b)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 T)"));
-
-      script = "(cdestructuring-bind (a &optional b &key c) '(1 2 :c 3) (print (list a b c)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2 3)"));
-
-      script = "(cdestructuring-bind (&whole a b &optional c &rest d &key e &allow-other-keys &aux f) '(1 2 :d 4 :e 3) (print (list a b c d e f)))";
-      responseList = cycAccess.converse().converseList(script);
-      assertEquals(responseList, cycAccess.getObjectTool().makeCycList(
-              "((1 2 :D 4 :E 3) 1 2 (:D 4 :E 3) 3 NIL)"));
-
-        // type testing
-        script = "(csetq a 1)";
-        testObjectScript(cycAccess, script, 1);
-        script = "(numberp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-
-        script = "(csetq a \"abc\")";
-        testObjectScript(cycAccess, script, "abc");
-        script = "(numberp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-
-        script = "(csetq a 2.14)";
-        responseObject = cycAccess.converse().converseObject(script);
-        assertTrue(responseObject instanceof Double);
-        assertTrue(((Double) responseObject).doubleValue() > 2.13999);
-        assertTrue(((Double) responseObject).doubleValue() < 2.14001);
-        script = "(numberp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-
-        script = "(csetq a 'my-symbol)";
-        testObjectScript(cycAccess, script, makeCycSymbol(
-                "my-symbol"));
-        script = "(numberp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-
-        script = "(csetq a '(1 . 2))";
-        testObjectScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 . 2)"));
-        script = "(numberp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-
-        script = "(csetq a '(1 2))";
-        testObjectScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
-        script = "(numberp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-
-        script = "(csetq a nil)";
-        testObjectScript(cycAccess, script, nil);
-        script = "(numberp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-
-        // empty list is treated the same as nil.
-        command = new CycArrayList();
-        command.add(makeCycSymbol("csetq"));
-        command.add(makeCycSymbol("a"));
-        command.add(new CycArrayList());
-        testObjectScript(cycAccess, command, nil);
-        script = "(numberp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(integerp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(stringp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(atom a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(floatp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(symbolp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(consp a)";
-        assertTrue(!cycAccess.converse().converseBoolean(script));
-        script = "(listp a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-        script = "(null a)";
-        assertTrue(cycAccess.converse().converseBoolean(script));
-
-
-      /*
-       // constant name with embedded slash
-       //cycAccess.traceOn();
-       script =
-       "(rtp-parse-exp-w/vpp \"Symptoms of EEE begin 4-10 days after infection\" \n" +
-       "(fort-for-string \"STemplate\") \n" +
-       "(fort-for-string \"AllEnglishTemplateMt\") \n" +
-       "(fort-for-string \"RKFParsingMt\"))";
-       responseList = cycAccess.converse().converseList(script);
-       */
-      // check-type
-      script
-              = "(clet (result) \n" + "  (ignore-errors \n" + "    (/ 1 1) \n"
-              + "    (csetq result t)) \n" + "  result)";
-      assertEquals((Object) t, cycAccess.converse().converseObject(script));
-      script
-              = "(clet (result) \n" + "  (ignore-errors \n" + "    (/ 1 0) \n"
-              + "    (csetq result t)) \n" + "  result)";
-      assertEquals((Object) nil, cycAccess.converse().converseObject(script));
-
-      //cycAccess.traceOn();
-
+    //cycAccess.traceNamesOn();
+    String script = null;
+    // Java ByteArray  and SubL byte-vector are used only in the binary api.
+    script = "(csetq my-byte-vector (vector 0 1 2 3 4 255))";
+
+    Object responseObject = cycAccess.converse().converseObject(script);
+    assertNotNull(responseObject);
+    assertTrue(responseObject instanceof ByteArray);
+
+    byte[] myBytes = {0, 1, 2, 3, 4, -1};
+    ByteArray myByteArray = new ByteArray(myBytes);
+    assertEquals(myByteArray, responseObject);
+
+    CycArrayList command = new CycArrayList();
+    command.add(makeCycSymbol("equalp"));
+    command.add(makeCycSymbol("my-byte-vector"));
+
+    CycArrayList command1 = new CycArrayList();
+    command.add(command1);
+    command1.add(quote);
+    command1.add(myByteArray);
+    assertTrue(cycAccess.converse().converseBoolean(command));
+
+    CycList responseList;
+    String responseString;
+    boolean responseBoolean;
+
+    // definition
+    script = "(define my-copy-tree (tree) \n" + "  (ret \n" + "    (fif (atom tree) \n"
+            + "         tree \n" + "         ;; else \n"
+            + "         (cons (my-copy-tree (first tree)) \n"
+            + "               (my-copy-tree (rest tree))))))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-copy-tree"));
+    script = "(define my-floor (x y) \n" + "  (clet (results) \n"
+            + "    (csetq results (multiple-value-list (floor x y))) \n"
+            + "    (ret results)))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-floor"));
+    script = "(my-floor 5 3)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(defmacro my-macro (a b c) \n" + "  (ret `(list ,a ,b ,c)))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-macro"));
+    script = "(my-macro " + DOG_STRING + " " + PLANT_STRING + "  " + BRAZIL_STRING + ")";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(" + DOG_STRING + " " + PLANT_STRING + "  " + BRAZIL_STRING + ")"));
+
+    script = "(defmacro my-floor-macro (x y) \n" + "  (ret `(floor ,x ,y)))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-floor-macro"));
+    script = "(define my-floor-macro-test (x y) \n" + "    (ret (multiple-value-list (my-floor-macro x y))))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-floor-macro-test"));
+    script = "(my-floor-macro-test 5 3)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(defmacro my-floor-macro (x y) \n" + "  (ret `(floor ,x ,y)))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-floor-macro"));
+    script = "(my-floor-macro-test 5 3)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    /**
+     * TODO: Use of the task processor means that CSETQ statements appear inside of a CLET wrapper.
+     * Need a way to set global variables. Current method removes the effect of CSETQ if setting a
+     * new variable.
+     *
+     */
+    script = "(csetq a '(1 " + DOG_STRING + " " + PLANT_STRING + " ))";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'a)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(1 " + DOG_STRING + " " + PLANT_STRING + " )"));
+
+    script = "(csetq a -1)";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'a)";
+    testObjectScript(cycAccess, script, -1);
+
+    script = "(csetq a '(1 " + DOG_STRING + " " + PLANT_STRING + " ) \n" + "       b '(2 " + DOG_STRING + " " + PLANT_STRING + " ) \n" + "       c 3)";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'a)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(1 " + DOG_STRING + " " + PLANT_STRING + " )"));
+    script = "(symbol-value 'b)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(2 " + DOG_STRING + " " + PLANT_STRING + " )"));
+    script = "(symbol-value 'c)";
+    testObjectScript(cycAccess, script, 3);
+
+    script = "(clet ((a 0)) (cinc a) a)";
+    assertEquals(1, cycAccess.converse().converseObject(script));
+
+    script = "(clet ((a 0)) (cinc a 10) a)";
+    assertEquals(10, cycAccess.converse().converseObject(script));
+
+    script = "(clet ((a 0)) (cdec a) a)";
+    assertEquals(-1, cycAccess.converse().converseObject(script));
+
+    script = "(clet ((a 0)) (cdec a 10) a)";
+    assertEquals(-10, cycAccess.converse().converseObject(script));
+
+    script = "(cpush 4 a)";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'a)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(4 1 " + DOG_STRING + " " + PLANT_STRING + " )"));
+
+    script = "(cpop a)";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'a)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(1 " + DOG_STRING + " " + PLANT_STRING + " )"));
+
+    script = "(fi-set-parameter 'my-parm '(1 " + DOG_STRING + " " + PLANT_STRING + " ))";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'my-parm)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(1 " + DOG_STRING + " " + PLANT_STRING + " )"));
+
+    script = "(clet (a b) \n" + "  (csetq a '(1 2 3)) \n" + "  (csetq b (cpop a)) \n" + "  (list a b))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((2 3) (2 3))"));
+
+    // boundp
+    final Random random = new Random();
+    CycSymbolImpl symbol = makeCycSymbol(
+            "test-symbol-for-value-binding" + random.nextInt());
+    assertTrue(!cycAccess.converse().converseBoolean("(boundp '" + symbol + ")"));
+    cycAccess.converse().converseVoid("(csetq " + symbol + " nil)");
+    assertTrue(cycAccess.converse().converseBoolean("(boundp '" + symbol + ")"));
+
+    // fi-get-parameter
+    script = "(csetq my-parm '(2 " + DOG_STRING + " " + PLANT_STRING + " ))";
+    cycAccess.converse().converseVoid(script);
+    script = "(fi-get-parameter 'my-parm)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "(2 " + DOG_STRING + " " + PLANT_STRING + " )"));
+
+    // eval
+    script = "(eval '(csetq a 4))";
+    testObjectScript(cycAccess, script, 4);
+    script = "(eval 'a)";
+    testObjectScript(cycAccess, script, 4);
+
+    script = "(eval (list 'csetq 'a 5))";
+    testObjectScript(cycAccess, script, 5);
+    script = "(eval 'a)";
+    testObjectScript(cycAccess, script, 5);
+
+    // apply
+    script = "(apply #'+ '(1 2 3))";
+    testObjectScript(cycAccess, script, 6);
+
+    script = "(apply #'+ 1 2 '(3 4 5))";
+    testObjectScript(cycAccess, script, 15);
+
+    script = "(apply (function +) '(1 2 3))";
+    testObjectScript(cycAccess, script, 6);
+
+    script = "(apply (function +) 1 2 '(3 4 5))";
+    testObjectScript(cycAccess, script, 15);
+
+    script = "(apply #'my-copy-tree '((1 (2 (3)))))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 (2 (3)))"));
+
+    // funcall
+    script = "(funcall #'+ 1 2 3)";
+    testObjectScript(cycAccess, script, 6);
+
+    script = "(funcall (function +) 1 2 3)";
+    final int expected = 6;
+    testObjectScript(cycAccess, script, expected);
+
+    script = "(funcall #'first '(1 (2 (3))))";
+    responseObject = cycAccess.converse().converseObject(script);
+    assertEquals("1", responseObject.toString());
+
+    script = "(funcall #'my-copy-tree '(1 (2 (3))))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 (2 (3)))"));
+
+    // multiple values
+    script = "(multiple-value-list (floor 5 3))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+
+    script = "(cmultiple-value-bind (a b) \n" + "    (floor 5 3) \n" + "  (csetq answer (list a b)))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+    script = "(symbol-value 'answer)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(define my-multiple-value-fn (arg1 arg2) \n"
+            + "  (ret (values arg1 arg2 (list arg1 arg2) 0)))";
+    testObjectScript(cycAccess, script, makeCycSymbol(
+            "my-multiple-value-fn"));
+
+    script = "(my-multiple-value-fn " + BRAZIL_STRING + " " + DOG_STRING + ")";
+    testObjectScript(cycAccess, script, cycAccess.getLookupTool().getKnownConstantByGuid(
+            BRAZIL_GUID_STRING));
+
+    script = "(cmultiple-value-bind (a b c d) \n" + "    (my-multiple-value-fn " + BRAZIL_STRING + " " + DOG_STRING + ") \n"
+            + "  (csetq answer (list a b c d)))";
+    testListScript(
+            cycAccess, script, cycAccess.getObjectTool().makeCycList(
+                    "(" + BRAZIL_STRING + " " + DOG_STRING + " (" + BRAZIL_STRING + " " + DOG_STRING + ") 0)"));
+    script = "(symbol-value 'answer)";
+    testListScript(
+            cycAccess, script, cycAccess.getObjectTool().makeCycList(
+                    "(" + BRAZIL_STRING + " " + DOG_STRING + " (" + BRAZIL_STRING + " " + DOG_STRING + ") 0)"));
+
+    // arithmetic
+    script = "(add1 2)";
+    testObjectScript(cycAccess, script, 3);
+
+    script = "(eq (add1 2) 3)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+
+    script = "(sub1 10)";
+    testObjectScript(cycAccess, script, 9);
+
+    script = "(eq (sub1 10) 9)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+
+    // sequence
+    script = "(csetq a nil)";
+    testObjectScript(cycAccess, script, nil);
+
+    script = "(progn (csetq a nil) (csetq a (list a)) (csetq a (list a)))";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'a)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((nil))"));
+
+    // sequence with variable bindings
+    script = "(clet (a b) " + "  (csetq a 1) " + "  (csetq b (+ a 3)) " + "  b)";
+    testObjectScript(cycAccess, script, 4);
+
+    script = "(clet ((a nil)) " + "  (cpush 1 a) " + "  a)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1)"));
+
+    script = "(clet (a b) " + "  (csetq a '(1 2 3)) " + "  (csetq b (cpop a)) " + "  (list a b))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((2 3) (2 3))"));
+
+    script = "(clet ((a 1) " + "       (b (add1 a)) " + "       (c (sub1 b))) " + "  c)";
+    testObjectScript(cycAccess, script, 1);
+
+    // boolean expressions
+    script = "(cand t nil t)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(!responseBoolean);
+
+    script = "(cand t t t)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    script = "(cand t)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    script = "(cand nil)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(!responseBoolean);
+
+    script = "(cand t " + DOG_STRING + ")";
+    testObjectScript(cycAccess, script, t);
+
+    script = "(cor t nil t)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    script = "(cor nil nil nil)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(!responseBoolean);
+
+    script = "(cor t)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    script = "(cor nil)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(!responseBoolean);
+
+    script = "(cor nil " + PLANT_STRING + " )";
+    testObjectScript(cycAccess, script, t);
+
+    script = "(cnot nil)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    script = "(cnot t)";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(!responseBoolean);
+
+    script = "(cnot (cand t nil))";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    script = "(cand (cnot nil) (cor t nil))";
+    responseBoolean = cycAccess.converse().converseBoolean(script);
+    assertTrue(responseBoolean);
+
+    // conditional sequencing
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(pcond ((eq 0 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
+            + "       ((> 1 4) \n" + "        (csetq answer \"clause 2 true\")) \n"
+            + "       (t \n" + "        (csetq answer \"clause 3 true\")))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+
+    script = "(pcond ((eq 1 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
+            + "       ((> 5 4) \n" + "        (csetq answer \"clause 2 true\")) \n"
+            + "       (t \n" + "        (csetq answer \"clause 3 true\")))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+
+    script = "(pcond ((eq 1 0) \n" + "        (csetq answer \"clause 1 true\")) \n"
+            + "       ((> 1 4) \n" + "        (csetq answer \"clause 2 true\")) \n"
+            + "       (t \n" + "        (csetq answer \"clause 3 true\")))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 3 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 3 true",
+            responseString);
+
+    script = "(pif (string= \"abc\" \"abc\") \n" + "     (csetq answer \"clause 1 true\") \n"
+            + "     ;; else \n" + "     (csetq answer \"clause 2 true\"))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+
+    script = "(pif (string> \"abc\" \"abc\") \n" + "     (csetq answer \"clause 1 true\") \n"
+            + "     ;; else \n" + "     (csetq answer \"clause 2 true\"))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+
+    script = "(csetq answer \n" + "       (fif (string= \"abc\" \"abc\") \n"
+            + "            \"clause 1 true\" \n" + "            ;; else \n"
+            + "            \"clause 2 true\"))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+
+    script = "(csetq answer \n" + "       (fif (string> \"abc\" \"abc\") \n"
+            + "            \"clause 1 true\" \n" + "            ;; else \n" + "            \"clause 2 true\"))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+
+    script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
+            + "  (pwhen (string= \"abc\" \"abc\") \n"
+            + "         (csetq answer \"clause 2 true\")))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+
+    script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
+            + "  (pwhen (string> \"abc\" \"abc\") \n"
+            + "         (csetq answer \"clause 2 true\")))";
+    testObjectScript(cycAccess, script, nil);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+
+    script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
+            + "  (punless (string> \"abc\" \"abc\") \n"
+            + "           (csetq answer \"clause 2 true\")))";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 2 true",
+            responseString);
+
+    script = "(progn \n" + "  (csetq answer \"clause 1 true\") \n"
+            + "  (punless (string= \"abc\" \"abc\") \n"
+            + "           (csetq answer \"clause 2 true\")))";
+    testObjectScript(cycAccess, script, nil);
+    script = "(symbol-value 'answer)";
+    responseString = cycAccess.converse().converseString(script);
+    assertEquals("clause 1 true",
+            responseString);
+
+    // iteration
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+
+    script = "(clet ((i 11)) \n" + "  (csetq answer -10) \n"
+            + "  ;;(break \"environment\") \n" + "  (while (> i 0) \n"
+            + "    (cdec i) \n" + "    (cinc answer)))";
+    cycAccess.converse().converseVoid(script);
+    script = "(symbol-value 'answer)";
+    testObjectScript(cycAccess, script, 1);
+
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(progn \n" + "  (cdo ((x 0 (add1 x)) \n" + "        (y (+ 0 1) (+ y 2)) \n"
+            + "        (z -10 (- z 1))) \n" + "       ((> x 3)) \n"
+            + "    (cpush (list 'x x 'y y 'z z) answer)) \n" + "  (csetq answer (nreverse answer)))";
+    testListScript(cycAccess, script,
+            cycAccess.getObjectTool().makeCycList("((x 0 y 1 z -10) " + " (x 1 y 3 z -11) "
+                    + " (x 2 y 5 z -12) " + " (x 3 y 7 z -13))"));
+
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(progn \n" + "  (clet ((x '(1 2 3))) \n" + "    (cdo nil ((null x) (csetq x 'y)) \n"
+            + "      (cpush x answer) \n" + "      (cpop x)) \n" + "    x) \n"
+            + "  (csetq answer (reverse answer)))";
+    testListScript(cycAccess, script,
+            cycAccess.getObjectTool().makeCycList("((1 2 3) " + " (2 3) " + " (3))"));
+
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(cdolist (x '(1 2 3 4)) \n" + "  (cpush x answer))";
+    assertEquals(nil, cycAccess.converse().converseObject(script));
+    script = "(symbol-value 'answer)";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(4 3 2 1)"));
+
+    // mapping
+    script = "(mapcar #'list '(a b c))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("((a) (b) (c))"));
+
+    script = "(mapcar #'list '(a b c) '(d e f))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList(
+            "((a d) (b e) (c f))"));
+
+    script = "(mapcar #'eq '(a b c) '(d b f))";
+    testListScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(nil t nil)"));
+
+    script = "(csetq answer nil)";
+    testObjectScript(cycAccess, script, nil);
+
+    long endMilliseconds = System.currentTimeMillis();
+    System.out.println(
+            "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
+  }
+
+  @Test
+  public void testBinaryCycAccess7_2() throws CycConnectionException {
+    TestUtils.assumeNotObfuscated();
+    long startMilliseconds = System.currentTimeMillis();
+    resetCycConstantCaches();
+
+    String script;
+    Object responseObject;
+    CycList responseList;
+
+    script = "(csetq my-small-dictionary nil)";
+    testObjectScript(cycAccess, script, nil);
+
+    // Wrap the dictionary assignment in a progn that returns nil, to avoid sending the
+    // dictionary itself back to the client, where it is not supported.
+    cycAccess.converse().converseVoid(
+            "(progn (csetq my-small-dictionary (new-dictionary #'eq 3)) nil)");
+    script = "(progn \n" + "  (dictionary-enter my-small-dictionary 'a 1) \n"
+            + "  (dictionary-enter my-small-dictionary 'b 2) \n"
+            + "  (dictionary-enter my-small-dictionary 'c 3))";
+    testObjectScript(cycAccess, script, makeCycSymbol("c"));
+
+    script = "(define my-mapdictionary-fn (key value) \n"
+            + "  (cpush (list key value) answer) \n"
+            + "  (ret nil))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-mapdictionary-fn"));
+
+    script = "(mapdictionary my-small-dictionary #'my-mapdictionary-fn)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(symbol-value 'answer)";
+    responseList = cycAccess.converse().converseList(script);
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(a 1)")));
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(b 2)")));
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(c 3)")));
+
+    script = "(csetq my-large-dictionary nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(progn (csetq my-large-dictionary (new-dictionary #'eq 200)) nil)";
+    responseObject = cycAccess.converse().converseObject(script);
+    script = "(clet ((cities (remove-duplicates \n" + "                 (with-all-mts \n"
+            + "                   (instances " + INDEPENDENT_COUNTRY_STRING + ")))) \n"
+            + "        capital-city) \n" + "  (cdolist (city cities) \n"
+            + "    (csetq capital-city (pred-values-in-any-mt city " + CAPITAL_CITY_STRING + ")) \n"
+            + "    (dictionary-enter my-large-dictionary \n" + "                      city \n"
+            + "                      (fif (consp capital-city) \n"
+            + "                           (first capital-city) \n"
+            + "                           ;; else \n" + "                           nil))))";
+    responseObject = cycAccess.converse().converseObject(script);
+
+    script = "(mapdictionary my-large-dictionary #'my-mapdictionary-fn)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(symbol-value 'answer)";
+    responseList = cycAccess.converse().converseList(script);
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
+            "(" + FRANCE_STRING + " " + CITY_OF_PARIS_FRANCE_STRING + ")")));
+
+    script = "(define my-parameterized-mapdictionary-fn (key value args) \n"
+            + "  (cpush (list key value args) answer) \n" + "  (ret nil))";
+    testObjectScript(cycAccess, script, makeCycSymbol(
+            "my-parameterized-mapdictionary-fn"));
+
+    script = "(mapdictionary-parameterized my-small-dictionary #'my-parameterized-mapdictionary-fn '(\"x\"))";
+    testObjectScript(cycAccess, script, nil);
+    script = "(symbol-value 'answer)";
+    responseList = cycAccess.converse().converseList(script);
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(a 1 (\"x\"))")));
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(b 2 (\"x\"))")));
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList("(c 3 (\"x\"))")));
+
+    script = "(mapdictionary-parameterized my-large-dictionary #'my-parameterized-mapdictionary-fn '(1 2))";
+    testObjectScript(cycAccess, script, nil);
+    script = "(symbol-value 'answer)";
+    responseList = cycAccess.converse().converseList(script);
+    assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
+            "(" + FRANCE_STRING + " " + CITY_OF_PARIS_FRANCE_STRING + " (1 2))")));
+
+    // ccatch and throw
+    script = "(define my-super () \n" + "  (clet (result) \n" + "    (ccatch :abort \n"
+            + "      result \n" + "      (my-sub) \n" + "      (csetq result 0)) \n"
+            + "  (ret result)))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-super"));
+
+    script = "(define my-sub () \n" + "  (clet ((a 1) (b 2)) \n" + "  (ignore a b) \n"
+            + "  (ret (throw :abort 99))))";
+    testObjectScript(cycAccess, script, makeCycSymbol("my-sub"));
+    script = "(my-super)";
+    testObjectScript(cycAccess, script, 99);
+
+    // ignore-errors, cunwind-protect
+    //cycAccess.traceOn();
+    script = "(clet (result) \n" + "  (ignore-errors \n" + "    (cunwind-protect \n"
+            + "	(/ 1 0) \n" + "      (csetq result \"protected\"))) \n"
+            + "  result)";
+    testObjectScript(cycAccess, script, "protected");
+
+    // get-environment
+    script = "(csetq a nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(csetq b -1)";
+    testObjectScript(cycAccess, script, -1);
+
+    // cdestructuring-bind
+    script = "(cdestructuring-bind () '() (print 'foo))";
+    testObjectScript(cycAccess, script, makeCycSymbol("foo"));
+
+    script = "(cdestructuring-bind (&whole a) () (print 'foo))";
+    testObjectScript(cycAccess, script, makeCycSymbol("foo"));
+
+    script = "(cdestructuring-bind (&whole a b c) '(1 2) (print (list a b c)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1 2) 1 2)"));
+
+    script = "(cdestructuring-bind (a b . c) '(1 2 3 4) (print (list a b c)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2 (3 4))"));
+
+    script = "(cdestructuring-bind (&optional a) '(1) (print (list a)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1)"));
+
+    script = "(cdestructuring-bind (a &optional b) '(1 2) (print (list a b)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(cdestructuring-bind (&whole a &optional b) '(1) (print (list a b)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1) 1)"));
+
+    script = "(cdestructuring-bind (&rest a) '(1 2) (print (list a)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1 2))"));
+
+    script = "(cdestructuring-bind (&whole a b &rest c) '(1 2 3) (print (list a b c)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("((1 2 3) 1 (2 3))"));
+
+    script = "(cdestructuring-bind (&key a b) '(:b 2 :a 1) (print (list a b)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(cdestructuring-bind (&key a b) '(:b 2 :allow-other-keys t :a 1 :c 3) (print (list a b)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2)"));
+
+    script = "(cdestructuring-bind (&key ((key a) 23 b)) '(key 1) (print (list a b)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 T)"));
+
+    script = "(cdestructuring-bind (a &optional b &key c) '(1 2 :c 3) (print (list a b c)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList("(1 2 3)"));
+
+    script = "(cdestructuring-bind (&whole a b &optional c &rest d &key e &allow-other-keys &aux f) '(1 2 :d 4 :e 3) (print (list a b c d e f)))";
+    responseList = cycAccess.converse().converseList(script);
+    assertEquals(responseList, cycAccess.getObjectTool().makeCycList(
+            "((1 2 :D 4 :E 3) 1 2 (:D 4 :E 3) 3 NIL)"));
+
+    long endMilliseconds = System.currentTimeMillis();
+    System.out.println(
+            "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
+  }
+
+  @Test
+  public void testBinaryCycAccess7_3() throws CycConnectionException {
+    //TestUtils.assumeNotObfuscated();
+    long startMilliseconds = System.currentTimeMillis();
+    resetCycConstantCaches();
+
+    String script;
+    Object responseObject;
+    CycArrayList command;
+
+    // type testing
+    script = "(csetq a 1)";
+    testObjectScript(cycAccess, script, 1);
+    script = "(numberp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+
+    script = "(csetq a \"abc\")";
+    testObjectScript(cycAccess, script, "abc");
+    script = "(numberp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+
+    script = "(csetq a 2.14)";
+    responseObject = cycAccess.converse().converseObject(script);
+    assertTrue(responseObject instanceof Double);
+    assertTrue(((Double) responseObject).doubleValue() > 2.13999);
+    assertTrue(((Double) responseObject).doubleValue() < 2.14001);
+    script = "(numberp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+
+    script = "(csetq a 'my-symbol)";
+    testObjectScript(cycAccess, script, makeCycSymbol(
+            "my-symbol"));
+    script = "(numberp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+
+    script = "(csetq a '(1 . 2))";
+    testObjectScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 . 2)"));
+    script = "(numberp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+
+    script = "(csetq a '(1 2))";
+    testObjectScript(cycAccess, script, cycAccess.getObjectTool().makeCycList("(1 2)"));
+    script = "(numberp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+
+    script = "(csetq a nil)";
+    testObjectScript(cycAccess, script, nil);
+    script = "(numberp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+
+    // empty list is treated the same as nil.
+    command = new CycArrayList();
+    command.add(makeCycSymbol("csetq"));
+    command.add(makeCycSymbol("a"));
+    command.add(new CycArrayList());
+    testObjectScript(cycAccess, command, nil);
+    script = "(numberp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(integerp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(stringp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(atom a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(floatp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(symbolp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(consp a)";
+    assertTrue(!cycAccess.converse().converseBoolean(script));
+    script = "(listp a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+    script = "(null a)";
+    assertTrue(cycAccess.converse().converseBoolean(script));
+
+
+    /*
+     // constant name with embedded slash
+     //cycAccess.traceOn();
+     script =
+     "(rtp-parse-exp-w/vpp \"Symptoms of EEE begin 4-10 days after infection\" \n" +
+     "(fort-for-string \"STemplate\") \n" +
+     "(fort-for-string \"AllEnglishTemplateMt\") \n" +
+     "(fort-for-string \"RKFParsingMt\"))";
+     responseList = cycAccess.converse().converseList(script);
+     */
+    // check-type
+    script
+            = "(clet (result) \n" + "  (ignore-errors \n" + "    (/ 1 1) \n"
+            + "    (csetq result t)) \n" + "  result)";
+    assertEquals((Object) t, cycAccess.converse().converseObject(script));
+    script
+            = "(clet (result) \n" + "  (ignore-errors \n" + "    (/ 1 0) \n"
+            + "    (csetq result t)) \n" + "  result)";
+    assertEquals((Object) nil, cycAccess.converse().converseObject(script));
+
+    //cycAccess.traceOn();
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
@@ -2813,7 +2452,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
   }
-  
+
   @Test
   public void testBinaryCycAccess8_2() throws CycConnectionException, CycApiException, OpenCycUnsupportedFeatureException {
     System.out.println("\n**** testBinaryCycAccess 8.2 ****");
@@ -2863,8 +2502,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             "pittsburghPenguinDisambiguationExpression\n" + pittsburghPenguinDisambiguationExpression);
     assertTrue(pittsburghPenguinDisambiguationExpression.contains(
             "the Pittsburgh Penguins"));
-    assertTrue(pittsburghPenguinDisambiguationExpression.contains(
-            "ice hockey team"));
+    boolean hasTeam = false;
+    for (Object o : pittsburghPenguinDisambiguationExpression) {
+      // Can contain "ice hockey team" or "NHL team"
+      hasTeam = hasTeam || o.toString().toLowerCase().contains("team");
+    }
+    assertTrue(hasTeam);
 
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
@@ -2935,7 +2578,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(cycAccess.getInspectorTool().isGenlInverseOf(siblings, siblings));
 
       // isGenlMtOf
-        assertTrue(cycAccess.getInspectorTool().isGenlMtOf(BASE_KB, biologyVocabularyMt));
+      assertTrue(cycAccess.getInspectorTool().isGenlMtOf(BASE_KB, biologyVocabularyMt));
 
       /*
        // tests proper receipt of narts from the server.
@@ -3053,9 +2696,9 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               cycAccess.converse().converseInt(
                       "(length (first " + cycList57.stringApiValue() + "))"));
 
-      script = "(identity (quote (" + givenNames + " " + guest + " \"\\\"The\\\" Guest\")))";
+      script = "(identity (quote (" + GIVEN_NAMES_STRING + " " + GUEST_STRING + " \"\\\"The\\\" Guest\")))";
 
-      String script1 = "(IDENTITY (QUOTE (" + givenNames + " " + guest + " \"\"The\" Guest\")))";
+      String script1 = "(IDENTITY (QUOTE (" + GIVEN_NAMES_STRING + " " + GUEST_STRING + " \"\"The\" Guest\")))";
 
       //CycListParser.verbosity = 3;
       CycList scriptCycList = cycAccess.getObjectTool().makeCycList(script);
@@ -3074,14 +2717,14 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertEquals(11, ((String) third).length());
 
       // isFormulaWellFormed
-        FormulaSentence formula1 = cycAccess.getObjectTool().makeCycSentence(
-                "(" + isa + " " + brazil + " " + independentCountry + ")");
-        CycConstant mt = cycAccess.getLookupTool().getKnownConstantByName(
-                WORLD_POLITICAL_GEO_DATA_VOCAB_MT.cyclify());
-        assertTrue(cycAccess.getInspectorTool().isFormulaWellFormed(formula1, mt));
-        FormulaSentence formula2 = cycAccess.getObjectTool().makeCycSentence(
-                "(" + genls + " " + brazil + " " + collectionString + ")");
-        assertTrue(!cycAccess.getInspectorTool().isFormulaWellFormed(formula2, mt));
+      FormulaSentence formula1 = cycAccess.getObjectTool().makeCycSentence(
+              "(" + ISA_STRING + " " + BRAZIL_STRING + " " + INDEPENDENT_COUNTRY_STRING + ")");
+      CycConstant mt = cycAccess.getLookupTool().getKnownConstantByName(
+              WORLD_POLITICAL_GEO_DATA_VOCAB_MT.cyclify());
+      assertTrue(cycAccess.getInspectorTool().isFormulaWellFormed(formula1, mt));
+      FormulaSentence formula2 = cycAccess.getObjectTool().makeCycSentence(
+              "(" + GENLS_STRING + " " + BRAZIL_STRING + " " + COLLECTION_STRING + ")");
+      assertTrue(!cycAccess.getInspectorTool().isFormulaWellFormed(formula2, mt));
 
       // isCycLNonAtomicReifableTerm
       Naut formula3 = cycAccess.getObjectTool().makeCycNaut(
@@ -3089,10 +2732,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(cycAccess.getInspectorTool().isCycLNonAtomicReifableTerm(formula3));
 
       FormulaSentence formula4 = cycAccess.getObjectTool().makeCycSentence(
-              "(" + isa + " " + plant + "  " + animal + ")");
+              "(" + ISA_STRING + " " + PLANT_STRING + "  " + ANIMAL_STRING + ")");
       assertTrue(!cycAccess.getInspectorTool().isCycLNonAtomicReifableTerm(formula4));
 
-      Naut formula5 = cycAccess.getObjectTool().makeCycNaut("(" + plusFn + " 1)");
+      Naut formula5 = cycAccess.getObjectTool().makeCycNaut("(" + PLUS_FN_STRING + " 1)");
       assertTrue(!cycAccess.getInspectorTool().isCycLNonAtomicReifableTerm(formula5));
 
       // isCycLNonAtomicUnreifableTerm
@@ -3101,10 +2744,10 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(!cycAccess.getInspectorTool().isCycLNonAtomicUnreifableTerm(formula6));
 
       FormulaSentence formula7 = cycAccess.getObjectTool().makeCycSentence(
-              "(" + isa + " " + plant + " " + animal + ")");
+              "(" + ISA_STRING + " " + PLANT_STRING + " " + ANIMAL_STRING + ")");
       assertTrue(!cycAccess.getInspectorTool().isCycLNonAtomicUnreifableTerm(formula7));
 
-      Naut formula8 = cycAccess.getObjectTool().makeCycNaut("(" + plusFn + " 1)");
+      Naut formula8 = cycAccess.getObjectTool().makeCycNaut("(" + PLUS_FN_STRING + " 1)");
       assertTrue(cycAccess.getInspectorTool().isCycLNonAtomicUnreifableTerm(formula8));
     } catch (Throwable e) {
       e.printStackTrace();
@@ -3410,7 +3053,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    */
   @Test
   public void testBinaryCycAccess13_1() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 13 ****");
+    System.out.println("\n**** testBinaryCycAccess 13_1 ****");
     // NART case
     {
       //cycAccess.traceNamesOn();
@@ -3444,7 +3087,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     // Nonsense case
     {
-      final String elmtString = "(" + plusFn + " 1 1)";
+      final String elmtString = "(" + PLUS_FN_STRING + " 1 1)";
       final Naut mt = cycAccess.getObjectTool().makeCycNaut(elmtString);
       final CycObject hlmtObject = cycAccess.getObjectTool().canonicalizeHLMT(mt);
       assertNotNull(hlmtObject);
@@ -3463,7 +3106,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertEquals(elmtString, elmt.cyclify());
 
     // Nonsense case
-    elmtString = "(" + plusFn + " 1 1)";
+    elmtString = "(" + PLUS_FN_STRING + " 1 1)";
     naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
     elmt = cycAccess.getObjectTool().makeELMt(naut);
     assertNotNull(elmt);
@@ -3477,11 +3120,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertNotNull(elmt);
     assertTrue(elmt instanceof CycConstantImpl);
     assertEquals(elmtString, elmt.toString());
+    System.out.println("**** testBinaryCycAccess 13_1 OK ****");
   }
-      
+
   @Test
   public void testBinaryCycAccess13_2() throws CycConnectionException {
-    System.out.println("\n**** testBinaryCycAccess 13 ****");
+    System.out.println("\n**** testBinaryCycAccess 13_2 ****");
 
     // getHLCycTerm
     Object obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("1");
@@ -3551,13 +3195,15 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     //System.out.println(queryList.cyclify());
     assertTrue(cycAccess.getInferenceTool().isQueryTrue(sentence, UNIVERSAL_VOCABULARY_MT,
             queryProperties));
+    System.out.println("**** testBinaryCycAccess 13_2 OK ****");
   }
-  
+
   @Test
   public void testBinaryCycAccess13_3() throws CycConnectionException {
+    System.out.println("**** testBinaryCycAccess 13_3 ****");
     // assertions containing hl variables
     FormulaSentence query2 = cycAccess.getObjectTool().makeCycSentence(
-            "(" + salientAssertions + " " + performedBy + " ?ASSERTION)");
+            "(" + SALIENT_ASSERTIONS_STRING + " " + PERFORMED_BY_STRING + " ?ASSERTION)");
     InferenceParameters queryProperties2 = cycAccess.getInferenceTool().getHLQueryProperties();
     queryProperties2.put(":answer-language", makeCycSymbol(
             ":hl"));
@@ -3566,16 +3212,16 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     resultSet.next();
     CycAssertion cycAssertion = (CycAssertion) resultSet.getCycObject(1);
     System.out.println("cycAssertion= " + cycAssertion.cyclify());
-    assertTrue(cycAssertion.cyclify().indexOf("?VAR0") > -1);
+    assertTrue(cycAssertion.cyclify().contains("?VAR0"));
     CycArrayList command = new CycArrayList();
     command.add(makeCycSymbol("identity"));
     command.add(cycAssertion);
     //cycAccess.traceOnDetailed();
     Object result = cycAccess.converse().converseObject(command);
     assertTrue(result instanceof CycAssertion);
-    assertTrue(((CycAssertion) result).cyclify().indexOf("?VAR0") > -1);
+    assertTrue(((CycAssertion) result).cyclify().contains("?VAR0"));
     //System.out.println("cycAssertion= " + ((CycAssertion) result).cyclify());
-    System.out.println("**** testBinaryCycAccess 13 OK ****");
+    System.out.println("**** testBinaryCycAccess 13_3 OK ****");
   }
 
   /**
@@ -3681,9 +3327,9 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Tests a portion of the CycAccess methods using the binary api connection.
-   * This test case specifically is used to test cfasl id versus guid constant
-   * encoding, and the eager obtaining of constant names.
+   * Tests a portion of the CycAccess methods using the binary api connection. This test case
+   * specifically is used to test cfasl id versus guid constant encoding, and the eager obtaining of
+   * constant names.
    */
   @Test
   public void testBinaryCycAccess15() {
@@ -3693,8 +3339,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
       // backquote
       String command
-              = "(identity " + "`(,(canonicalize-term \'(" + collectionUnionFn + " (" + theSet + " " + tourist
-              + " (" + groupFn + " " + tourist + ")))) ," + computationalSystem + "))";
+              = "(identity " + "`(,(canonicalize-term \'(" + COLLECTION_UNION_FN_STRING + " (" + THE_SET_STRING + " " + TOURIST_STRING
+              + " (" + GROUP_FN_STRING + " " + TOURIST_STRING + ")))) ," + COMPUTATIONAL_SYSTEM_STRING + "))";
       Object result;
       try {
         //cycAccess.traceOn();
@@ -3714,11 +3360,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       Nart nart = null;
       String comment = null;
       try {
-          nart = (Nart) cycAccess.converse().converseObject(
-                  "(find-nart '(" + juvenileFn + " " + dog + "))");
-          comment = cycAccess.getLookupTool().getComment(nart);
-          assertNotNull(comment);
-          //assertEquals("", comment);
+        nart = (Nart) cycAccess.converse().converseObject(
+                "(find-nart '(" + JUVENILE_FN_STRING + " " + DOG_STRING + "))");
+        comment = cycAccess.getLookupTool().getComment(nart);
+        assertNotNull(comment);
+        //assertEquals("", comment);
       } catch (Throwable e) {
         e.printStackTrace();
         fail(e.toString());
@@ -3841,9 +3487,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   }
 
   /**
-   * Tests a portion of the CycAccess methods using the binary api connection.
-   * This test case specifically is used to test soap service handling of an xml
-   * response from Cyc.
+   * Tests a portion of the CycAccess methods using the binary api connection. This test case
+   * specifically is used to test soap service handling of an xml response from Cyc.
    */
   @Test
   public void testBinaryCycAccess16() throws CycConnectionException {
@@ -3855,7 +3500,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     genls = cycAccess.getLookupTool().getGenls(carAccident);
     assertNotNull(genls);
     assertTrue(genls instanceof CycArrayList);
-    
+
     Iterator iter = genls.iterator();
 
     while (iter.hasNext()) {
@@ -3875,7 +3520,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
       CycListParser parser = new CycListParser(cycAccess);
       CycArrayList nart = parser.read(
-              "(" + remotelyExploitableFn + " " + vulnerableToDTMLMethodExecution + ")");
+              "(" + REMOTELY_EXPLOITABLE_FN_STRING + " " + VULNERABLE_TO_DTML_METHOD_EXECUTION_STRING + ")");
       System.out.println("Nart: " + nart);
 
       CycList gafs = cycAccess.getLookupTool().getGafs(NartImpl.coerceToCycNart(nart), ISA);
@@ -3904,7 +3549,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   @Test
   public void testGetELCycTerm() throws CycConnectionException {
     System.out.println("\n**** testGetELCycTerm ****");
-    Object obj = cycAccess.getObjectTool().getELCycTerm("(" + juvenileFn + " " + dog + ")");
+    Object obj = cycAccess.getObjectTool().getELCycTerm("(" + JUVENILE_FN_STRING + " " + DOG_STRING + ")");
     assertTrue(obj != null);
     System.out.println("**** testGetELCycTerm OK ****");
   }
@@ -4008,7 +3653,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println("queryVariable took " + ratio + " times as long as converseList");
     return ratio < 2;
   }
-  
+
   @Test
   public void testManyQuickQueries() throws Exception {
     System.out.println("manyQuickQueries, attempt 1...");
@@ -4060,8 +3705,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     abstract List getValues(final Object input) throws Exception;
 
     /**
-     * Test the specified list of inputs with the specified max number of
-     * threads.
+     * Test the specified list of inputs with the specified max number of threads.
      *
      * @param inputs
      * @param maxThreads
@@ -4394,7 +4038,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       final boolean invalidConstantCfaslWorks = false; // Until system 1.131015.
       if (invalidConstantCfaslWorks) {
         try {
-          final String command = "(list \"a\" 1 " + brazil + " (cfasl-invalid-constant) \"z\")";
+          final String command = "(list \"a\" 1 " + BRAZIL_STRING + " (cfasl-invalid-constant) \"z\")";
           cycAccess.converse().converseList(command);
           fail("Expected CycApiException not thrown.");
         } catch (CycApiException e) {
@@ -4404,7 +4048,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
           fail(t.getLocalizedMessage());
         }
         try {
-          final String command = "(list \"a\" 1 " + brazil + " \"z\")";
+          final String command = "(list \"a\" 1 " + BRAZIL_STRING + " \"z\")";
           final CycList result = cycAccess.converse().converseList(command);
           assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
         } catch (Throwable e) {
@@ -4415,7 +4059,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     // invalid nart
     try {
-      final String command = "(list \"a\" 1 " + brazil + " (cfasl-invalid-nart) \"z\")";
+      final String command = "(list \"a\" 1 " + BRAZIL_STRING + " (cfasl-invalid-nart) \"z\")";
       final CycList result = cycAccess.converse().converseList(command);
       fail("Expected CycApiException not thrown.");
     } catch (CycApiException e) {
@@ -4423,7 +4067,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       fail(StringUtils.getStringForException(e));
     }
     try {
-      final String command = "(list \"a\" 1 " + brazil + " \"z\")";
+      final String command = "(list \"a\" 1 " + BRAZIL_STRING + " \"z\")";
       final CycList result = cycAccess.converse().converseList(command);
       assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
     } catch (Throwable e) {
@@ -4432,7 +4076,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     // invalid assertion
     try {
-      final String command = "(list \"a\" 1 " + brazil + " (create-sample-invalid-assertion) \"z\")";
+      final String command = "(list \"a\" 1 " + BRAZIL_STRING + " (create-sample-invalid-assertion) \"z\")";
       final CycList result = cycAccess.converse().converseList(command);
       fail("Expected CycApiException not thrown.");
     } catch (CycApiException e) {
@@ -4441,7 +4085,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       fail(StringUtils.getStringForException(e));
     }
     try {
-      final String command = "(list \"a\" 1 " + brazil + " \"z\")";
+      final String command = "(list \"a\" 1 " + BRAZIL_STRING + " \"z\")";
       final CycList result = cycAccess.converse().converseList(command);
       assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
     } catch (Throwable e) {
@@ -4450,38 +4094,38 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println("**** testInvalidTerms OK ****");
   }
 
-  private static final String isa = ISA.cyclify();
-  private static final String plusFn = PLUS_FN.cyclify();
-  private static final String plant = TestConstants.PLANT.cyclify();
-  private static final String dog = TestConstants.DOG.cyclify();
-  private static final String brazil = TestConstants.BRAZIL.cyclify();
-  private static final String genls = CommonConstants.GENLS.cyclify();
-  private static final String collectionString = CommonConstants.COLLECTION.cyclify();
-  private static final String animal = TestConstants.ANIMAL.cyclify();
-  private static final String domesticatedAnimalString = TestConstants.DOMESTICATED_ANIMAL.cyclify();
-  private static final String tameAnimal = TestConstants.TAME_ANIMAL.cyclify();
-  private static final String nonPersonAnimalString = TestConstants.NON_PERSON_ANIMAL.cyclify();
-  private static final String fluidFlowComplete = TestConstants.FLUID_FLOW_COMPLETE.cyclify();
-  private static final String nthSubSituationTypeOfTypeFn = TestConstants.NTH_SUB_SITUATION_TYPE_OF_TYPE_FN.cyclify();
-  private static final String preparingFoodItemFn = TestConstants.PREPARING_FOOD_ITEM_FN.cyclify();
-  private static final String spaghettiMarinara = TestConstants.SPAGHETTI_MARINARA.cyclify();
-  private static final String humanActivitiesMt = TestConstants.HUMAN_ACTIVITIES_MT.cyclify();
-  private static final String remotelyExploitableFn = TestConstants.REMOTELY_EXPLOITABLE_FN.cyclify();
-  private static final String vulnerableToDTMLMethodExecution = TestConstants.VULNERABLE_TO_DTML_METHOD_EXECUTION.cyclify();
-  private static final String juvenileFn = TestConstants.JUVENILE_FN.cyclify();
-  private static final String independentCountry = TestConstants.INDEPENDENT_COUNTRY.cyclify();
-  private static final String capitalCity = TestConstants.CAPITAL_CITY.cyclify();
-  private static final String france = TestConstants.FRANCE.cyclify();
-  private static final String paris = TestConstants.CITY_OF_PARIS_FRANCE.cyclify();
-  private static final String givenNames = GIVEN_NAMES.cyclify();
-  private static final String guest = GUEST.cyclify();
-  private static final String performedBy = PERFORMED_BY.cyclify();
-  private static final String salientAssertions = SALIENT_ASSERTIONS.cyclify();
-  private static final String collectionUnionFn = COLLECTION_UNION_FN.cyclify();
-  private static final String theSet = THE_SET.cyclify();
-  private static final String tourist = TOURIST.cyclify();
-  private static final String groupFn = GROUP_FN.cyclify();
-  private static final String computationalSystem = COMPUTATIONAL_SYSTEM.cyclify();
+  private static final String ISA_STRING = ISA.cyclify();
+  private static final String PLUS_FN_STRING = PLUS_FN.cyclify();
+  private static final String PLANT_STRING = TestConstants.PLANT.cyclify();
+  private static final String DOG_STRING = TestConstants.DOG.cyclify();
+  private static final String BRAZIL_STRING = TestConstants.BRAZIL.cyclify();
+  private static final String GENLS_STRING = CommonConstants.GENLS.cyclify();
+  private static final String COLLECTION_STRING = CommonConstants.COLLECTION.cyclify();
+  private static final String ANIMAL_STRING = TestConstants.ANIMAL.cyclify();
+  private static final String DOMESTICATED_ANIMAL_STRING = TestConstants.DOMESTICATED_ANIMAL.cyclify();
+  private static final String TAME_ANIMAL_STRING = TestConstants.TAME_ANIMAL.cyclify();
+  private static final String NON_PERSON_ANIMAL_STRING = TestConstants.NON_PERSON_ANIMAL.cyclify();
+  private static final String FLUID_FLOW_COMPLETE_STRING = TestConstants.FLUID_FLOW_COMPLETE.cyclify();
+  private static final String NTH_SUB_SITUATION_TYPE_OF_TYPE_FN_STRING = TestConstants.NTH_SUB_SITUATION_TYPE_OF_TYPE_FN.cyclify();
+  private static final String PREPARING_FOOD_ITEM_FN_STRING = TestConstants.PREPARING_FOOD_ITEM_FN.cyclify();
+  private static final String SPAGHETTI_MARINARA_STRING = TestConstants.SPAGHETTI_MARINARA.cyclify();
+  private static final String HUMAN_ACTIVITIES_MT_STRING = TestConstants.HUMAN_ACTIVITIES_MT.cyclify();
+  private static final String REMOTELY_EXPLOITABLE_FN_STRING = TestConstants.REMOTELY_EXPLOITABLE_FN.cyclify();
+  private static final String VULNERABLE_TO_DTML_METHOD_EXECUTION_STRING = TestConstants.VULNERABLE_TO_DTML_METHOD_EXECUTION.cyclify();
+  private static final String JUVENILE_FN_STRING = TestConstants.JUVENILE_FN.cyclify();
+  private static final String INDEPENDENT_COUNTRY_STRING = TestConstants.INDEPENDENT_COUNTRY.cyclify();
+  private static final String CAPITAL_CITY_STRING = TestConstants.CAPITAL_CITY.cyclify();
+  private static final String FRANCE_STRING = TestConstants.FRANCE.cyclify();
+  private static final String CITY_OF_PARIS_FRANCE_STRING = TestConstants.CITY_OF_PARIS_FRANCE.cyclify();
+  private static final String GIVEN_NAMES_STRING = GIVEN_NAMES.cyclify();
+  private static final String GUEST_STRING = GUEST.cyclify();
+  private static final String PERFORMED_BY_STRING = PERFORMED_BY.cyclify();
+  private static final String SALIENT_ASSERTIONS_STRING = SALIENT_ASSERTIONS.cyclify();
+  private static final String COLLECTION_UNION_FN_STRING = COLLECTION_UNION_FN.cyclify();
+  private static final String THE_SET_STRING = THE_SET.cyclify();
+  private static final String TOURIST_STRING = TOURIST.cyclify();
+  private static final String GROUP_FN_STRING = GROUP_FN.cyclify();
+  private static final String COMPUTATIONAL_SYSTEM_STRING = COMPUTATIONAL_SYSTEM.cyclify();
 
   private static final String DOG_GUID_STRING = TestConstants.DOG.getGuid().getGuidString();
 }

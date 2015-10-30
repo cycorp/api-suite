@@ -49,8 +49,8 @@ import com.cyc.session.exception.UnsupportedCycOperationException;
  */
 public interface CycSessionRequirement<T extends UnsupportedCycOperationException> {
   
-  public boolean isCompatible(CycSession session) throws SessionCommunicationException, SessionCommandException;
+  public CompatibilityResults checkCompatibility(CycSession session) throws SessionCommunicationException, SessionCommandException;
   
-  public void testCompatibility(CycSession session) throws T, SessionCommunicationException, SessionCommandException;
-  
+  public void throwExceptionIfIncompatible(CycSession session) throws T, SessionCommunicationException, SessionCommandException;
+
 }

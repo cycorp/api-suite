@@ -96,7 +96,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * <p>
  * @author tbrussea
  * @date March 25, 2004, 2:01 PM
- * @version $Id: DefaultSubLWorker.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: DefaultSubLWorker.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 public class DefaultSubLWorker implements Worker {
   
@@ -671,7 +671,7 @@ public class DefaultSubLWorker implements Worker {
    */
   public static void main(String[] args) {
     try {
-      CycAccess access = CycAccessManager.getAccess();
+      CycAccess access = CycAccessManager.getCurrentAccess();
       Worker worker = new DefaultSubLWorker("(+ 1 1)", access);
       worker.addListener(new WorkerListener() {
         public void notifySubLWorkerStarted(WorkerEvent event) {

@@ -62,7 +62,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirement(CycSessionRequirement requirement) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirement.isCompatible(getSession()));
+      org.junit.Assume.assumeTrue(requirement.checkCompatibility(getSession()).isCompatible());
     } catch (SessionApiException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);
@@ -72,7 +72,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirements(CycSessionRequirementList requirements) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirements.isCompatible());
+      org.junit.Assume.assumeTrue(requirements.checkCompatibility().isCompatible());
     } catch (SessionApiException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);

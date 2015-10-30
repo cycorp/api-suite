@@ -21,7 +21,7 @@ package com.cyc.baseclient;
  * #L%
  */
 
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.SessionInitializationException;
@@ -35,22 +35,22 @@ public class LegacyCycClientManager extends LegacyCycAccessManager {
   
   // Public
   
-  public CycClientSession setCurrentSession(CycServer server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+  public CycClientSession setCurrentSession(CycServerAddress server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     CycClientSession session = getSession(server);
     return this.setCurrentSession(session);
   }
   
-  public CycClientSession getSession(CycServer server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    if (!hasSession(server)) {
-      return createSession(server);
+  public CycClientSession getSession(CycServerAddress server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    if (hasCurrentSession() && server.equals(getCurrentSession().getServerInfo().getCycServer())) {
+      return getCurrentSession();
     }
-    return retrieveSession(server);
+    return createSession(server);
   }
   
-  public CycClient getAccess(CycServer server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+  public CycClient getAccess(CycServerAddress server) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     return this.getSession(server).getAccess();
   }
-
+  
   
   public boolean hasCurrentAccess() {
     return hasCurrentSession();

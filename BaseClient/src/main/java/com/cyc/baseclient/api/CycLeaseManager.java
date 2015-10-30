@@ -51,7 +51,7 @@ import com.cyc.baseclient.CycClientManager;
  *
  * @author reed
  date June 27, 2005, 10:20 AM
- * @version $Id: CycLeaseManager.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycLeaseManager.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 public class CycLeaseManager extends Thread implements LeaseManager {
 
@@ -375,7 +375,7 @@ public class CycLeaseManager extends Thread implements LeaseManager {
   public static void main(String[] args) {
     try {
       Logger.getAnonymousLogger().info("Starting.");
-      final CycAccess cycAccess = CycAccessManager.getAccess();
+      final CycAccess cycAccess = CycAccessManager.getCurrentAccess();
       Logger.getAnonymousLogger().info(
               "Connected to: " + cycAccess.getHostName() + ":" + cycAccess.getBasePort());
       //      cycAccess.traceOn();

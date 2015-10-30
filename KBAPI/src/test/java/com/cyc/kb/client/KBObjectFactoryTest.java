@@ -68,7 +68,7 @@ public class KBObjectFactoryTest {
 //    FormulaSentence istSentence = CycFormulaSentence.makeCycSentence("(ist LogicalTruthMt (isa Collection Collection))");
     CycAccess cyc = CycAccessManager.getCurrentAccess();
     FormulaSentence cycSentence = CycFormulaSentence.makeCycSentence(cyc, "(isa Collection Collection)");
-    ELMt ltMt = CycAccessManager.getAccess().getObjectTool().makeELMt("LogicalTruthMt");
+    ELMt ltMt = CycAccessManager.getCurrentAccess().getObjectTool().makeELMt("LogicalTruthMt");
     CycAssertion cycAssert = new CycAssertionImpl(cycSentence, ltMt);
     Assertion a = AssertionImpl.get(cycAssert); // TODO: since this is failing, it looks like the getter doesn't properly accept ist sentences
     KBObject s = new SentenceImpl(a.getCore());
@@ -97,8 +97,8 @@ public class KBObjectFactoryTest {
   
   @Test
   public void testNartAndNautWithSameFormula() throws KBApiException, UnknownHostException, IOException, Exception {
-    Naut naut = CycAccessManager.getAccess().getObjectTool().makeCycNaut("(#$AirForceFn #$France)");
-    Nart nart = CycAccessManager.getAccess().getLookupTool().getCycNartFromCons(naut.toCycList());
+    Naut naut = CycAccessManager.getCurrentAccess().getObjectTool().makeCycNaut("(#$AirForceFn #$France)");
+    Nart nart = CycAccessManager.getCurrentAccess().getLookupTool().getCycNartFromCons(naut.toCycList());
     KBIndividual nartInd = KBIndividualImpl.get(nart);
     KBIndividual nautInd = KBIndividualImpl.get(naut);
     assertSame("Got the different KBIndividuals back for what should be the same NAT.", nartInd, nautInd);

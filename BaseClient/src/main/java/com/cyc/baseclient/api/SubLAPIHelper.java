@@ -28,7 +28,6 @@ import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.DefaultSubLWorker;
 import com.cyc.baseclient.CycClient;
 import com.cyc.base.CycConnectionException;
-import com.cyc.session.CycServer;
 import com.cyc.base.conn.Worker;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -40,12 +39,13 @@ import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.CycClientManager;
 //import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.session.CycServerAddress;
 
 /** 
  * <P>SubLAPIHelper is designed to...
  *
  * @author tbrussea, Nov 4, 2010, 11:33:24 AM
- * @version $Id: SubLAPIHelper.java 158663 2015-05-26 21:30:12Z nwinant $
+ * @version $Id: SubLAPIHelper.java 161591 2015-10-16 18:24:37Z nwinant $
  */
 public class SubLAPIHelper {
 
@@ -84,7 +84,7 @@ public class SubLAPIHelper {
   }
   
   private synchronized void recreateCycAccess() throws CycConnectionException {
-    final CycServer server = getCycAccess().getCycServer();
+    final CycServerAddress server = getCycAccess().getCycServer();
     setCycAccess(new CycClient(server));
     madeCycAccess = true;
   }

@@ -4,7 +4,7 @@
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-parent</artifactId>
-  <version>1.0.0-rc3</version>
+  <version>1.0.0-rc4</version>
   <packaging>pom</packaging>
   
   <name>Core API Parent</name>
@@ -312,8 +312,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
       <plugin>

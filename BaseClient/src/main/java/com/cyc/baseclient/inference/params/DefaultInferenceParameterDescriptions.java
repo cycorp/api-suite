@@ -60,7 +60,7 @@ import java.util.Map;
  *
  * @author zelal
  * @date August 9, 2005, 9:30 PM
- * @version $Id: DefaultInferenceParameterDescriptions.java 158695 2015-05-27 21:41:57Z nwinant $
+ * @version $Id: DefaultInferenceParameterDescriptions.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 public class DefaultInferenceParameterDescriptions extends HashMap<String, InferenceParameter>
         implements InferenceParameterDescriptions {
@@ -403,7 +403,7 @@ public String stringApiValue() {
   public static void main(String[] args) {
     try {
       System.out.println("Starting...");
-      CycAccess cycAccess = CycAccessManager.getAccess();
+      CycAccess cycAccess = CycAccessManager.getCurrentAccess();
       InferenceParameterDescriptions parameters = new DefaultInferenceParameterDescriptions(cycAccess, 100000);
       System.out.println("PARAMETERS: " + parameters);
     } catch (Exception e) {

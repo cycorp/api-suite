@@ -132,7 +132,7 @@ public class SubLInteractorPanel extends javax.swing.JPanel {
 //// Main
   public static void main(String[] args) {
     try {
-      CycAccess cycAccess = CycAccessManager.getAccess();
+      CycAccess cycAccess = CycAccessManager.getCurrentAccess();
       if (cycAccess == null) {
         System.exit(-1);
       }

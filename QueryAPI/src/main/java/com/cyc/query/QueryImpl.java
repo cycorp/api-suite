@@ -110,7 +110,9 @@ import javax.xml.bind.JAXBException;
  *
  */
 public class QueryImpl implements Query, Closeable, InferenceParameterSetter, InferenceParameterGetter {
-
+  
+  // Fields
+  
   public static final CycSessionRequirementList QUERY_LOADER_REQUIREMENTS = CycSessionRequirementList.fromList(
           new MinimumPatchRequirement(
                   "Query loading is unsupported on ResearchCyc 4.0q and earlier",
@@ -135,7 +137,61 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
   private final Set<String> categories = new HashSet<String>();
   private boolean retainInference = false;
   private final QueryInference inference = new QueryInference();
+  private static final Set<QueryImpl> unclosedQueries = Collections.newSetFromMap(new ConcurrentHashMap<QueryImpl, Boolean>());
+  
+  
+  // Static methods
+  
+  protected static CycAccess getAccess() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    return CycAccessManager.getCurrentAccess();
+  }
+  
+  private static ContextImpl constructContext(String ctxStr) throws QueryConstructionException {
+    try {
+      return ContextImpl.get(ctxStr);
+    } catch (Exception ex) {
+      throw new QueryConstructionException(ex);
+    }
+  }
 
+  private static DefaultInferenceParameters constructParams(String queryParams) throws QueryConstructionException {
+    try {
+      return queryParams.isEmpty() ? null : new DefaultInferenceParameters(
+              getAccess(), queryParams);
+    } catch (Exception ex) {
+      throw new QueryConstructionException(ex);
+    }
+  }
+
+  private static CycFormulaSentence constructSentence(String queryStr) throws QueryConstructionException {
+    try {
+      return CycLParserUtil.parseCycLSentence(queryStr, true,
+              getAccess());
+    } catch (Exception ex) {
+      throw new QueryConstructionException(ex);
+    }
+  }
+  
+  private static ContextImpl constructContext(CycObject ctx) throws QueryConstructionException {
+    try {
+      return ContextImpl.get(ctx);
+    } catch (Exception ex) {
+      throw new QueryConstructionException(ex);
+    }
+  }
+  
+  private static KBIndividualImpl constructQueryIdTerm(final DenotationalTerm id)
+          throws QueryConstructionException {
+    try {
+      return KBIndividualImpl.get(id.cyclify());
+    } catch (Exception ex) {
+      throw new QueryConstructionException(ex);
+    }
+  }
+  
+  
+  // Constructors
+  
   /**
    * constructs a Query working with the string queryStr.
    * <p>
@@ -185,59 +241,18 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
   public QueryImpl(String queryStr, String ctxStr, String queryParams) throws QueryConstructionException {
     this(constructSentence(queryStr), constructContext(ctxStr), constructParams(queryParams));
   }
-
-  private static ContextImpl constructContext(String ctxStr) throws QueryConstructionException {
-    try {
-      return ContextImpl.get(ctxStr);
-    } catch (Exception ex) {
-      throw new QueryConstructionException(ex);
-    }
-  }
-
-  private static DefaultInferenceParameters constructParams(String queryParams) throws QueryConstructionException {
-    try {
-      return queryParams.isEmpty() ? null : new DefaultInferenceParameters(
-              getAccess(), queryParams);
-    } catch (Exception ex) {
-      throw new QueryConstructionException(ex);
-    }
-  }
-
-  private static CycFormulaSentence constructSentence(String queryStr) throws QueryConstructionException {
-    try {
-      return CycLParserUtil.parseCycLSentence(queryStr, true,
-              getAccess());
-    } catch (Exception ex) {
-      throw new QueryConstructionException(ex);
-    }
-  }
-
-  protected static CycAccess getAccess() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    return CycAccessManager.getCurrentAccess();
-  }
-
+  
   /**
-   * Returns a new query with the specified context, sentence, and parameters.
+   * Construct a new Query with the specified sentence and context.
    *
-   * @param sent The CycL sentence to be queried
-   * @param ctx the Context in which to run the query
-   * @param params
-   * @throws com.cyc.query.exception.QueryConstructionException
-   *
+   * @param sent
+   * @param ctx
+   * @throws QueryConstructionException
    */
-  @Deprecated
-  public QueryImpl(FormulaSentence sent, Context ctx, InferenceParameters params) throws QueryConstructionException {
-    this();
-    this.ctx = ctx;
-    this.querySentence = sent;
-    if (params == null) {
-      initializeParams();
-    } else {
-      this.params = params;
-    }
-    unclosedQueries.add(this);
+  public QueryImpl(Sentence sent, ELMt ctx) throws QueryConstructionException {
+    this((FormulaSentence) sent.getCore(), ctx);
   }
-
+  
   /**
    *
    * @param sent
@@ -248,22 +263,7 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
   public QueryImpl(Sentence sent, Context ctx, InferenceParameters params) throws QueryConstructionException {
     this((FormulaSentence) sent.getCore(), ctx, params);
   }
-
-  /**
-   * Returns a new query with the specified context and sentence, and default
-   * parameters.
-   *
-   * @param sent The CycL sentence to be queried
-   * @param ctx the Context in which to run the query
-   *
-   * @throws QueryConstructionException
-   *
-   */
-  @Deprecated
-  public QueryImpl(FormulaSentence sent, Context ctx) throws QueryConstructionException {
-    this(sent, ctx, null);
-  }
-
+  
   /**
    *
    * @param sent
@@ -272,30 +272,6 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
    */
   public QueryImpl(Sentence sent, Context ctx) throws QueryConstructionException {
     this((FormulaSentence) sent.getCore(), ctx);
-  }
-
-  /**
-   * Returns a new query with the specified context, sentence, and parameters.
-   *
-   * @param sent The CycL sentence to be queried
-   * @param ctx the Context in which to run the query
-   * @param params
-   * @throws QueryConstructionException
-   *
-   * @deprecated Use {@link #Query(FormulaSentence,Context,InferenceParameters)}
-   *
-   */
-  @Deprecated
-  public QueryImpl(FormulaSentence sent, ELMt ctx, InferenceParameters params) throws QueryConstructionException {
-    this(sent, constructContext(ctx), params);
-  }
-
-  private static ContextImpl constructContext(CycObject ctx) throws QueryConstructionException {
-    try {
-      return ContextImpl.get(ctx);
-    } catch (Exception ex) {
-      throw new QueryConstructionException(ex);
-    }
   }
 
   /**
@@ -309,65 +285,6 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
    */
   public QueryImpl(Sentence sent, ELMt ctx, InferenceParameters params) throws QueryConstructionException {
     this((FormulaSentence) sent.getCore(), ctx, params);
-  }
-
-  /**
-   * Returns a new query with the specified context and sentence, and default
-   * parameters.
-   *
-   * @param sent The CycL sentence to be queried
-   * @param ctx the Context in which to run the query
-   *
-   * @throws QueryConstructionException
-   * @deprecated Use {@link #Query(FormulaSentence,Context)}
-   *
-   */
-  @Deprecated
-  public QueryImpl(FormulaSentence sent, ELMt ctx) throws QueryConstructionException {
-    this(sent, constructContext(ctx));
-  }
-
-  /**
-   * Construct a new Query with the specified sentence and context.
-   *
-   * @param sent
-   * @param ctx
-   * @throws QueryConstructionException
-   */
-  public QueryImpl(Sentence sent, ELMt ctx) throws QueryConstructionException {
-    this((FormulaSentence) sent.getCore(), ctx);
-  }
-
-  /**
-   * Constructs a Query from a CycLQuerySpecification term.
-   *
-   * @param id
-   * @throws QueryConstructionException
-   * @throws KBApiException
-   * <p/>
-   * <b>Note:</b> {@link QueryConstructionException} is thrown if the specified
-   * query term has a sentence whose outermost operator is #$ist and the query
-   * is loaded from a Cyc server with a system level under 10.154917 (Nov.
-   * 2014). A workaround is to edit the query in the KB, removing the #$ist from
-   * the query's sentence, and specifying it as the query mt using
-   * #$microtheoryParameterValueInSpecification.
-   * @deprecated New code should use {@link Query#Query(com.cyc.kb.KBIndividual)
-   * }.
-   *
-   */
-  public QueryImpl(final DenotationalTerm id) throws QueryConstructionException,
-          KBApiException,
-          UnsupportedCycOperationException {
-    this(constructQueryIdTerm(id));
-  }
-
-  private static KBIndividualImpl constructQueryIdTerm(final DenotationalTerm id)
-          throws QueryConstructionException {
-    try {
-      return KBIndividualImpl.get(id.cyclify());
-    } catch (Exception ex) {
-      throw new QueryConstructionException(ex);
-    }
   }
 
   /**
@@ -395,6 +312,119 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
     this.setId(id);
     unclosedQueries.add(this);
   }
+  
+  /**
+   *
+   * @throws IOException
+   */
+  private QueryImpl() throws QueryConstructionException {
+    try {
+      this.session = CycSessionManager.getCurrentSession();
+      this.cyc = CycAccessManager.getAccessManager().fromSession(session);
+    } catch (SessionConfigurationException ex) {
+      throw new QueryConstructionException(ex);
+    } catch (SessionCommunicationException ex) {
+      throw new QueryConstructionException(ex);
+    } catch (SessionInitializationException ex) {
+      throw new QueryConstructionException(ex);
+    }
+  }
+  
+  /**
+   * Returns a new query with the specified context, sentence, and parameters.
+   *
+   * @param sent The CycL sentence to be queried
+   * @param ctx the Context in which to run the query
+   * @param params
+   * @throws com.cyc.query.exception.QueryConstructionException
+   *
+   */
+  @Deprecated
+  public QueryImpl(FormulaSentence sent, Context ctx, InferenceParameters params) throws QueryConstructionException {
+    this();
+    this.ctx = ctx;
+    this.querySentence = sent;
+    if (params == null) {
+      initializeParams();
+    } else {
+      this.params = params;
+    }
+    unclosedQueries.add(this);
+  }
+
+  /**
+   * Returns a new query with the specified context and sentence, and default
+   * parameters.
+   *
+   * @param sent The CycL sentence to be queried
+   * @param ctx the Context in which to run the query
+   *
+   * @throws QueryConstructionException
+   *
+   */
+  @Deprecated
+  public QueryImpl(FormulaSentence sent, Context ctx) throws QueryConstructionException {
+    this(sent, ctx, null);
+  }
+  
+  /**
+   * Returns a new query with the specified context, sentence, and parameters.
+   *
+   * @param sent The CycL sentence to be queried
+   * @param ctx the Context in which to run the query
+   * @param params
+   * @throws QueryConstructionException
+   *
+   * @deprecated Use {@link #Query(FormulaSentence,Context,InferenceParameters)}
+   *
+   */
+  @Deprecated
+  public QueryImpl(FormulaSentence sent, ELMt ctx, InferenceParameters params) throws QueryConstructionException {
+    this(sent, constructContext(ctx), params);
+  }
+
+  
+  /**
+   * Returns a new query with the specified context and sentence, and default
+   * parameters.
+   *
+   * @param sent The CycL sentence to be queried
+   * @param ctx the Context in which to run the query
+   *
+   * @throws QueryConstructionException
+   * @deprecated Use {@link #Query(FormulaSentence,Context)}
+   *
+   */
+  @Deprecated
+  public QueryImpl(FormulaSentence sent, ELMt ctx) throws QueryConstructionException {
+    this(sent, constructContext(ctx));
+  }
+
+  /**
+   * Constructs a Query from a CycLQuerySpecification term.
+   *
+   * @param id
+   * @throws QueryConstructionException
+   * @throws KBApiException
+   * <p/>
+   * <b>Note:</b> {@link QueryConstructionException} is thrown if the specified
+   * query term has a sentence whose outermost operator is #$ist and the query
+   * is loaded from a Cyc server with a system level under 10.154917 (Nov.
+   * 2014). A workaround is to edit the query in the KB, removing the #$ist from
+   * the query's sentence, and specifying it as the query mt using
+   * #$microtheoryParameterValueInSpecification.
+   * @deprecated New code should use {@link Query#Query(com.cyc.kb.KBIndividual)
+   * }.
+   *
+   */
+  public QueryImpl(final DenotationalTerm id) throws QueryConstructionException,
+          KBApiException,
+          UnsupportedCycOperationException {
+    this(constructQueryIdTerm(id));
+  }
+  
+  
+  // Public methods
 
   /**
    * Run this query and return the results.
@@ -461,7 +491,7 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
   public static Query load(KBIndividual id) throws UnsupportedCycOperationException, QueryConstructionException,
           KBApiException {
     try {
-      QUERY_LOADER_REQUIREMENTS.testCompatibility();
+      QUERY_LOADER_REQUIREMENTS.throwExceptionIfIncompatible();
       return new QueryReader().queryFromTerm(id);
     } catch (UnsupportedCycOperationException ex) {
       throw ex;
@@ -478,7 +508,7 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
 
   /**
    * Returns a QueryImpl object defined by a CycLQuerySpecification term, and
- substitutes in relevant values from the indexicals Map. This is the
+   * substitutes in relevant values from the indexicals Map. This is the
    * equivalent of calling {@link #load(com.cyc.kb.KBIndividual)} and then
    * calling {@link #substituteTermsWithCycObject(java.util.Map)} on it.
    *
@@ -965,7 +995,7 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
   public Collection<Collection<Sentence>> findRedundantClauses() throws KBApiException,
           SessionCommunicationException, OpenCycUnsupportedFeatureException {
     try {
-      QUERY_COMPARISON_REQUIREMENTS.testCompatibilityWithRuntimeException();
+      QUERY_COMPARISON_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
       Collection<Collection<FormulaSentence>> cycClauseCollections = findRedundantClausesCFS();
       Collection<Collection<Sentence>> clauses = new HashSet<Collection<Sentence>>();
       Collection<Sentence> clauseCollections = new HashSet<Sentence>();
@@ -998,7 +1028,7 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
   public Collection<ArgPosition> findUnconnectedClauses() throws SessionCommunicationException, 
           OpenCycUnsupportedFeatureException {
     try {
-      QUERY_COMPARISON_REQUIREMENTS.testCompatibilityWithRuntimeException();
+      QUERY_COMPARISON_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
       final Set<ArgPosition> argPositions = new HashSet<ArgPosition>();
       for (final Object obj : getCycAccess().converse().converseList(SubLAPIHelper.makeSubLStmt(
               "find-unconnected-literals", querySentence))) {
@@ -1032,7 +1062,7 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
           SessionCommunicationException,
           OpenCycUnsupportedFeatureException {
     try {
-      QUERY_COMPARISON_REQUIREMENTS.testCompatibilityWithRuntimeException();
+      QUERY_COMPARISON_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
       QueryImpl otherQueryImpl = (QueryImpl)otherQuery;
       final String command = SubLAPIHelper.makeSubLStmt("combine-queries",
               querySentence, ContextImpl.asELMt(ctx), params, otherQueryImpl.querySentence,
@@ -1872,7 +1902,33 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
     }
     return this.hashCode() == o.hashCode();
   }
+  
+  
+  // Private
 
+  private boolean requiresInferenceWorker() {
+    final InferenceParameters inferenceParameters = getInferenceParameters();
+    if (inferenceParameters.containsKey(RETURN)) {
+      return true;
+    } else if (Boolean.TRUE.equals(inferenceParameters.isContinuable())) {
+      return true;
+    } else if (Boolean.TRUE.equals(inferenceParameters.isBrowsable())) {
+      return true;
+    } else if (!listeners.isEmpty()) {
+      return true;
+    } else if (retainInference == true) {
+      return true;
+    } else if (CycObjectFactory.t.equals(
+            inferenceParameters.get(COMPUTE_ANSWER_JUSTIFICATIONS))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  
+  // Inner classes
+  
   /**
    * Inner class to hold the aspects of a QueryImpl that it acquires when run.
    */
@@ -1881,14 +1937,12 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
     protected long closeTimeoutMS = 5000;
     private QueryResultSet rs = null;
     private boolean hasBeenStarted = false;
-    private InferenceWorker worker;
+    private QueryWorker worker;
     private InferenceStatus inferenceStatus = InferenceStatus.NOT_STARTED;
     private InferenceIdentifier inferenceIdentifier = null;
     private final List<Object> cycAnswers = new ArrayList<Object>();
 
-    private QueryInference() {
-
-    }
+    private QueryInference() {}
 
     /**
      *
@@ -2050,17 +2104,15 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
     }
 
     private QueryWorker createInferenceWorker() {
-
       final ELMt elmt = ContextImpl.asELMt(ctx);
       worker = new QueryWorker(elmt, getCycAccess());
       // We get to be the first listener, so we can be sure we're up to date
       // when other listeners are called.
       worker.addInferenceListener(this);
       for (final QueryListener listener : listeners) {
-        worker.addInferenceListener(((QueryListenerImpl)listener).getInferenceListener());
+        worker.addQueryListener(listener);
       }
       return (QueryWorker) worker;
-
     }
 
     private void setResultSet(QueryResultSet rs) {
@@ -2087,46 +2139,14 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
     QueryImpl getQuery() {
       return QueryImpl.this;
     }
-  }
-
-
-
-  /**
-   *
-   * @throws IOException
-   */
-  private QueryImpl() throws QueryConstructionException {
-    try {
-      this.session = CycSessionManager.getCurrentSession();
-      this.cyc = CycAccessManager.getAccessManager().fromSession(session);
-    } catch (SessionConfigurationException ex) {
-      throw new QueryConstructionException(ex);
-    } catch (SessionCommunicationException ex) {
-      throw new QueryConstructionException(ex);
-    } catch (SessionInitializationException ex) {
-      throw new QueryConstructionException(ex);
+    
+    public void addQueryListener(QueryListener listener) {
+      if (listener instanceof InferenceWorkerListener) {
+        addInferenceListener((InferenceWorkerListener) listener);
+      } else {
+        addInferenceListener(new QueryListenerAdaptor(listener));
+      }
     }
   }
-
-  private boolean requiresInferenceWorker() {
-    final InferenceParameters inferenceParameters = getInferenceParameters();
-    if (inferenceParameters.containsKey(RETURN)) {
-      return true;
-    } else if (Boolean.TRUE.equals(inferenceParameters.isContinuable())) {
-      return true;
-    } else if (Boolean.TRUE.equals(inferenceParameters.isBrowsable())) {
-      return true;
-    } else if (!listeners.isEmpty()) {
-      return true;
-    } else if (retainInference == true) {
-      return true;
-    } else if (CycObjectFactory.t.equals(
-            inferenceParameters.get(COMPUTE_ANSWER_JUSTIFICATIONS))) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private static final Set<QueryImpl> unclosedQueries = Collections.newSetFromMap(new ConcurrentHashMap<QueryImpl, Boolean>());
+  
 }

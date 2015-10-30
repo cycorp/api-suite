@@ -23,7 +23,6 @@ package com.cyc.baseclient.testing;
 
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycConnectionException;
-import com.cyc.session.CycServer;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ELMt;
 import com.cyc.baseclient.CommonConstants;
@@ -31,6 +30,7 @@ import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.ELMtConstant;
 import com.cyc.baseclient.cycobject.ELMtCycNaut;
 import static com.cyc.baseclient.testing.TestConstants.CONTEXT_OF_PCW_FN;
+import com.cyc.session.CycServerAddress;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,6 +40,13 @@ import java.util.Set;
  */
 public class KBPopulator {  
   
+  static private KBPopulator me = new KBPopulator();
+  
+  synchronized public static void ensureKBPopulated(CycAccess access) throws CycConnectionException {
+    if (!me.isAlreadyCalledForKB(access)){
+      me.populate(access);
+    }
+  }
   // Public
   
   public synchronized void populate(CycAccess cyc) throws CycConnectionException {
@@ -142,7 +149,7 @@ public class KBPopulator {
   
   public static final String WHH_WP_PCW_STR = "#$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison";
 
-  private final Set<CycServer> populatedKBs = new HashSet();
+  private final Set<CycServerAddress> populatedKBs = new HashSet();
   private static final boolean BOOKKEEPING = true;
   private static final boolean TRANSCRIPT = false;
 }

@@ -51,7 +51,7 @@ import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
  a truth function and a list of arguments
  *
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: CycFormulaSentence.java 159504 2015-07-06 23:40:29Z nwinant $
+ * @version $Id: CycFormulaSentence.java 161086 2015-09-22 16:14:24Z daves $
  *
  * @todo make it implement CycLFormula, or get rid of CycLFormula, as
  * appropriate
@@ -361,7 +361,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
   public CycFormulaSentence splice(FormulaSentence toInsert,
           ArgPosition argPosition,
           CycAccess access) throws CycConnectionException, OpenCycUnsupportedFeatureException {
-    ADVANCED_SENTENCE_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    ADVANCED_SENTENCE_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     final String command = SubLAPIHelper.makeSubLStmt(
             "combine-formulas-at-position", this, toInsert, argPosition);
     final List result = access.converse().converseList(command);
@@ -383,7 +383,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
   @Override
   public List<Object> getCandidateReplacements(ArgPosition position,
           ELMt mt, CycAccess cyc) throws CycConnectionException, OpenCycUnsupportedFeatureException {
-    ADVANCED_SENTENCE_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    ADVANCED_SENTENCE_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     final String command = SubLAPIHelper.makeSubLStmt(
             "candidate-replacements-for-arg", this, position, mt);
     return cyc.converse().converseList(command);
@@ -478,7 +478,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    */
   @Override
   public CycSentence getSimplifiedSentence(CycAccess access, ELMt mt) throws CycConnectionException, OpenCycUnsupportedFeatureException {
-    ADVANCED_SENTENCE_REQUIREMENTS.testCompatibilityWithRuntimeException();
+    ADVANCED_SENTENCE_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     String command = null;
     try {
       command = "(with-inference-mt-relevance " + mt.stringApiValue() + " (simplify-cycl-sentence (fold-equals "
@@ -763,7 +763,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    * @return The CycFormulaSentence resulting from the tree substitution.
    * @throws CycApiException
    */
-  @Override
+    @Override
   public FormulaSentence treeSubstitute(CycAccess access,
           Map<CycObject, Object> substitutions) throws CycApiException {
     CycList terms = this.toDeepCycList();

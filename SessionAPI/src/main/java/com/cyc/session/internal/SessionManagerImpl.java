@@ -21,21 +21,28 @@ package com.cyc.session.internal;
  * #L%
  */
 
-import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSession.SessionStatus;
+import com.cyc.session.CycSession.SessionListener;
+import com.cyc.session.CycSession.ConnectionStatus;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
+import com.cyc.session.SessionApiException;
 import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionInitializationException;
 import com.cyc.session.SessionServiceException;
 import com.cyc.session.SessionManager;
 import com.cyc.session.connection.SessionFactory;
+import com.cyc.session.selection.CycServerSelector;
+import com.cyc.session.selection.SessionSelector;
+import com.cyc.session.exception.SessionApiRuntimeException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,239 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SessionManagerImpl<T extends CycSession> implements SessionManager<T> {
   
-  // Fields
-  
-  // TODO: add currentSessions map!
-  static final private Logger LOGGER = LoggerFactory.getLogger(SessionManagerImpl.class);
-  static final private ThreadLocal<CycSession> currentSession = new ThreadLocal<CycSession>() {
-    @Override
-    protected CycSession initialValue() {
-      return null;
-    }
-  };
-  
-  final private ConfigurationLoaderManager loaderMgr;
-  final private SessionFactory<T> sessionFactory;
-  final private ConfigurationCache configCache;
-  final private CycSessionCache<T> sessionCache;
-  final private EnvironmentConfigurationLoader environmentLoader;
-  
-  
-  // Constructors
-  
-  public SessionManagerImpl() throws SessionServiceException, SessionConfigurationException {
-    this.loaderMgr = new ConfigurationLoaderManager();
-    this.sessionFactory = loadSessionFactory();
-    this.configCache = new ConfigurationCache();
-    this.sessionCache = new CycSessionCache();
-    this.environmentLoader = new EnvironmentConfigurationLoader();
-    LOGGER.debug("{} instantiated.", SessionManagerImpl.class.getSimpleName());
-  }
-  
-  
-  // Public
-  
-  @Override
-  public EnvironmentConfiguration getEnvironmentConfiguration() throws SessionConfigurationException {
-    return environmentLoader.getConfiguration();
-  }
-  
-  @Override
-  public CycSessionConfiguration getConfiguration() throws SessionConfigurationException {
-    final EnvironmentConfiguration environment = getEnvironmentConfiguration();
-    final CycSessionConfiguration cachedConfig = configCache.get(environment);
-    if (cachedConfig != null) {
-      LOGGER.info("Retrieving config from cache: {}", cachedConfig);
-      return cachedConfig;
-    }
-    LOGGER.info("#getConfiguration() Loading new configuration");
-    CycSessionConfiguration config = loaderMgr.getConfiguration(environment);
-    if (!(config instanceof EnvironmentConfiguration)) {
-      configCache.put(environment, config);
-    }
-    return config;
-  }
-  
-  @Override
-  public T getSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    final CycSessionConfiguration config = getConfiguration();
-    final ConfigurationValidator configUtils = new ConfigurationValidator(config);
-    if (!configUtils.isSufficient()) {
-      throw new SessionConfigurationException("Configuration " + config + " is not sufficient to create a valid session");
-    }
-    
-    final T cachedSession = retrieveCachedSession(config);
-    if (cachedSession != null) {
-      return cachedSession;
-    }
-    
-    return sessionCache.put(createSession(config), 
-            getEnvironmentConfiguration());
-  }
-  
-  @Override
-  public T getCurrentSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
-    reapDeadSessions();
-    if (!this.hasCurrentSession()) {
-      LOGGER.debug("#getCurrentSession: There is no current session. Retrieving...");
-      initCurrentSession();
-    }
-    return (T) currentSession.get();
-  }
-  
-  
-  // Protected
-  
-  protected boolean hasCurrentSession() {
-    return currentSession.get() instanceof CycSession;
-  }
-  
-  /**
-   * @param server
-   * @return is the server managed by this session manager?
-   * @deprecated May be removed or changed before final 1.0.0 release
-   */
-  @Deprecated
-  protected boolean hasSession(CycServer server) {
-    return this.sessionCache.hasSession(server);
-  }
-  
-  /**
-   * @param session
-   * @throws SessionConfigurationException
-   * @deprecated May be removed or changed before final 1.0.0 release
-   */
-  @Deprecated
-  protected void putSession(T session) throws SessionConfigurationException {
-    this.sessionCache.put(session, this.getEnvironmentConfiguration());
-  }
-  
-  /**
-   * @param server
-   * @return the session associated with this server.
-   * @deprecated May be removed or changed before final 1.0.0 release
-   */
-  @Deprecated
-  protected T getSession(CycServer server) {
-    if (!hasSession(server)) {
-      return null;
-    }
-    return this.sessionCache.get(server);
-  }
-  
-  protected void clearCurrentSession() {
-    LOGGER.debug("Clearing current session");
-    currentSession.set(null);
-  }
-  
-  /**
-   * Sets the current CycSession. It will not allow null values. If you need to
-   * clear the current CycSession, call {@link #clearCurrentSession}.
-   * 
-   * @param session
-   * @return the session
-   * @throws SessionConfigurationException 
-   */
-  protected T setCurrentSession(T session) throws SessionConfigurationException {
-    if (!isValidSession(session)) {
-      throw new SessionConfigurationException("Session " + session + " is not valid. Cannot set it to the current session.");
-    }
-    currentSession.set(session);
-    if (!hasCurrentSession()) {
-      throw new SessionConfigurationException("Session " + session + " seems valid, but could not set it to the current session.");
-    }
-    LOGGER.debug("Current session set: {}", session);
-    return session;
-  }
-  
-  protected void initCurrentSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
-    LOGGER.debug("Initializing current session");
-    setCurrentSession(getSession());
-  }
-  
-  protected SessionFactory<T> getSessionFactory() {
-    return this.sessionFactory;
-  }
-  
-  protected boolean isValidSession(CycSession session) {
-    // TODO: this could be more fleshed out
-    return session != null;
-  }
-  
-  protected T retrieveCachedSession(CycSessionConfiguration config) {
-    if (config == null) {
-      return null; 
-    }
-    final T cachedSession = sessionCache.get(config.getCycServer());
-    if (cachedSession != null) {
-      if (!isSessionDead(cachedSession)) {
-        LOGGER.info("Retrieved session from cache: {}", cachedSession);
-        return cachedSession;
-      }
-      reapDeadSessions();
-    }
-    return null;
-  }
-  
-  protected T createSession(CycSessionConfiguration config) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    final SessionFactory<T> factory = getSessionFactory();
-    final T session = factory.createSession(config);
-    if (!isValidSession(session)) {
-      throw new SessionConfigurationException("Session " + session + " is not valid; could not retrieve a valid session from " + factory.getClass());
-    }
-    getSessionFactory().initializeSession(session);
-    if (SessionStatus.UNINITIALIZED.equals(session.getStatus())) {
-      throw new SessionInitializationException("Session " + session + " could not be initialized by " + factory);
-    }
-    LOGGER.info("Created new session: {}", session);
-    return sessionCache.put(session, getEnvironmentConfiguration());
-  }
-  
-  synchronized protected void reapDeadSessions() {
-    // Should we consider a way to allow closed sessions to remain in the cache for diagnostics / debugging / least surprise?
-    if (hasCurrentSession()) {
-      T currSession = (T) currentSession.get();
-      if (isSessionDead(currSession)) {
-        final CycSession current = currentSession.get();
-        LOGGER.warn("Reaping current session with status {}: {}", current.getStatus(), current);
-        this.clearCurrentSession();
-        sessionCache.remove(currSession);
-      }
-    }
-    final Collection<T> cachedSessions = sessionCache.getAll();
-    for (T cachedSession : cachedSessions) {
-      if ((cachedSession != null) && isSessionDead(cachedSession)) {
-        LOGGER.warn("Reaping session with status {}: {}", cachedSession.getStatus(), cachedSession);
-        sessionCache.remove(cachedSession);
-      }
-    }
-  }
-  
-  protected boolean isSessionDead(CycSession session) {
-    return (session == null) 
-            || !SessionStatus.CONNECTED.equals(session.getStatus());
-  }
-   
-  
-  // Private
-  
-  /**
-   * Returns an implementation of {@link SessionFactory}. It will return the first
-   * implementation it finds which has been registered per {@link java.util.ServiceLoader}.
-   * 
-   * @return an object which implements SessionFactory.
-   * @throws com.cyc.session.SessionServiceException
-   */
-  final protected SessionFactory<T> loadSessionFactory() throws SessionServiceException {
-    final List<SessionFactory> factories = loadAllSessionFactories();
-    if (factories.isEmpty()) {
-      throw new SessionServiceException(SessionFactory.class, "Could not find a service implementation!");
-    }
-    for (SessionFactory factory : factories) {
-      LOGGER.info("Found {}: {}", SessionFactory.class.getSimpleName(), factory.getClass().getName());
-    }
-    return factories.get(0);
-  }
+  // Static
   
   /**
    * Returns a list of all implementations of SessionFactory which can be located
@@ -297,12 +72,291 @@ public class SessionManagerImpl<T extends CycSession> implements SessionManager<
     }
     return factories;
   }
-
+  
+  static final private Logger LOGGER = LoggerFactory.getLogger(SessionManagerImpl.class);
+  
+  
+  // Fields
+  
+  final private ConfigurationLoaderManager loaderMgr;
+  final private SessionFactory<T> sessionFactory;
+  final private ConfigurationCache configCache;
+  final private CycSessionCache<T> sessionCache;
+  final private CurrentObjectCache<T> currentObjectCache;
+  final private EnvironmentConfigurationLoader environmentLoader;
+  private boolean closed = false;
+  
+  
+  // Constructors
+  
+  public SessionManagerImpl() throws SessionServiceException, SessionConfigurationException {
+    this.loaderMgr = new ConfigurationLoaderManager();
+    this.sessionFactory = loadSessionFactory();
+    this.configCache = new ConfigurationCache();
+    this.sessionCache = new CycSessionCache();
+    this.currentObjectCache = new CurrentObjectCache();
+    this.environmentLoader = new EnvironmentConfigurationLoader();
+    LOGGER.info("SessionManager instance created: {}", this);
+  }
+  
+  
+  // Public
+  
+  @Override
+  public EnvironmentConfiguration getEnvironmentConfiguration() throws SessionConfigurationException {
+    errorIfClosed("Cannot retrieve EnvironmentConfiguration.");
+    return environmentLoader.getConfiguration();
+  }
+  
+  @Override
+  public CycSessionConfiguration getConfiguration() throws SessionConfigurationException {
+    errorIfClosed("Cannot retrieve configuration.");
+    final EnvironmentConfiguration environment = getEnvironmentConfiguration();
+    final CycSessionConfiguration cachedConfig = configCache.get(environment);
+    if (cachedConfig != null) {
+      LOGGER.info("Retrieving config from cache: {}", cachedConfig);
+      return cachedConfig;
+    }
+    LOGGER.info("#getConfiguration() Loading new configuration");
+    CycSessionConfiguration config = loaderMgr.getConfiguration(environment);
+    if (!(config instanceof EnvironmentConfiguration)) {
+      configCache.put(environment, config);
+    }
+    return config;
+  }
+  
+  @Override
+  public T getCurrentSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
+    errorIfClosed("Cannot retrieve current session.");
+    reapDeadSessions();
+    if (!this.hasCurrentSession()) {
+      LOGGER.debug("#getCurrentSession: There is no current session. Retrieving...");
+      initCurrentSession();
+    }
+    return currentObjectCache.getCurrentSession();
+  }
+  
+  public Set<T> getSessions(SessionSelector criteria) throws SessionApiException {
+    return sessionCache.getAll(criteria);
+  }
+  
+  /**
+   * SessionManagerImpl should usually be ranked lowest, to make it easy to override.
+   * 
+   * @param o
+   * @return 
+   */
   @Override
   public int compareTo(SessionManager<T> o) {
     if (o == null) {
-      return 1;
+      return -1;
     }
-    return -1;
+    return 1;
   }
+  
+  @Override
+  public boolean isClosed() {
+    return this.closed;
+  }
+  
+  /**
+   * Closes the SessionManagerImpl instance, releasing any underlying resources used by it, by all
+   * of its caches and factories, and by all CycSessions which it has created.
+   * 
+   * @throws IOException 
+   */
+  @Override
+  public void close() throws IOException {
+    try {
+      LOGGER.debug("Closing SessionManager instance {}", this);
+      closed = true;
+      // TODO: is there more cleanup which would be necessary? - nwinant, 2015-10-20
+      clearCurrentSession();
+      final Collection<T> sessions = this.sessionCache.getAll();
+      for (T session : sessions) {
+        try {
+          this.removeSession(session);
+        } catch (SessionApiException ex) {
+          LOGGER.error("Error releasing session " + session, ex);
+        }
+      }
+    } finally {
+      this.getSessionFactory().close();
+      LOGGER.warn("{} closed: {}", SessionManager.class.getSimpleName(), this);
+    }
+  }
+  
+  
+  // Protected
+  
+  protected T createSession(CycSessionConfiguration config) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    errorIfClosed("New sessions cannot be created.");
+    final long startMillis = System.currentTimeMillis();
+    final SessionFactory<T> factory = getSessionFactory();
+    final T session = factory.createSession(config);
+    if (!isValidSession(session)) {
+      throw new SessionConfigurationException("Session " + session + " is not valid; could not retrieve a valid session from " + factory.getClass());
+    }
+    getSessionFactory().initializeSession(session);
+    if (ConnectionStatus.UNINITIALIZED.equals(session.getConnectionStatus())) {
+      throw new SessionInitializationException("Session " + session + " could not be initialized by " + factory);
+    }
+    session.addListener(new SessionListener() {
+      @Override
+      public void onClose(Thread thread) {
+        try {
+          onSessionRelease(session, thread);
+        } catch (SessionApiException ex) {
+          throw new SessionApiRuntimeException(ex);
+        }
+      }
+    });
+    sessionCache.add(session, getEnvironmentConfiguration());
+    LOGGER.info("Created new session in {}ms; {} sessions total. Session: {}", (System.currentTimeMillis() - startMillis), sessionCache.size(), session);
+    return session;
+  }
+  
+  protected T createSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
+    // This method formerly implemented SessionManager#getSession before that method was removed (and this method was renamed) - nwinant, 2015-10-16
+    final CycSessionConfiguration config = getConfiguration();
+    final ConfigurationValidator configUtils = new ConfigurationValidator(config);
+    if (!configUtils.isSufficient()) {
+      throw new SessionConfigurationException("Configuration " + config + " is not sufficient to create a valid session");
+    }
+    return createSession(config);
+  }
+  
+  /**
+   * Sets the current CycSession. It will not allow null values. If you need to
+   * clear the current CycSession, call {@link #clearCurrentSession}.
+   * 
+   * @param session
+   * @return the session
+   * @throws SessionConfigurationException 
+   */
+  protected T setCurrentSession(T session) throws SessionConfigurationException {
+    if (!isValidSession(session)) {
+      throw new SessionConfigurationException("Session " + session + " is not valid. Cannot set it to the current session.");
+    }
+    currentObjectCache.setCurrentSession(session);
+    LOGGER.debug("Current session set: {}", session);
+    return session;
+  }
+  
+  protected boolean hasCurrentSession() {
+    return currentObjectCache.hasCurrentSession();
+  }
+  
+  protected SessionFactory<T> getSessionFactory() {
+    return this.sessionFactory;
+  }
+  
+  
+  // Private
+  
+  private boolean isValidSession(CycSession session) {
+    // TODO: this could be just a biiiiiiiit more fleshed out...
+    return (session != null) && !session.isClosed();
+  }
+  
+  private void initCurrentSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
+    LOGGER.debug("Initializing current session");
+    setCurrentSession(createSession());
+  }
+  
+  private void clearCurrentSession() {
+    LOGGER.debug("Clearing current session");
+    currentObjectCache.clearCurrentSession();
+  }
+  
+  private void releaseCycServerIfAppropriate(T session) throws SessionApiException {
+    final CycServerAddress server = session.getServerInfo().getCycServer();
+    if (getSessions(new CycServerSelector(server)).isEmpty()) {
+      LOGGER.info("Releasing all server resources for {}", server);
+      this.getSessionFactory().releaseResourcesForServer(server);
+    }
+  }
+    
+  synchronized private void removeSession(T session) throws SessionApiException {
+    if (session == null) {
+      return;
+    }
+    if (hasCurrentSession() && (currentObjectCache.getCurrentSession().equals(session))) {
+      LOGGER.info("Reaping current session with status {}: {}", session.getConnectionStatus(), session);
+      // TODO: This behavior should be correct, but let's evaluate it more carefully. - nwinant, 2015-10-16
+      this.clearCurrentSession();
+    } else {
+      LOGGER.info("Reaping session with status {}: {}", session.getConnectionStatus(), session);
+    }
+    if (!session.isClosed()) {
+      session.close();
+    }
+    sessionCache.remove(session);
+    LOGGER.info("{} sessions remaining", sessionCache.size());
+    releaseCycServerIfAppropriate(session);
+  }
+  
+  private void onSessionRelease(T session, Thread thread) throws SessionApiException {
+    LOGGER.debug("Releasing session {} from thread {}", session, thread);
+    removeSession(session);
+  }
+  
+  private boolean isSessionDead(CycSession session) {
+    return (session == null) 
+            || session.isClosed()
+            || !ConnectionStatus.CONNECTED.equals(session.getConnectionStatus());
+  }
+  
+  synchronized private void reapDeadSessions() {
+    try {
+      // TODO: Should we consider allowing closed sessions to remain in the cache for diagnostics / debugging / least surprise?
+      final long startMillis = System.currentTimeMillis();
+      int numSessionsReaped = 0;
+      if (hasCurrentSession()) {
+        T currSession = currentObjectCache.getCurrentSession();
+        if (isSessionDead(currSession)) {
+          removeSession(currSession);
+          numSessionsReaped++;
+        }
+      }
+      final Collection<T> cachedSessions = sessionCache.getAll();
+      for (T cachedSession : cachedSessions) {
+        if ((cachedSession != null) && isSessionDead(cachedSession)) {
+          removeSession(cachedSession);
+          numSessionsReaped++;
+        }
+      }
+      final long duration = System.currentTimeMillis() - startMillis;
+      if ((numSessionsReaped > 0) || (duration > 1)) {
+        LOGGER.info("Reaped {} sessions in {}ms; {} sessions remaining", numSessionsReaped, (System.currentTimeMillis() - startMillis), sessionCache.size());
+      }
+    } catch (SessionApiException ex) {
+      throw new SessionApiRuntimeException(ex);
+    }
+  }
+  
+  /**
+   * Returns an implementation of {@link SessionFactory}. It will return the first
+   * implementation it finds which has been registered per {@link java.util.ServiceLoader}.
+   * 
+   * @return an object which implements SessionFactory.
+   * @throws com.cyc.session.SessionServiceException
+   */
+  private SessionFactory<T> loadSessionFactory() throws SessionServiceException {
+    final List<SessionFactory> factories = loadAllSessionFactories();
+    if (factories.isEmpty()) {
+      throw new SessionServiceException(SessionFactory.class, "Could not find a service implementation!");
+    }
+    for (SessionFactory factory : factories) {
+      LOGGER.info("Found {}: {}", SessionFactory.class.getSimpleName(), factory.getClass().getName());
+    }
+    return factories.get(0);
+  }
+  
+  private void errorIfClosed(String msg) {
+    if (isClosed()) {
+      throw new SessionApiRuntimeException(getClass().getSimpleName() + " has been closed. " + msg + " " + this);
+    }
+  }
+  
 }

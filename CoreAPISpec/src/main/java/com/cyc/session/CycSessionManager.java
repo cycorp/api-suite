@@ -21,6 +21,7 @@ package com.cyc.session;
  * #L%
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * The CycSessionManager provides a singleton implementation of a SessionManager.
+ * The CycSessionManager provides singleton access to a SessionManager instance.
  * Additionally, it provides several convenience methods to access it. 
  * 
- * The CycSessionManager searches for SessionManager services during class
+ * <p>The CycSessionManager searches for SessionManager services during class
  * initialization. If it cannot find any, it will throw a 
  * {@link CycSessionManagerInitializationError}.
  * 
@@ -64,12 +65,12 @@ public class CycSessionManager {
   // Static Fields
   
   private static final Logger LOGGER;
-  private static final SessionManager MANAGER;
+  private static SessionManager MANAGER;
   
   static {
     try {
       LOGGER = LoggerFactory.getLogger(CycSessionManager.class);
-      MANAGER = loadManager();
+      loadSessionManager();
     } catch (SessionApiException ex) {
       throw new CycSessionManagerInitializationError(CycSessionManager.class.getName() + " could not be initialized.", ex);
     } catch (ServiceConfigurationError ex) {
@@ -83,24 +84,42 @@ public class CycSessionManager {
   private CycSessionManager() {}
   
   
-  // Static
+  // Public static methods
   
   /**
-   * Returns a singleton implementation of {@link SessionManager}.
+   * Returns the current instance of {@link SessionManager}.
    * 
-   * @return A singleton SessionManager instance
+   * @return The current SessionManager instance
    */
-  public static SessionManager get() {
+  public static SessionManager getInstance() {
     return MANAGER;
   }
   
-  
-  // Public
+  /**
+   * Loads a new SessionManager. The previous SessionManager will be closed if it has not been closed already.
+   * 
+   * @throws SessionServiceException
+   * @throws SessionConfigurationException 
+   */
+  static public synchronized void reloadInstance() throws SessionServiceException, SessionConfigurationException {
+    final SessionManager currMgr = getInstance();
+    if ((currMgr != null) && !currMgr.isClosed()) {
+      try {
+        currMgr.close();
+      } catch (IOException ex) {
+        throw new SessionServiceException(CycSessionManager.class, "Error closing current SessionManager", ex);
+      }
+    }
+    loadSessionManager();
+  }
   
   /**
    * Returns the CycSession currently assigned to this thread. If no CycSession
    * object currently exists, one will be acquired via {@link #getSession()} and assigned to the
    * local thread.
+   * 
+   * <p>Note that this is a convenience method which simply trampolines to
+   * {@link CycSessionManager#getInstance()#getCurrentSession() }.
    * 
    * @return CycSession
    * @throws SessionConfigurationException if the application is not sufficiently configured for the CycConfigurationManager to connect to a Cyc server.
@@ -108,23 +127,10 @@ public class CycSessionManager {
    * @throws SessionInitializationException if the application encounters problems initializing the CycSession.
    */
   static public CycSession getCurrentSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    return CycSessionManager.get().getCurrentSession();
+    return CycSessionManager.getInstance().getCurrentSession();
   }
   
-  /**
-   * Returns a CycSession object, creating one if necessary. If no CycSession object currently 
-   * exists, one will be created from a configuration drawn from {@link #getConfiguration()}.
-   * 
-   * @return a new CycSession object
-   * @throws SessionConfigurationException if the application is not sufficiently configured for the CycSession to identify a Cyc server.
-   * @throws SessionCommunicationException if the application encounters problems communicating with a Cyc server.
-   * @throws SessionInitializationException if the application encounters problems initializing the CycSession.
-   */
-  static public CycSession getSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
-    return CycSessionManager.get().getSession();
-  }
-  
-  /**
+  /* *
    * Returns a CycSessionConfiguration, suitable for creating a new CycSession. The SessionManager 
    * will first retrieve an {@link EnvironmentConfiguration} based on the System properties, and 
    * then expanding any configuration directives it might contain; the result is returned by this 
@@ -134,23 +140,25 @@ public class CycSessionManager {
    * 
    * @return a new CycSessionConfiguration
    * @throws SessionConfigurationException 
-   */
+   * /
   static public CycSessionConfiguration getConfiguration() throws SessionConfigurationException {
     return CycSessionManager.get().getConfiguration();
   }
+  */
   
-  /**
+  /* *
    * Returns an EnvironmentConfiguration, drawn from the System properties.
    * @return
    * @throws SessionConfigurationException 
-   */
+   * /
   static public CycSessionConfiguration getEnvironmentConfiguration() throws SessionConfigurationException {
     return CycSessionManager.get().getEnvironmentConfiguration();
   }
+  */
   
   
-  // Protected
-          
+  // Protected static methods
+  
   /**
    * Returns a list of all available SessionManager implementations, with the default
    * {@link com.cyc.session.internal.SessionManagerImpl} implementation as the last element.
@@ -167,30 +175,32 @@ public class CycSessionManager {
     final ServiceLoader<SessionManager> loader =
             ServiceLoader.load(SessionManager.class);
     for (SessionManager sessionMgr : loader) {
-      sessionMgrs.add(sessionMgr);
+      if (!sessionMgr.isClosed()) {
+        sessionMgrs.add(sessionMgr);
+      }
     }
     Collections.sort(sessionMgrs);
     return sessionMgrs;
   }
   
   
-  // Private
+  // Private static methods
   
   private static SessionManager selectSessionManager(List<SessionManager> sessionMgrs) {
     return sessionMgrs.get(0);
   }
   
-  private static synchronized SessionManager loadManager() throws SessionServiceException, SessionConfigurationException {
+  private static synchronized void loadSessionManager() throws SessionServiceException, SessionConfigurationException {
     final List<SessionManager> sessionMgrs = loadAllSessionManagers();
     if (sessionMgrs.isEmpty()) {
       throw new SessionServiceException(SessionManager.class, "Could not find any " + SessionManager.class.getSimpleName() + " implementations to load. This should never happen.");
     }
     for (SessionManager sessionMgr : sessionMgrs) {
-      LOGGER.info("Found {}: {}", SessionManager.class.getSimpleName(), sessionMgr.getClass().getName());
+      LOGGER.info("Found {}: {}", SessionManager.class.getSimpleName(), sessionMgr);
     }
     final SessionManager mgr = selectSessionManager(sessionMgrs);
-    LOGGER.info("Selected {}: {}", SessionManager.class.getSimpleName(), mgr.getClass().getName());
-    return mgr;
+    MANAGER = mgr;
+    LOGGER.warn("Loaded {}: {}", SessionManager.class.getSimpleName(), MANAGER);
   }
-  
+
 }

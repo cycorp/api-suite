@@ -1,5 +1,7 @@
 package com.cyc.session;
 
+import java.io.Closeable;
+
 /*
  * #%L
  * File: SessionManager.java
@@ -29,30 +31,55 @@ package com.cyc.session;
  * @author nwinant
  * @param <T>
  */
-public interface SessionManager<T extends CycSession> extends Comparable<SessionManager<T>> {
+public interface SessionManager<T extends CycSession> extends Closeable, Comparable<SessionManager<T>> {
   
   /**
-   * Returns the CycSession currently assigned to this thread. If no CycSession
-   * object currently exists, one will be acquired via {@link #getSession()} and assigned to the
-   * local thread.
+   * Returns the CycSession currently assigned to this thread. If no CycSession object currently 
+   * exists, one will be created from a configuration drawn from {@link #getConfiguration()} and
+   * assigned to the local thread.
    * 
-   * @return CycSession
+   * @return a (possibly new) CycSession object for the current thread.
    * @throws SessionConfigurationException if the application is not sufficiently configured for the CycConfigurationManager to connect to a Cyc server.
    * @throws SessionCommunicationException if the application encounters problems communicating with a Cyc server.
    * @throws SessionInitializationException if the application encounters problems initializing the CycSession.
    */
   T getCurrentSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException;
+  
+  /* *
+   * Returns the CycSession currently assigned to this thread. If no CycSession
+   * object currently exists, one will be acquired via {@link #getSession(SessionCriteria)} and 
+   * assigned to the local thread.
+   * 
+   * @param criteria The criteria for selecting the session.
+   * @return a (possibly) new CycSession object for the current thread.
+   * @throws SessionConfigurationException if the application is not sufficiently configured for the CycConfigurationManager to connect to a Cyc server.
+   * @throws SessionCommunicationException if the application encounters problems communicating with a Cyc server.
+   * @throws SessionInitializationException if the application encounters problems initializing the CycSession.
+   */
+  //T getCurrentSession(SessionCriteria criteria) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException;
 
-  /**
-   * Returns a CycSession object, creating one if necessary. If no CycSession object currently 
+  /* *
+   * Returns a new CycSession object, creating one if necessary. If no CycSession object currently 
    * exists, one will be created from a configuration drawn from {@link #getConfiguration()}.
    *
-   * @return a new CycSession object
+   * @return a new CycSession object.
    * @throws SessionConfigurationException if the application is not sufficiently configured for the CycSession to identify a Cyc server.
    * @throws SessionCommunicationException if the application encounters problems communicating with a Cyc server.
    * @throws SessionInitializationException if the application encounters problems initializing the CycSession.
    */
-  T getSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException;
+  //T createSession() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException;
+  
+  /* *
+   * Returns a CycSession object, creating one if necessary. If no CycSession object currently 
+   * exists, one will be created from a configuration drawn from {@link #getConfiguration()}.
+   *
+   * @param criteria The criteria for selecting the session.
+   * @return a (possibly) new CycSession object.
+   * @throws SessionConfigurationException if the application is not sufficiently configured for the CycSession to identify a Cyc server.
+   * @throws SessionCommunicationException if the application encounters problems communicating with a Cyc server.
+   * @throws SessionInitializationException if the application encounters problems initializing the CycSession.
+   */
+  //T createSession(SessionCriteria criteria) throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException;
   
   /**
    * Returns a CycSessionConfiguration, suitable for creating a new CycSession. The SessionManager 
@@ -75,4 +102,27 @@ public interface SessionManager<T extends CycSession> extends Comparable<Session
    * @throws SessionConfigurationException 
    */
   EnvironmentConfiguration getEnvironmentConfiguration() throws SessionConfigurationException;
+  
+  /* *
+   * Retrieves all sessions matching a SessionCriteria object.
+   * 
+   * @param criteria
+   * @return 
+   */
+  //Collection<T> getSessions(SessionCriteria criteria);
+  
+  /* *
+   * Releases all sessions matching a SessionCriteria object.
+   * @param criteria
+   * @return 
+   */
+  //Collection<T> releaseSessions(SessionCriteria criteria);
+  
+  /**
+   * Returns whether the SessionManager is closed.
+   * 
+   * @return whether SessionManager is closed
+   */
+  public boolean isClosed();
+  
 }

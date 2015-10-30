@@ -25,16 +25,17 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
-
 import com.cyc.kb.KBObject;
+import com.cyc.kb.KBTerm;
 import com.cyc.kb.Variable;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Encodes one answer to a {@link Query}.
- * <p/>Unlike {@link InferenceAnswer}, this class is designed to use
- * KB API classes, so variables are {@link Variable}s, and bindings are
- * returned as {@link KBObject}s where possible.
+ * <p/>
+ * Unlike {@link InferenceAnswer}, this class is designed to use KB API classes, so variables are
+ * {@link Variable}s, and bindings are returned as {@link KBObject}s where possible.
  *
  * @author baxter
  */
@@ -52,18 +53,30 @@ public interface QueryAnswer {
   /**
    * Get the values to which the all variables are bound.
    *
-   * @return A mapping from variables to the values to which they are bound in
-   * this answer.
+   * @return A mapping from variables to the values to which they are bound in this answer.
    */
   Map<Variable, Object> getBindings();
 
   /**
-   * Get the identifier for this answer. This can be used to unambiguously
-   * identify this answer to the Cyc that produced it, so long as the inference
-   * has not been destroyed.
+   * Get the identifier for this answer. This can be used to unambiguously identify this answer to
+   * the Cyc that produced it, so long as the inference has not been destroyed.
    *
    * @return the identifier.
    */
   InferenceAnswerIdentifier getId();
+
+  /**
+   * Get the attributed sources used in inferring this answer. Generally, results will include SKSI
+   * sources, or terms used in meta-assertions using sourceOfTerm-NonTrivial or its specializations.
+   * Note that this method works by introspecting on the inference object, and will not work if the
+   * inference has already been destroyed when this is called. The canonical way of ensuring that
+   * the inference is not destroyed immediately is to call {@link com.cyc.query.Query#retainInference()
+   * }, though there are other ways of ensuring the inference is not immediately destroyed, such as
+   * {@link com.cyc.query.Query#setBrowsable(boolean)} and {@link com.cyc.query.Query#setContinuable(boolean)
+   * }.
+   *
+   * @return A set of KBTerms that are the attributed sources for this answer.
+   */
+  Set<KBTerm> getSources();
 
 }

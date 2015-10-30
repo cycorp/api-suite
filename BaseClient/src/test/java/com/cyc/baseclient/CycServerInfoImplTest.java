@@ -56,7 +56,7 @@ public class CycServerInfoImplTest {
   @Before
   public void setUp() throws SessionApiException {
     serverInfo = CycClientManager.getCurrentClient().getServerInfo();
-    access = CycClientManager.getAccess();
+    access = CycClientManager.getCurrentAccess();
   }
   
   

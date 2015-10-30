@@ -156,7 +156,7 @@ public class KBInferenceResultSetTest {
     String columnLabel = "?X";
     QueryResultSet resultSet = q.getResultSet();
     resultSet.next();
-    FirstOrderCollection result = (FirstOrderCollection)resultSet.getKBObject(columnLabel, KBCollection.class);
+    KBCollection result = (KBCollection)resultSet.getKBObject(columnLabel, KBCollection.class);
     assertTrue(result instanceof KBObject);
   }
 

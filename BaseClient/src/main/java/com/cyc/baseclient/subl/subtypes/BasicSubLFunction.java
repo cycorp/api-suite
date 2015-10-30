@@ -78,7 +78,7 @@ import java.io.File;
    * 
    * @param name
    */
-  protected BasicSubLFunction(String name) {
+  public BasicSubLFunction(String name) {
     this.symbol = makeCycSymbol(name);
   }
   

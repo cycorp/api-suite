@@ -47,6 +47,6 @@ import com.cyc.baseclient.CycClient;
  */
 public interface CycClientRequirement {
   
-  public boolean isCompatible(CycClient client) throws CycApiException, CycConnectionException;
-    
+  public CompatibilityResults checkCompatibility(CycClient client) throws CycApiException, CycConnectionException;
+  
 }

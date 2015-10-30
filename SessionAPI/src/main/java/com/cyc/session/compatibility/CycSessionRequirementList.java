@@ -75,35 +75,48 @@ public class CycSessionRequirementList<T extends UnsupportedCycOperationExceptio
   // Basic test methods
   
   @Override
-  public boolean isCompatible(CycSession session) throws SessionCommunicationException, SessionCommandException {
+  public CompatibilityResults checkCompatibility(CycSession session) throws SessionCommunicationException, SessionCommandException {
+    final List<String> errorMessages = new ArrayList<String>();
     boolean compatible = true;
-    for (CycSessionRequirement check : this) {
-      LOGGER.warn("Checking {}", check.getClass());
-      if (!check.isCompatible(session)) {
+    for (CycSessionRequirement requirement : this) {
+      LOGGER.info("Checking {}", requirement.getClass());
+      final CompatibilityResults reqResult = requirement.checkCompatibility(session);
+      if (!reqResult.isCompatible()) {
         compatible = false;
+        errorMessages.addAll(reqResult.getCompatibilityErrorMessages());
+        for (String errMsg : reqResult.getCompatibilityErrorMessages()) {
+          LOGGER.error("{}: {}", requirement.getClass().getSimpleName(), errMsg);
+        }
+        //LOGGER.warn("{}: {}", requirement.getClass().getSimpleName(), reqResult.checkCompatibility());
+      } else {
+        LOGGER.info("{}: {}", requirement.getClass().getSimpleName(), reqResult.isCompatible());
       }
     }
-    return compatible;
+    if (compatible) {
+      return new CompatibilityResultsImpl(compatible);
+    } else {
+      return new CompatibilityResultsImpl(compatible, errorMessages);
+    }
   }
   
-  public boolean isCompatible() throws SessionCommunicationException, SessionCommandException, SessionConfigurationException, SessionInitializationException {
-    return isCompatible(getSession());
+  public CompatibilityResults checkCompatibility() throws SessionCommunicationException, SessionCommandException, SessionConfigurationException, SessionInitializationException {
+    return checkCompatibility(getSession());
   }
   
   @Override
-  public void testCompatibility(CycSession session) throws T, SessionCommunicationException, SessionCommandException {
+  public void throwExceptionIfIncompatible(CycSession session) throws T, SessionCommunicationException, SessionCommandException {
     for (CycSessionRequirement<T> check : this) {
-      check.testCompatibility(session);
+      check.throwExceptionIfIncompatible(session);
     }
   }
   
-  public void testCompatibility() throws T, SessionCommunicationException, SessionCommandException, SessionConfigurationException, SessionInitializationException {
-    testCompatibility(getSession());
+  public void throwExceptionIfIncompatible() throws T, SessionCommunicationException, SessionCommandException, SessionConfigurationException, SessionInitializationException {
+    throwExceptionIfIncompatible(getSession());
   }
   
-  public void testCompatibilityWithRuntimeException(CycSession session) throws T {
+  public void throwRuntimeExceptionIfIncompatible(CycSession session) throws T {
     try {
-      testCompatibility(session);
+      throwExceptionIfIncompatible(session);
     } catch (UnsupportedCycOperationException ex) {
       throw (T) ex;
     } catch (SessionApiException ex) {
@@ -111,9 +124,9 @@ public class CycSessionRequirementList<T extends UnsupportedCycOperationExceptio
     }
   }
   
-  public void testCompatibilityWithRuntimeException() throws T {
+  public void throwRuntimeExceptionIfIncompatible() throws T {
     try {
-      testCompatibility();
+      throwExceptionIfIncompatible();
     } catch (UnsupportedCycOperationException ex) {
       throw (T) ex;
     } catch (SessionApiException ex) {

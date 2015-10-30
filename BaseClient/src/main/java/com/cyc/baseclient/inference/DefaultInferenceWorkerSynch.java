@@ -57,7 +57,7 @@ import com.cyc.baseclient.parser.CycLParserUtil;
  <p>
  * @author tbrussea, zelal
  * @date July 27, 2005, 11:55 AM
- * @version $Id: DefaultInferenceWorkerSynch.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: DefaultInferenceWorkerSynch.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 public class DefaultInferenceWorkerSynch extends DefaultInferenceWorker implements InferenceWorkerSynch {
   
@@ -321,7 +321,7 @@ public class DefaultInferenceWorkerSynch extends DefaultInferenceWorker implemen
     System.out.println("Starting");
     CycAccess access = null;
     try {
-      access = CycAccessManager.getAccess();
+      access = CycAccessManager.getCurrentAccess();
       String query = "(#$isa ?X #$Dog)";
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query, 
         CommonConstants.INFERENCE_PSC, null, access, 500000);

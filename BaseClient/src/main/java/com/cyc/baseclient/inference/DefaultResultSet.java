@@ -89,7 +89,7 @@ import com.cyc.baseclient.cycobject.CycVariableImpl;
  * <p>
  * @author tbrussea
  * @date Mar 22, 2010, 11:55 AM
- * @version $Id: DefaultResultSet.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: DefaultResultSet.java 161606 2015-10-16 21:52:46Z nwinant $
  */
 @SuppressWarnings("deprecation")
 public final class DefaultResultSet extends AbstractResultSet {
@@ -708,7 +708,7 @@ public final class DefaultResultSet extends AbstractResultSet {
     System.out.println("Starting");
     CycAccess access = null;
     try {
-      access = CycAccessManager.getAccess();
+      access = CycAccessManager.getCurrentAccess();
       String query = "(#$and (#$isa ?X #$Dog) (#$isa ?Y #$Cat))";
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
         CommonConstants.INFERENCE_PSC, null, access, 50000);

@@ -29,6 +29,7 @@ import com.cyc.session.SessionCommunicationException;
 import com.cyc.session.SessionConfigurationException;
 import com.cyc.session.SessionInitializationException;
 import com.cyc.session.SessionManager;
+import java.io.IOException;
 import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,20 +42,13 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 abstract public class CycAccessManager<T extends CycAccessSession> implements SessionManager<T> {
-  // @todo: resolve interactive stuff
   
   static final private Logger LOGGER = LoggerFactory.getLogger(CycAccessManager.class);
   static private CycAccessManager manager;
-  final private SessionManager<T> sessionMgr;
   final private LegacyCycClientManager legacyMgr;
-
-  protected CycAccessManager(SessionManager<T> sessionMgr) {
-    this.sessionMgr = sessionMgr;
-    this.legacyMgr = new LegacyCycClientManager();
-  }
   
   protected CycAccessManager() {
-    this(CycSessionManager.get());
+    this.legacyMgr = new LegacyCycClientManager();
   }
   
   /**
@@ -95,11 +89,12 @@ abstract public class CycAccessManager<T extends CycAccessSession> implements Se
   
   
   // Public
-  
+  /*
   static public CycAccess getAccess() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     //LOGGER.debug("Calling #getAccess()");
     return CycAccessManager.getAccessManager().getSession().getAccess();
   }
+  */
   
   static public CycAccess getCurrentAccess() throws SessionConfigurationException, SessionCommunicationException, SessionInitializationException {
     //LOGGER.debug("Calling #getCurrentAccess()");
@@ -110,10 +105,20 @@ abstract public class CycAccessManager<T extends CycAccessSession> implements Se
     return ((CycAccessSession) session).getAccess();
   }
   
+  @Override
+  public void close() throws IOException {
+    this.getSessionMgr().close();
+  }
+  
+  @Override
+  public boolean isClosed() {
+    return this.getSessionMgr().isClosed();
+  }
+  
   
   // Protected
   
   protected SessionManager<T> getSessionMgr() {
-    return this.sessionMgr;
+    return CycSessionManager.getInstance();
   }
 }

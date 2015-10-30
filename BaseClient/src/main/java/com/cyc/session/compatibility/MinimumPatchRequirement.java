@@ -45,7 +45,6 @@ import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.CycSession;
 import com.cyc.session.SessionCommandException;
 import com.cyc.session.SessionCommunicationException;
-import com.cyc.session.exception.UnsupportedCycOperationException;
 
 /**
  *
@@ -66,14 +65,23 @@ public class MinimumPatchRequirement extends AbstractCycSessionRequirement imple
   }
   
   @Override
-  public boolean isCompatible(CycClient client) throws CycApiException, CycConnectionException {
+  public CompatibilityResults checkCompatibility(CycClient client) throws CycApiException, CycConnectionException {
     try {
-      
-      if (!serverType.equals(client.getServerInfo().getSystemReleaseType())) {
-        return true;
+      final CycServerReleaseType actualServerType = client.getServerInfo().getSystemReleaseType();
+      if (actualServerType == null) {
+        return new CompatibilityResultsImpl(false, "Server returned null for CycServerReleaseType, which is invalid");
       }
-      return client.getServerInfo().getCycMinorRevisionNumber() >= minimumPatchNumber;
-      
+      if (!serverType.equals(actualServerType)) {
+        return new CompatibilityResultsImpl(true);
+      }
+      final boolean compatible = client.getServerInfo().getCycMinorRevisionNumber() >= minimumPatchNumber;
+      if (compatible) {
+        return new CompatibilityResultsImpl(compatible);
+      } else {
+        return new CompatibilityResultsImpl(compatible, 
+                serverType + " must be at patch level " + minimumPatchNumber + " or higher, but is at " 
+                        + client.getServerInfo().getCycMinorRevisionNumber());
+      }
     } catch (SessionCommunicationException ex) {
       throw new CycConnectionException(ex);
     } catch (SessionCommandException ex) {
@@ -82,23 +90,13 @@ public class MinimumPatchRequirement extends AbstractCycSessionRequirement imple
   }
   
   @Override
-  public boolean isCompatible(CycSession session) throws SessionCommunicationException, SessionCommandException {
+  public CompatibilityResults checkCompatibility(CycSession session) throws SessionCommunicationException, SessionCommandException {
     try {
-      return isCompatible(CycClientManager.getClientManager().fromSession(session));
+      return checkCompatibility(CycClientManager.getClientManager().fromSession(session));
     } catch (CycApiException ex) {
       throw new SessionCommandException(ex);
     } catch (CycConnectionException ex) {
       throw new SessionCommunicationException(ex);
     }
   }
-  
-  @Override
-  public String getErrorMessage(CycSession session) throws UnsupportedCycOperationException, SessionCommunicationException, SessionCommandException {
-    final String msg = super.getErrorMessage(session);
-    if (msg != null) {
-      return msg;
-    }
-    return serverType + " must be at patch level " + minimumPatchNumber + " or higher, but is at " + session.getServerInfo().getCycMinorRevisionNumber();
-  }
-  
 }

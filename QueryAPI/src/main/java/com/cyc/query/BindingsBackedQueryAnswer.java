@@ -25,11 +25,15 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
+import com.cyc.kb.KBTerm;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.KBObjectImpl;
 import com.cyc.kb.exception.CreateException;
+import com.cyc.query.exception.QueryApiException;
+import com.cyc.query.exception.QueryApiRuntimeException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -83,4 +87,11 @@ class BindingsBackedQueryAnswer implements QueryAnswer {
     }
   }
 
+  @Override
+  public Set<KBTerm> getSources() {
+    if (getId() == null) {
+      throw new QueryApiRuntimeException("Unable to get sources for BindingsBackedQueryAnswer without an inference answer id");
+    }
+    return new InferenceAnswerBackedQueryAnswer(getId()).getSources();
+  }
 }
