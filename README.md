@@ -6,10 +6,10 @@ accessing Cyc capabilities, and provides a layered suite of functionality.
 
 We have currently released the [Core API Suite](./cyc-core-suite/). Further functionality will be
 rolled out in a series of releases, including the Knowledge Management, Natural Language, Model
-Generator, Structured Knowledge, and Administration APIs.
+Generator, Structured Knowledge, and Administration APIs:
 
 <center>
-![Diagram of the Cyc API stack](./resources/api-stack.png "Cyc API Stack")
+![Diagram of the Cyc API stack](./api-stack.png "Cyc API Stack")
 </center>
 
 
