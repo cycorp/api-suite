@@ -4,7 +4,7 @@ Cyc Java API Suite
 The Cyc API comprises a suite of Java APIs for developing Cyc-based applications or otherwise
 accessing Cyc capabilities, and provides a layered suite of functionality.
 
-We have currently released the [Core API Suite](./cyc-core-suite/). Further functionality will be
+We have currently released the [Core API Suite](cyc-core-suite/README.md). Further functionality will be
 rolled out in a series of releases, including the Knowledge Management, Natural Language, Model
 Generator, Structured Knowledge, and Administration APIs:
 
