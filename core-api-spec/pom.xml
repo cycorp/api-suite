@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>com.cyc</groupId>
+    <artifactId>cyc-api-parent</artifactId>
+    <version>1.0.0-rc5</version>
+    <relativePath>../api-parent</relativePath>
+  </parent>
+  
+  <groupId>com.cyc</groupId>
+  <artifactId>cyc-core-api-parent</artifactId>
+  <version>1.0.0-rc5</version>
+  <packaging>pom</packaging>
+  
+  <!-- ====  Metadata & contact info  ========================================================== -->
+  
+  <name>Core API Parent</name>
+  <description>
+    The parent project which manages the configuration and build of the projects within 
+    Cyc Core API Suite: the core Java APIs for interacting with the Cyc inference engine and 
+    knowledge base.
+  </description>
+  <url>http://dev.cyc.com/api/core/</url>
+
+  <scm>
+    <connection>scm:git:git@github.com:cycorp/api-suite.git</connection>
+    <developerConnection>scm:git:git@github.com:cycorp/api-suite.git</developerConnection>
+    <url>https://github.com/cycorp/api-suite</url>
+  </scm>
+  
+  <issueManagement>
+    <url>https://github.com/cycorp/api-suite/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  
+  <inceptionYear>2013</inceptionYear>
+  
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  
+  <organization>
+    <name>Cycorp, Inc.</name>
+    <url>http://www.cyc.com</url>
+  </organization>
+  
+  <developers>
+    <developer>
+      <name>Cycorp API Team</name>
+      <email>dev-team@cyc.com</email>
+      <organization>Cycorp, Inc.</organization>
+      <organizationUrl>http://www.cyc.com</organizationUrl>
+    </developer>
+  </developers>
+  
+  <!-- ====  Configuration  ==================================================================== -->
+  
+  <properties>
+    <maven-compiler-plugin.source>1.6</maven-compiler-plugin.source>
+    <maven-compiler-plugin.target>1.6</maven-compiler-plugin.target>
+  </properties>
+  
+  <modules>
+    <module>core-object-api</module>
+    <module>core-object-factories</module>
+    <module>core-api</module>
+  </modules>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/BuildInfo.properties</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-object-api</artifactId>
+        <version>${cyc-core-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-object-factories</artifactId>
+        <version>${cyc-core-api.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+</project>
