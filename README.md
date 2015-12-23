@@ -17,7 +17,7 @@ Further functionality will be rolled out in a series of releases, including the 
 Management, Natural Language, Structured Knowledge, and Administration APIs:
 
 <center>
-![Diagram of the Cyc API stack](./api-suite-parent/src/site/resources/images/api-stack.png
+![Diagram of the Cyc API stack](../master/api-parent/src/site/resources/images/api-stack.png?raw=true
 "Cyc API Stack")
 </center>
 
