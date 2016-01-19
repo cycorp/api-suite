@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: FactImpl.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * is used to create and remove arbitrary assertions from Cyc.
  * 
  * @author Vijay Raj
- * @version $Id: FactImpl.java 163117 2015-12-11 00:27:39Z nwinant $
+ * @version $Id: FactImpl.java 163517 2016-01-12 00:58:43Z nwinant $
  * @since 1.0
  */
 
@@ -641,7 +641,7 @@ public static FactImpl findOrCreate(Sentence formula, Context ctx, Strength s, D
           + core.toString(), ex);
     }
     try {
-      if (findAssertion(sentence, getAccess().getObjectTool().makeELMt(mt)) instanceof CycAssertion) {
+      if (findAssertion(sentence, getAccess().getObjectTool().makeElMt(mt)) instanceof CycAssertion) {
         throw new DeleteException("Unable to delete Fact " + sentence + " in "
             + mt);
       }

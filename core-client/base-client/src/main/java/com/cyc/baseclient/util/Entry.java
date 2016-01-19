@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: Entry.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ package com.cyc.baseclient.util;
  *
  * @author mreimers
  * @date August 11, 2004, 1:00 PM
- * @version $Id: Entry.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: Entry.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public interface Entry {
   

@@ -5,7 +5,7 @@ package com.cyc.base.kbtool;
  * File: ObjectTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,51 +239,51 @@ public interface ObjectTool {
   FormulaSentence makeCyclifiedSentence(String string) throws CycApiException, CycConnectionException, CycConnectionException;
 
   /**
-   * Constructs a new ELMt object by the given CycObject.
+   * Constructs a new ElMt object by the given CycObject.
    *
-   * @param object the given CycObject from which the ELMt is derived
+   * @param object the given CycObject from which the ElMt is derived
    *
-   * @return the new ELMt object by the given CycObject
+   * @return the new ElMt object by the given CycObject
    *
    * @throws CycConnectionException if a communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    * @throws IllegalArgumentException if the cycObject is not the correct type of thing for
-   * making into an ELMt
+   * making into an ElMt
    */
-  ElMt makeELMt(Object object) throws CycConnectionException, CycApiException;
+  ElMt makeElMt(Object object) throws CycConnectionException, CycApiException;
 
   /**
-   * Constructs a new ELMt object by the given CycObject.
+   * Constructs a new ElMt object by the given CycObject.
    *
-   * @param cycObject the given CycObject from which the ELMt is derived
+   * @param cycObject the given CycObject from which the ElMt is derived
    *
-   * @return the new ELMt object by the given CycObject
+   * @return the new ElMt object by the given CycObject
    *
    * @note this is redundant with the Object version, but leaving in for compatability
    *
    * @throws CycConnectionException if a communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    * @throws IllegalArgumentException if the cycObject is not the correct type of thing for
-   * making into an ELMt
+   * making into an ElMt
    */
-  ElMt makeELMt(CycObject cycObject) throws CycConnectionException, CycApiException;
+  ElMt makeElMt(CycObject cycObject) throws CycConnectionException, CycApiException;
 
   /** @note this is redundant with the Object version, but leaving in for compatability */
-  ElMt makeELMt(Fort cycObject);
+  ElMt makeElMt(Fort cycObject);
 
   /**
-   * Constructs a new ELMt object by the given String.
+   * Constructs a new ElMt object by the given String.
    *
-   * @param elmtString the given CycObject from which the ELMt is derived
+   * @param elmtString the given CycObject from which the ElMt is derived
    *
-   * @return the new ELMt object by the given CycObject
+   * @return the new ElMt object by the given CycObject
    *
    * @note this is redundant with the Object version, but leaving in for compatability
    *
    * @throws CycConnectionException if a communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  ElMt makeELMt(String elmtString) throws CycConnectionException, CycApiException;
+  ElMt makeElMt(String elmtString) throws CycConnectionException, CycApiException;
 
   /**
    * Returns a new unique <tt>CycConstant</tt> object using the constant start name prefixed by

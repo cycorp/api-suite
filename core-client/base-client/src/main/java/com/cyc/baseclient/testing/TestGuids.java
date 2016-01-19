@@ -5,7 +5,7 @@ package com.cyc.baseclient.testing;
  * File: TestGuids.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ public class TestGuids {
   public static final String CONSTANT_NAME_GUID_STRING = "bd7183b0-9c29-11b1-9dad-c379636f7270";
   public static final String COUNTRY_GUID_STRING = "bd588879-9c29-11b1-9dad-c379636f7270";
   public static final String CYCL_TERM_GUID_STRING = "c107fffb-9c29-11b1-9dad-c379636f7270";
+  public static final String DOG_GUID_STRING = TestConstants.DOG.getGuid().getGuidString();
   public static final String DOMESTICATED_ANIMAL_GUID_STRING = "c10c22cd-9c29-11b1-9dad-c379636f7270";
   public static final String DONE_BY_GUID_STRING = "c0fd4798-9c29-11b1-9dad-c379636f7270";
   public static final String EXISTING_OBJECT_TYPE_GUID_STRING = "bd65d880-9c29-11b1-9dad-c379636f7270";

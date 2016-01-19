@@ -13,7 +13,7 @@
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-client-parent</artifactId>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0-rc5.1</version>
   <packaging>pom</packaging>
   
   <!-- ====  Metadata & contact info  ========================================================== -->
@@ -63,6 +63,8 @@
   <properties>
     <maven-compiler-plugin.source>1.6</maven-compiler-plugin.source>
     <maven-compiler-plugin.target>1.6</maven-compiler-plugin.target>
+    <cyc-core-api.version>1.0.0-rc5</cyc-core-api.version>
+    <cyc-core-client-impl.version>1.0.0-rc5.1</cyc-core-client-impl.version>
   </properties>
   
   <modules>

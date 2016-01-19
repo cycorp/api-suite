@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycAssertTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -230,7 +230,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
   public void assertWithTranscript(String sentence,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    assertSentence(sentence, makeELMt_inner(mt), null, null, false, true);
+    assertSentence(sentence, makeElMt_inner(mt), null, null, false, true);
   }
 
   /**
@@ -308,7 +308,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           CycObject mt)
           throws CycConnectionException,
           CycApiException {
-    assertSentence(sentence, makeELMt_inner(mt), null, null, true, false);
+    assertSentence(sentence, makeElMt_inner(mt), null, null, true, false);
   }
 
   @Override
@@ -509,7 +509,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
             //getKnownConstantByGuid_inner("c0e2af4e-9c29-11b1-9dad-c379636f7270"),
             CommonConstants.SYNONYMOUS_EXTERNAL_CONCEPT,
             cycTerm, informationSource, externalConcept);
-    assertGaf(gaf, makeELMt_inner(mt));
+    assertGaf(gaf, makeElMt_inner(mt));
   }
   
     /**
@@ -544,7 +544,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
   public void assertIsaCollection(Fort cycFort,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    ElMt elmt = makeELMt_inner(mt);
+    ElMt elmt = makeElMt_inner(mt);
     assertGaf(elmt,
             CommonConstants.ISA,
             cycFort,
@@ -567,7 +567,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           String genlsCollectionName,
           String mtName)
           throws CycConnectionException, CycApiException {
-    assertGaf(makeELMt_inner(getKnownConstantByName_inner(mtName)),
+    assertGaf(makeElMt_inner(getKnownConstantByName_inner(mtName)),
             CommonConstants.GENLS,
             getKnownConstantByName_inner(specCollectionName),
             getKnownConstantByName_inner(genlsCollectionName));
@@ -629,7 +629,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           Fort genlsCollection,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    ElMt elmt = makeELMt_inner(mt);
+    ElMt elmt = makeElMt_inner(mt);
     assertGaf(elmt,
             CommonConstants.GENLS,
             specCollection,
@@ -758,7 +758,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           String collectionName,
           String mtName)
           throws CycConnectionException, CycApiException {
-    assertGaf(makeELMt_inner(getKnownConstantByName_inner(mtName)),
+    assertGaf(makeElMt_inner(getKnownConstantByName_inner(mtName)),
             CommonConstants.ISA,
             getKnownConstantByName_inner(cycFortName),
             getKnownConstantByName_inner(collectionName));
@@ -780,7 +780,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           Fort aCollection,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    assertGaf(makeELMt_inner(mt),
+    assertGaf(makeElMt_inner(mt),
             CommonConstants.ISA,
             cycFort,
             aCollection);
@@ -800,7 +800,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
   @Override
   public void assertQuotedIsa(Fort cycFort, Fort aCollection, CycObject mt)
           throws CycConnectionException, CycApiException {
-    assertGaf(makeELMt_inner(mt),
+    assertGaf(makeElMt_inner(mt),
             //getKnownConstantByGuid_inner("055544a2-4371-11d6-8000-00a0c9da2002"),
             CommonConstants.QUOTED_ISA,
             cycFort,
@@ -860,7 +860,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           throws CycConnectionException, CycApiException {
     assertIsa(cycFort,
             CommonConstants.BINARY_PREDICATE,
-            makeELMt_inner(mt));
+            makeElMt_inner(mt));
   }
   
   /**
@@ -879,7 +879,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           String nameString,
           String mtName)
           throws CycConnectionException, CycApiException {
-    assertGaf(makeELMt_inner(getKnownConstantByName_inner(mtName)),
+    assertGaf(makeElMt_inner(getKnownConstantByName_inner(mtName)),
             //getKnownConstantByGuid_inner("c0fdf7e8-9c29-11b1-9dad-c379636f7270"),
             CommonConstants.NAME_STRING,
             getKnownConstantByName_inner(cycConstantName),
@@ -902,7 +902,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           String comment,
           String mtName)
           throws CycConnectionException, CycApiException {
-    assertGaf(makeELMt_inner(getKnownConstantByName_inner(mtName)),
+    assertGaf(makeElMt_inner(getKnownConstantByName_inner(mtName)),
             CommonConstants.COMMENT,
             getKnownConstantByName_inner(cycConstantName),
             comment);
@@ -924,7 +924,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           String comment,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    ElMt elmt = makeELMt_inner(mt);
+    ElMt elmt = makeElMt_inner(mt);
     assertGaf(elmt,
             CommonConstants.COMMENT,
             cycFort,
@@ -947,7 +947,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
           String nameString,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    ElMt elmt = makeELMt_inner(mt);
+    ElMt elmt = makeElMt_inner(mt);
     assertGaf(elmt,
             //getKnownConstantByGuid_inner("c0fdf7e8-9c29-11b1-9dad-c379636f7270"),
             CommonConstants.NAME_STRING,
@@ -986,7 +986,7 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
 
     assertGaf(sentence,
             // #$EnglishParaphraseMt
-//            makeELMt_inner(getKnownConstantByGuid_inner(
+//            makeElMt_inner(getKnownConstantByGuid_inner(
 //            "bda16220-9c29-11b1-9dad-c379636f7270")));
             CommonConstants.ENGLISH_PARAPHRASE_MT);
   }
@@ -2314,6 +2314,6 @@ public class CycAssertTool extends AbstractKbTool implements AssertTool {
   private void assertWithTranscriptAndBookkeepingInternal(CycObject sentence,
           CycObject mt)
           throws CycConnectionException, CycApiException {
-    assertSentence(sentence.stringApiValue(), makeELMt_inner(mt), null, null, true, true);
+    assertSentence(sentence.stringApiValue(), makeElMt_inner(mt), null, null, true, true);
   }
 }

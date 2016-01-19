@@ -2,10 +2,10 @@ package com.cyc.query;
 
 /*
  * #%L
- * File: QueryTest.java
+ * File: QueryImplTest.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,10 @@ import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.inference.params.OpenCycInferenceParameterEnum;
 import com.cyc.kb.Fact;
 import com.cyc.kb.KbCollection;
+import com.cyc.kb.KbFactory;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbObject;
+import com.cyc.kb.Sentence;
 import com.cyc.kb.Variable;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.KbIndividualImpl;
@@ -65,7 +67,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class QueryTest {
+public class QueryImplTest {
 
   private static final String queryStringAssembling = "(#$disjointWith #$Assembling ?COLL)";
   private static final String queryStringAbesAPresident = "(#$isa #$AbrahamLincoln #$UnitedStatesPresident)";
@@ -437,6 +439,36 @@ public class QueryTest {
     assertEquals(2, q.getAnswerCount());
   }
 
+  @Test
+  public void testGetAnswerSentence() throws QueryConstructionException, SessionCommunicationException, KbException {
+    System.out.println("getAnswerSentence");
+    q = QueryFactory.getQuery(testConstants().genlsSpecGenls, Constants.uvMt());
+    q.setMaxAnswerCount(10);  
+    
+    final Variable varGenls = KbFactory.getVariable("?GENLS");
+    final Variable varSpec = KbFactory.getVariable("?SPEC");
+    final List<QueryAnswer> answers = q.getAnswers();
+    assertFalse(answers.isEmpty());
+    
+    for (QueryAnswer answer : answers) {
+      KbCollection bindingGenls = answer.getBinding(varGenls);
+      KbCollection bindingSpec = answer.getBinding(varSpec);
+      //System.out.println(varGenls + "=" + bindingGenls + "    " + varSpec + "=" + bindingSpec);
+      final Sentence sentence = q.getAnswerSentence(answer);
+      final Sentence inner = sentence.getArgument(1);
+      System.out.println(inner);
+      
+      KbCollection arg1 = inner.getArgument(1);
+      KbCollection arg2 = inner.getArgument(2);
+      assertFalse(arg1 instanceof Variable);
+      assertFalse(arg2 instanceof Variable);
+      assertEquals(arg1, bindingSpec);
+      //System.out.println(arg1 + " == " + bindingSpec);
+      assertEquals(arg2, bindingGenls);
+      //System.out.println(arg2 + " == " + bindingGenls);
+    }
+  }
+  
   /**
    * Test of getContext method, of class QueryImpl.
    * @throws com.cyc.query.exception.QueryConstructionException

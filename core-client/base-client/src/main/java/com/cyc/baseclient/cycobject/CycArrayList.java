@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: CycArrayList.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -345,7 +345,7 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
    * @ deprecated use CycAccess.isFormulaWellFormed(this, mt);
    */
   /*
-  public boolean isFormulaWellFormed(final ELMt mt)
+  public boolean isFormulaWellFormed(final ElMt mt)
           throws IOException, UnknownHostException, CycApiException {
     return CycAccess.getCurrent().isFormulaWellFormed(this, mt);
   }
@@ -2256,7 +2256,21 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
       dottedElement = (E) stream.readObject();
     }
   }
-
+  
+  /**
+   * Unmodifiable CycList. Attempts to invoke methods which would alter the underlying structure 
+   * will cause a {@link java.lang.UnsupportedOperationException} to be thrown.
+   * 
+   * <p><strong>Note regarding Java 8:</strong> In order to maintain backwards compatibility to Java
+   * 6, the following methods have not been overridden, and are still capable of modifying a
+   * UnmodifiableCycList instance:
+   * <ul>
+   *   <li>Collection#removeIf(Predicate<? super E> filter)</li>
+   *   <li>List#replaceAll(UnaryOperator<E> operator)</li>
+   * </ul>
+   * 
+   * @param <E> 
+   */
   static public class UnmodifiableCycList<E> extends CycArrayList<E> {
 
     public UnmodifiableCycList(CycList<? extends E> list) {
@@ -2401,7 +2415,7 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
     public void setSpecifiedObject(CycList pathSpecification, Object value) {
       throw new UnsupportedOperationException();
     }
-
+    
     @Override
     public CycArrayList sort() {
       throw new UnsupportedOperationException();
@@ -2416,6 +2430,27 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
     public void trimToSize() {
       throw new UnsupportedOperationException();
     }
+    
+    // Java 8 methods
+    
+    public void sort(Comparator c) {
+      // Omits @Override annotation to maintain backwards compatibility with < Java 8.
+      // - nwinant, 2016-01-05
+      throw new UnsupportedOperationException();
+    }
+    
+    /*
+    These methods take Java 8 arguments, so there's no clean way to override them in < Java 8...
+    TODO: Uncomment these once Base Client has moved to Java 8. - nwinant, 2016-01-05
+    
+    public void replaceAll(UnaryOperator operator) {
+      throw new UnsupportedOperationException();
+    }
+    
+    public boolean removeIf(Predicate filter) {
+      throw new UnsupportedOperationException();
+    }
+    */
   }
   
    /**

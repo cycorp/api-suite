@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: CycClientSessionFactoryTest.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.cyc.session.*;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.session.CycSession.ConnectionStatus;
 import com.cyc.session.exception.SessionRuntimeException;
+import com.cyc.session.internal.ImmutableConfiguration;
 import java.io.IOException;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertNotEquals;
@@ -131,7 +132,8 @@ public class CycClientSessionFactoryTest extends TestCase {
     assertEquals(session1.getAccess(), session2.getAccess());
     
     final CycServerAddress server = factory.getServers().iterator().next();
-    final CycClient client = factory.getClient(server);
+    final ImmutableConfiguration serverConfig = new ImmutableConfiguration(server, this.getClass());
+    final CycClient client = factory.getClient(serverConfig);
     assertEquals(client, session1.getAccess());
     assertEquals(client, session2.getAccess());
     assertEquals(server, session1.getServerInfo().getCycServer());

@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: GeneralUnitTest.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,27 +144,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   @Before
   public void setup() throws CycConnectionException, CycApiException, IOException {
     if (cycAccess == null || cycAccess.isClosed()) {
-      cycAccess = getCycAccess();
+      cycAccess = TestUtils.getCyc();
     }
   }
 
   private static CycAccess getCycAccess() throws CycConnectionException, CycApiException, IOException {
-    CycAccess cycAccess = TestUtils.getCyc();
-    /*
-     if (connectionMode == LOCAL_CYC_CONNECTION) {
-     cycAccess = InteractiveCycAccessManager.get().getAccess(host, port);
-     System.out.println(cycAccess.getCycConnection().connectionInfo());
-     } else if (connectionMode == SOCKET_COMM_CYC_CONNECTION) {
-     cycAccess = new CycClient(new SocketComm(host, port));
-     } else if (connectionMode == ROUND_ROBIN_SOCKET_COMM_CYC_CONNECTION) {
-     // SocketCommRoundRobin will create two socket connections to two 
-     // Cyc servers on 3600 and 3620. This is hardcoded in SocketCommRoundRobin
-     cycAccess = new CycClient(new SocketCommRoundRobin());
-     } else {
-     fail("Invalid connection mode " + connectionMode);
-     }
-     */
-    return cycAccess;
+    return TestUtils.getCyc();
   }
 
   @AfterClass
@@ -200,14 +185,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     if (!testExpression) {
       System.out.println("Test expression not true\n" + message);
     }
-  }
-
-  public static boolean isBasicParaphraser(Paraphraser p) throws CycConnectionException {
-    if (p != null) {
-      // Checking the string value is a little hacky, but Paraphraser$BasicParaphraser is a private class... - nwinant, 2014-04-16
-      return p.getClass().getName().endsWith("$BasicParaphraser");
-    }
-    return false;
   }
 
   /**
@@ -795,37 +772,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     // isBinaryPredicate dog.
     assertFalse(cycAccess.getInspectorTool().isBinaryPredicate(dog));
-
-    // getGeneratedPhrase.
     
-    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
-    String phrase = p.paraphrase(dog).getString();
-    assertNotNull(phrase);
-    if (isBasicParaphraser(p)) {
-      assertEquals("Dog", phrase);
-    } else {
-      assertEquals("Canis familiaris", phrase);
-    }
-
-    // getSingularGeneratedPhrase.
-    CycConstant brazil = cycAccess.getLookupTool().getKnownConstantByGuid(
-            BRAZIL_GUID_STRING);
-    phrase = p.paraphrase(brazil).getString();
-
-    //@todo this should check to see what kind of paraphraser it got.  If basic, we can expect "#$Dog" back or perhaps "Dog"
-    assertNotNull(phrase);
-    assertTrue(phrase.toLowerCase().contains("bra"));
-    
-    
-    // getGeneratedPhrase.
-    phrase = p.paraphrase(doneBy).getString();
-    assertNotNull(phrase);
-    if (isBasicParaphraser(p)) {
-      assertTrue(phrase.contains("doneBy"));
-    } else {
-      assertTrue(phrase.contains("doer"));
-    }
-
     // denots-of-string
     String brazilDenotationString = "Brazil";
     CycList brazilDenotations = cycAccess.getLookupTool().getDenotsOfString(brazilDenotationString);
@@ -837,6 +784,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     CycList sDakotaDenotations = cycAccess.getLookupTool().getDenotsOfString(sDakotaDenotationString);
     System.out.println(sDakotaDenotations.cyclify());
     assertTrue(sDakotaDenotations.contains(SOUTH_DAKOTA));
+    
     long endMilliseconds = System.currentTimeMillis();
     System.out.println(
             "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
@@ -1392,13 +1340,13 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     InferenceParameters queryProperties1 = new DefaultInferenceParameters(
             cycAccess);
     InferenceResultSet response1 = cycAccess.getInferenceTool().executeQuery(query1,
-            cycAccess.getObjectTool().makeELMt(mt), queryProperties1, 20000);
+            cycAccess.getObjectTool().makeElMt(mt), queryProperties1, 20000);
     assertNotNull(response1);
 
     //System.out.println("query: " + query + "\n  response: " + response);
     //queryProperties.setMaxNumber(4);
     queryProperties1.put(":max-time", 30);
-    response1 = cycAccess.getInferenceTool().executeQuery(query1, cycAccess.getObjectTool().makeELMt(mt),
+    response1 = cycAccess.getInferenceTool().executeQuery(query1, cycAccess.getObjectTool().makeElMt(mt),
             queryProperties1, 20000);
     //System.out.println("query: " + query + "\n  response: " + response);  
     assertTrue(response1.getCurrentRowCount() > 0);
@@ -1428,7 +1376,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     queryProperties2.put(":non-explanatory-sentence",
             cycAccess.getObjectTool().makeCycSentence(TestSentences.UNKNOWN_SENTENCE_FOOD_ORG.cyclify()));
     InferenceResultSet response2 = cycAccess.getInferenceTool().executeQuery(query2,
-            cycAccess.getObjectTool().makeELMt(mt), queryProperties2, 20000);
+            cycAccess.getObjectTool().makeElMt(mt), queryProperties2, 20000);
     assertNotNull(response2);
 
     // askWithVariable
@@ -2579,7 +2527,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               TIMEPOINT_GUID_STRING);
       //(#$MtSpace (#$MtTimeWithGranularityDimFn #$Now #$TimePoint) #$WorldGeographyMt)
       ElMt worldGeographyMtNow
-              = cycAccess.getObjectTool().makeELMt(
+              = cycAccess.getObjectTool().makeElMt(
                       new NautImpl(
                               mtSpace, new NautImpl(mtTimeWithGranularityDimFn, now, timePoint),
                               worldGeographyMt));
@@ -3121,11 +3069,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               hlmtObject.cyclify());
     }
 
-    // makeELMt
+    // makeElMt
     // NART case
     String elmtString = AZERI_LANGUAGE_LEXICAL_MT.cyclify();
     Naut naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
-    ElMt elmt = cycAccess.getObjectTool().makeELMt(naut);
+    ElMt elmt = cycAccess.getObjectTool().makeElMt(naut);
     assertNotNull(elmt);
     assertTrue(elmt instanceof Nart);
     assertEquals(elmtString, elmt.cyclify());
@@ -3133,7 +3081,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     // Nonsense case
     elmtString = "(" + PLUS_FN_STRING + " 1 1)";
     naut = cycAccess.getObjectTool().makeCycNaut(elmtString);
-    elmt = cycAccess.getObjectTool().makeELMt(naut);
+    elmt = cycAccess.getObjectTool().makeElMt(naut);
     assertNotNull(elmt);
     assertTrue(elmt instanceof Naut);
     assertEquals(elmtString, elmt.cyclify());
@@ -3141,7 +3089,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     // Constant case
     elmtString = BASE_KB.toString();
     Fort baseKB = cycAccess.getLookupTool().getKnownConstantByName(elmtString);
-    elmt = cycAccess.getObjectTool().makeELMt(baseKB);
+    elmt = cycAccess.getObjectTool().makeElMt(baseKB);
     assertNotNull(elmt);
     assertTrue(elmt instanceof CycConstantImpl);
     assertEquals(elmtString, elmt.toString());
@@ -4152,5 +4100,4 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   private static final String GROUP_FN_STRING = GROUP_FN.cyclify();
   private static final String COMPUTATIONAL_SYSTEM_STRING = COMPUTATIONAL_SYSTEM.cyclify();
 
-  private static final String DOG_GUID_STRING = TestConstants.DOG.getGuid().getGuidString();
 }

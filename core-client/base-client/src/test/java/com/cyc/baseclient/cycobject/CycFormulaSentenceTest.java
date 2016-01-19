@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: CycFormulaSentenceTest.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -220,7 +220,7 @@ public class CycFormulaSentenceTest {
    * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
   @Test
-  public void testGetSimplifiedSentence_CycAccess_ELMt() throws CycConnectionException, OpenCycUnsupportedFeatureException {
+  public void testGetSimplifiedSentence_CycAccess_ElMt() throws CycConnectionException, OpenCycUnsupportedFeatureException {
     System.out.println("getSimplifiedSentence");
     assumeNotOpenCyc();
     final FormulaSentence sentence = makeCycFormulaSentence(ISA, X,
@@ -244,7 +244,7 @@ public class CycFormulaSentenceTest {
    * Test of getNonWffAssertExplanation method, of class CycFormulaSentence.
    */
   @Test
-  public void testGetNonWffAssertExplanation_CycAccess_ELMt() throws CycConnectionException {
+  public void testGetNonWffAssertExplanation_CycAccess_ElMt() throws CycConnectionException {
     System.out.println("getNonWffAssertExplanation");
     makeCycSentence(getCyc(), genlsWilliamHenryHarrisonBLO_STRING).getNonWffAssertExplanation(
             getCyc(), BASE_KB);
@@ -264,7 +264,7 @@ public class CycFormulaSentenceTest {
    * Test of getNonWffExplanation method, of class CycFormulaSentence.
    */
   @Test
-  public void testGetNonWffExplanation_CycAccess_ELMt() throws CycApiException, CycConnectionException {
+  public void testGetNonWffExplanation_CycAccess_ElMt() throws CycApiException, CycConnectionException {
     System.out.println("getNonWffExplanation");
     makeCycSentence(getCyc(), genlsWilliamHenryHarrisonBLO_STRING).getNonWffExplanation(
             getCyc(), BASE_KB);
@@ -468,7 +468,7 @@ public class CycFormulaSentenceTest {
       Collection result = getCyc().getObjectTool().makeCycSentence(
               "(" + WEIGHT_ON_PLANET + " ?ME " + PLANET_MARS + ")").getCandidateReplacements(
                       ArgPositionImpl.ARG2,
-                      ElMtConstant.makeELMtConstant(universeDataMt), getCyc());
+                      ElMtConstant.makeElMtConstant(universeDataMt), getCyc());
       assertFalse(result.isEmpty());
       assertTrue(
               result.contains(getCyc().getLookupTool().getKnownConstantByName(PLANET_VENUS)));
@@ -511,7 +511,7 @@ public class CycFormulaSentenceTest {
    * Test of getEqualsFoldedSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetEqualsFoldedSentence_CycAccess_ELMt() throws CycConnectionException {
+  public void testGetEqualsFoldedSentence_CycAccess_ElMt() throws CycConnectionException {
     System.out.println("getEqualsFoldedSentence");
     CycAccess access = null;
     ElMt mt = null;
@@ -542,7 +542,7 @@ public class CycFormulaSentenceTest {
    * Test of getExpandedSentence method, of class CycFormulaSentence.
    */
   //@Test
-  public void testGetExpandedSentence_CycAccess_ELMt() throws CycConnectionException {
+  public void testGetExpandedSentence_CycAccess_ElMt() throws CycConnectionException {
     System.out.println("getExpandedSentence");
     CycAccess access = null;
     ElMt mt = null;

@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: CycListParser.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import static com.cyc.base.cycobject.CycConstant.HD;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.datatype.StackWithPointer;
 import com.cyc.baseclient.util.MyStreamTokenizer;
+import java.math.BigInteger;
 
 /**
  * Provides a parser that reads a <tt>String</tt> representation and constructs
@@ -381,24 +382,32 @@ public class CycListParser {
 
       }
     }
+    BigInteger bigNumber = null;
+    try {
+      bigNumber = new BigInteger(string);
+    } catch (NumberFormatException e) {
+      // not a big integer
+    }
     Double doubleNumber;
     Integer integerNumber;
     Long longNumber;
-    Object number = null;
+    final Object number;
 
     if (verbosity > 5) {
       System.out.println(string);
     }
     // Try representing the scanned number as both java double and long.
     doubleNumber = parsedNumber;
-    integerNumber = new Integer(doubleNumber.intValue());
-    longNumber = new Long(doubleNumber.longValue());
+    integerNumber = doubleNumber.intValue();
+    longNumber = doubleNumber.longValue();
 
     if (integerNumber.doubleValue() == doubleNumber.doubleValue()) // Choose integer if no loss of accuracy.
     {
       number = integerNumber;
     } else if (longNumber.doubleValue() == doubleNumber.doubleValue()) {
       number = longNumber;
+    } else if (bigNumber != null) {
+      number = bigNumber;
     } else {
       number = doubleNumber;
     }

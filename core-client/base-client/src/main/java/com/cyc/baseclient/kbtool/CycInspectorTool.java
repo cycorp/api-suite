@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycInspectorTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
           CycObject mt)
           throws CycConnectionException, CycApiException {
     return getConverse().converseInt("(count-all-instances " + collection.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -105,7 +105,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
       return countAllInstances;
     }
 
-    final int answer = countAllInstances(collection, makeELMt_inner(mt));
+    final int answer = countAllInstances(collection, makeElMt_inner(mt));
     countAllInstancesCache.put(collection, answer);
 
     return answer;
@@ -122,7 +122,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
   }
   
   @Override
-  public boolean isELMtInKB(ElMt obj)
+  public boolean isElMtInKB(ElMt obj)
           throws CycConnectionException, CycApiException {
     if (obj != null) {
       if (ElMtConstant.class.isInstance(obj)) {
@@ -194,7 +194,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     final String command = "(isa? " + term.stringApiValue() + " "
-            + collection.stringApiValue() + " " + makeELMt_inner(mt).stringApiValue() + ")";
+            + collection.stringApiValue() + " " + makeElMt_inner(mt).stringApiValue() + ")";
 
     return getConverse().converseBoolean(command);
   }
@@ -307,7 +307,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     }
     final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
             CommonConstants.QUOTED_ISA, term, collection);
-    return getCyc().getInferenceTool().isQueryTrue(query, makeELMt_inner(mt), null, timeoutMsecs);
+    return getCyc().getInferenceTool().isQueryTrue(query, makeElMt_inner(mt), null, timeoutMsecs);
   }
   
     /**
@@ -331,7 +331,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
 //            "beaa3d29-9c29-11b1-9dad-c379636f7270");
 
     return getCyc().getLookupTool().hasSomePredicateUsingTerm(CommonConstants.BACKCHAIN_REQUIRED,
-            predicate, 1, makeELMt_inner(mt));
+            predicate, 1, makeElMt_inner(mt));
   }
 
   /**
@@ -355,7 +355,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
    //         "c09d1cea-9c29-11b1-9dad-c379636f7270");
 
     return getCyc().getLookupTool().hasSomePredicateUsingTerm(CommonConstants.BACKCHAIN_ENCOURAGED,
-            predicate, 1, makeELMt_inner(mt));
+            predicate, 1, makeElMt_inner(mt));
   }
 
   /**
@@ -379,7 +379,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     //        "bfcbce14-9c29-11b1-9dad-c379636f7270");
 
     return getCyc().getLookupTool().hasSomePredicateUsingTerm(CommonConstants.BACKCHAIN_DISCOURAGED,
-            predicate, 1, makeELMt_inner(mt));
+            predicate, 1, makeElMt_inner(mt));
   }
 
   /**
@@ -403,7 +403,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     //        "bfa4e9d2-9c29-11b1-9dad-c379636f7270");
 
     return getCyc().getLookupTool().hasSomePredicateUsingTerm(CommonConstants.BACKCHAIN_FORBIDDEN,
-            predicate, 1, makeELMt_inner(mt));
+            predicate, 1, makeElMt_inner(mt));
   }
 
   /**
@@ -428,7 +428,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
 
     return this.isa(predicate,
             CommonConstants.IRREFLEXIVE_BINARY_PREDICATE,
-            makeELMt_inner(mt));
+            makeElMt_inner(mt));
   }
   
     /**
@@ -527,7 +527,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseBoolean(
             "(binary-predicate? " + cycObject.stringApiValue() + ")");
   }
@@ -673,11 +673,11 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseBoolean(
             "(isa-in-any-mt? " + cycObject.stringApiValue() + " " + COLLECTION + ")");
   }
-
+  
   /**
    * Returns true if the given object is a Collection.
    *
@@ -721,7 +721,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     Boolean isCollection = isCollectionCache.get(cycObject);
 
     if (isCollection != null) {
@@ -762,7 +762,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseBoolean(
             "(isa-in-any-mt? " + cycObject.stringApiValue() + " " + INDIVIDUAL + ")");
   }
@@ -840,7 +840,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseBoolean(
             "(isa-in-any-mt? " + cycObject.stringApiValue() + " " + PREDICATE + ")");
   }
@@ -875,7 +875,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseBoolean("(isa-in-any-mt? " + cycObject.stringApiValue()
             + " " + UNARY_PREDICATE + ")");
   }
@@ -1119,7 +1119,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(genl? " + spec.stringApiValue() + " " + genl.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1141,7 +1141,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(genl-predicate? " + specPred.stringApiValue() + " "
-            + genlPred.stringApiValue() + " " + makeELMt_inner(
+            + genlPred.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + ")");
   }
 
@@ -1184,7 +1184,7 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(genl-inverse? " + specPred.stringApiValue() + " "
-            + genlPred.stringApiValue() + " " + makeELMt_inner(
+            + genlPred.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + ")");
   }
 
@@ -1226,8 +1226,8 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
   public boolean isGenlMtOf(CycObject genlMt,
           CycObject specMt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    return getConverse().converseBoolean("(genl-mt? " + makeELMt_inner(specMt).stringApiValue() + " "
-            + makeELMt_inner(genlMt).stringApiValue() + ")");
+    return getConverse().converseBoolean("(genl-mt? " + makeElMt_inner(specMt).stringApiValue() + " "
+            + makeElMt_inner(genlMt).stringApiValue() + ")");
   }
   
   
@@ -1243,7 +1243,11 @@ public class CycInspectorTool extends AbstractKbTool implements InspectorTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(el-formula-ok? " + formula.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
+  }
+  
+  private void verifyPossibleDenotationalTerm(CycObject cycObject) throws IllegalArgumentException {
+    ((CycLookupTool) getCyc().getLookupTool()).verifyPossibleDenotationalTerm(cycObject);
   }
   
   

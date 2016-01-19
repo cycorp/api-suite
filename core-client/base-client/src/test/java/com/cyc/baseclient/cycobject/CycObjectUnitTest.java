@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: CycObjectUnitTest.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1566,7 +1566,7 @@ public class CycObjectUnitTest {
     doTestUnmodifiableCycListAdd(frozenList);
     doTestUnmodifiableCycListSort(frozenList);
   }
-
+  
   @Test
   public void testVariableNameOptimization() throws CycConnectionException {
     System.out.println("\n*** testVariableNameOptimization ***");
@@ -1700,14 +1700,13 @@ public class CycObjectUnitTest {
   }
 
   private void doTestUnmodifiableCycListSort(final CycList frozenList) {
-    // FIXME: make this pass under Java 8. - nwinant, 2015-10-05
     UnsupportedOperationException x = null;
     try {
       Collections.sort(frozenList);
     } catch (UnsupportedOperationException e) {
       x = e;
     }
-    assertNotNull("This test passes under Java 7, but not Java 8.", x);
+    assertNotNull(x);
   }
   
 }

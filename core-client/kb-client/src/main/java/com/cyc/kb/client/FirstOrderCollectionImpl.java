@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: FirstOrderCollectionImpl.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ import com.cyc.kb.exception.KbTypeException;
  * So we have a class to support strongly typing such collections. 
  * 
  * @author Vijay Raj
- * @version $Id: FirstOrderCollectionImpl.java 163117 2015-12-11 00:27:39Z nwinant $
+ * @version $Id: FirstOrderCollectionImpl.java 163355 2016-01-04 20:53:24Z nwinant $
  */
 public class FirstOrderCollectionImpl extends KbCollectionImpl implements FirstOrderCollection {
   private static final DenotationalTerm TYPE_CORE =

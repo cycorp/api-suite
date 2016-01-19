@@ -7,7 +7,7 @@ import com.cyc.query.InferenceStatus;
  * File: CycQuery.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.cyc.query.InferenceStatus;
  */
 
 /**
- * @version $Id: CycQuery.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: CycQuery.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author  mreimers
  */
 public interface CycQuery extends Query {

@@ -5,7 +5,7 @@ package com.cyc.base;
  * File: CycAccessManagerIT.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,5 +156,14 @@ public class CycAccessManagerIT  {
       Thread.sleep(1000);
     }
     System.out.println("... Should have thrown a CycTimeOutException by now.");
+  }
+  
+  //@Test
+  public void testSetCurrentSession() throws SessionException {
+    CycServer server = new CycServer("localhost", 3600);
+    System.out.println(server);
+    CycAccessManager.get().setCurrentSession(server);
+    CycSession session = CycSessionManager.getCurrentSession();
+    assertEquals(server, session.getConfiguration().getCycServer());
   }
 }

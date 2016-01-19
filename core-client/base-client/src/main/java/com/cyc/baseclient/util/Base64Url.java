@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: Base64Url.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ package com.cyc.baseclient.util;
  * <P>Base64Url is designed to...
  *
  * @author daves, May 14, 2010, 2:00:10 PM
- * @version $Id: Base64Url.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: Base64Url.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 final public class Base64Url extends Base64 {
 

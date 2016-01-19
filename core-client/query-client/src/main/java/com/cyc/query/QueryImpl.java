@@ -5,7 +5,7 @@ package com.cyc.query;
  * File: QueryImpl.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1696,12 +1696,16 @@ public class QueryImpl implements Query, Closeable, InferenceParameterSetter, In
    * @return the answer sentence
    * @throws KbException
    */
+  @Override
   public Sentence getAnswerSentence(QueryAnswer answer) throws KbException {
-    final FormulaSentence sentence = getQuerySentenceMainClauseCyc().deepCopy();
+    Sentence sentence = getQuerySentenceMainClause();
+    final List<Object> from = new ArrayList<Object>();
+    final List<Object> to = new ArrayList<Object>();
     for (final Variable var : getQueryVariables()) {
-      sentence.substituteDestructive(var, answer.getBinding(var));
+      from.add(var);
+      to.add(answer.getBinding(var));
     }
-    return new SentenceImpl(sentence);
+    return sentence.replaceTerms(from, to);
   }
 
   /**

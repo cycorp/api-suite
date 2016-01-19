@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: KbCollectionTest.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,15 @@ import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.kb.Context;
 import com.cyc.kb.FirstOrderCollection;
 import com.cyc.kb.KbCollection;
+import com.cyc.kb.KbCollectionFactory;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbStatus;
+import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.session.exception.SessionException;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -83,6 +86,17 @@ public class KbCollectionTest {
     assertTrue(c.getComments("AppleProductMt").contains("All Apple products start with i"));
 
   }
+  
+  
+  @Test
+  public void testToNlString() throws KbTypeException, CreateException, SessionException {
+    System.out.println("testToNlString");
+    KbCollection temporalThing = KbCollectionFactory.get("TemporalThing");
+    String paraphrase = temporalThing.toNlString();
+    assertNotEquals("Got CycL instead of NL", "TemporalThing", paraphrase);
+    assertEquals("temporal thing", paraphrase);
+  }
+
 
   @Test
   public void testGetMinCol() throws KbException {

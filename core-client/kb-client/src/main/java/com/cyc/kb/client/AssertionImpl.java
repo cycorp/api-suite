@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: AssertionImpl.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 163117 2015-12-11 00:27:39Z nwinant $
+ * @version $Id: AssertionImpl.java 163517 2016-01-12 00:58:43Z nwinant $
  * @since 1.0
  */
 public class AssertionImpl extends StandardKbObject implements Assertion {
@@ -652,7 +652,7 @@ public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength 
     }
     try {
       if (findAssertion(ca.getELFormula(getAccess()), 
-          getAccess().getObjectTool().makeELMt(ca.getMt())) instanceof CycAssertion) {
+          getAccess().getObjectTool().makeElMt(ca.getMt())) instanceof CycAssertion) {
         log.error("Unable to delete assertion: {}", ca);
         throw new DeleteException("Unable to delete assertion: " + ca);
       }
@@ -734,7 +734,7 @@ static CycAssertion assertSentence(FormulaSentence factSentence, Context ctx, St
       if (ca == null) {
         log.debug("Attempting to assert the formula: {} in context {}", factSentence, ctx);
         getStaticAccess().getAssertTool().assertSentence(factSentence.stringApiValue(), 
-            getStaticAccess().getObjectTool().makeELMt(ctx.getCore()),
+            getStaticAccess().getObjectTool().makeElMt(ctx.getCore()),
         		":"+s.name(), ":"+d.name(), true, KbConfiguration.getShouldTranscriptOperations());
         ca = findAssertion(factSentence, ContextImpl.asELMt(ctx));
       }
@@ -802,7 +802,7 @@ static CycAssertion assertSentence(FormulaSentence factSentence, Context ctx, St
     try {
       CycAccess cyc = getStaticAccess();
       FormulaSentence factFormulaSentence = CycFormulaSentence.makeCycSentence(cyc, factSentenceStr);
-      return findAssertion(factFormulaSentence, cyc.getObjectTool().makeELMt(cyc.cyclifyString(ctxStr)));
+      return findAssertion(factFormulaSentence, cyc.getObjectTool().makeElMt(cyc.cyclifyString(ctxStr)));
     } catch (CycApiException ex) {
       // throw new KBApiException(ex);
       return null;

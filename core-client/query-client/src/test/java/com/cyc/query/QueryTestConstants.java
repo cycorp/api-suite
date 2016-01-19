@@ -5,7 +5,7 @@ package com.cyc.query;
  * File: QueryTestConstants.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,16 @@ import com.cyc.base.annotation.CycTerm;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
+import static com.cyc.kb.KbFactory.getSentence;
+import static com.cyc.kb.KbFactory.getVariable;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.Sentence;
+import com.cyc.kb.SentenceFactory;
 import com.cyc.kb.client.BinaryPredicateImpl;
 import com.cyc.kb.client.Constants;
+import static com.cyc.kb.client.Constants.different;
+import static com.cyc.kb.client.Constants.genls;
 import com.cyc.kb.client.ContextImpl;
 import com.cyc.kb.client.KbCollectionImpl;
 import com.cyc.kb.client.KbIndividualImpl;
@@ -162,7 +167,12 @@ public class QueryTestConstants {
   public final Sentence genlsAnimalX = new SentenceImpl(Constants.genls(), animal, new VariableImpl("X"));
   public final Sentence academyAwardWinners = new SentenceImpl(
           academyAwardWinner, new VariableImpl("X"), new VariableImpl("Y"), new VariableImpl("Z"));
-
+  public final Sentence genlsSpecGenls = SentenceFactory
+          .and(
+          getSentence(genls(), getVariable("?SPEC"), getVariable("?GENLS")),
+          getSentence(genls(), animal, getVariable("?SPEC")),
+          getSentence(different(), getVariable("?SPEC"), getVariable("?GENLS")));
+  
   public final Sentence whatIsAbe = new SentenceImpl(
           Constants.isa(), abrahamLincoln, new VariableImpl("TYPE"));
 

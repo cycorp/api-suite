@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: KbIndividualTest.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package com.cyc.kb.client;
  * limitations under the License.
  * #L%
  */
-
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycObject;
@@ -28,12 +27,14 @@ import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.kb.KbCollection;
+import com.cyc.kb.KbFactory;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbStatus;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.session.exception.SessionException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -49,7 +50,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 public class KbIndividualTest {
 
   private static Logger log = null;
@@ -62,25 +62,25 @@ public class KbIndividualTest {
 
   @AfterClass
   public static void tearDownClass() throws Exception {
-    if(TestConstants.getCyc().getLookupTool().find("NewConstantNotInKB") != null) {
+    if (TestConstants.getCyc().getLookupTool().find("NewConstantNotInKB") != null) {
       TestConstants.getCyc().getUnassertTool().kill(TestConstants.getCyc().getLookupTool().getKnownConstantByName("NewConstantNotInKB"));
     }
   }
-  
+
   @Before
   public void setUp() {
-    
+
   }
-  
+
   @After
   public void tearDown() {
     // Do not do this. We setup a detailed script based on flying event.
     // KBObjectFactory.clearKBObjectCache();
   }
-  
 
   /**
    * Test of get method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -92,7 +92,7 @@ public class KbIndividualTest {
     String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
-    
+
     String nameOrId2 = "(GenericInstanceFn Dog)";
     KbIndividualImpl kbi2 = KbIndividualImpl.get(nameOrId2);
     String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
@@ -100,8 +100,18 @@ public class KbIndividualTest {
     assertEquals(expResult2, result2);
   }
 
+  @Test
+  public void testToNlString() throws KbTypeException, CreateException, SessionException {
+    System.out.println("testToNlString");
+    KbIndividual WilliamHenryHarrison = (KbIndividual) KbFactory.getKbObject("WilliamHenryHarrison");
+    String paraphrase = WilliamHenryHarrison.toNlString();
+    assertNotEquals("Got CycL instead of NL", "WilliamHenryHarrison", paraphrase);
+    assertEquals("William Henry Harrison", paraphrase);
+  }
+
   /**
    * Test of get method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -114,7 +124,7 @@ public class KbIndividualTest {
     String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
-    
+
     Fort object2_functor = TestConstants.getCyc().getLookupTool().getKnownFortByName("GenericInstanceFn");
     CycConstant object2_arg = TestConstants.getCyc().getLookupTool().getKnownConstantByName("Dog");
     CycObject object2 = new NartImpl(object2_functor, object2_arg);
@@ -126,10 +136,11 @@ public class KbIndividualTest {
 
   /**
    * Test of findOrCreate method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
-    @Test
-    public void testFindOrCreate_String() throws Exception {
+  @Test
+  public void testFindOrCreate_String() throws Exception {
     System.out.println("findOrCreate");
     // Test for find
     String nameOrId1 = "AlbertEinstein";
@@ -145,12 +156,13 @@ public class KbIndividualTest {
     String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KbIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
-    
+
     kbi2.delete();
   }
 
   /**
    * Test of findOrCreate method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -164,7 +176,7 @@ public class KbIndividualTest {
     String expResult1 = TestConstants.getCyc().cyclifyString(nameOrId1);
     String result1 = kbi1.getCore().cyclify();
     assertEquals(expResult1, result1);
-    
+
     /* Test for create
     Question - why do we need this? If the method takes a CycObject object as input, then 
                the corresponding term already exists in the KB. 
@@ -173,11 +185,12 @@ public class KbIndividualTest {
     String expResult2 = TestConstants.getCyc().cyclifyString("ThisIsANewKBIndividualForTestingCreation");
     String result2 = kbi2.getCore().cyclify();
     assertEquals(expResult2, result2);
-    */
+     */
   }
 
   /**
    * Test of findOrCreate method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -198,12 +211,13 @@ public class KbIndividualTest {
     String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KbIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
-    
-   kbi2.delete();
+
+    kbi2.delete();
   }
 
   /**
    * Test of findOrCreate method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -222,12 +236,13 @@ public class KbIndividualTest {
     String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KbIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
-    
+
     kbi2.delete();
   }
 
   /**
    * Test of findOrCreate method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -249,18 +264,19 @@ public class KbIndividualTest {
     String expResult2 = TestConstants.getCyc().cyclifyString(nameOrId2);
     String result2 = KbIndividualImpl.get(nameOrId2).getCore().cyclify();
     assertEquals(expResult2, result2);
-    
+
     kbi2.delete();
   }
 
   /**
    * Test of findOrCreate method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
   public void testFindOrCreate_String_String_String() throws Exception {
     System.out.println("findOrCreate");
-        // Test for find
+    // Test for find
     String nameOrId1 = "AlbertEinstein";
     ContextImpl.findOrCreate("WebSearchDataMt"); // We are using this context as a string
     // This will fail if WebSearchDataMt or Scientist is not found
@@ -279,11 +295,9 @@ public class KbIndividualTest {
     kbi2.delete();
   }
 
-  
-  
-  
-    /**
+  /**
    * Test of existsAsType method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -293,7 +307,7 @@ public class KbIndividualTest {
     boolean expResult1 = true;
     boolean result1 = KbIndividualImpl.existsAsType(nameOrId1);
     assertEquals(expResult1, result1);
-    
+
     String nameOrId2 = "Scientist";
     boolean expResult2 = false;
     boolean result2 = KbIndividualImpl.existsAsType(nameOrId2);
@@ -302,6 +316,7 @@ public class KbIndividualTest {
 
   /**
    * Test of existsAsType method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -320,8 +335,9 @@ public class KbIndividualTest {
     assertEquals(expResult2, result2);
   }
 
-    /**
+  /**
    * Test of getStatus method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -331,13 +347,12 @@ public class KbIndividualTest {
     KbStatus expResult = KbStatus.EXISTS_AS_TYPE;
     KbStatus result = KbIndividualImpl.getStatus(nameOrId);
     assertEquals(expResult, result);
-    
+
     CycConstant cc = CycAccessManager.getCurrentAccess().getLookupTool().getKnownConstantByName(nameOrId);
     KbStatus result1 = KbIndividualImpl.getStatus(cc);
     assertEquals(expResult, result1);
   }
 
-    
   @Test
   public void testIndividualString() throws CreateException, KbTypeException {
     KbIndividualImpl i = KbIndividualImpl.findOrCreate("TestIndividual001");
@@ -367,7 +382,6 @@ public class KbIndividualTest {
     KbIndividualImpl i = KbIndividualImpl.findOrCreate(name);
     assertEquals(i.toString(), name);
     final KbCollection person = KbCollectionImpl.get("Person");
-
 
     i.instantiates(person, ContextImpl.get("PeopleDataMt")).instantiates(
             "MaleHuman", "PeopleDataMt");
@@ -410,8 +424,9 @@ public class KbIndividualTest {
 
   /**
    * Test of getClassTypeCore method, of class KBIndividual.
- * @throws IOException 
- * @throws Exception 
+   *
+   * @throws IOException
+   * @throws Exception
    */
   @Test
   public void testGetClassTypeCore() throws Exception {
@@ -421,12 +436,9 @@ public class KbIndividualTest {
     assertEquals(expResult, result);
   }
 
-
-  
-
-
   /**
    * Test of instanceOf method, of class KBIndividual.
+   *
    * @throws java.lang.Exception
    */
   @Test
@@ -439,7 +451,7 @@ public class KbIndividualTest {
     expResult.add(KbCollectionImpl.get("Individual"));
     Collection<KbCollection> result = instance.instanceOf("SomeAirlineLogMt");
     assertEquals(expResult, result);
-    
+
     expResult = new HashSet<KbCollectionImpl>();
     expResult.add(KbCollectionImpl.get("Individual"));
     expResult.add(col);
@@ -447,9 +459,9 @@ public class KbIndividualTest {
     assertTrue(result.containsAll(expResult));
   }
 
-
   /**
    * Test of getTypeString method, of class KBIndividual.
+   *
    * @throws com.cyc.kb.exception.KbException
    */
   @Test
@@ -457,10 +469,10 @@ public class KbIndividualTest {
     System.out.println("getTypeString");
     KbIndividualImpl instance = new KbIndividualImpl();
     KbCollection expResult = KbCollectionImpl.get("#$Individual");
-    KbCollection result = (KbCollection)instance.getType();
+    KbCollection result = (KbCollection) instance.getType();
     assertEquals(expResult, result);
   }
-  
+
   @Test
   public void testKBObjectVar() throws KbTypeException, CreateException {
     System.out.println("KBObjectVar");

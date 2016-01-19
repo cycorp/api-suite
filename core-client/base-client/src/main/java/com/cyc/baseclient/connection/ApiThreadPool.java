@@ -5,7 +5,7 @@ package com.cyc.baseclient.connection;
  * File: ApiThreadPool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author rck
  * @date September 14, 2006, 3:01 PM
- * @version $Id: ApiThreadPool.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: ApiThreadPool.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public class ApiThreadPool extends ThreadPoolExecutor {
   

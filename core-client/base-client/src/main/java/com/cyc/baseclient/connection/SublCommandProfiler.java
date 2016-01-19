@@ -5,7 +5,7 @@ package com.cyc.baseclient.connection;
  * File: SublCommandProfiler.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import java.io.*;
  * <P>Use is subject to license terms.
  * @author reed
   date September 2, 2005, 7:37 AM
- * @version $Id: SublCommandProfiler.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: SublCommandProfiler.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public class SublCommandProfiler implements WorkerListener {
   

@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference;
  * File: DefaultResultSet.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ import com.cyc.baseclient.cycobject.CycVariableImpl;
  * CycAccess access = null;
  * try {
  *   access = CycAccessManager.getAccess();
- *   ELMt inferencePSC = CommonConstants.INFERENCE_PSC;
+ *   ElMt inferencePSC = CommonConstants.INFERENCE_PSC;
  *   String query = "(#$isa ?X #$Dog)";
  *   InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
  *       inferencePSC, null, access, 500000);
@@ -89,7 +89,7 @@ import com.cyc.baseclient.cycobject.CycVariableImpl;
  * <p>
  * @author tbrussea
  * @date Mar 22, 2010, 11:55 AM
- * @version $Id: DefaultResultSet.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: DefaultResultSet.java 163450 2016-01-08 21:40:25Z nwinant $
  */
 @SuppressWarnings("deprecation")
 public final class DefaultResultSet extends AbstractResultSet {

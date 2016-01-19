@@ -5,7 +5,7 @@ package com.cyc.base.cycobject;
  * File: NonAtomicTerm.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.List;
  * <P>NonAtomicTerm is designed to...
  * 
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: NonAtomicTerm.java 158611 2015-05-21 16:49:58Z daves $
+ * @version $Id: NonAtomicTerm.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public interface NonAtomicTerm extends DenotationalTerm {
   

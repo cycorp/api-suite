@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: CycFormulaSentence.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
  a truth function and a list of arguments
  *
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: CycFormulaSentence.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: CycFormulaSentence.java 163450 2016-01-08 21:40:25Z nwinant $
  *
  * @todo make it implement CycLFormula, or get rid of CycLFormula, as
  * appropriate
@@ -461,7 +461,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
 
   static synchronized ElMt getDefaultSimplifierMt() {
     if (simplifierMt == null && CommonConstants.MT_SPACE != null) {
-      simplifierMt = ElMtCycNaut.makeELMtCycNaut(Arrays.asList(CommonConstants.MT_SPACE,
+      simplifierMt = ElMtCycNaut.makeElMtCycNaut(Arrays.asList(CommonConstants.MT_SPACE,
               CommonConstants.CURRENT_WORLD_DATA_MT, CommonConstants.ANYTIME_PSC));
     }
     return simplifierMt;
@@ -555,7 +555,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    *
    * @throws com.cyc.base.exception.CycConnectionException
    * @see #getCanonicalElSentence(com.cyc.base.CycAccess,
-   * com.cyc.base.cycobject.ELMt, java.lang.Boolean)
+   * com.cyc.base.cycobject.ElMt, java.lang.Boolean)
    * @param access
    * @return the canonical version of this sentence.
    */
@@ -566,7 +566,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
   /**
    * @throws com.cyc.base.exception.CycConnectionException
    * @see #getCanonicalElSentence(com.cyc.base.CycAccess,
-   * com.cyc.base.cycobject.ELMt, java.lang.Boolean)
+   * com.cyc.base.cycobject.ElMt, java.lang.Boolean)
    * @param access
    * @param canonicalizeVars
    * @return the canonical version of this sentence.
@@ -641,7 +641,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
 
   /**
    * @see #getNonWffAssertExplanation(com.cyc.base.CycAccess,
-   * com.cyc.base.cycobject.ELMt)
+   * com.cyc.base.cycobject.ElMt)
    * @param access
    * @return the explanation
    */
@@ -683,7 +683,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
 
   /**
    * @see #getNonWffAssertExplanation(com.cyc.base.CycAccess,
-   * com.cyc.base.cycobject.ELMt)
+   * com.cyc.base.cycobject.ElMt)
    * @param access
    * @return An explanation, or null if no problems found.
    */
@@ -695,7 +695,7 @@ public class CycFormulaSentence extends FormulaImpl implements CycSentence, Form
    * Returns a string that attempts to explain why this is not well-formed for
  any purpose. Return null if this is well-formed. If you want to make an
  assertion with your sentence, use the much more constraining
- {@link com.cyc.baseclient.cycobject.CycFormulaSentence#getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ELMt)  getNonWffAssertExplanation}.
+ {@link com.cyc.baseclient.cycobject.CycFormulaSentence#getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ElMt)  getNonWffAssertExplanation}.
    *
    * @param access
    * @param mt

@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: CycUtils.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import com.cyc.base.exception.CycTimeOutException;
  * <p>
  * @deprecated There should be no such class as this. It should be broken up.
  * @author  tbrussea
- * @version $Id: CycUtils.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: CycUtils.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 @Deprecated
 public class CycUtils {

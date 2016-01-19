@@ -5,7 +5,7 @@ package com.cyc.km.query.answer.justification;
  * File: ProofViewJustification.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ public class ProofViewJustification implements Justification {
   }
 
   private ElMt mtFromObject(final CycObject mtObject) throws CycConnectionException {
-    return cyc.getObjectTool().makeELMt(mtObject);
+    return cyc.getObjectTool().makeElMt(mtObject);
   }
 
   /**

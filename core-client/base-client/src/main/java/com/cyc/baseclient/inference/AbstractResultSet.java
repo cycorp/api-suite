@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference;
  * File: AbstractResultSet.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ import java.util.Collections;
  *  CycAccess access = null;
  *  try {
  *    access = CycAccessManager.getAccess();
- *    ELMt inferencePSC = access.makeELMt("#$InferencePSC");
+ *    ElMt inferencePSC = access.makeElMt("#$InferencePSC");
  *    String query = "(#$isa ?X #$Dog)";
  *    InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
  *      inferencePSC, null, access, 500000);
@@ -97,7 +97,7 @@ import java.util.Collections;
  *
  * @author tbrussea
  * @date Mar 22, 2010, 11:55 AM
- * @version $Id: AbstractResultSet.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: AbstractResultSet.java 163450 2016-01-08 21:40:25Z nwinant $
  */
 public abstract class AbstractResultSet implements ResultSet, InferenceResultSet {
 

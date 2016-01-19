@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: ElMtConstant.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,20 +23,22 @@ package com.cyc.baseclient.cycobject;
 
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ElMt;
+import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.kb.Context;
 
 /**
- * Provides the container for the ELMt CycConstantImpl (Epistemlogical Level Microtheory
+ * Provides the container for the ElMt CycConstantImpl (Epistemlogical Level Microtheory
  Constant).<p>
  *
- * @version $Id: ElMtConstant.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: ElMtConstant.java 163503 2016-01-11 23:42:19Z nwinant $
  * @author Tony Brusseau
  */
 public class ElMtConstant extends CycConstantImpl implements ElMt {
   
   static final long serialVersionUID = -2405506745680227189L;
   
-  /** Privately creates a new instance of ELMtConstant 
+  /** Privately creates a new instance of ElMtConstant 
    * deprecated
    */
   private ElMtConstant(CycConstant cycConstant) {
@@ -44,13 +46,30 @@ public class ElMtConstant extends CycConstantImpl implements ElMt {
   }
     
   /**
-   * Returns a new ELMtConstant given a CycConstantImpl.  Note, use the
+   * Returns a new ElMtConstant given a CycConstantImpl.  Note, use the
  factory method in the CycClient to create these.
    */
-  public static ElMtConstant makeELMtConstant(CycConstant cycConstant) {
+  public static ElMtConstant makeElMtConstant(CycConstant cycConstant) {
     CycObjectFactory.removeCaches(cycConstant);
     ElMtConstant elmtConstant = new ElMtConstant(cycConstant);
     CycObjectFactory.addCycConstantCache(cycConstant);
     return elmtConstant;
   }
+  
+  public static boolean isCompatible(Context context) {
+    final Object core = context.getCore();
+    return (core instanceof ElMtConstant) || (core instanceof CycConstant);
+  }
+  
+  public static ElMtConstant fromContext(Context context) {
+    final Object core = context.getCore();
+    if (core instanceof ElMtConstant) {
+      return (ElMtConstant) core;
+    } else if (core instanceof CycConstant) {
+     return makeElMtConstant((CycConstant) core);
+    }
+    throw new BaseClientRuntimeException("Could not create " + ElMtConstant.class.getSimpleName() 
+            + " from " + core);
+  }
+  
 }

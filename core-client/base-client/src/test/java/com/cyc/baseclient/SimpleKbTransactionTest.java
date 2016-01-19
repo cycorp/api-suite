@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: SimpleKbTransactionTest.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -320,7 +320,7 @@ public class SimpleKbTransactionTest {
         List<Fort> templates = new ArrayList<Fort>();
         SimpleKbTransaction instance = new SimpleKbTransaction();
         instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
-        templates.add((Fort) cyc.getObjectTool().makeELMt("" + thing + ""));
+        templates.add((Fort) cyc.getObjectTool().makeElMt("" + thing + ""));
         instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
         // TODO review the generated test code and remove the default call to fail.
         assertTrue(true);
@@ -335,14 +335,14 @@ public class SimpleKbTransactionTest {
         try {
             System.out.println("noteForAssertion3");
             String sentence = "(" + isa + " " + collection + " " + thing + ")";
-            ElMt mt = cyc.getObjectTool().makeELMt(universalVocabularyMt);
+            ElMt mt = cyc.getObjectTool().makeElMt(universalVocabularyMt);
             boolean bookkeeping = false;
             boolean transcripting = false;
             boolean wffDisabled = false;
             List<Fort> templates = new ArrayList<Fort>();
             SimpleKbTransaction instance = new SimpleKbTransaction();
             instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
-            mt = cyc.getObjectTool().makeELMt(baseKB);
+            mt = cyc.getObjectTool().makeElMt(baseKB);
             instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
             assertTrue(true);
         } catch (CycConnectionException ex) {
@@ -370,7 +370,7 @@ public class SimpleKbTransactionTest {
             boolean wffDisabled = false;
             List<Fort> templates = new ArrayList<Fort>();
             SimpleKbTransaction instance = new SimpleKbTransaction();
-            mt = cyc.getObjectTool().makeELMt(baseKB);
+            mt = cyc.getObjectTool().makeElMt(baseKB);
             instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
             instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
             sentence = "(" + isa + " " + thing + " " + collection + ")";
@@ -401,7 +401,7 @@ public class SimpleKbTransactionTest {
             boolean wffDisabled = false;
             List<Fort> templates = new ArrayList<Fort>();
             SimpleKbTransaction instance = new SimpleKbTransaction();
-            mt = cyc.getObjectTool().makeELMt(baseKB);
+            mt = cyc.getObjectTool().makeElMt(baseKB);
             instance.noteForUnassertion(sentence, mt, bookkeeping, transcripting);
             instance.noteForAssertion(sentence, mt, bookkeeping, transcripting, wffDisabled, templates);
         } catch (CycConnectionException ex) {
@@ -457,12 +457,12 @@ public class SimpleKbTransactionTest {
         try {
             System.out.println("noteForUnassertion3");
             String sentence = "(" + isa + " " + collection + " " + thing + ")";
-            ElMt mt = cyc.getObjectTool().makeELMt("" + universalVocabularyMt + "");
+            ElMt mt = cyc.getObjectTool().makeElMt("" + universalVocabularyMt + "");
             boolean bookkeeping = false;
             boolean transcripting = false;
             SimpleKbTransaction instance = new SimpleKbTransaction();
             instance.noteForUnassertion(sentence, mt, bookkeeping, transcripting);
-            mt = cyc.getObjectTool().makeELMt(baseKB);
+            mt = cyc.getObjectTool().makeElMt(baseKB);
             instance.noteForUnassertion(sentence, mt, bookkeeping, transcripting);
             // TODO review the generated test code and remove the default call to fail.
             assertTrue(true);
@@ -489,7 +489,7 @@ public class SimpleKbTransactionTest {
             boolean bookkeeping = false;
             boolean transcripting = false;
             SimpleKbTransaction instance = new SimpleKbTransaction();
-            mt = cyc.getObjectTool().makeELMt(baseKB);
+            mt = cyc.getObjectTool().makeElMt(baseKB);
             instance.noteForUnassertion(sentence, mt, bookkeeping, transcripting);
             instance.noteForUnassertion(sentence, mt, bookkeeping, transcripting);
             sentence = "(" + isa + " " + thing + " " + collection + ")";

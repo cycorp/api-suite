@@ -5,7 +5,7 @@ package com.cyc.baseclient.util.query;
  * File: EffortConstraint.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package com.cyc.baseclient.util.query;
  */
 
 /**
- * @version $Id: EffortConstraint.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: EffortConstraint.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author  mreimers
  */
 public interface EffortConstraint extends QueryConstraint {

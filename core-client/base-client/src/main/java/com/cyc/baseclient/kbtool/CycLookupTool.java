@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycLookupTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -466,7 +466,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
   @Override
   public CycList getArg2s(String predicate, Fort arg1, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    return getArg2s(getKnownConstantByName(predicate), arg1, makeELMt_inner(mt));
+    return getArg2s(getKnownConstantByName(predicate), arg1, makeElMt_inner(mt));
   }
 
   /**
@@ -491,7 +491,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
             predicate, arg1, variable);
 
-    return getCyc().getInferenceTool().queryVariable(variable, query, makeELMt_inner(mt));
+    return getCyc().getInferenceTool().queryVariable(variable, query, makeElMt_inner(mt));
   }
 
   /**
@@ -533,7 +533,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
   @Override
   public Object getArg2(String predicate, Fort arg1, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    return getArg2(getKnownConstantByName(predicate), arg1, makeELMt_inner(mt));
+    return getArg2(getKnownConstantByName(predicate), arg1, makeElMt_inner(mt));
   }
 
   /**
@@ -560,7 +560,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     final DefaultInferenceParameters params = new DefaultInferenceParameters(
             getCyc());
     params.setMaxAnswerCount(1);
-    CycList answer = getCyc().getInferenceTool().queryVariable(variable, query, makeELMt_inner(mt), params);
+    CycList answer = getCyc().getInferenceTool().queryVariable(variable, query, makeElMt_inner(mt), params);
 
     if (answer.size() > 0) {
       return answer.get(0);
@@ -612,7 +612,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
   public Object getAssertionArg2(Fort predicate, Fort arg1, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseObject(makeSubLStmt(FPRED_VALUE_IN_MT, arg1, predicate,
-            makeELMt_inner(mt)));
+            makeElMt_inner(mt)));
   }
 
   /**
@@ -653,7 +653,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
   public Object getArg1(Fort predicate, DenotationalTerm arg2,
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    CycList answer = getArg1s(predicate, arg2, makeELMt_inner(mt));
+    CycList answer = getArg1s(predicate, arg2, makeElMt_inner(mt));
     if (answer.size() > 0) {
       return answer.get(0);
     } else {
@@ -704,7 +704,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
             predicate, variable, arg2);
 
-    return getCyc().getInferenceTool().queryVariable(variable, query, makeELMt_inner(mt));
+    return getCyc().getInferenceTool().queryVariable(variable, query, makeElMt_inner(mt));
   }
   
     /**
@@ -857,7 +857,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (cycObject instanceof CycArrayList) {
       return null;
     }
@@ -893,7 +893,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     }
     String script =
             "(clet ((comment-string \n"
-            + "         (comment " + cycObject.stringApiValue() + " " +  makeELMt_inner(
+            + "         (comment " + cycObject.stringApiValue() + " " +  makeElMt_inner(
             mt).stringApiValue() + "))) \n"
             + "  (fif comment-string \n"
             + "       (string-substitute \" \" \"\\\"\" comment-string) \n"
@@ -919,7 +919,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList("(remove-duplicates (with-all-mts (isa " + cycObject.stringApiValue()
             + ")))");
   }
@@ -943,12 +943,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
     return getConverse().converseList("(isa " + cycObject.stringApiValue()
-            + " " +  makeELMt_inner(mt).stringApiValue()
+            + " " +  makeElMt_inner(mt).stringApiValue()
             + ")");
   }
 
@@ -969,7 +969,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList("(remove-duplicates (with-all-mts (genls " + cycObject.stringApiValue()
             + ")))");
   }
@@ -993,12 +993,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
     return getConverse().converseList("(genls " + cycObject.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1034,7 +1034,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(min-genls " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1070,7 +1070,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(specs " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1106,7 +1106,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(max-specs " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1140,7 +1140,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(genl-siblings " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1215,7 +1215,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(spec-siblings " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1253,12 +1253,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
     return getConverse().converseList("(all-genls " + cycObject.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1293,7 +1293,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-specs " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1335,7 +1335,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-genls-wrt " + spec.stringApiValue() + " " + genl.stringApiValue()
-            + " " + makeELMt_inner(mt).stringApiValue() + ")");
+            + " " + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1375,7 +1375,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-dependent-specs " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1435,7 +1435,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(sample-leaf-specs " + cycFort.stringApiValue() + " " + numberOfSamples
-            + " " + makeELMt_inner(mt).stringApiValue() + ")");
+            + " " + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1478,7 +1478,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
-    return (Fort) getConverse().converseObject("(with-inference-mt-relevance " + makeELMt_inner(
+    return (Fort) getConverse().converseObject("(with-inference-mt-relevance " + makeElMt_inner(
             mt).stringApiValue()
             + " (min-col " + collections.stringApiValue() + "))");
   }
@@ -1526,7 +1526,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
-    return getConverse().converseList("(with-inference-mt-relevance " + makeELMt_inner(mt).stringApiValue() + " (max-cols " + collections.stringApiValue()
+    return getConverse().converseList("(with-inference-mt-relevance " + makeElMt_inner(mt).stringApiValue() + " (max-cols " + collections.stringApiValue()
             + "))");
   }
 
@@ -1573,7 +1573,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
-    return getConverse().converseList("(with-inference-mt-relevance " + makeELMt_inner(mt).stringApiValue()
+    return getConverse().converseList("(with-inference-mt-relevance " + makeElMt_inner(mt).stringApiValue()
             + " (min-cols " + collections.stringApiValue() + "))");
   }
 
@@ -1620,7 +1620,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(why-genl? " + spec.stringApiValue() + " " + genl.stringApiValue()
-            + " " + makeELMt_inner(mt).stringApiValue() + ")");
+            + " " + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1685,7 +1685,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     CycList listAnswer = getConverse().converseList("(why-genl? " + spec.stringApiValue() + " "
             + genl.stringApiValue() + " "
-            + getCyc().getObjectTool().makeELMt(mt).stringApiValue() + ")");
+            + getCyc().getObjectTool().makeElMt(mt).stringApiValue() + ")");
     List answerPhrases = new ArrayList();
 
     if (listAnswer.size() == 0) {
@@ -1748,7 +1748,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(why-collections-intersect? " + collection1.stringApiValue() + " "
-            + collection2.stringApiValue() + " " + makeELMt_inner(
+            + collection2.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + ")");
   }
 
@@ -1819,7 +1819,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     CycList listAnswer = getConverse().converseList("(with-all-mts (why-collections-intersect? "
             + collection1.stringApiValue() + " "
             + collection2.stringApiValue() + " "
-            + getCyc().getObjectTool().makeELMt(mt).stringApiValue() + ")");
+            + getCyc().getObjectTool().makeElMt(mt).stringApiValue() + ")");
     List answerPhrases = new ArrayList();
 
     if (listAnswer.size() == 0) {
@@ -1880,7 +1880,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(collection-leaves " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1918,7 +1918,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(local-disjoint-with " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1960,7 +1960,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(min-isa " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -1999,7 +1999,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(instances " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2041,7 +2041,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(instance-siblings " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2082,7 +2082,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-isa " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2123,7 +2123,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-instances " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2171,7 +2171,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
             "?QUOTED-INSTANCE");
     final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
             CommonConstants.QUOTED_ISA, queryVariable, cycFort);
-    return getCyc().getInferenceTool().queryVariable(queryVariable, query, makeELMt_inner(mt), null, timeoutMsecs);
+    return getCyc().getInferenceTool().queryVariable(queryVariable, query, makeElMt_inner(mt), null, timeoutMsecs);
   }
 
 
@@ -2220,7 +2220,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(why-isa? " + spec.stringApiValue() + " " + genl.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2281,7 +2281,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     String command = "(why-isa? " + spec.stringApiValue() + " " + genl.stringApiValue() + " "
-            + getCyc().getObjectTool().makeELMt(mt).stringApiValue() + ")";
+            + getCyc().getObjectTool().makeElMt(mt).stringApiValue() + ")";
     CycList listAnswer = getConverse().converseList(command);
     List answerPhrases = new ArrayList();
 
@@ -2346,12 +2346,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
       final String script =
               "(clet ((canonicalized-predicate (canonicalize-term " + predicate.stringApiValue() + ")))"
               + "  (pif (fort-p canonicalized-predicate)"
-              + "    (remove-duplicates (with-all-mts (genl-predicates canonicalized-predicate " + makeELMt_inner(
+              + "    (remove-duplicates (with-all-mts (genl-predicates canonicalized-predicate " + makeElMt_inner(
               mt).stringApiValue() + ")))"
               + "    nil))";
       return getConverse().converseList(script);
     } else {
-      return getConverse().converseList("(genl-predicates " + predicate.stringApiValue() + " " + makeELMt_inner(
+      return getConverse().converseList("(genl-predicates " + predicate.stringApiValue() + " " + makeElMt_inner(
               mt).stringApiValue() + ")");
     }
   }
@@ -2391,7 +2391,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-genl-predicates " + predicate.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2432,7 +2432,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-spec-predicates " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2473,7 +2473,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(all-spec-inverses " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2492,7 +2492,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
   @Override
   public CycList getAllSpecMts(CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    return getConverse().converseList("(all-spec-mts " + makeELMt_inner(mt).stringApiValue() + ")");
+    return getConverse().converseList("(all-spec-mts " + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2513,7 +2513,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList("(remove-duplicates (with-all-mts (arg1-isa "
             + cycObject.stringApiValue() + ")))");
   }
@@ -2542,7 +2542,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
       throw new NullPointerException("mt must not be null");
     }
     return getConverse().converseList("(arg1-isa " + predicate.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2563,7 +2563,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList("(remove-duplicates (with-all-mts (arg2-isa "
             + cycObject.stringApiValue() + ")))");
   }
@@ -2588,12 +2588,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (mt == null) {
       throw new NullPointerException("mt must not be null");
     }
     return getConverse().converseList("(arg2-isa " + cycObject.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2631,7 +2631,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(arg3-isa " + predicate.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2669,7 +2669,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(arg4-isa " + predicate.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2715,7 +2715,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     String command = "(remove-duplicates \n" + "  (with-all-mts \n" + "    (argn-isa \n"
             + "      " + predicate.stringApiValue() + "      "
-            + Integer.toString(argPosition) + "      " + makeELMt_inner(
+            + Integer.toString(argPosition) + "      " + makeElMt_inner(
             mt).stringApiValue()
             + ")))";
 
@@ -2766,7 +2766,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     String command = "(remove-duplicates \n" + "  (with-all-mts \n" + "    (inter-arg-isa1-2 "
             + "      " + predicate.stringApiValue() + "      "
-            + makeELMt_inner(mt).stringApiValue() + ")))";
+            + makeElMt_inner(mt).stringApiValue() + ")))";
 
     return getConverse().converseList(command);
   }
@@ -2869,7 +2869,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(result-isa " + function.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2913,7 +2913,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(argn-genl " + predicate.stringApiValue() + " " + argPosition + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2934,7 +2934,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList(
             "(with-all-mts (arg1-format " + cycObject.stringApiValue() + "))");
   }
@@ -2959,12 +2959,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
     return getConverse().converseList("(arg1-format " + cycObject.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -2985,7 +2985,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList(
             "(with-all-mts (arg2-format " + cycObject.stringApiValue() + "))");
   }
@@ -3010,12 +3010,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
     return getConverse().converseList("(arg2-format " + cycObject.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -3036,7 +3036,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     return getConverse().converseList("(remove-duplicates (with-all-mts (local-disjoint-with "
             + cycObject.stringApiValue() + ")))");
   }
@@ -3058,7 +3058,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseList("(local-disjoint-with " + cycFort.stringApiValue() + " "
-            + makeELMt_inner(mt).stringApiValue() + ")");
+            + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   /**
@@ -3131,7 +3131,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     CycList answer = null;
     try {
       final String queryString =
@@ -3141,7 +3141,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
               + "    (" + COEXTENSIONAL_SET_OR_COLLECTIONS + " " + cycObject.cyclify() + " ?X)))";
       final FormulaSentence query = getCyc().getObjectTool().makeCycSentence(queryString);
       final CycVariable queryVariable = CycObjectFactory.makeCycVariable("?X");
-      answer = getCyc().getInferenceTool().queryVariable(queryVariable, query, makeELMt_inner(mt), null,
+      answer = getCyc().getInferenceTool().queryVariable(queryVariable, query, makeElMt_inner(mt), null,
               timeoutMsecs);
     } catch (CycConnectionException e) {
       if (IOException.class.isInstance(e)) {
@@ -3247,7 +3247,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     StringBuilder command = new StringBuilder();
 
-    if (makeELMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeELMt_inner(mt).equals(
+    if (makeElMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeElMt_inner(mt).equals(
             CommonConstants.EVERYTHING_PSC)) {
       command.append("(clet (backchain-rules formula) ");
       command.append("  (with-all-mts ");
@@ -3266,7 +3266,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     } else {
       command.append("(clet (backchain-rules formula) ");
       command.append("  (with-inference-mt-relevance ").
-              append(makeELMt_inner(mt).stringApiValue()).
+              append(makeElMt_inner(mt).stringApiValue()).
               append(" ");
       command.append("    (do-predicate-rule-index (rule ").
               append(predicate.stringApiValue()).
@@ -3305,7 +3305,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycList formula, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     StringBuilder command = new StringBuilder();
-    if (makeELMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeELMt_inner(mt).equals(
+    if (makeElMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeElMt_inner(mt).equals(
             CommonConstants.EVERYTHING_PSC)) {
       command.append("(clet (backchain-rules formula) ");
       command.append("  (with-all-mts ");
@@ -3322,7 +3322,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     } else {
       command.append("(clet (backchain-rules formula) ");
       command.append("  (with-inference-mt-relevance ").append(
-              makeELMt_inner(mt).stringApiValue()).append(" ");
+              makeElMt_inner(mt).stringApiValue()).append(" ");
       command.append("    (do-predicate-rule-index (rule ").append(
               predicate.stringApiValue()).append(" :pos nil :forward) ");
       command.append("       (csetq formula (assertion-el-formula rule)) ");
@@ -3354,7 +3354,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
   public CycList getBackchainRules(CycConstant predicate, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     StringBuilder command = new StringBuilder();
-    if (makeELMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeELMt_inner(mt).equals(
+    if (makeElMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeElMt_inner(mt).equals(
             CommonConstants.EVERYTHING_PSC)) {
       command.append("(clet (backchain-rules) ");
       command.append("  (with-all-mts ");
@@ -3371,7 +3371,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     } else {
       command.append("(clet (backchain-rules) ");
       command.append("  (with-inference-mt-relevance ").append(
-              makeELMt_inner(mt).stringApiValue()).append(" ");
+              makeElMt_inner(mt).stringApiValue()).append(" ");
       command.append("    (do-predicate-rule-index (rule ").append(
               predicate.stringApiValue()).append(" ");
       command.append("                                :sense :pos ");
@@ -3408,7 +3408,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     StringBuilder command = new StringBuilder();
 
-    if (makeELMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeELMt_inner(mt).equals(
+    if (makeElMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeElMt_inner(mt).equals(
             CommonConstants.EVERYTHING_PSC)) {
       command.append("(clet (backchain-rules) ");
       command.append("  (with-all-mts ");
@@ -3425,7 +3425,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     } else {
       command.append("(clet (backchain-rules) ");
       command.append("  (with-inference-mt-relevance ").append(
-              makeELMt_inner(mt).stringApiValue()).append(" ");
+              makeElMt_inner(mt).stringApiValue()).append(" ");
       command.append("    (do-predicate-rule-index (rule ").append(
               predicate.stringApiValue()).append(" ");
       command.append("                                :sense :pos ");
@@ -3463,12 +3463,12 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     String command;
-    if (makeELMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeELMt_inner(mt).equals(CommonConstants.EVERYTHING_PSC)) {
+    if (makeElMt_inner(mt).equals(CommonConstants.INFERENCE_PSC) || makeElMt_inner(mt).equals(CommonConstants.EVERYTHING_PSC)) {
       command = makeSubLStmt(SOME_PRED_VALUE_IN_ANY_MT, term, predicate,
               argumentPosition);
     } else {
       command = makeSubLStmt(SOME_PRED_VALUE_IN_RELEVANT_MTS, term, predicate,
-              makeELMt_inner(mt), argumentPosition);
+              makeElMt_inner(mt), argumentPosition);
     }
 
     //getCyc().traceOn();
@@ -3569,7 +3569,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (predicates == null) {
       throw new NullPointerException("predicates must not be null");
     }
@@ -3582,7 +3582,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
       result.addAllNew(getGafs(cycObject,
               (Fort) predicates.get(
               i),
-              makeELMt_inner(mt)));
+              makeElMt_inner(mt)));
     }
 
     return result;
@@ -3620,7 +3620,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
       //getGafsForNaut
     }
     final CycArrayList gafs = new CycArrayList();
-    final String command = "(with-inference-mt-relevance " + makeELMt_inner(mt).stringApiValue() + "\n"
+    final String command = "(with-inference-mt-relevance " + makeElMt_inner(mt).stringApiValue() + "\n"
             + "  (pred-values-in-relevant-mts " + cycFort.stringApiValue() + " "
             + predicate.stringApiValue() + "))";
     final CycList values = getConverse().converseList(command);
@@ -3657,7 +3657,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (predicates == null) {
       throw new NullPointerException("predicates must not be null");
     }
@@ -3691,7 +3691,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     if (cycObject == null) {
       throw new NullPointerException("cycObject must not be null");
     }
-    verifyPossibleDenotationalTerm_inner(cycObject);
+    verifyPossibleDenotationalTerm(cycObject);
     if (cycObject instanceof CycArrayList) {
       return getGafsForNaut((CycArrayList) cycObject, predicate);
     }
@@ -3774,7 +3774,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     CycArrayList tuples = new CycArrayList();
     String command = makeSubLStmt("pred-value-tuples-in-mt", term, predicate,
             indexArg,
-            gatherArgs, makeELMt_inner(mt));
+            gatherArgs, makeElMt_inner(mt));
     return getConverse().converseList(command);
   }
 
@@ -3831,7 +3831,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
             CommonConstants.SYNONYMOUS_EXTERNAL_CONCEPT,
             cycTermVar, informationSource, externalConceptVar);
 
-    return getCyc().getInferenceTool().queryVariables(variables, query, makeELMt_inner(mt),
+    return getCyc().getInferenceTool().queryVariables(variables, query, makeElMt_inner(mt),
             new DefaultInferenceParameters(getCyc()));
   }
 
@@ -3858,7 +3858,7 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
             CommonConstants.NAME_STRING,
             cycFort, variable);
 
-    return getCyc().getInferenceTool().queryVariable(variable, query, makeELMt_inner(mt));
+    return getCyc().getInferenceTool().queryVariable(variable, query, makeElMt_inner(mt));
   }
 
   @Override
@@ -4025,6 +4025,16 @@ public class CycLookupTool extends AbstractKbTool implements LookupTool {
     return nlf.format(cycObject);
   }
   */
+  
+  // Protected
+  
+  protected void verifyPossibleDenotationalTerm(CycObject cycObject) throws IllegalArgumentException {
+    if (!(cycObject instanceof DenotationalTerm || cycObject instanceof CycList)) {
+      throw new IllegalArgumentException(
+              "cycObject must be a Cyc denotational term " + cycObject.cyclify());
+    }
+  }
+  
   
   // Internal
   

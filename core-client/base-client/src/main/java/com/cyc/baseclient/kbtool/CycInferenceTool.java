@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycInferenceTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           final InferenceParameters queryProperties)
           throws CycConnectionException, CycApiException {
     final String script =
-            "(new-cyc-query " + query.stringApiValue() + " " + makeELMt_inner(mt).stringApiValue() + " " + queryPropertiesToString(
+            "(new-cyc-query " + query.stringApiValue() + " " + makeElMt_inner(mt).stringApiValue() + " " + queryPropertiesToString(
             queryProperties) + ")";
     return getConverse().converseList(script);
   }
@@ -243,7 +243,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
    * could cause garbage to accumulate on the server.
    *
    * @param query the query in String form to ask
-   * @param mt the microtheory in which the query should be asked (as a String, CycObject or ELMt)
+   * @param mt the microtheory in which the query should be asked (as a String, CycObject or ElMt)
    * @param queryProperties the query properties to use when asking the query
    * @param timeoutMsecs the amount of time in milliseconds to wait before
    * giving up. A zero for this value means to wait forever.
@@ -260,7 +260,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           final long timeoutMsecs)
           throws CycConnectionException, com.cyc.base.exception.CycApiException, CycTimeOutException {
     InferenceWorkerSynch worker =
-            new DefaultInferenceWorkerSynch(query, getCyc().getObjectTool().makeELMt(mt), queryProperties,
+            new DefaultInferenceWorkerSynch(query, getCyc().getObjectTool().makeElMt(mt), queryProperties,
             getCyc(), timeoutMsecs);
     InferenceResultSet rs = worker.executeQuery();
     return rs;
@@ -376,7 +376,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
   public boolean isQueryTrue(CycList query, CycObject mt,
           InferenceParameters queryProperties, long timeoutMsecs)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    InferenceResultSet rs = executeQuery(query, makeELMt_inner(mt), queryProperties,
+    InferenceResultSet rs = executeQuery(query, makeElMt_inner(mt), queryProperties,
             timeoutMsecs);
     try {
       return rs.getTruthValue();
@@ -406,7 +406,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
   public boolean isQueryTrue(FormulaSentence query, CycObject mt,
           InferenceParameters queryProperties, long timeoutMsecs)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    InferenceResultSet rs = executeQuery(query, makeELMt_inner(mt), queryProperties,
+    InferenceResultSet rs = executeQuery(query, makeElMt_inner(mt), queryProperties,
             timeoutMsecs);
     try {
       return rs.getTruthValue();
@@ -477,7 +477,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           final FormulaSentence query, final CycObject mt,
           final InferenceParameters queryProperties)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    final InferenceResultSet rs = executeQuery(query, makeELMt_inner(mt),
+    final InferenceResultSet rs = executeQuery(query, makeElMt_inner(mt),
             queryProperties);
     return queryVariableLow(queryVariable, rs);
   }
@@ -487,7 +487,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
    *
    * @param queryVariable the unbound variable for which bindings are sought
    * @param query the query expression
-   * @param mt the inference microtheory (given in String, CycObject or ELMt form)
+   * @param mt the inference microtheory (given in String, CycObject or ElMt form)
    * @param queryProperties queryProperties the list of query property keywords and values, or null if the defaults are to used
    *
    * @return the binding list resulting from the given query
@@ -530,7 +530,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException, CycTimeOutException {
     InferenceResultSet rs = null;
     try {
-      rs = executeQuery(query, makeELMt_inner(mt), queryProperties, timeoutMsecs);
+      rs = executeQuery(query, makeElMt_inner(mt), queryProperties, timeoutMsecs);
       return queryVariableLow(variable, rs);
     } finally {
       return new CycArrayList<Object>();
@@ -582,7 +582,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           final FormulaSentence query, final CycObject mt,
           final InferenceParameters queryProperties, long timeoutMsecs)
           throws CycConnectionException, com.cyc.base.exception.CycApiException, CycTimeOutException {
-    InferenceResultSet rs = executeQuery(query, makeELMt_inner(mt), queryProperties,
+    InferenceResultSet rs = executeQuery(query, makeElMt_inner(mt), queryProperties,
             timeoutMsecs);
     return queryVariableLow(variable, rs);
   }
@@ -635,7 +635,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
     final String script =
             "(clet ((problem-store (find-problem-store-by-name \"" + inferenceProblemStoreName + "\")))"
             + "  (query-variable " + variable.stringApiValue() + " "
-            + query.stringApiValue() + " " + makeELMt_inner(mt).stringApiValue() + " " + queryPropertiesToString(
+            + query.stringApiValue() + " " + makeElMt_inner(mt).stringApiValue() + " " + queryPropertiesToString(
             tempQueryProperties) + "))";
     return getConverse().converseList(script);
   }
@@ -710,7 +710,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           final long timeoutMsecs)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     final String command = makeSubLStmt("query-template", variables, query,
-            getCyc().getObjectTool().makeELMt(mt), queryProperties);
+            getCyc().getObjectTool().makeElMt(mt), queryProperties);
     SublWorkerSynch worker = new DefaultSublWorkerSynch(command, getCyc(),
             timeoutMsecs);
     if (CycObjectFactory.nil.equals(worker.getWork())) {
@@ -853,7 +853,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
         parameterList.add(queryParameterValue);
       }
     }
-    String command = makeSubLStmt(CYC_QUERY, query, makeELMt_inner(mt), parameterList);
+    String command = makeSubLStmt(CYC_QUERY, query, makeElMt_inner(mt), parameterList);
 
     return getConverse().converseList(command);
   }
@@ -886,7 +886,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
             " ");
     queryBuffer.append("                  ").append(query.stringApiValue()).append(
             " ");
-    queryBuffer.append("                  ").append(makeELMt_inner(
+    queryBuffer.append("                  ").append(makeElMt_inner(
             mt).stringApiValue()).append(" ");
     queryBuffer.append("                  0 nil nil nil)))");
 
@@ -923,7 +923,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
             " ");
     queryBuffer.append("                  ").append(query.stringApiValue()).append(
             " ");
-    queryBuffer.append("                  ").append(makeELMt_inner(
+    queryBuffer.append("                  ").append(makeElMt_inner(
             mt).stringApiValue()).append(" ");
     queryBuffer.append("                  0 nil nil nil)))");
 
@@ -992,7 +992,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
   @Override
   public boolean isQueryTrue(CycList query, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
-    String command = makeSubLStmt(CYC_QUERY, getCyc().getObjectTool().canonicalizeList(query), makeELMt_inner(
+    String command = makeSubLStmt(CYC_QUERY, getCyc().getObjectTool().canonicalizeList(query), makeElMt_inner(
             mt));
     CycList response = getConverse().converseList(command);
 
@@ -1022,7 +1022,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
       return isQueryTrue.booleanValue();
     }
 
-    final boolean answer = isQueryTrue(query, makeELMt_inner(mt));
+    final boolean answer = isQueryTrue(query, makeElMt_inner(mt));
     askCache.put(query, answer);
 
     return answer;
@@ -1137,7 +1137,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
     final String script =
             "(clet ((problem-store (find-problem-store-by-name \"" + inferenceProblemStoreName + "\")))"
             + "  (query-template " + queryVariables.stringApiValue() + " "
-            + query.stringApiValue() + " " + makeELMt_inner(mt).stringApiValue() + " " + queryPropertiesToString(
+            + query.stringApiValue() + " " + makeElMt_inner(mt).stringApiValue() + " " + queryPropertiesToString(
             tempQueryProperties) + "))";
     SublWorkerSynch worker = new DefaultSublWorkerSynch(script, getCyc(),
             timeoutMsecs);
@@ -1155,7 +1155,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           final long timeoutMsecs)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     final String command = makeSubLStmt("query-template", queryVariables, query,
-            makeELMt_inner(mt), queryProperties);
+            makeElMt_inner(mt), queryProperties);
     SublWorkerSynch worker = new DefaultSublWorkerSynch(command, getCyc(),
             timeoutMsecs);
     if (CycObjectFactory.nil.equals(worker.getWork())) {
@@ -1172,7 +1172,7 @@ public class CycInferenceTool extends AbstractKbTool implements InferenceTool {
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     String xmlSpecString = (xmlSpec == null) ? ":default" : xmlSpec.stringApiValue();
     final String script =
-            "(query-results-to-xml-string " + query.stringApiValue() + " " + makeELMt_inner(
+            "(query-results-to-xml-string " + query.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + " " + queryPropertiesToString(queryProperties) + " " + xmlSpecString + ")";
     return getConverse().converseString(script);
   }

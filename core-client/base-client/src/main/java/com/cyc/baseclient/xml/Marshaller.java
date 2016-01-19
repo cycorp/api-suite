@@ -5,7 +5,7 @@ package com.cyc.baseclient.xml;
  * File: Marshaller.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.io.*;
 /**
  * Provides the behavior of a CYC-ML marshaller.<p>
  *
- * @version $Id: Marshaller.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: Marshaller.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author Stephen L. Reed
  */
 

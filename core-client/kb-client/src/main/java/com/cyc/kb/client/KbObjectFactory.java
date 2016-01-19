@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: KbObjectFactory.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * The class and the methods of this class are not part of the KB API.
  *  
  * @author David Baxter
- * @version $Id: KbObjectFactory.java 162904 2015-12-02 18:35:34Z nwinant $ 
+ * @version $Id: KbObjectFactory.java 163517 2016-01-12 00:58:43Z nwinant $ 
  */
 
 public class KbObjectFactory {
@@ -711,10 +711,10 @@ public class KbObjectFactory {
     CycAccess cyc = getStaticAccess();
     try {
       final CycObject baseCycTypeCore = KbObjectImpl.getBaseCycTypeCore(c);
-      if (cyc.getInspectorTool().isa(cycObject, baseCycTypeCore, cyc.getObjectTool().makeELMt("InferencePSC"))) {
+      if (cyc.getInspectorTool().isa(cycObject, baseCycTypeCore, cyc.getObjectTool().makeElMt("InferencePSC"))) {
         return KbStatus.EXISTS_AS_TYPE;
       }
-      if (cyc.getComparisonTool().provablyNotIsa(cycObject, baseCycTypeCore, cyc.getObjectTool().makeELMt("InferencePSC"))) { 
+      if (cyc.getComparisonTool().provablyNotIsa(cycObject, baseCycTypeCore, cyc.getObjectTool().makeElMt("InferencePSC"))) { 
         //this won't work for NAUT collections, but we shouldn't ever need those...
         return KbStatus.EXISTS_WITH_TYPE_CONFLICT;
       } else {

@@ -5,7 +5,7 @@ package com.cyc.baseclient.testing;
  * File: TestConstants.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -449,7 +449,7 @@ public class TestConstants {
           new GuidImpl("c10052d1-9c29-11b1-9dad-c379636f7270"));
   
   @CycTerm(cycl="#$HistoricalPeopleDataMt")
-  public static final ElMt HISTORICAL_PEOPLE_DATA_MT = ElMtConstant.makeELMtConstant(
+  public static final ElMt HISTORICAL_PEOPLE_DATA_MT = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("HistoricalPeopleDataMt", new GuidImpl(
                           "c0852ac3-9c29-11b1-9dad-c379636f7270")));
   

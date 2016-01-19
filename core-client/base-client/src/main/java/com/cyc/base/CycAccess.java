@@ -5,7 +5,7 @@ package com.cyc.base;
  * File: CycAccess.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ package com.cyc.base;
 
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.exception.CycApiException;
-import com.cyc.session.CycServer;
 import com.cyc.base.conn.LeaseManager;
 import com.cyc.base.conn.CycConnection;
 
@@ -39,6 +38,7 @@ import com.cyc.base.kbtool.UnassertTool;
 import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycSession;
+import com.cyc.base.kbtool.KbObjectTool;
 
 /**
  *
@@ -235,6 +235,13 @@ public interface CycAccess {
    * @return ComparisonTool
    */
   ComparisonTool getComparisonTool();
+  
+  /**
+   * Provides tools for converting KbObjects to Base Client objects.
+   * 
+   * @return KbObjectTool
+   */
+  KbObjectTool getKbObjectTool();
   
   /**
    * Provides tools for performing inferences over the Cyc KB.

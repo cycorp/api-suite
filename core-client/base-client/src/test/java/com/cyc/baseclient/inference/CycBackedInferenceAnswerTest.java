@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference;
  * File: CycBackedInferenceAnswerTest.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public class CycBackedInferenceAnswerTest extends InferenceAnswerTest {
     assumeNotOpenCyc();
     final CycConstant WHH_WP = getCyc().getLookupTool().find("#$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison");
     // (#$ContextOfPCWFn #$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison)
-    final ElMt WHH_WP_MT = ElMtCycNaut.makeELMtCycNaut(
+    final ElMt WHH_WP_MT = ElMtCycNaut.makeElMtCycNaut(
             CycArrayList.makeCycList(CONTEXT_OF_PCW_FN, WHH_WP));
 
     InferenceAnswer inferenceAnswer = getFirstInferenceAnswer(ISA_WILLIAM_HENRY_HARRISON_US_PRESIDENT_STRING, WHH_WP_MT);

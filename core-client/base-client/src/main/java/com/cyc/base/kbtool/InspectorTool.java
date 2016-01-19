@@ -5,7 +5,7 @@ package com.cyc.base.kbtool;
  * File: InspectorTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -194,7 +194,7 @@ public interface InspectorTool {
 
   boolean isConstantInKB(CycConstant obj) throws CycConnectionException, CycApiException;
   
-  boolean isELMtInKB(ElMt obj) throws CycConnectionException, CycApiException;
+  boolean isElMtInKB(ElMt obj) throws CycConnectionException, CycApiException;
 
   /**
    * Returns true if the candidate name is an available CycConstant name, case insensitive.

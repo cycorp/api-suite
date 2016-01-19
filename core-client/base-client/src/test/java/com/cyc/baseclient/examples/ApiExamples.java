@@ -5,7 +5,7 @@ package com.cyc.baseclient.examples;
  * File: ApiExamples.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ import com.cyc.session.exception.SessionException;
 
  Created on : May 1, 2009, 11:13:55 AM Author : tbrussea
  *
- * @version $Id: ApiExamples.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: ApiExamples.java 163450 2016-01-08 21:40:25Z nwinant $
  */
 public class ApiExamples {
 
@@ -142,7 +142,7 @@ public class ApiExamples {
       InferenceParameters inferenceParameters = new DefaultInferenceParameters(access);
       inferenceParameters.setMaxTime(10).setMaxAnswerCount(100).setMaxTransformationDepth(2);
       inferenceParameters.put(":ALLOW-INDETERMINATE-RESULTS?", Boolean.FALSE);
-      ElMt inferencePSC = access.getObjectTool().makeELMt("InferencePSC");
+      ElMt inferencePSC = access.getObjectTool().makeElMt("InferencePSC");
       CycFormulaSentence query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
               inferencePSC, inferenceParameters, access, 10000);
@@ -176,7 +176,7 @@ public class ApiExamples {
   public static final void exampleSynchronousQueries() {
     System.out.println("Starting Cyc synchronous query examples.");
     try {
-      ElMt inferencePSC = access.getObjectTool().makeELMt("InferencePSC");
+      ElMt inferencePSC = access.getObjectTool().makeElMt("InferencePSC");
       CycFormulaSentence query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
               inferencePSC, null, access, 10000);
@@ -196,7 +196,7 @@ public class ApiExamples {
   public static final void exampleAsynchronousQueries() {
     System.out.println("Starting Cyc asynchronous query examples.");
     try {
-      ElMt inferencePSC = access.getObjectTool().makeELMt("InferencePSC");
+      ElMt inferencePSC = access.getObjectTool().makeElMt("InferencePSC");
       CycFormulaSentence query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       final InferenceWorker worker = new DefaultInferenceWorker(query,
               inferencePSC, null, access, 10000);
@@ -260,7 +260,7 @@ public class ApiExamples {
       assert gaf.equals(gaf2) : "Good grief! List parsing appears to be broken.";
 
       // making an assertion to the KB
-      ElMt peopleDataMt = access.getObjectTool().makeELMt(access.getLookupTool().getKnownConstantByName("PeopleDataMt"));
+      ElMt peopleDataMt = access.getObjectTool().makeElMt(access.getLookupTool().getKnownConstantByName("PeopleDataMt"));
       access.getAssertTool().assertGaf(gaf, peopleDataMt);
 
       // verifying that a forumla is asserted

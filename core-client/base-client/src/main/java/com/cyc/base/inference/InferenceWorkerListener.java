@@ -5,7 +5,7 @@ package com.cyc.base.inference;
  * File: InferenceWorkerListener.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @see InferenceWorker
  * @author tbrussea, zelal
- * @version $Id: InferenceWorkerListener.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: InferenceWorkerListener.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public interface InferenceWorkerListener extends EventListener {
   

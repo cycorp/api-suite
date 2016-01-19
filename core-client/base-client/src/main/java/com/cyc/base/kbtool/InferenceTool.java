@@ -5,7 +5,7 @@ package com.cyc.base.kbtool;
  * File: InferenceTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ public interface InferenceTool {
    * could cause garbage to accumulate on the server.
    *
    * @param query the query in String form to ask
-   * @param mt the microtheory in which the query should be asked (as a String, CycObject or ELMt)
+   * @param mt the microtheory in which the query should be asked (as a String, CycObject or ElMt)
    * @param queryProperties the query properties to use when asking the query
    * @param timeoutMsecs the amount of time in milliseconds to wait before
    * giving up. A zero for this value means to wait forever.
@@ -335,7 +335,7 @@ public interface InferenceTool {
    *
    * @param queryVariable the unbound variable for which bindings are sought
    * @param query the query expression
-   * @param mt the inference microtheory (given in String, CycObject or ELMt form)
+   * @param mt the inference microtheory (given in String, CycObject or ElMt form)
    * @param queryProperties queryProperties the list of query property keywords and values, or null if the defaults are to used
    *
    * @return the binding list resulting from the given query

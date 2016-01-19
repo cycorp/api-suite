@@ -6,7 +6,7 @@ package com.cyc.baseclient.parser;
  * File: CycLParser.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ import static com.cyc.base.cycobject.CycConstant.HD;
  of the CycL vocabulary in the KB, and on the current behavior of the system
  with a bit of cleaning up.
  *
- * @version $Id: CycLParser.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: CycLParser.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author Tony Brusseau
  <p>
  */

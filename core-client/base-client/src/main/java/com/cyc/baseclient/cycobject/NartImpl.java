@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: NartImpl.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import com.cyc.baseclient.xml.XmlWriter;
  * This class implements the behavior and attributes of a
  * a Base Client NART (Non Atomic Reified Term).
  *
- * @version $Id: NartImpl.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: NartImpl.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author Stefano Bertolo
  * @author Stephen L. Reed
  */

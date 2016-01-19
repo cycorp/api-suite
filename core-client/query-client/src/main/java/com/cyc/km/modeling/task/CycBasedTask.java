@@ -5,7 +5,7 @@ package com.cyc.km.modeling.task;
  * File: CycBasedTask.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,9 +256,9 @@ public class CycBasedTask {
           SessionException, QueryConstructionException {
     if (guidanceMt == null) {
       try {
-        guidanceMt = getObjectTool().makeELMt(QueryConstants.getInstance().CURRENT_WORLD_DATA_COLLECTOR_MT_NON_HOMOCENTRIC.getCore());
+        guidanceMt = getObjectTool().makeElMt(QueryConstants.getInstance().CURRENT_WORLD_DATA_COLLECTOR_MT_NON_HOMOCENTRIC.getCore());
         final KbIndividual guidanceMtQuery = QueryConstants.getInstance().CAE_GUIDANCE_MT_QUERY;
-        guidanceMt = getObjectTool().makeELMt(getSingleAnswerQueryValue(guidanceMtQuery, guidanceMt));
+        guidanceMt = getObjectTool().makeElMt(getSingleAnswerQueryValue(guidanceMtQuery, guidanceMt));
       } catch (KbObjectNotFoundException ex) {
         //Just use default.
       } 

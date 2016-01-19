@@ -5,7 +5,7 @@ package com.cyc.base.cycobject;
  * File: CycObject.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.List;
  * This interface marks an object as being a
  * CycL object.
  *
- * @version $Id: CycObject.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycObject.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author  tbrussea
  */
 public interface CycObject extends Comparable<Object> {

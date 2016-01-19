@@ -5,7 +5,7 @@ package com.cyc.baseclient.comm;
  * File: AbstractComm.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,14 @@ package com.cyc.baseclient.comm;
 //// Internal Imports
 
 import com.cyc.base.conn.CycConnection;
+import com.cyc.baseclient.connection.CfaslInputStream;
+import com.cyc.baseclient.connection.CfaslOutputStream;
+import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 
 
 //// External Imports
@@ -33,10 +41,35 @@ import com.cyc.base.conn.CycConnection;
  * can be used across all Comm implementations.
  *
  * @author tbrussea, May 7, 2013, 12:19:20 PM
- * @version $Id: AbstractComm.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: AbstractComm.java 163397 2016-01-05 23:58:08Z nwinant $
  */
 public abstract class AbstractComm implements Comm {
 
+  // Static methods
+  
+  public static byte[] getCycInitializationRequest(UUID uuid) {
+    CycArrayList request = new CycArrayList();
+    request.add(new CycSymbolImpl("INITIALIZE-JAVA-API-PASSIVE-SOCKET"));
+    request.add(uuid.toString());
+    ByteArrayOutputStream baos = new ByteArrayOutputStream(2048);
+    CfaslOutputStream cfo = new CfaslOutputStream(baos);
+    try {
+      cfo.writeObject(request);
+      cfo.flush();
+    } catch (IOException ioe) {} // ignore, should never happen
+    return baos.toByteArray();
+  }
+  
+  public static void handleCycInitializationRequestResponse(InputStream is) throws IOException {
+    CfaslInputStream inboundStream = new CfaslInputStream(is);
+    // read and ignore the status
+    inboundStream.resetIsInvalidObject();
+    Object status = inboundStream.readObject();
+    // read and ignore the response
+    inboundStream.resetIsInvalidObject();
+    Object response = inboundStream.readObject();
+  }
+  
   //// Constructors
 
   /** Creates a new instance of AbstractComm. */

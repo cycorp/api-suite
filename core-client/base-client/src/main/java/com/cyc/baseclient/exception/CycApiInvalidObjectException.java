@@ -5,7 +5,7 @@ package com.cyc.baseclient.exception;
  * File: CycApiInvalidObjectException.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ package com.cyc.baseclient.exception;
  * server. If an error is detected on the Java client, then a CycApiException
  * is thrown instead.
  *
- * @version $Id: CycApiInvalidObjectException.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: CycApiInvalidObjectException.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author daves
  */
 

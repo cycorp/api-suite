@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: KbFunctionImpl.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * Cyc Knowledge Base. A future version of the API will support un-reifiable functions.
  *
  * @author Vijay Raj
- * @version	$Id: KbFunctionImpl.java 163117 2015-12-11 00:27:39Z nwinant $
+ * @version	$Id: KbFunctionImpl.java 163355 2016-01-04 20:53:24Z nwinant $
  */
   // @TODO: Add examples
 public class KbFunctionImpl extends RelationImpl implements KbFunction {

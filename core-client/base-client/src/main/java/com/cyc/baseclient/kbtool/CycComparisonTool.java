@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycComparisonTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class CycComparisonTool extends AbstractKbTool implements ComparisonTool 
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(tacit-coextensional? " + collection1.stringApiValue() + " "
-            + collection2.stringApiValue() + " " + makeELMt_inner(
+            + collection2.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + ")");
   }
 
@@ -205,7 +205,7 @@ public class CycComparisonTool extends AbstractKbTool implements ComparisonTool 
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(collections-intersect? " + collection1.stringApiValue() + " "
-            + collection2.stringApiValue() + " " + makeELMt_inner(
+            + collection2.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + ")");
   }
   
@@ -248,7 +248,7 @@ public class CycComparisonTool extends AbstractKbTool implements ComparisonTool 
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(with-all-mts (disjoint-with? " + collection1.stringApiValue() + " "
-            + collection2.stringApiValue() + " " + makeELMt_inner(
+            + collection2.stringApiValue() + " " + makeElMt_inner(
             mt).stringApiValue() + ")");
   }
   
@@ -330,7 +330,7 @@ public class CycComparisonTool extends AbstractKbTool implements ComparisonTool 
     Object[] response = {null, null};
     final String command =
             makeSubLStmt("pred-u-v-holds", binaryPredicate, arg1, arg2,
-            makeELMt_inner(mt));
+            makeElMt_inner(mt));
     response = converse_inner(command);
 
     if (response[0].equals(Boolean.TRUE)) {
@@ -367,7 +367,7 @@ public class CycComparisonTool extends AbstractKbTool implements ComparisonTool 
           CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     final String command = "(not-isa? " + term.stringApiValue() + " "
-            + collection.stringApiValue() + " " + makeELMt_inner(mt).stringApiValue() + ")";
+            + collection.stringApiValue() + " " + makeElMt_inner(mt).stringApiValue() + ")";
     return getConverse().converseBoolean(command);
   }
   

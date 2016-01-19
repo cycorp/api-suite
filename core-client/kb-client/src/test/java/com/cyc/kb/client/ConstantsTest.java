@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: ConstantsTest.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,14 +83,14 @@ public class ConstantsTest {
     }
     
   @Test
-  public void testKBObjectLibraryLoader() {
+  public void testKbObjectLibraryLoader() {
     final KbObjectLibraryLoader loader = new KbObjectLibraryLoader();
     final Collection<KbObject> allObj = loader.getAllKBObjectsForClass(Constants.class);
     for (KbObject o : allObj) {
       System.out.println("  - " + o);
     }
     assertFalse(allObj.isEmpty());
-    assertEquals(30, allObj.size());
+    assertEquals(31, allObj.size());
     
     // Do a deeper inspection of constants classes by name:
     validateCycLibrary(loader, Constants.class);

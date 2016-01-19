@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference;
  * File: KbQueryFactory.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,12 +42,12 @@ import com.cyc.query.InferenceParameters;
 /**
  *
  * KBQueryFactory provides factory methods for inference workers where
- * the query information--the sentence, the ELMt and the inference parameters--
+ * the query information--the sentence, the ElMt and the inference parameters--
  * are backed by a KBQ term in the CYC knowledge base.
  *
  * @author rck
  * @date 2010-07-08
- * @version $Id: KbQueryFactory.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: KbQueryFactory.java 163450 2016-01-08 21:40:25Z nwinant $
  */
 public class KbQueryFactory {
 
@@ -64,7 +64,7 @@ public class KbQueryFactory {
   /**
    *
    * Create a new instance of InferenceWorker, either synchronous or asynchronous,
-   * that will run the query in the ELMt and with the parameters specified by the
+   * that will run the query in the ElMt and with the parameters specified by the
    * CYC query in the Cyc KB and uniquely denoted by the KBQ parameter.
    *
    * @param access the CycAccess object that specifies the CYC server that hosts the
@@ -87,7 +87,7 @@ public class KbQueryFactory {
   /**
    *
    * Create a new instance of InferenceWorker, either synchronous or asynchronous,
-   * that will run the query in the ELMt and with the parameters specified by the
+   * that will run the query in the ElMt and with the parameters specified by the
    * CYC query in the Cyc KB and uniquely denoted by the KBQ parameter.
    *
    * @param access the CycAccess object that specifies the CYC server that hosts the
@@ -110,7 +110,7 @@ public class KbQueryFactory {
 
   /**
    * Create a new instance of InferenceWorker, either synchronous or asynchronous,
-   * that will run the query in the ELMt and with the parameters specified by the
+   * that will run the query in the ElMt and with the parameters specified by the
    * CYC query in the Cyc KB and uniquely denoted by the KBQ parameter.
    * After the query sentence has been loaded, apply the substitutions spelled out
    * in the substitution map, equating variables with bindings.
@@ -133,7 +133,7 @@ public class KbQueryFactory {
           DenotationalTerm kbq, Map<CycVariableImpl, Object> substitutions, long timeoutMsecs,
           boolean sync) throws CycApiException, CycConnectionException {
     final FormulaSentence sentence = loadKBQSentence(access, kbq);
-    final ElMt elmt = loadKBQELMt(access, kbq);
+    final ElMt elmt = loadKbqElMt(access, kbq);
     final InferenceParameters properties = loadKBQProperties(access, kbq);
     if (substitutions != null) {
       sentence.applySubstitutionsDestructive(substitutions);
@@ -144,7 +144,7 @@ public class KbQueryFactory {
 
   /**
    * Create a new instance of InferenceWorker, either synchronous or asynchronous,
-   * that will run the query in the ELMt and with the parameters specified by the
+   * that will run the query in the ElMt and with the parameters specified by the
    * CYC query in the Cyc KB and uniquely denoted by the KBQ parameter.
    * After the query sentence has been loaded, apply the substitutions spelled out
    * in the substitution map, equating variables with bindings.
@@ -193,7 +193,7 @@ public class KbQueryFactory {
           DenotationalTerm kbq, Map<CycObject, Object> substitutions, long timeoutMsecs,
           boolean sync) throws CycApiException, CycConnectionException {
     final FormulaSentence sentence = loadKBQSentence(access, kbq);
-    final ElMt elmt = loadKBQELMt(access, kbq);
+    final ElMt elmt = loadKbqElMt(access, kbq);
     final InferenceParameters properties = loadKBQProperties(access, kbq);
     FormulaSentence subsSentence = sentence.treeSubstitute(access, substitutions);
     return (sync) ? new DefaultInferenceWorkerSynch(subsSentence, elmt, properties, access, timeoutMsecs)
@@ -236,11 +236,11 @@ public class KbQueryFactory {
     }
   }
 
-  protected ElMt loadKBQELMt(CycAccess access, DenotationalTerm kbq)
+  protected ElMt loadKbqElMt(CycAccess access, DenotationalTerm kbq)
           throws CycApiException, CycConnectionException {
     try {
       final String command = SublApiHelper.makeSubLStmt(KBQ_ELMT, kbq);
-      return access.getObjectTool().makeELMt(access.converse().converseCycObject(command));
+      return access.getObjectTool().makeElMt(access.converse().converseCycObject(command));
     } catch (CycApiException xcpt) {
       throw new CycApiException("Could not load query MT for KBQ " + kbq.cyclify(), xcpt);
     }

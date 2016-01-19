@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: Constants.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import com.cyc.kb.exception.KbRuntimeException;
  * to use this class in application making use of the KB API.
  * 
  * @author Vijay Raj
- * @version $Id: Constants.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: Constants.java 163369 2016-01-05 00:04:22Z nwinant $
  * @since 1.0
  */
 @CycObjectLibrary(accessor="getInstance")
@@ -61,8 +61,11 @@ public class Constants {
   @CycTerm(cycl="#$EverythingPSC")
   public final Context EVERYTHING_PSC_CTX = ContextImpl.get("EverythingPSC");
   
-@CycTerm(cycl="#$isa")
+  @CycTerm(cycl="#$isa")
   public final KbPredicate ISA_PRED  = KbPredicateImpl.get("isa");
+  
+  @CycTerm(cycl="#$different")
+  public final KbPredicate DIFFERENT = KbPredicateImpl.get("different");
   
   @CycTerm(cycl="#$genls")
   public final KbPredicate GENLS_PRED = KbPredicateImpl.get("genls");
@@ -198,35 +201,35 @@ public class Constants {
 
   // Main contexts
   /**
-   * @return Collection.get("DataMicrotheory")
+   * @return KbCollectionImpl.get("DataMicrotheory")
    */
   public static KbCollection dataMt() {
     return getInstance().DATA_MT;
   }
 
   /**
-   * @return Context.get("BaseKB")
+   * @return ContextImpl.get("BaseKB")
    */
   public static Context baseKbMt() {
     return getInstance().BASE_KB_CTX;
   }
 
   /**
-   * @return Context.get("EverythingPSC")
+   * @return ContextImpl.get("EverythingPSC")
    */
   public static Context everythingPSCMt() {
     return getInstance().EVERYTHING_PSC_CTX;
   }
 
   /**
-   * @return Context.get("InferencePSC")
+   * @return ContextImpl.get("InferencePSC")
    */
   public static Context inferencePSCMt() {
     return getInstance().INFERENCE_PSC_CTX;
   }
 
   /**
-   * @return Context.get("UniversalVocabularyMt")
+   * @return ContextImpl.get("UniversalVocabularyMt")
    */
   public static Context uvMt() {
     return getInstance().UV_MT_CTX;
@@ -234,84 +237,91 @@ public class Constants {
 
   // Main predicates
   /**
-   * @return Predicate.get("isa")
+   * @return KbPredicateImpl.get("isa")
    */
   public static KbPredicate isa() {
     return getInstance().ISA_PRED;
   }
   
   /**
-   * @return Predicate.get("genls")
+   * @return KbPredicateImpl.get("different")
+   */
+  public static KbPredicate different() {
+    return getInstance().DIFFERENT;
+  }
+  
+  /**
+   * @return KbPredicateImpl.get("genls")
    */
   public static KbPredicate genls() {
     return getInstance().GENLS_PRED;
   }
-
+  
   /**
-   * @return Predicate.get("genlMt")
+   * @return KbPredicateImpl.get("genlMt")
    */
   public static KbPredicate genlMt() {
     return getInstance().GENLMT_PRED;
   }
 
   /**
-   * @return Predicate.get("genlPreds")
+   * @return KbPredicateImpl.get("genlPreds")
    */
   public static KbPredicate genlPreds() {
     return getInstance().GENLPREDS_PRED;
   }
   
   /**
-   * @return Predicate.get("quotedIsa")
+   * @return BinaryPredicateImpl.get("quotedIsa")
    */
   public static BinaryPredicate quotedIsa() {
     return getInstance().QUOTEDISA_PRED;
   }
   
   /**
-   * @return Predicate.get("argIsa")
+   * @return KbPredicateImpl.get("argIsa")
    */
   public static KbPredicate argIsa() {
     return getInstance().ARGISA_PRED;
   }
-
+  
   /**
-   * @return Predicate.get("argGenl")
+   * @return KbPredicateImpl.get("argGenl")
    */
   public static KbPredicate argGenl() {
     return getInstance().ARGGENL_PRED;
   }
 
   /**
-   * @return BinaryPredicate.get("arity")
+   * @return BinaryPredicateImpl.get("arity")
    */
   public static BinaryPredicate arity() {
     return getInstance().ARITY_PRED;
   }
 
   /**
-   * @return Predicate.get("resultIsa")
+   * @return KbPredicateImpl.get("resultIsa")
    */
   public static KbPredicate resultIsa() {
     return getInstance().RESULTISA_PRED;
   }
 
   /**
-   * @return Predicate.get("resultGenl")
+   * @return KbPredicateImpl.get("resultGenl")
    */
   public static KbPredicate resultGenl() {
     return getInstance().RESULTGENL_PRED;
   }
 
   /**
-   * @return Predicate.get("resultGenl")
+   * @return KbPredicateImpl.get("resultGenl")
    */
   public static KbPredicate mtMonad() {
     return getInstance().MTMONAD_PRED;
   }
 
   /**
-   * @return Predicate.get("resultGenl")
+   * @return KbPredicateImpl.get("resultGenl")
    */
   public static KbPredicate mtTimeIndex() {
     return getInstance().MTTIMEIDX_PRED;

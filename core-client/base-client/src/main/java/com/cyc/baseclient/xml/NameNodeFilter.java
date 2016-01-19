@@ -5,7 +5,7 @@ package  com.cyc.baseclient.xml;
  * File: NameNodeFilter.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import  org.w3c.dom.Node;
  * Provides a implementation of org.w3c.dom.traversal.NodeFilter that allows a TreeWalker
  * to select nodes of a DOM tree based on their tag name.<p>
  *
- * @version $Id: NameNodeFilter.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: NameNodeFilter.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author Stefano Bertolo
  */
 public class NameNodeFilter

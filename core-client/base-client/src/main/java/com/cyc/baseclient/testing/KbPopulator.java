@@ -5,7 +5,7 @@ package com.cyc.baseclient.testing;
  * File: KbPopulator.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class KbPopulator {
                     "\"Wikipedia contributors, \\\"William Henry Harrison,\\\" <i>Wikipedia, The Free Encyclopedia,</i> http://en.wikipedia.org/w/index.php?title=William_Henry_Harrison&oldid=619200023 (accessed August 20, 2014).\")",
             TestConstants.HISTORICAL_PEOPLE_DATA_MT, cyc);
     makeSentence("'(#$isa #$WilliamHenryHarrison (#$FormerFn #$UnitedStatesPresident))",
-            ElMtCycNaut.makeELMtCycNaut(
+            ElMtCycNaut.makeElMtCycNaut(
                     CycArrayList.makeCycList(CONTEXT_OF_PCW_FN, WHH_WP_PCW)),
             cyc);
     
@@ -102,7 +102,7 @@ public class KbPopulator {
             "    (#$isa ?EVENT #$WorkingEvent) " +
             "    (#$performedBy ?EVENT ?AGENT)) " +
             "   (#$subjectivelyEvaluates ?AGENT ?EVENT #$Challenging))",
-            ElMtConstant.makeELMtConstant(TestConstants.HUMAN_ACTIVITIES_MT), cyc);
+            ElMtConstant.makeElMtConstant(TestConstants.HUMAN_ACTIVITIES_MT), cyc);
     makeSentence(
             "'(#$salientAssertions #$performedBy " +
                     " (#$ist #$HumanActivitiesMt " +
@@ -138,7 +138,7 @@ public class KbPopulator {
   }
   
   protected void makeSentence(String sentence, String mtString, CycAccess cyc) throws CycConnectionException {
-    final ElMt mt = cyc.getObjectTool().makeELMt(mtString);
+    final ElMt mt = cyc.getObjectTool().makeElMt(mtString);
     makeSentence(sentence, mt, cyc);
   }
   

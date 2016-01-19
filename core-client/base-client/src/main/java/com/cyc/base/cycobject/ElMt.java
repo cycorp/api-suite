@@ -5,7 +5,7 @@ package com.cyc.base.cycobject;
  * File: ElMt.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package com.cyc.base.cycobject;
  */
 
 /**
- * Defines the behavior of a Epistemological Level Microtheory (ELMt), which can be
+ * Defines the behavior of a Epistemological Level Microtheory (ElMt), which can be
  * a Constant, NART (Non-Atomic Reified Term) or NAUT (Non-Atomic Unrefied Term).
  *
  * @version $0.1$

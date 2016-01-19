@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: ElMtCycNaut.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,30 @@ package com.cyc.baseclient.cycobject;
  */
 
 import com.cyc.base.cycobject.ElMt;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.kb.Context;
 import java.util.List;
 
 /**
- * Provides the container for the ELMt NAUT (Epistemlogical Level Microtheory
+ * Provides the container for the ElMt NAUT (Epistemlogical Level Microtheory
  * Non Atomic Un-reified Term).<p>
  *
- * @version $Id: ElMtCycNaut.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: ElMtCycNaut.java 163503 2016-01-11 23:42:19Z nwinant $
  * @author Tony Brusseau
  */
 
 public class ElMtCycNaut extends NautImpl implements ElMt {
   
-  /** Creates a new instance of ELMtCycNaut */
+  /** Creates a new instance of ElMtCycNaut */
   private ElMtCycNaut(List terms) {
     super(terms);
   }
   
   /**
-   * Returns a new ELMtCycNaut.  Note, use the
+   * Returns a new ElMtCycNaut.  Note, use the
    * factory method in the CycAccess to create these.
    */
-  public static ElMtCycNaut makeELMtCycNaut(List terms) {
+  public static ElMtCycNaut makeElMtCycNaut(List terms) {
     return new ElMtCycNaut(terms);
   }
   /**
@@ -55,5 +57,20 @@ public class ElMtCycNaut extends NautImpl implements ElMt {
   /*public String stringApiValue() {
     return "'" + super.stringApiValue();
   }*/
+  
+  public static boolean isCompatible(Context context) {
+    final Object core = context.getCore();
+    return (core instanceof ElMtCycNaut) || (core instanceof List);
+  }
 
+  public static ElMtCycNaut fromContext(Context context) {
+    final Object core = context.getCore();
+    if (core instanceof ElMtCycNaut) {
+      return (ElMtCycNaut) core;
+    } else if (core instanceof List) {
+     return makeElMtCycNaut((List) core);
+    }
+    throw new BaseClientRuntimeException("Could not create " + ElMtCycNaut.class.getSimpleName() 
+            + " from " + core);
+  }
 }

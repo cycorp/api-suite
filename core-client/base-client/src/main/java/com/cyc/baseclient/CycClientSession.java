@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: CycClientSession.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,11 +87,12 @@ public class CycClientSession extends AbstractCycSession<CycClientOptions> imple
   
   // Protected
   
-  protected void setAccess(CycClient client) {
+  protected CycClient setAccess(CycClient client) {
     this.client = client;
     if (client != null) {
       setOptions(new CycClientOptions(this));
     }
+    return this.client;
   }
   
 }

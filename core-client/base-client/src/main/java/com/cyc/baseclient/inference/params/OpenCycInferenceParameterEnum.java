@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference.params;
  * File: OpenCycInferenceParameterEnum.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import com.cyc.baseclient.CycObjectFactory;
  *
  * @author baxter
  * @date August 9, 2005, 8:49 PM
- * @version $Id: OpenCycInferenceParameterEnum.java 158569 2015-05-19 21:51:08Z daves $
+ * @version $Id: OpenCycInferenceParameterEnum.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public enum OpenCycInferenceParameterEnum {
 

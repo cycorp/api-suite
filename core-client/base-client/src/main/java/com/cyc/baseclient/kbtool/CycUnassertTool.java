@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycUnassertTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,11 +174,11 @@ public class CycUnassertTool extends AbstractKbTool implements UnassertTool {
       getCurrentTransaction().noteForUnassertion(getCyc().getHostName(), CommonConstants.BASE_KB, true, false);
     } else {
       String command = getConverse().wrapBookkeeping("(cyc-unassert " + sentence.stringApiValue()
-              + makeELMt_inner(mt).stringApiValue() + ")");
+              + makeElMt_inner(mt).stringApiValue() + ")");
       boolean unassertOk = getConverse().converseBoolean(command);
 
       if (!unassertOk) {
-        throw new CycApiException("Could not unassert from mt: " + makeELMt_inner(
+        throw new CycApiException("Could not unassert from mt: " + makeElMt_inner(
                 mt) + "\n  "
                 + sentence.cyclify());
       }
@@ -234,12 +234,12 @@ public class CycUnassertTool extends AbstractKbTool implements UnassertTool {
           boolean transcript)
           throws CycConnectionException, CycApiException {
     if (getCurrentTransaction() != null) {
-      getCurrentTransaction().noteForUnassertion(gaf.stringApiValue(), makeELMt_inner(
+      getCurrentTransaction().noteForUnassertion(gaf.stringApiValue(), makeElMt_inner(
               mt), bookkeeping, transcript);
     } else {
       final String fn = (transcript) ? "ke-unassert-now" : "cyc-unassert";
       String command = "(" + fn + " " + gaf.stringApiValue()
-              + makeELMt_inner(mt).stringApiValue() + ")";
+              + makeElMt_inner(mt).stringApiValue() + ")";
       if (bookkeeping) {
         command = getConverse().wrapBookkeeping(command);
       }
@@ -263,7 +263,7 @@ public class CycUnassertTool extends AbstractKbTool implements UnassertTool {
           boolean transcript)
           throws CycConnectionException, CycApiException {
     if (getCurrentTransaction() != null) {
-      getCurrentTransaction().noteForUnassertion(assertion.stringApiValue(), makeELMt_inner(assertion.getMt()), bookkeeping, transcript);
+      getCurrentTransaction().noteForUnassertion(assertion.stringApiValue(), makeElMt_inner(assertion.getMt()), bookkeeping, transcript);
     } else {
       final String fn = (transcript) ? "ke-unassert" : "cyc-unassert";
       String command = "(" + fn + " " + assertion.getELFormula(getCyc()).stringApiValue() + " " 
@@ -326,7 +326,7 @@ public class CycUnassertTool extends AbstractKbTool implements UnassertTool {
     while (iter.hasNext()) {
       CycAssertionImpl assertion = (CycAssertionImpl) iter.next();
       String command = getConverse().wrapBookkeeping(makeSubLStmt("ke-unassert-now", assertion,
-              makeELMt_inner(mt)));
+              makeElMt_inner(mt)));
       getConverse().converseVoid(command);
     }
   }
@@ -349,7 +349,7 @@ public class CycUnassertTool extends AbstractKbTool implements UnassertTool {
 
     while (iter.hasNext()) {
       CycAssertionImpl assertion = (CycAssertionImpl) iter.next();
-      String command = makeSubLStmt("cyc-unassert", assertion, makeELMt_inner(mt));
+      String command = makeSubLStmt("cyc-unassert", assertion, makeElMt_inner(mt));
       getConverse().converseVoid(command);
     }
   }
@@ -391,7 +391,7 @@ public class CycUnassertTool extends AbstractKbTool implements UnassertTool {
       }
 
       String command = "(cyc-unassert " + assertion.stringApiValue()
-              + makeELMt_inner(mt).stringApiValue() + "))";
+              + makeElMt_inner(mt).stringApiValue() + "))";
       getConverse().converseVoid(command);
     }
   }

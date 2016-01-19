@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: CycClientSessionFactory.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,10 +66,12 @@ public class CycClientSessionFactory implements SessionFactory<CycClientSession>
   @Override
   public CycClientSession initializeSession(CycClientSession session) throws SessionCommunicationException, SessionInitializationException {
     errorIfClosed("Cannot initialize session.");
-    final CycServerAddress server = session.getConfiguration().getCycServer();
+    final CycSessionConfiguration config = session.getConfiguration();
+    final CycServerAddress server = config.getCycServer();
     LOGGER.debug("Initializing session for {}", server);
     try {
-      session.setAccess(getClient(server));
+      CycClient client = session.setAccess(getClient(config));
+      client.initializeSession(config);
     } catch (CycConnectionException ex) {
       ex.throwAsSessionException("Error communicating with " + server);
     } catch (CycApiException ex) {
@@ -110,11 +112,13 @@ public class CycClientSessionFactory implements SessionFactory<CycClientSession>
     return Collections.unmodifiableSet(clients.keySet());
   }
   
-  synchronized public CycClient getClient(CycServerAddress server) throws CycConnectionException {
+  synchronized public CycClient getClient(CycSessionConfiguration config) throws CycConnectionException {
     reapOldClients();
+    final CycServerAddress server = config.getCycServer();
     if (!clients.containsKey(server)) {
       final long startMillis = System.currentTimeMillis();
-      final CycClient newClient = new CycClient(server);
+      final CycClient newClient = new CycClient(config);
+      //final CycClient newClient = new CycClient(server);
       LOGGER.debug("Created new client for {}: {} in {}ms", server, newClient, (System.currentTimeMillis() - startMillis));
       clients.put(server, newClient);
     }

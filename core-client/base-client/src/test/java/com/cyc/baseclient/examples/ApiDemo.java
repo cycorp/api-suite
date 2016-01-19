@@ -5,7 +5,7 @@ package com.cyc.baseclient.examples;
  * File: ApiDemo.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 /**
  * Provides a simple demo of the Base Client.<p>
  *
- * @version $Id: ApiDemo.java 162904 2015-12-02 18:35:34Z nwinant $
+ * @version $Id: ApiDemo.java 163356 2016-01-04 20:55:47Z nwinant $
  * @author Stephen L. Reed
  */
 

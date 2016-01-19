@@ -5,7 +5,7 @@ package com.cyc.base.cycobject;
  * File: FormulaSentence.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public interface FormulaSentence extends Formula, CycSentence {
    * sentence after calling this method, then those two sentences are equal at the EL.
    * In other words, they are merely syntactic variants of the same semantic meaning.
    *
-   * @see #getCanonicalElSentence(com.cyc.base.CycAccess, com.cyc.base.cycobject.ELMt, java.lang.Boolean)
+   * @see #getCanonicalElSentence(com.cyc.base.CycAccess, com.cyc.base.cycobject.ElMt, java.lang.Boolean)
    * @param access
    * @return the canonical version of this sentence.
    * @throws CycConnectionException
@@ -78,7 +78,7 @@ public interface FormulaSentence extends Formula, CycSentence {
   FormulaSentence getCanonicalElSentence(CycAccess access) throws CycConnectionException;
 
   /**
-   * @see #getCanonicalElSentence(com.cyc.base.CycAccess, com.cyc.base.cycobject.ELMt, java.lang.Boolean)
+   * @see #getCanonicalElSentence(com.cyc.base.CycAccess, com.cyc.base.cycobject.ElMt, java.lang.Boolean)
    * @param access
    * @param canonicalizeVars
    * @return the canonical version of this sentence.
@@ -140,7 +140,7 @@ public interface FormulaSentence extends Formula, CycSentence {
   FormulaSentence getExpandedSentence(CycAccess access, ElMt mt) throws CycConnectionException;
 
   /**
-   * @see #getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ELMt)
+   * @see #getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ElMt)
    * @param access
    * @return the explanation
    */
@@ -157,7 +157,7 @@ public interface FormulaSentence extends Formula, CycSentence {
   String getNonWffAssertExplanation(CycAccess access, ElMt mt);
 
   /**
-   * @see #getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ELMt)
+   * @see #getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ElMt)
    * @param access
    * @return An explanation, or null if no problems found.
    */
@@ -166,7 +166,7 @@ public interface FormulaSentence extends Formula, CycSentence {
   /**
    * Returns a string that attempts to explain why this is not well-formed for
    * any purpose. Return null if this is well-formed. If you want to make an assertion with your sentence,
-   * use the much more constraining {@link com.cyc.base.cycobject.FormulaSentence#getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ELMt) getNonWffAssertExplanation}.
+   * use the much more constraining {@link com.cyc.base.cycobject.FormulaSentence#getNonWffAssertExplanation(com.cyc.base.CycAccess, com.cyc.base.cycobject.ElMt) getNonWffAssertExplanation}.
    *
    * @param access
    * @param mt

@@ -5,7 +5,7 @@ package com.cyc.query;
  * File: QueryReader.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -193,8 +193,8 @@ public class QueryReader {
       final NonAtomicTerm mtNAT = (NonAtomicTerm) translateObject(
               queryMt.getFunction());
       final ElMt elmt = (mtNAT instanceof Nart) //@todo mtNat can probably be sent directly to Context.get(), without trying to convert to either an ELMt or a CycNaut
-              ? ElMtNart.makeELMtNart((Nart) mtNAT)
-              : ElMtCycNaut.makeELMtCycNaut(
+              ? ElMtNart.makeElMtNart((Nart) mtNAT)
+              : ElMtCycNaut.makeElMtCycNaut(
                       ((Naut) mtNAT).getArgs());
       return ContextImpl.get(elmt);
 

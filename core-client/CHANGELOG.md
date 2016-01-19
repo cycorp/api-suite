@@ -9,6 +9,19 @@ follow. Until the final 1.0.0 release, it is expected that future release candid
 backwards compatibility.
 
 
+1.0.0-rc5.1 - 2016-01-18
+------------------------
+
+Fixes several bugs in the Core Client implementation:
+
+* QueryImpl#getAnswerSentence() not substituting bindings.
+* CycListParser mangling very big integers.
+* LegacyCycClientManager#setCurrentSession(CycServerAddress) being ignored.
+* UnmodifiableCycList modified by java.util.Collections#sort() under Java 8.
+
+Additionally, in keeping with Google Java Style, references to "ELMt" have been changed to "ElMt".
+
+
 1.0.0-rc5 - 2015-12-18
 ----------------------
 

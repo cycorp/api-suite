@@ -5,7 +5,7 @@ package com.cyc.baseclient.comm;
  * File: SocketCommRoundRobin.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,10 +105,10 @@ public class SocketCommRoundRobin extends AbstractComm implements Comm {
       if (socketList.size() >= targetRoundRobinSize - 1) {
         isInitialized = true;
       }
-      byte[] initializationRequest = CycClient.getCycInitializationRequest(getCycConnection().getUuid());
+      byte[] initializationRequest = AbstractComm.getCycInitializationRequest(getCycConnection().getUuid());
       InputStream is = sendRequest(initializationRequest, makeRequestSummary("initialization request"), RequestType.INIT);
       
-      CycClient.handleCycInitializationRequestResponse(is);
+      AbstractComm.handleCycInitializationRequestResponse(is);
       getCycConnection().setupNewCommConnection(is);// @Note; this is required! It must happen after communication initialization.
     } catch (IOException ioe) {
       throw new CycConnectionException(ioe);

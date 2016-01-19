@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: AbstractKbTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.ElMt;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
@@ -72,12 +73,8 @@ public class AbstractKbTool {
   public CycList<Object> makeCycList_inner(String string) throws CycApiException {
     return getCyc().getObjectTool().makeCycList(string);
   }
-  protected ElMt makeELMt_inner(CycObject mt) throws CycConnectionException {
-    return getCyc().getObjectTool().makeELMt(mt);
-  }
-  
-  protected void verifyPossibleDenotationalTerm_inner(CycObject cycObject) throws IllegalArgumentException {
-    getCycClient().verifyPossibleDenotationalTerm(cycObject);
+  protected ElMt makeElMt_inner(CycObject mt) throws CycConnectionException {
+    return getCyc().getObjectTool().makeElMt(mt);
   }
   
   protected static KbTransaction getCurrentTransaction() {

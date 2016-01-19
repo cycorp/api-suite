@@ -5,7 +5,7 @@ package com.cyc.baseclient.kbtool;
  * File: CycObjectTool.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,9 +91,9 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
     String command = makeSubLStmt("canonicalize-hlmt", cycList);
     final CycObject result = getConverse().converseCycObject(command);
     if (result instanceof DenotationalTerm) {
-      mt = makeELMt(result);
+      mt = makeElMt(result);
     } else if (result instanceof List) {
-      mt = ElMtCycNaut.makeELMtCycNaut((List) result);
+      mt = ElMtCycNaut.makeElMtCycNaut((List) result);
     } else {
       throw new CycApiException("Can't canonicalize " + cycList);
     }
@@ -398,19 +398,19 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
   }
 
   /**
-   * Constructs a new ELMt object by the given CycObject.
+   * Constructs a new ElMt object by the given CycObject.
    *
-   * @param object the given CycObject from which the ELMt is derived
+   * @param object the given CycObject from which the ElMt is derived
    *
-   * @return the new ELMt object by the given CycObject
+   * @return the new ElMt object by the given CycObject
    *
    * @throws CycConnectionException if a communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    * @throws IllegalArgumentException if the cycObject is not the correct type of thing for
-   * making into an ELMt
+   * making into an ElMt
    */
   @Override
-  public ElMt makeELMt(Object object)
+  public ElMt makeElMt(Object object)
           throws CycConnectionException, CycApiException {
     if (object instanceof ElMt) {
       return (ElMt) object;
@@ -419,9 +419,9 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
     } else if (object instanceof Naut) {
       return canonicalizeHLMT((Naut) object);
     } else if (object instanceof CycConstantImpl) {
-      return ElMtConstant.makeELMtConstant((CycConstantImpl) object);
+      return ElMtConstant.makeElMtConstant((CycConstantImpl) object);
     } else if (object instanceof Nart) {
-      return ElMtNart.makeELMtNart((Nart) object);
+      return ElMtNart.makeElMtNart((Nart) object);
     } else if (object instanceof String) {
       String elmtString = object.toString().trim();
       if (elmtString.startsWith("(")) {
@@ -430,32 +430,32 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
         }
         @SuppressWarnings("unchecked")
         CycList<Object> elmtCycList = makeCycList_inner(elmtString);
-        return makeELMt_inner(elmtCycList);
+        return makeElMt_inner(elmtCycList);
       } else {
-        return makeELMt(getKnownConstantByName_inner(elmtString));
+        return makeElMt(getKnownConstantByName_inner(elmtString));
       }
     } else {
-      throw new IllegalArgumentException("Can't make an ELMt from " + object
+      throw new IllegalArgumentException("Can't make an ElMt from " + object
               + " class: " + object.getClass().getSimpleName());
     }
   }
 
   /**
-   * Constructs a new ELMt object by the given CycObject.
+   * Constructs a new ElMt object by the given CycObject.
    *
-   * @param cycObject the given CycObject from which the ELMt is derived
+   * @param cycObject the given CycObject from which the ElMt is derived
    *
-   * @return the new ELMt object by the given CycObject
+   * @return the new ElMt object by the given CycObject
    *
    * @note this is redundant with the Object version, but leaving in for compatability
    *
    * @throws CycConnectionException if a communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    * @throws IllegalArgumentException if the cycObject is not the correct type of thing for
-   * making into an ELMt
+   * making into an ElMt
    */
   @Override
-  public ElMt makeELMt(CycObject cycObject)
+  public ElMt makeElMt(CycObject cycObject)
           throws CycConnectionException, CycApiException {
     if (cycObject instanceof ElMt) {
       return (ElMt) cycObject;
@@ -464,40 +464,40 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
     } else if (cycObject instanceof Naut) {
       return canonicalizeHLMT((Naut) cycObject);
     } else if (cycObject instanceof Fort) {
-      return makeELMt((Fort) cycObject);
+      return makeElMt((Fort) cycObject);
     } else {
-      throw new IllegalArgumentException("Can't make an ELMt from " + cycObject
+      throw new IllegalArgumentException("Can't make an ElMt from " + cycObject
               + " class: " + cycObject.getClass().getSimpleName());
     }
   }
 
   /**
-   * Constructs a new ELMt object by the given CycObject.
+   * Constructs a new ElMt object by the given CycObject.
    * 
-   * @param cycObject the given Fort from which the ELMt is derived
-   * @return the new ELMt object by the given CycObject
+   * @param cycObject the given Fort from which the ElMt is derived
+   * @return the new ElMt object by the given CycObject
    * @note this is redundant with the Object version, but leaving in for compatability
    */
   @Override
-  public ElMt makeELMt(Fort cycObject) {
+  public ElMt makeElMt(Fort cycObject) {
     ElMt result = null;
     if (cycObject instanceof CycConstantImpl) {
-      result = ElMtConstant.makeELMtConstant((CycConstantImpl) cycObject);
+      result = ElMtConstant.makeElMtConstant((CycConstantImpl) cycObject);
     } else if (cycObject instanceof Nart) {
-      result = ElMtNart.makeELMtNart((Nart) cycObject);
+      result = ElMtNart.makeElMtNart((Nart) cycObject);
     } else {
       throw new IllegalArgumentException("CycObject: " + cycObject.cyclify()
-              + "is not a valid ELMt.");
+              + "is not a valid ElMt.");
     }
     return result;
   }
 
   /**
-   * Constructs a new ELMt object by the given String.
+   * Constructs a new ElMt object by the given String.
    *
-   * @param elmtString the given CycObject from which the ELMt is derived
+   * @param elmtString the given CycObject from which the ElMt is derived
    *
-   * @return the new ELMt object by the given CycObject
+   * @return the new ElMt object by the given CycObject
    *
    * @note this is redundant with the Object version, but leaving in for compatability
    *
@@ -505,7 +505,7 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
    * @throws CycApiException if the api request results in a cyc server error
    */
   @Override
-  public ElMt makeELMt(String elmtString)
+  public ElMt makeElMt(String elmtString)
           throws CycConnectionException, CycApiException {
     elmtString = elmtString.trim();
     if (elmtString.startsWith("(")) {
@@ -513,9 +513,9 @@ public class CycObjectTool extends AbstractKbTool implements ObjectTool {
           elmtString = getCyc().cyclifyString(elmtString);
         }
       CycList elmtCycList = makeCycList_inner(elmtString);
-      return makeELMt_inner(elmtCycList);
+      return makeElMt_inner(elmtCycList);
     } else {
-      return makeELMt(getKnownConstantByName_inner(elmtString));
+      return makeElMt(getKnownConstantByName_inner(elmtString));
     }
   }
 

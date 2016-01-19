@@ -5,7 +5,7 @@ package com.cyc.base.conn;
  * File: WorkerStatus.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ package com.cyc.base.conn;
  *
  * @author tbrussea
  * @date March 26, 2004, 10:40 AM
- * @version $Id: WorkerStatus.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: WorkerStatus.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public class WorkerStatus {
   

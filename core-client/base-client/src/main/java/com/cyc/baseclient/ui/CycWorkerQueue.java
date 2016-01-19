@@ -5,7 +5,7 @@ package com.cyc.baseclient.ui;
  * File: CycWorkerQueue.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * <P>Copyright (c) 2008 Cycorp, Inc.  (Copyright is assigned to the United States Government under DFARS 252.227-7020).
  *
  * @author baxter
- * @version $Id: CycWorkerQueue.java 155703 2015-01-05 23:15:30Z nwinant $
+ * @version $Id: CycWorkerQueue.java 163356 2016-01-04 20:55:47Z nwinant $
  * @date March 27, 2008, 12:19 PM
  */
 public class CycWorkerQueue {

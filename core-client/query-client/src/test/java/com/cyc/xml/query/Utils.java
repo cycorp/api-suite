@@ -9,7 +9,7 @@ package com.cyc.xml.query;
  * File: Utils.java
  * Project: Query Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,8 @@ public class Utils {
   }
   public static QueryAnswer answer = null;
   public static ElMt domainMt
-          = ElMtConstant.makeELMtConstant((CycConstant) Constants.baseKbMt().getCore());
-  public static ElMt languageMt = ElMtConstant.makeELMtConstant((CycConstant) QueryTestConstants.getInstance().englishParaphraseMt.getCore());
+          = ElMtConstant.makeElMtConstant((CycConstant) Constants.baseKbMt().getCore());
+  public static ElMt languageMt = ElMtConstant.makeElMtConstant((CycConstant) QueryTestConstants.getInstance().englishParaphraseMt.getCore());
 
   public static void teardown() {
     try {

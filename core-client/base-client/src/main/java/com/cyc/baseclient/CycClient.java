@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: CycClient.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,20 +28,13 @@ import com.cyc.base.CycAccess;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.conn.Worker;
 import com.cyc.base.conn.CycConnection;
-import java.io.ByteArrayOutputStream;
-//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
-import com.cyc.baseclient.connection.CfaslInputStream;
-import com.cyc.baseclient.connection.CfaslOutputStream;
 import com.cyc.baseclient.exception.CycApiClosedConnectionException;
 import com.cyc.baseclient.connection.CycConnectionImpl;
 import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
@@ -49,8 +42,6 @@ import com.cyc.baseclient.comm.Comm;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.base.cycobject.CycObject;
-import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.baseclient.cycobject.GuidImpl;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameterDescriptions;
 //import com.cyc.baseclient.util.Log;
@@ -63,18 +54,20 @@ import com.cyc.session.CycServer;
 import com.cyc.base.kbtool.InspectorTool;
 import com.cyc.baseclient.kbtool.CycAssertTool;
 import com.cyc.baseclient.kbtool.CycComparisonTool;
+import com.cyc.baseclient.kbtool.CycKbObjectTool;
 import com.cyc.baseclient.kbtool.CycInspectorTool;
 import com.cyc.baseclient.kbtool.CycLookupTool;
 import com.cyc.baseclient.kbtool.CycOwlTool;
 import com.cyc.baseclient.kbtool.CycInferenceTool;
 import com.cyc.baseclient.kbtool.CycRkfTool;
 import com.cyc.baseclient.kbtool.CycUnassertTool;
+import com.cyc.baseclient.nl.ParaphraserFactory;
 import com.cyc.baseclient.subl.SublResourceLoader;
 import com.cyc.baseclient.subl.SublSourceFile;
 import com.cyc.baseclient.subl.functions.SublFunctions;
+import com.cyc.nl.Paraphraser;
 import com.cyc.session.CycServerAddress;
 import com.cyc.session.CycSessionConfiguration;
-import com.cyc.session.CycSessionManager;
 import com.cyc.session.exception.SessionException;
 import com.cyc.session.exception.SessionRuntimeException;
 import java.util.List;
@@ -85,38 +78,15 @@ import org.slf4j.LoggerFactory;
  * Provides wrappers for the Base Client.
  *
  * <p>
- Collaborates with the <tt>CycConnection</tt> class which manages the api connections.
+ Collaborates with the <tt>CycConnection</tt> class which manages the API connections.
  </p>
  *
- * @version $Id: CycClient.java 162936 2015-12-03 19:49:28Z nwinant $
+ * @version $Id: CycClient.java 163503 2016-01-11 23:42:19Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {
   
   // Static methods
-  
-  public static byte[] getCycInitializationRequest(UUID uuid) {
-    CycArrayList request = new CycArrayList();
-    request.add(new CycSymbolImpl("INITIALIZE-JAVA-API-PASSIVE-SOCKET"));
-    request.add(uuid.toString());
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(2048);
-    CfaslOutputStream cfo = new CfaslOutputStream(baos);
-    try {
-      cfo.writeObject(request);
-      cfo.flush();
-    } catch (IOException ioe) {} // ignore, should never happen
-    return baos.toByteArray();
-  }
-  
-  public static void handleCycInitializationRequestResponse(InputStream is) throws IOException {
-    CfaslInputStream inboundStream = new CfaslInputStream(is);
-    // read and ignore the status
-    inboundStream.resetIsInvalidObject();
-    Object status = inboundStream.readObject();
-    // read and ignore the response
-    inboundStream.resetIsInvalidObject();
-    Object response = inboundStream.readObject();
-  }
   
   @Deprecated
   protected static KbTransaction getCurrentTransaction() {
@@ -128,35 +98,6 @@ public class CycClient implements CycAccess {
     currentTransaction.set(transaction);
   }
   
-  private static boolean isPossibleExternalIDString(final Object obj) {
-    return is64BitString(obj);
-  }
-  
-  private static boolean is64BitString(final Object obj) {
-    if (obj instanceof String) {
-      return is64Bit((String) obj);
-    } else {
-      return false;
-    }
-  }
-
-  private static boolean is64Bit(final String string) {
-    final StringCharacterIterator i = new StringCharacterIterator(string);
-    for (char c = i.first(); c != CharacterIterator.DONE; c = i.next()) {
-      if (!is64Bit(c)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private static boolean is64Bit(final char c) {
-    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || //0-51
-            (c >= '0' && c <= '9') || //52-61
-            (c == '+') || (c == '/') || //62-63 original Base64 standard
-            (c == '-') || (c == '_'); //62-63 modified Base64 for URL
-  }
-  
   
   // Static fields
   
@@ -165,27 +106,6 @@ public class CycClient implements CycAccess {
    */
   public static final int PERSISTENT_CONNECTION = 2;
   
-  /** 
-   * Value indicating that the Base Client should use one TCP socket for the entire session. 
-   */
-  private static final int XML_SOAP_CONNECTION = 3;
-
-  /** 
-   * Default value for isLegacyMode is no compatibility with older versions of the Base Client.
-   */
-  private static final boolean DEFAULT_IS_LEGACY_MODE = false;
-  
-  /** 
-   * The maximum time that the CycClient connection is allowed to be unused before establishing 
- a fresh connection (ten hours)
-   */
-  private static final long MAX_UNACCESSED_MILLIS = 36000000;
-  
-  /** 
-   * The Cyc server OK response code
-   */
-  private static final int OK_RESPONSE_CODE = 200;
-    
   @Deprecated
   private static ThreadLocal<KbTransaction> currentTransaction = new ThreadLocal<KbTransaction>() {
     @Override
@@ -193,28 +113,13 @@ public class CycClient implements CycAccess {
       return null;
     }
   };
-  /*
-  @Deprecated
-  private static ThreadLocal<CycClientOptions> currentOptions = new ThreadLocal<CycClientOptions>() {
-    @Override
-    protected CycClientOptions initialValue() {
-      return null;
-    }
-  };
-  */
+  
   /**
    * Dictionary of CycClient instances, indexed by thread so that the application does not have to
- keep passing around a CycClient object reference.
+   * keep passing around a CycClient object reference.
    */
   @Deprecated
   private static final Map<Thread, CycClient> cycAccessInstances = new HashMap<Thread, CycClient>();
-  
-  /**
-   * Shared CycClient instance when thread synchronization is entirely handled by the application.
-   * Use of the CycClient.current() method returns this reference if the lookup by process thread
- fails.
-   */
-  //public static CycClient sharedCycAccessInstance = null;
   
   private static final String UTF8 = "UTF-8";
 
@@ -224,39 +129,34 @@ public class CycClient implements CycAccess {
   
   
   // Instance fields
-  
-  //  final private CycClientSession session;
-  
-  /** 
-   * The indicator that this CycClient object is using a SOAP connection to communicate with Cyc.
-   */
-  final private boolean isSOAPConnection = false;
-  
-  /** 
+    
+  /* * 
    * The indicator that API request forms should be logged to a file api-requests.lisp in the 
    * working directory.
-   */
-  //final private boolean areAPIRequestsLoggedToFile = false;
+   * /
+  final private boolean areAPIRequestsLoggedToFile = false;
   
   // TODO: should this be replaced with SLF4J?
-  //private FileWriter apiRequestLog = null;
+  private FileWriter apiRequestLog = null;
+  */
   
-  /**
+  /* *
    * Parameter indicating whether the Base Client should use one TCP socket for the entire session,
- or if the socket is created and then closed for each api call, or if an XML SOAP service 
- provides the message transport.
-   */
+   * or if the socket is created and then closed for each api call, or if an XML SOAP service 
+   * provides the message transport.
+   * /
   private int persistentConnection = PERSISTENT_CONNECTION;
+  */
   
   /** 
    * the Cyc server host name 
    */
-  private String hostName;
+  final private String hostName;
   
   /** 
    * The Cyc server host TCP port number.
    */
-  private int port;
+  final private Integer port;
   
   private Comm comm;
   
@@ -269,7 +169,7 @@ public class CycClient implements CycAccess {
 
   /**
    * Reference to <tt>CycConnection</tt> object which manages the api connection to the OpenCyc
- server.
+   * server.
    */
   private CycConnection cycConnection;
 
@@ -283,20 +183,19 @@ public class CycClient implements CycAccess {
    */
   private String cycImageID;
   
-  /* * the Cyc lease manager that acquires Cyc api service leases */
-  //Tag: Fix CycLeaseManager
-  //private CycLeaseManager cycLeaseManager;
-  
   /** 
    * Indicates whether the connection is closed.
    */
   private volatile boolean isClosed = false;
+  
+  private boolean hasServerPatchingBeenChecked = false;
   
   private boolean reestablishClosedConnections = true;
   private Boolean isOpenCyc = null;
   private CycCommandTool converseTool;
   private CycAssertTool assertTool;
   private CycComparisonTool comparisonTool;
+  private CycKbObjectTool compatibilityTool;
   private CycInferenceTool inferenceTool;
   private CycInspectorTool inspectorTool;
   private CycLookupTool lookupTool;
@@ -309,20 +208,35 @@ public class CycClient implements CycAccess {
   
   // Constructors
   
+  private CycClient(String hostName, Integer port)
+          throws CycConnectionException, CycApiException {
+    this.hostName = hostName;
+    this.port = port;
+  }
+  
   /**
-   * Constructs a new CycAccess object from a CycConnectionInterface.
-   *
-   * @param conn the Cyc connection object (in persistent, binary mode)
+   * Constructs a new CycAccess object given a CycServer address and no CycSession.
+   * 
+   * @param server The address of the server to connect to.
    * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  public CycClient(CycConnection conn)
+  public CycClient(CycServerAddress server) throws CycConnectionException, CycApiException {
+    this(server.getHostName(), server.getBasePort());
+    commonInitialization(new CycConnectionImpl(server, this));
+  }
+  
+  /**
+   * Constructs a new CycAccess object given a CycSessionConfiguration.
+   *
+   * @param config The CycSessionConfiguration to which the CycAccess should be tied.
+   *
+   * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
+   * @throws CycApiException if the api request results in a cyc server error
+   */
+  public CycClient(CycSessionConfiguration config)
           throws CycConnectionException, CycApiException {
-    this.hostName = conn.getHostName();
-    this.port = conn.getBasePort();
-    //this.session = session;
-    this.cycConnection = conn;
-    commonInitialization();
+    this(config.getCycServer());
   }
   
   /**
@@ -335,27 +249,20 @@ public class CycClient implements CycAccess {
    */
   public CycClient(CycClientSession session)
           throws CycConnectionException, CycApiException {
-    final CycServerAddress server = session.getConfiguration().getCycServer();
-    this.hostName = server.getHostName();
-    this.port = server.getBasePort();
-    //this.session = session;
-    this.cycConnection = new CycConnectionImpl(server, this);
-    commonInitialization();
+    this(session.getConfiguration());
   }
   
   /**
-   * Constructs a new CycAccess object given a CycServer address and no CycSession.
-   * 
-   * @param server The address of the server to connect to.
+   * Constructs a new CycAccess object from a CycConnectionInterface.
+   *
+   * @param conn the Cyc connection object (in persistent, binary mode)
    * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  public CycClient(CycServerAddress server) throws CycConnectionException, CycApiException {
-    this.hostName = server.getHostName();
-    this.port = server.getBasePort();
-    //this.session = null;
-    this.cycConnection = new CycConnectionImpl(server, this);
-    commonInitialization();
+  public CycClient(CycConnection conn)
+          throws CycConnectionException, CycApiException {
+    this(conn.getHostName(), conn.getBasePort());
+    commonInitialization(conn);
   }
   
   /**
@@ -366,14 +273,14 @@ public class CycClient implements CycAccess {
    */
   public CycClient(Comm comm)
           throws CycConnectionException, CycApiException {
+    this(null, null);
     System.out.println("Cyc Access with Comm object: " + comm.toString());
     System.out.flush();
-    //this.session = session;
     this.comm = comm;
-    this.cycConnection = new CycConnectionImpl(comm, this);
-    this.comm.setCycConnection(cycConnection);
+    CycConnection conn = new CycConnectionImpl(comm, this);
+    this.comm.setCycConnection(conn);
     //if (comm instanceof SocketComm) {
-      commonInitialization();
+      commonInitialization(conn);
     //}
   }
   
@@ -403,17 +310,6 @@ public class CycClient implements CycAccess {
   @Override
   public CycClientOptions getOptions() {
     return this.getCycSession().getOptions();
-    /*
-    if (this.getCycSession() != null) {
-      return this.getCycSession().getOptions();
-    }
-    
-    // If no CycSession is available, fall back on a threadlocal variable.
-    if (currentOptions.get() == null) {
-      currentOptions.set(new CycClientOptions(this));
-    }
-    return currentOptions.get();
-    */
   }
 
   /**
@@ -487,9 +383,10 @@ public class CycClient implements CycAccess {
   
   /**
    * Does this CycClient access a single Cyc?  
+   * 
    * @return true if this CycClient will always access the same Cyc server, and returns false if the
- CycClient was constructed with  a {@link com.cyc.baseclient.comm.Comm} object that may result 
- in different calls being sent to different Cyc servers.
+   * CycClient was constructed with  a {@link com.cyc.baseclient.comm.Comm} object that may result 
+   * in different calls being sent to different Cyc servers.
    */
   @Override
   public boolean hasStaticCycServer() {
@@ -529,7 +426,7 @@ public class CycClient implements CycAccess {
   public int getHttpPort() {
     return cycConnection.getHttpPort();
   }
-
+  
   /**
    * Returns the CycConnection object.
    *
@@ -567,7 +464,7 @@ public class CycClient implements CycAccess {
     LOGGER.debug("Attempting to close {} {}", this.getClass().getSimpleName(), this);
 
     isClosed = true;
-  //Tag: Fix CycLeaseManager
+    //TODO: Fix CycLeaseManager
     /*
     if (cycLeaseManager != null) {
       cycLeaseManager.interrupt();
@@ -587,21 +484,6 @@ public class CycClient implements CycAccess {
     }
     */
     cycAccessInstances.remove(Thread.currentThread());
-    // make sure it's not ever used again for setting as the 'current' CycClient.
-    /*
-    for (Map.Entry<String, CycClient> entry : currentCycAccesses.entrySet()) {
-      if (entry.getValue().equals(this)) {
-        currentCycAccesses.remove(entry.getKey());
-      }
-    }
-    */
-    /* if (sharedCycAccessInstance == null || sharedCycAccessInstance.equals(this)) {
-     * final Iterator iter = cycAccessInstances.values().iterator();
-     * if (iter.hasNext())
-     * sharedCycAccessInstance = (CycClient) iter.next();
-     * else
-     * sharedCycAccessInstance = null;
-     * } */
     LOGGER.debug("Closed {} {}", this.getClass().getSimpleName(), this);
   }
   
@@ -666,10 +548,10 @@ public class CycClient implements CycAccess {
     return answer;
   }
   
-  /**
+  /* *
    * Imports a MUC (Message Understanding Conference) formatted symbolic expression into cyc via
- the function which parses the expression and creates assertions for the contained concepts
- and relations between them.
+   * the function which parses the expression and creates assertions for the contained concepts
+   * and relations between them.
    *
    * @param mucExpression the MUC (Message Understanding Conference) formatted symbolic expression
    * @param mtName the name of the microtheory in which the imported assertions will be made
@@ -677,7 +559,7 @@ public class CycClient implements CycAccess {
    * @return the number of assertions imported from the input MUC expression
    * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
-   */
+   * /
   @Deprecated
   public int importMucExpression(CycList mucExpression,
           String mtName)
@@ -686,13 +568,15 @@ public class CycClient implements CycAccess {
             mucExpression, mtName);
     return converse().converseInt(command);
   }
+  */
 
   /**
    * Returns true if this KB is an OpenCyc image.
    *
    * @return true if this KB is an OpenCyc image, otherwise false
    *
-   * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
+   * @throws CycConnectionException if cyc server host not found on the network or a data 
+   * communication error occurs
    */
   @Override
   public synchronized boolean isOpenCyc() throws CycConnectionException {
@@ -703,7 +587,6 @@ public class CycClient implements CycAccess {
         isOpenCyc = false;
       }
     }
-
     return isOpenCyc;
   }
   
@@ -739,9 +622,9 @@ public class CycClient implements CycAccess {
    *
    * @return whether or not we have a valid lease with the Cyc server
    */
-  //Tag: Fix CycLeaseManager
   @Override
   public boolean hasValidLease() {
+    //TODO: Fix CycLeaseManager
     boolean valid = false;
     for (Entry<String, LeaseManager> kv : cycConnection.getCycLeaseManagerMap().entrySet()){
       if (kv.getValue().hasValidLease()){
@@ -759,9 +642,12 @@ public class CycClient implements CycAccess {
   }
   
   /**
-   * Should the connection to the Cyc server be re-established if it for some reason becomes unreachable?
- If true, a reconnect will be attempted, and a connection will be established with whatever Cyc
- server is reachable to the original address, even if it is a different server process."
+   * Should the connection to the Cyc server be re-established if it for some reason becomes 
+   * unreachable? If true, a reconnect will be attempted, and a connection will be established with
+   * whatever Cyc server is reachable to the original address, even if it is a different server 
+   * process.
+   * 
+   * @return Whether to reestablish closed connections
    */
   @Override
   public boolean getReestablishClosedConnections() {
@@ -782,7 +668,8 @@ public class CycClient implements CycAccess {
   }
   
   /**
-   * Send command to a Cyc server in the SubL language, and receive the results expressed as Java objects.
+   * Provides tools to send commands to a Cyc server in the SubL language, and receive the results 
+   * expressed as Java objects.
    * 
    * @return CycCommandTool
    */
@@ -818,6 +705,14 @@ public class CycClient implements CycAccess {
       comparisonTool = new CycComparisonTool(this);
     }
     return comparisonTool;
+  }
+  
+  @Override
+  public CycKbObjectTool getKbObjectTool() {
+    if (compatibilityTool == null) {
+      compatibilityTool = new CycKbObjectTool(this);
+    }
+    return compatibilityTool;
   }
   
   /**
@@ -911,16 +806,6 @@ public class CycClient implements CycAccess {
     return rkfTool;
   }
   
-  /* 
-  @Override
-  public ServerProfile getServerProfile() {
-    if (cycProfile == null) {
-      cycProfile = new CycServerProfile(this);
-    }
-    return cycProfile;
-  }
-  */
-  
   /**
    * Provides basic information about the state and location of the current Cyc server.
    * 
@@ -936,6 +821,67 @@ public class CycClient implements CycAccess {
   
   
   // Protected
+  
+  /** 
+   * Converses with Cyc to perform an API command. Creates a new connection for this command if the
+   * connection is not persistent.
+   *
+   * @param command the command string or CycArrayList
+   *
+   * @return the result as an object array of two objects
+   * @see CycConnectionInterface#converse(Object)
+   *
+   * @throws CycConnectionException if cyc server host not found on the network or a data
+   * communication error occurs
+   * @throws CycApiException if the api request results in a cyc server error
+   */
+  protected Object[] converse(Object command)
+          throws CycConnectionException, CycApiException {
+    //Object[] response = {null, null};
+    Object[] response;
+    try {
+      maybeLogCommand(command);
+    } catch (IOException ioe) {
+      throw new CycConnectionException(ioe);
+    }
+    response = converseWithRetrying(command);
+    previousAccessedMilliseconds = System.currentTimeMillis();
+    maybeLogResponse(response);
+    return response;
+  }
+
+  /**
+   * Send a command to Cyc, and maybe try to recover from a closed connection.
+   *
+   * @param command - String, CycArrayList, or Worker
+   * @return the results of evaluating the command
+   * @throws CycApiException if the Cyc server returns an error
+   * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
+   * @see #getReestablishClosedConnections()
+   * @see CycConnection#converse(java.lang.Object)
+   * @see CycConnection#converseBinary(com.cyc.base.conn.Worker)
+   */
+  protected Object[] converseWithRetrying(Object command) throws CycApiException, CycConnectionException {
+    Object[] response = {null, null};
+    try {
+      response = doConverse(getCycConnection(), command);
+    } catch (CycApiClosedConnectionException ex) {
+      if (getReestablishClosedConnections()) {
+        reEstablishCycConnection();
+        response = doConverse(cycConnection, command);
+      } else {
+        throw (ex);
+      }
+    }
+    return response;
+  }
+  
+  protected synchronized void initializeSession(CycSessionConfiguration config) {
+    loadSublPatches(config);
+  }
+  
+  
+  // Private
   
   /** 
    * Re-establishes a stale binary CycConnection. 
@@ -980,79 +926,17 @@ public class CycClient implements CycAccess {
     }
   }
   
-  protected void verifyPossibleDenotationalTerm(CycObject cycObject) throws IllegalArgumentException {
-    if (!(cycObject instanceof DenotationalTerm || cycObject instanceof CycArrayList)) {
-      throw new IllegalArgumentException(
-              "cycObject must be a Cyc denotational term " + cycObject.cyclify());
-    }
-  }
-  
-  /** 
-   * Converses with Cyc to perform an API command. Creates a new connection for this command if the
-   * connection is not persistent.
-   *
-   * @param command the command string or CycArrayList
-   *
-   * @return the result as an object array of two objects
-   * @see CycConnectionInterface#converse(Object)
-   *
-   * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
-   * @throws CycApiException if the api request results in a cyc server error
-   */
-  protected Object[] converse(Object command)
-          throws CycConnectionException, CycApiException {
-    //Object[] response = {null, null};
-    Object[] response;
-    try {
-      maybeLogCommand(command);
-    } catch (IOException ioe) {
-      throw new CycConnectionException(ioe);
-    }
-    response = converseWithRetrying(command);
-    previousAccessedMilliseconds = System.currentTimeMillis();
-    maybeLogResponse(response);
-    return response;
-  }
-
-  /**
-   * Send a command to Cyc, and maybe try to recover from a closed connection.
-   *
-   * @param command - String, CycArrayList, or Worker
-   * @return the results of evaluating the command
-   * @throws CycApiException if the Cyc server returns an error
-   * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
-   * @see #getReestablishClosedConnections()
-   * @see CycConnection#converse(java.lang.Object)
-   * @see CycConnection#converseBinary(com.cyc.base.conn.Worker)
-   */
-  protected Object[] converseWithRetrying(Object command) throws CycApiException, CycConnectionException {
-    Object[] response = {null, null};
-    try {
-      response = doConverse(getCycConnection(), command);
-    } catch (CycApiClosedConnectionException ex) {
-      if (getReestablishClosedConnections()) {
-        reEstablishCycConnection();
-        response = doConverse(cycConnection, command);
-      } else {
-        throw (ex);
-      }
-    }
-    return response;
-  }
-  
-  
-  // Private
-  
   /**
    * Provides common local and remote CycClient object initialization.
    *
    * @throws IOException if a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  private void commonInitialization()
+  private void commonInitialization(CycConnection cycConnection)
           throws CycConnectionException, CycApiException {
+    this.cycConnection = cycConnection; 
     LOGGER.debug("* * * Initializing * * *");
-    this.persistentConnection = PERSISTENT_CONNECTION;
+    //this.persistentConnection = PERSISTENT_CONNECTION;
     /*
     if (Log.current == null) {
       Log.makeLog("cyc-api.log");
@@ -1074,11 +958,8 @@ public class CycClient implements CycAccess {
      */
     cycImageID = getCycImageID();
     
-    loadSublPatches();
-    
     try {
-      DefaultInferenceParameterDescriptions.loadInferenceParameterDescriptions(
-              this, 0);
+      DefaultInferenceParameterDescriptions.loadInferenceParameterDescriptions(this, 0);
     } catch (Exception e) {
       LOGGER.warn("Could not load inference parameter descriptions.", e);
       Throwable curr = e;
@@ -1087,104 +968,57 @@ public class CycClient implements CycAccess {
         curr = curr.getCause();
       }
     }
-  }
-  
-  /**
-   * Returns a with-bookkeeping-info macro expression.
-   *
-   * @return a with-bookkeeping-info macro expression
-   */
-  private String withBookkeepingInfo() {
-    String projectName = "nil";
-    final Fort project = getOptions().getKePurpose();
-    final Fort cyclist = getOptions().getCyclist();
     
-    if (project != null) {
-      projectName = project.stringApiValue();
-    }
-
-    String cyclistName = "nil";
-
-    if (cyclist != null) {
-      cyclistName = cyclist.stringApiValue();
-    }
-
-    return "(with-bookkeeping-info (new-bookkeeping-info " + cyclistName + " (the-date) "
-            + projectName + "(the-second)) ";
-  }
-  
-  private String doubleURLEncode(final String password) throws UnsupportedEncodingException {
-    return urlEncode(urlEncode(password));
-  }
-
-  private String urlEncode(final String password) throws UnsupportedEncodingException {
-    return URLEncoder.encode(password, UTF8);
-  }
-
-  /** Add a piece to the URL being string-built to specify cyclist's (encrypted) password */
-  private void maybeAddPassword(final Fort cyclist,
-          final DenotationalTerm applicationTerm,
-          final StringBuilder stringBuilder) {
-    if (cyclist instanceof CycConstantImpl) {
-      final PasswordManager passwordManager = new PasswordManager(this);
-      try {
-        if (passwordManager.isPasswordRequired()) {
-          final String password = passwordManager.lookupPassword(
-                  (CycConstantImpl) cyclist, applicationTerm);
-          if (password != null) {
-            // @hack -- Cyc decodes '+' characters twice, so we encode twice:
-            final String urlEncodedPassword = doubleURLEncode(password);
-            stringBuilder.append("&new_login_hashed_password=").append(
-                    urlEncodedPassword);
-          }
-        }
-      } catch (IOException ex) {
-        // Ignore: User may have to supply password to browser.
-      } catch (CycConnectionException ex) {
-        // Ignore: User may have to supply password to browser.
-      }
+    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.QUERY);
+    if (ParaphraserFactory.isBasicParaphraser(p)) {
+      LOGGER.warn("Natural Language generation will be compromised because the NL API is not on the classpath.");
+    } else {
+      LOGGER.info("Located external paraphraser: {}", p.getClass());
     }
   }
-  
+    
   /**
    * Apply any missing SubL patches to the Cyc server.
    * 
    * @throws CycConnectionException if cyc server host not found on the network or a data communication error occurs
    * @throws CycApiException if the Cyc server returns an error
    */
-  private void loadSublPatches() throws BaseClientRuntimeException {
-    final String forMoreInfo = "For more information, see http://dev.cyc.com/api/server-patching/";
-    final SublResourceLoader loader = new SublResourceLoader(this);
-    try {
-      if (!getServerInfo().isApiCompatible()) {
-        String msg = "This server is not compatible with this release of the Core API Suite and cannot be patched; skipping. " + forMoreInfo;
-        LOGGER.error(msg);
-        throw new BaseClientRuntimeException(msg);
-      } else if (!CycSessionManager.getInstance().getConfiguration().isServerPatchingAllowed()) {  // TODO: Is this the best solution for getting config info? - nwinant, 2015-10-16
-        final List<SublSourceFile> missing = loader.findMissingRequiredResources(SublFunctions.SOURCES);
-        if (!missing.isEmpty()) {
-          LOGGER.warn("Auto-loading SubL patches is not allowed (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == false); skipping. " + forMoreInfo);
-          String numResources = (missing.size() >= 2) ? missing.size() + " required resources" : "required resource";
-          String msg = "Cyc server " + getServerInfo().getCycServer() + " is missing " + numResources + ": " + missing.toString() + ". " + forMoreInfo;
+  private void loadSublPatches(CycSessionConfiguration config) throws BaseClientRuntimeException {
+    if (!hasServerPatchingBeenChecked) {
+      final String forMoreInfo = "For more information, see http://dev.cyc.com/api/server-patching/";
+      final SublResourceLoader loader = new SublResourceLoader(this);
+      try {
+        if (!getServerInfo().isApiCompatible()) {
+          String msg = "This server is not compatible with this release of the Core API Suite and cannot be patched; skipping. " + forMoreInfo;
           LOGGER.error(msg);
           throw new BaseClientRuntimeException(msg);
+        } else if (config.isServerPatchingAllowed()) {
+          // TODO: we may also want Cyc to be able to disallow server patching.
+          LOGGER.info("Auto-loading SubL patches is enabled (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == true). " + forMoreInfo);
+          loader.loadMissingResources(SublFunctions.SOURCES);
+          hasServerPatchingBeenChecked = true;
+        } else {
+          final List<SublSourceFile> missing = loader.findMissingRequiredResources(SublFunctions.SOURCES);
+          if (!missing.isEmpty()) {
+            LOGGER.warn("Auto-loading SubL patches is not allowed (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == false); skipping. " + forMoreInfo);
+            String numResources = (missing.size() >= 2) ? missing.size() + " required resources" : "required resource";
+            String msg = "Cyc server " + getServerInfo().getCycServer() + " is missing " + numResources + ": " + missing.toString() + ". " + forMoreInfo;
+            LOGGER.error(msg);
+            throw new BaseClientRuntimeException(msg);
+          }
         }
-      } else {
-        // TODO: we may also want Cyc to be able to disallow server patching.
-        LOGGER.info("Auto-loading SubL patches is enabled (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == true). " + forMoreInfo);
-        loader.loadMissingResources(SublFunctions.SOURCES);
+      } catch (BaseClientRuntimeException ex) {
+        throw ex;
+      } catch (Exception ex) {
+        String msg = "Could not load SubL patches. " + forMoreInfo;
+        LOGGER.warn(msg, ex);
+        throw new BaseClientRuntimeException(msg, ex);
       }
-    } catch (BaseClientRuntimeException ex) {
-      throw ex;
-    } catch (Exception ex) {
-      String msg = "Could not load SubL patches. " + forMoreInfo;
-      LOGGER.warn(msg, ex);
-      throw new BaseClientRuntimeException(msg, ex);
     }
   }
   
   private void maybeReEstablishCycConnection() throws CycConnectionException, CycApiException {
-    if (!isSOAPConnection) {
+    //if (!isSOAPConnection) {
 //      if ((previousAccessedMilliseconds + MAX_UNACCESSED_MILLIS) < System.currentTimeMillis()) {
 //        Log.current.println("Re-establishing a stale Cyc connection.");
 //        reEstablishCycConnection();
@@ -1194,7 +1028,7 @@ public class CycClient implements CycAccess {
         LOGGER.warn("Re-establishing an invalid Cyc connection  to {}", this);
         reEstablishCycConnection();
       }
-    }
+    //}
   }
 
   /**
@@ -1210,10 +1044,10 @@ public class CycClient implements CycAccess {
               (String) command);
       final String prettyCommandCycList = commandCycList.toPrettyCyclifiedString(
               "");
-      final String escapedCommandCycList = commandCycList.toPrettyEscapedCyclifiedString(
-              "");
       /*
       if (areAPIRequestsLoggedToFile) {
+        final String escapedCommandCycList = commandCycList.toPrettyEscapedCyclifiedString(
+              "");
         apiRequestLog.write(escapedCommandCycList);
         apiRequestLog.write('\n');
       }
@@ -1250,4 +1084,63 @@ public class CycClient implements CycAccess {
       return cycConnection.converse(command);
     }
   }
+  
+  private String doubleURLEncode(final String password) throws UnsupportedEncodingException {
+    return urlEncode(urlEncode(password));
+  }
+
+  private String urlEncode(final String password) throws UnsupportedEncodingException {
+    return URLEncoder.encode(password, UTF8);
+  }
+
+  /** Add a piece to the URL being string-built to specify cyclist's (encrypted) password */
+  private void maybeAddPassword(final Fort cyclist,
+          final DenotationalTerm applicationTerm,
+          final StringBuilder stringBuilder) {
+    if (cyclist instanceof CycConstantImpl) {
+      final PasswordManager passwordManager = new PasswordManager(this);
+      try {
+        if (passwordManager.isPasswordRequired()) {
+          final String password = passwordManager.lookupPassword(
+                  (CycConstantImpl) cyclist, applicationTerm);
+          if (password != null) {
+            // @hack -- Cyc decodes '+' characters twice, so we encode twice:
+            final String urlEncodedPassword = doubleURLEncode(password);
+            stringBuilder.append("&new_login_hashed_password=").append(
+                    urlEncodedPassword);
+          }
+        }
+      } catch (IOException ex) {
+        // Ignore: User may have to supply password to browser.
+      } catch (CycConnectionException ex) {
+        // Ignore: User may have to supply password to browser.
+      }
+    }
+  }
+    
+  /* *
+   * Returns a with-bookkeeping-info macro expression.
+   *
+   * @return a with-bookkeeping-info macro expression
+   * /
+  private String withBookkeepingInfo() {
+    String projectName = "nil";
+    final Fort project = getOptions().getKePurpose();
+    final Fort cyclist = getOptions().getCyclist();
+    
+    if (project != null) {
+      projectName = project.stringApiValue();
+    }
+
+    String cyclistName = "nil";
+
+    if (cyclist != null) {
+      cyclistName = cyclist.stringApiValue();
+    }
+
+    return "(with-bookkeeping-info (new-bookkeeping-info " + cyclistName + " (the-date) "
+            + projectName + "(the-second)) ";
+  }
+  */
+  
 }

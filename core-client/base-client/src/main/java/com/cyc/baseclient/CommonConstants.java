@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: CommonConstants.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -243,7 +243,7 @@ public class CommonConstants {
    * Convenient reference to #$BaseKB.
    */
   @CycTerm(cycl="#$BaseKB")
-  public static final ElMt BASE_KB = ElMtConstant.makeELMtConstant(
+  public static final ElMt BASE_KB = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("BaseKB", new GuidImpl(
                           "bd588111-9c29-11b1-9dad-c379636f7270")));
 
@@ -251,7 +251,7 @@ public class CommonConstants {
    * Convenient reference to #$CurrentWorldDataCollectorMt-NonHomocentric.
    */
   @CycTerm(cycl="#$CurrentWorldDataCollectorMt-NonHomocentric")
-  public static final ElMt CURRENT_WORLD_DATA_MT = ElMtConstant.makeELMtConstant(
+  public static final ElMt CURRENT_WORLD_DATA_MT = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("CurrentWorldDataCollectorMt-NonHomocentric",
                   new GuidImpl("bf192b1e-9c29-11b1-9dad-c379636f7270")));
 
@@ -259,7 +259,7 @@ public class CommonConstants {
    * Convenient reference to #$InferencePSC.
    */
   @CycTerm(cycl="#$InferencePSC")
-  public static final ElMt INFERENCE_PSC = ElMtConstant.makeELMtConstant(
+  public static final ElMt INFERENCE_PSC = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("InferencePSC", new GuidImpl(
                           "bd58915a-9c29-11b1-9dad-c379636f7270")));
 
@@ -267,7 +267,7 @@ public class CommonConstants {
    * Convenient reference to #$AnytimePSC.
    */
   @CycTerm(cycl="#$AnytimePSC")
-  public static final ElMt ANYTIME_PSC = ElMtConstant.makeELMtConstant(
+  public static final ElMt ANYTIME_PSC = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("AnytimePSC", new GuidImpl(
                           "28392742-b00f-41d8-98de-8399027785de")));
 
@@ -275,7 +275,7 @@ public class CommonConstants {
    * Convenient reference to #$EverythingPSC.
    */
   @CycTerm(cycl="#$EverythingPSC")
-  public static final ElMt EVERYTHING_PSC = ElMtConstant.makeELMtConstant(
+  public static final ElMt EVERYTHING_PSC = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("EverythingPSC", new GuidImpl(
                           "be7f041b-9c29-11b1-9dad-c379636f7270")));
 
@@ -283,7 +283,7 @@ public class CommonConstants {
    * Convenient reference to #$UniversalVocabularyMt.
    */
   @CycTerm(cycl="#$UniversalVocabularyMt")
-  public static final ElMt UNIVERSAL_VOCABULARY_MT = ElMtConstant.makeELMtConstant(
+  public static final ElMt UNIVERSAL_VOCABULARY_MT = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("UniversalVocabularyMt", new GuidImpl(
                           "dff4a041-4da2-11d6-82c0-0002b34c7c9f")));
 
@@ -291,12 +291,12 @@ public class CommonConstants {
    * Convenient reference to #$BookkeepingMt.
    */
   @CycTerm(cycl="#$BookkeepingMt")
-  public static final ElMt BOOKKEEPING_MT = ElMtConstant.makeELMtConstant(
+  public static final ElMt BOOKKEEPING_MT = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("BookkeepingMt", new GuidImpl(
                           "beaed5bd-9c29-11b1-9dad-c379636f7270")));
   
   @CycTerm(cycl="#$EnglishParaphraseMt")
-  public static final ElMt ENGLISH_PARAPHRASE_MT = ElMtConstant.makeELMtConstant(
+  public static final ElMt ENGLISH_PARAPHRASE_MT = ElMtConstant.makeElMtConstant(
           new CycConstantImpl("EnglishParaphraseMt", new GuidImpl(
                           "bda16220-9c29-11b1-9dad-c379636f7270")));
 

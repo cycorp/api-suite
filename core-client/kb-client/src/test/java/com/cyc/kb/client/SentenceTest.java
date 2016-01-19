@@ -9,7 +9,7 @@ package com.cyc.kb.client;
  * File: SentenceTest.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2016 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.kb.KbCollection;
+import com.cyc.kb.KbFactory;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.Sentence;
@@ -40,6 +41,7 @@ import com.cyc.kb.exception.KbTypeException;
 import com.cyc.kb.client.quant.InstanceRestrictedVariable;
 import com.cyc.kb.client.quant.RestrictedVariable;
 import com.cyc.kb.client.quant.SpecializationRestrictedVariable;
+import com.cyc.session.exception.SessionException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -250,6 +252,7 @@ public class SentenceTest {
 
   /**
    * Test of getTypeString method, of class Sentence.
+   *
    * @throws com.cyc.kb.exception.KbException
    */
   @Test
@@ -331,19 +334,19 @@ public class SentenceTest {
     Sentence notS1 = SentenceImpl.SentenceOperatorImpl.NOT.wrap(s1);
     assertEquals(new SentenceImpl(LogicalConnectiveImpl.get("#$not"), s1), notS1);
   }
-  
+
   @Test
   public void testJavaDateWrapping() throws ParseException, KbTypeException, CreateException {
     final SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd HH:mm");
     final Date date = sdf.parse("2014 03 15 10:20:23");
-    
+
     final Sentence dateWrappingSentence = new SentenceImpl(date);
     assertEquals("((MinuteFn 20 (HourFn 10 (DayFn 15 (MonthFn March (YearFn 2014))))))", dateWrappingSentence.toString());
-    
+
     final Date innerDate = new SentenceImpl(date).getArgument(0);
     assertEquals(date, innerDate);
   }
-  
+
   @Test
   public void testToString() throws KbException {
     System.out.println("toString");
@@ -353,5 +356,13 @@ public class SentenceTest {
     System.out.println("Sentence: " + result);
     assertEquals(expected, result);
   }
-  
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void testToNlString() throws KbTypeException, CreateException, SessionException, CycApiException, CycConnectionException {
+    System.out.println("testToNlString");
+    Sentence s = new SentenceImpl(CycFormulaSentence.makeCycSentence(TestConstants.getCyc(), "(#$isa #$Thing #$Predicate)"));
+    String paraphrase = s.toNlString();
+    fail("The basic Sentence#toNlString() method should throw an error if the NL API isn't on the class path.  It failed to throw that error.");
+  }
+
 }

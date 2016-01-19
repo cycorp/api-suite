@@ -5,7 +5,7 @@ package com.cyc.baseclient.datatype;
  * File: TimeGranularity.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc.
+ * Copyright (C) 2013 - 2016 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.Date;
  * <P>TimeGranularity is designed to...
  *
  * @author baxter, May 27, 2010, 1:27:34 PM
- * @version $Id: TimeGranularity.java 159296 2015-06-24 22:44:04Z nwinant $
+ * @version $Id: TimeGranularity.java 163356 2016-01-04 20:55:47Z nwinant $
  */
 public enum TimeGranularity {
 
