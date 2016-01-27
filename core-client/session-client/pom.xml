@@ -6,12 +6,12 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-client-parent</artifactId>
-    <version>1.0.0-rc5.1</version>
+    <version>1.0.0-rc5.2</version>
   </parent>
 
   <groupId>com.cyc</groupId>
   <artifactId>cyc-session-client</artifactId>
-  <version>1.0.0-rc5.1</version>
+  <version>1.0.0-rc5.2</version>
   <packaging>jar</packaging>
   
   <!-- ====  Metadata & contact info  ========================================================== -->

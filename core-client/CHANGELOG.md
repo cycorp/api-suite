@@ -9,6 +9,16 @@ follow. Until the final 1.0.0 release, it is expected that future release candid
 backwards compatibility.
 
 
+1.0.0-rc5.2 - 2016-01-27
+------------------------
+
+* Fixes a ParaphraserFactory-related StackOverflowError in the Base Client 
+  (CycClient#commonInitialization()) which occurred when NL API was on the classpath.
+* The warning message which is logged when the NL API is missing from the classpath has been toned 
+  down & clarified a bit, and is only logged when the user actually attempts to do something 
+  NL-related (i.e., when the ParaphraserFactory first attempts to load a Paraphraser).
+
+
 1.0.0-rc5.1 - 2016-01-18
 ------------------------
 

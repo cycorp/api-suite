@@ -1,7 +1,7 @@
 Cyc Core Client Implementation
 ==============================
 
-**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-client-parent.svg)](https://github.com/cycorp/api-suite/releases/tag/core-client-1.0.0-rc5.1)  
+**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-client-parent.svg)](https://github.com/cycorp/api-suite/releases/tag/core-client-1.0.0-rc5.2)  
 **Current snapshot version:** 1.0.0-rc6-SNAPSHOT  
 **License:** [Apache 2.0](LICENSE)  
 **Changes:** See the [CHANGELOG](CHANGELOG.md)  
@@ -33,7 +33,7 @@ Requirements
 * [Apache Maven](http://maven.apache.org/) version `3.2` or higher to build the sources. If you are
   new to Maven, you may wish to view the [quick start](http://maven.apache.org/run-maven/index.html).
 
-The APIs may be used without Maven via the `cyc-core-client-impl-1.0.0-rc5.1-jar-with-dependencies.jar`.
+The APIs may be used without Maven via the `cyc-core-client-impl-1.0.0-rc5.2-jar-with-dependencies.jar`.
 See [Standalone Bundle](#standalone-bundle), below.
 
 ### Cyc Server
@@ -80,7 +80,7 @@ project, add the following dependencies to your pom.xml:
       <!-- Reference implementation for the Core API -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc5.1</version>
+      <version>1.0.0-rc5.2</version>
       <scope>runtime</scope>
     </dependency>
 
@@ -116,7 +116,7 @@ you may download this release in a standalone bundle containing:
 * Example code. (Requires Maven to compile.)
 
 The bundle is available from the
-[releases page](https://github.com/cycorp/api-suite/releases/tag/core-client-1.0.0-rc5.1) as a 
+[releases page](https://github.com/cycorp/api-suite/releases/tag/core-client-1.0.0-rc5.2) as a 
 tar or zip file. See the README in the bundle for details.
 
 To use a standalone jar in a Maven project, use the "jar-with-dependencies" classifier when
@@ -133,7 +133,7 @@ specifying the dependency:
       <!-- Reference implementation for the Core API -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc5.1</version>
+      <version>1.0.0-rc5.2</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
 

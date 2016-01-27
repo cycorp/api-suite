@@ -73,37 +73,21 @@ public abstract class ParaphraserFactory<E> {
 
   private static final Map<String, Boolean> classAvailability = new HashMap<String, Boolean>();
   private static final Logger LOGGER = LoggerFactory.getLogger(ParaphraserFactory.class);
-
+  private static final String NL_API_IMPL_BASE_PATH = "com.cyc.nl"; // TODO: update? - nwinant, 2016-01-25
+  
   static public Paraphraser getInstance(final ParaphrasableType type) {
     //this should only check once to see if these other classes are available...
     //if they're not there, it needs to give back some kind of stupid paraphrase that doesn't work well...
     try {
       switch (type) {
         case QUERY:
-          if (isClassAvailable("com.cyc.nl.QueryParaphraser")) {
-            return (Paraphraser) Class.forName("com.cyc.nl.QueryParaphraser").newInstance(); //new QueryParaphraser
-          } else {
-            return new BasicParaphraser();
-          }
-        //new QueryParaphraser
+          return getParaphraser(NL_API_IMPL_BASE_PATH + ".QueryParaphraser");
         case FORMULA:
-          if (isClassAvailable("com.cyc.nl.FormulaParaphraser")) {
-            return (Paraphraser) Class.forName("com.cyc.nl.FormulaParaphraser").newInstance();
-          } else {
-            return new BasicParaphraser();
-          }
+          return getParaphraser(NL_API_IMPL_BASE_PATH + ".FormulaParaphraser");
         case KBOBJECT:
-          if (isClassAvailable("com.cyc.nl.KbObjectParaphraser")) {
-            return (Paraphraser) Class.forName("com.cyc.nl.KbObjectParaphraser").newInstance();
-          } else {
-            return new BasicParaphraser();
-          }
+          return getParaphraser(NL_API_IMPL_BASE_PATH + ".KbObjectParaphraser");
         case DEFAULT:
-          if (isClassAvailable("com.cyc.nl.DefaultParaphraser")) {
-            return (Paraphraser) Class.forName("com.cyc.nl.DefaultParaphraser").newInstance();
-          } else {
-            return new BasicParaphraser();
-          }
+          return getParaphraser(NL_API_IMPL_BASE_PATH + ".DefaultParaphraser");
       }
     } catch (ClassNotFoundException ex) {
       LOGGER.error(null, ex);
@@ -114,13 +98,25 @@ public abstract class ParaphraserFactory<E> {
     }
     throw new UnsupportedOperationException("Unable to produce a Paraphraser for " + type);
   }
-
+  
+  private static Paraphraser getParaphraser(String binaryClassName)
+          throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    if (isClassAvailable(binaryClassName)) {
+      return (Paraphraser) Class.forName(binaryClassName).newInstance();
+    } else {
+      return new BasicParaphraser();
+    }
+  }
+  
   private static boolean isClassAvailable(String binaryClassName) {
     if (!classAvailability.containsKey(binaryClassName)) {
       try {
         Class clazz = ParaphraserFactory.class.getClassLoader().loadClass(binaryClassName);
+        LOGGER.info("Loaded external paraphraser: {}", clazz);
         classAvailability.put(binaryClassName, true);
       } catch (java.lang.ClassNotFoundException ex) {
+        LOGGER.warn("Could not find " + binaryClassName + ", indicating that NL API is not on the "
+                + "classpath; Natural Language generation support will be limited.");
         classAvailability.put(binaryClassName, false);
       }
     }

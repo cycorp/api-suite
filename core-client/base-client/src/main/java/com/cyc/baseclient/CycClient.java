@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
  Collaborates with the <tt>CycConnection</tt> class which manages the API connections.
  </p>
  *
- * @version $Id: CycClient.java 163503 2016-01-11 23:42:19Z nwinant $
+ * @version $Id: CycClient.java 163752 2016-01-26 01:34:19Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {
@@ -967,13 +967,6 @@ public class CycClient implements CycAccess {
         LOGGER.warn(curr.getLocalizedMessage());
         curr = curr.getCause();
       }
-    }
-    
-    Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.QUERY);
-    if (ParaphraserFactory.isBasicParaphraser(p)) {
-      LOGGER.warn("Natural Language generation will be compromised because the NL API is not on the classpath.");
-    } else {
-      LOGGER.info("Located external paraphraser: {}", p.getClass());
     }
   }
     
