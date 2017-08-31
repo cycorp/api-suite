@@ -8,7 +8,7 @@ package com.cyc.core.service;
  * File: package-info.java
  * Project: Core API Object Factories
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

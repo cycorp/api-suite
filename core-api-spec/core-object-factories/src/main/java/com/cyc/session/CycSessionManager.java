@@ -5,7 +5,7 @@ package com.cyc.session;
  * File: CycSessionManager.java
  * Project: Core API Object Factories
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -200,10 +200,10 @@ public class CycSessionManager {
               + " implementations to load. This should never happen.");
     }
     for (SessionManager sessionMgr : sessionMgrs) {
-      LOGGER.info("Found {}: {}", SessionManager.class.getSimpleName(), sessionMgr);
+      LOGGER.debug("Found {}: {}", SessionManager.class.getSimpleName(), sessionMgr);
     }
     MANAGER = selectSessionManager(sessionMgrs);
-    LOGGER.warn("Loaded {}: {}", SessionManager.class.getSimpleName(), MANAGER);
+    LOGGER.debug("Loaded {}: {}", SessionManager.class.getSimpleName(), MANAGER);
   }
 
 }

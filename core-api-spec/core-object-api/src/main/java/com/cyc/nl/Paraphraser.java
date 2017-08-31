@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.cyc.nl;
 
 /*
@@ -11,7 +5,7 @@ package com.cyc.nl;
  * File: Paraphraser.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +22,16 @@ package com.cyc.nl;
  */
 
 import com.cyc.kb.Context;
+import com.cyc.kb.KbPredicate;
 
 import java.util.List;
 
 /**
  *
  * @author daves
- * @param <E>
+ * @param <C> The CycL we're paraphrasing.
  */
-public interface Paraphraser<E> {
+public interface Paraphraser<C> {
   
   /**
    * Returns a paraphrase of the specified object.
@@ -44,7 +39,7 @@ public interface Paraphraser<E> {
    * @param object an object to paraphrase.
    * @return a paraphrase of the specified object.
    */
-  public Paraphrase<? extends E> paraphrase(final E object);  
+  public Paraphrase<C> paraphrase(final C object);  
 
   /* *
    * Returns a list of paraphrases of the specified objects, attempting to minimize
@@ -95,5 +90,11 @@ public interface Paraphraser<E> {
 
   public List getNlPreds();
 
+  public void setNlPreds(List<KbPredicate> preds);
+    
   public void setDomainContext(Context ctx);  
+  
+  public void setLanguageContext(Context ctx);  
+
+  public List<? extends Paraphrase<C>> paraphraseWithDisambiguation(List<C> objects);
 }

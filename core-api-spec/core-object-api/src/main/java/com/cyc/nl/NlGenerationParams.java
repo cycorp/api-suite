@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.cyc.nl;
 
 /*
@@ -10,7 +5,7 @@ package com.cyc.nl;
  * File: NlGenerationParams.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +23,6 @@ package com.cyc.nl;
 
 import com.cyc.kb.Context;
 import com.cyc.kb.KbPredicate;
-import com.cyc.kb.KbTerm;
 
 import java.util.List;
 
@@ -82,7 +76,7 @@ public interface NlGenerationParams {
    * @param preds
    * @return 
    */
-  NlGenerationParams setNlPreds(List<? extends KbTerm> preds);
+  NlGenerationParams setNlPreds(List<? extends KbPredicate> preds);
 
   /**
    * Should we generate NL quantifiers for open variables?
@@ -185,6 +179,21 @@ public interface NlGenerationParams {
    */
   public NlGenerationParams setUseBulletsInHtmlMode(boolean useBullets);
 
+    /**
+   * 
+   * @return true iff we should generate bulleted lists when in HTML mode
+   * @see GenerationMode#HTML
+   */
+  public HtmlLinkType getHtmlLinkType();
+
+  /**
+   * Should we generate bulleted lists when in HTML mode
+   * @param htmlLinkType
+   * @return 
+   * @see GenerationMode#HTML
+   */
+  public NlGenerationParams setHtmlLinkType(HtmlLinkType htmlLinkType);
+  
   /**
    * @return true iff we should generate _____ for variables.
    */

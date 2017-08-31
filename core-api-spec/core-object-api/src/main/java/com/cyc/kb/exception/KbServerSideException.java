@@ -5,7 +5,7 @@ package com.cyc.kb.exception;
  * File: KbServerSideException.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ package com.cyc.kb.exception;
  * Wraps all Cyc server errors, when a more specific semantic error can not be thrown.
  *
  * @author Vijay Raj
- * @version $Id: KbServerSideException.java 163206 2015-12-16 00:07:09Z nwinant $
+ * @version $Id: KbServerSideException.java 169908 2017-01-11 23:19:09Z nwinant $
  */
 public class KbServerSideException extends KbRuntimeException{
   

@@ -7,18 +7,22 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api-parent</artifactId>
-    <version>1.0.0-rc5</version>
+    <version>1.0.0-rc6</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-object-api</artifactId>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0-rc6</version>
   <packaging>jar</packaging>
   
-  <!-- ====  Metadata & contact info  ========================================================== -->
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Object Specification</name>
-  <description>The interfaces which define the Cyc Core API.</description>
+
+  <description>
+    The interfaces which define the Cyc Core API.
+  </description>
+  
   <url>http://dev.cyc.com/api/core/</url>
   
   <scm>
@@ -28,7 +32,7 @@
   </scm>
   
   <issueManagement>
-    <url>https://github.com/cycorp/api-suite/issues</url>
+    <url>http://dev.cyc.com/issues/</url>
     <system>GitHub Issues</system>
   </issueManagement>
   
@@ -55,7 +59,7 @@
     </developer>
   </developers>
   
-  <!-- ====  Configuration  ==================================================================== -->
+  <!-- ====|    Configuration    |============================================================= -->
   
   <build>
     <plugins>

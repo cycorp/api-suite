@@ -7,20 +7,22 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api-parent</artifactId>
-    <version>1.0.0-rc5</version>
+    <version>1.0.0-rc6</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-api</artifactId>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0-rc6</version>
   <packaging>jar</packaging>
   
-  <!-- ====  Metadata & contact info  ========================================================== -->
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Specification</name>
+
   <description>
     Packages the Cyc Core API Object Specification and Factories into one bundle.
   </description>
+  
   <url>http://dev.cyc.com/api/core</url>
   
   <scm>
@@ -30,7 +32,7 @@
   </scm>
   
   <issueManagement>
-    <url>https://github.com/cycorp/api-suite/issues</url>
+    <url>http://dev.cyc.com/issues/</url>
     <system>GitHub Issues</system>
   </issueManagement>
   
@@ -62,16 +64,21 @@
     </site>
   </distributionManagement>
   
-  <!-- ====  Configuration  ==================================================================== -->
+  <!-- ====|    Configuration    |============================================================= -->
   
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- bind to the packaging phase -->
+            <id>make-assembly</id>
+            <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>

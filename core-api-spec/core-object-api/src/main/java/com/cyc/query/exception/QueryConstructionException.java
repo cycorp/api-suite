@@ -5,7 +5,7 @@ package com.cyc.query.exception;
  * File: QueryConstructionException.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,10 @@ public class QueryConstructionException extends QueryException {
   
   public QueryConstructionException(String message, Throwable throwable) {
     super(message, throwable);
+  }
+  
+  public QueryConstructionException(String message) {
+    super(message);
   }
 
 }

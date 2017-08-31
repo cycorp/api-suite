@@ -5,7 +5,7 @@ package com.cyc.query.metrics;
  * File: InferenceMetrics.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,18 @@ package com.cyc.query.metrics;
  * #L%
  */
 
-import com.cyc.query.InferenceParameterValue;
+import com.cyc.query.parameters.InferenceParameterValue;
 
 import java.util.Set;
 
+/**
+ * A Set of {@link InferenceMetric} values.
+ * 
+ * Inference metrics are a way of telling Cyc's inference engine to collect a certain type of data 
+ * for later inspection. The most common metrics are in {@link StandardInferenceMetric}.
+ * 
+ * @author nwinant
+ */
 public interface InferenceMetrics extends Set<InferenceMetric>, InferenceParameterValue {
 
 }

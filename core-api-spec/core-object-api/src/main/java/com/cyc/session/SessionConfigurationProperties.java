@@ -5,7 +5,7 @@ package com.cyc.session;
  * File: SessionConfigurationProperties.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,13 @@ public interface SessionConfigurationProperties {
    */
   public static final String SERVER_KEY = "cyc.session.server";
   
+  
+  
+  // TODO: add javadocs
+  public static final String SERVER_RELEASED_WHEN_ALL_SESSIONS_CLOSED = "cyc.session.server.releaseWhenAllSessionsAreClosed";
+  
+  
+  
   /**
    * Whether the APIs permitted to apply code patches to the Cyc server.
    * 
@@ -68,6 +75,7 @@ public interface SessionConfigurationProperties {
     CONFIGURATION_LOADER_KEY,
     CONFIGURATION_FILE_KEY,
     SERVER_KEY,
+    SERVER_RELEASED_WHEN_ALL_SESSIONS_CLOSED,
     SERVER_PATCHING_ALLOWED_KEY
   };
 }

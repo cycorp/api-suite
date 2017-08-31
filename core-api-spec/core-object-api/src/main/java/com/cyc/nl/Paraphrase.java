@@ -1,11 +1,13 @@
 package com.cyc.nl;
 
+import java.util.List;
+
 /*
  * #%L
  * File: Paraphrase.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +27,9 @@ package com.cyc.nl;
  * A class that bundles information about the rendering of a term in a natural language.
  *
  * @author baxter
- * @param <E>
+ * @param <C> The CycL we're paraphrasing.
  */
-public interface Paraphrase<E> extends Comparable<Paraphrase<? extends Object>> {
+public interface Paraphrase<C> extends Comparable<Paraphrase<C>> {
 
 
   @Override
@@ -37,7 +39,7 @@ public interface Paraphrase<E> extends Comparable<Paraphrase<? extends Object>> 
   public int hashCode();
 
   @Override
-  public int compareTo(Paraphrase<? extends Object> object);
+  public int compareTo(Paraphrase<C> object);
 
   /**
    * Returns the NL string paraphrasing the term.
@@ -54,6 +56,15 @@ public interface Paraphrase<E> extends Comparable<Paraphrase<? extends Object>> 
    *
    * @return the CycL term of which this is a paraphrase.
    */
-  public E getCycL();
+  public C getCycl();
   
+  /**
+   * 
+   * @param sub
+   * @return this Paraphrase object.
+   */
+  public Paraphrase<C> addSubParaphrase(SubParaphrase sub);
+
+  public List<SubParaphrase> getSubParaphrases ();
+    
 }

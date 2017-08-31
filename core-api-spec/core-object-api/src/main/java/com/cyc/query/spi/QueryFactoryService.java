@@ -5,7 +5,7 @@ package com.cyc.query.spi;
  * File: QueryFactoryService.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,10 @@ import com.cyc.kb.KbObject;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeException;
-import com.cyc.query.InferenceParameters;
 import com.cyc.query.Query;
 import com.cyc.query.exception.QueryConstructionException;
+import com.cyc.query.parameters.InferenceParameters;
 import com.cyc.session.exception.UnsupportedCycOperationException;
-
 import java.util.Map;
 
 /**
@@ -39,141 +38,137 @@ import java.util.Map;
  */
 public interface QueryFactoryService {
 
-
   /**
    * constructs a Query working with the string queryStr.
    * <p>
    * The query is executed in InferencePSC with a default timeout and default inference parameters.
    *
-   * @param queryStr the string representing the CycL query
-   * @return 
+   * @param   queryStr  the string representing the CycL query
+   * @return  
+   * @throws  QueryConstructionException
    * @see com.cyc.query.Query#TIMEOUT
    *
-   * @throws QueryConstructionException
    */
-  public Query getQuery(String queryStr) throws QueryConstructionException;
+  Query getQuery(String queryStr) throws QueryConstructionException;
+  
   /**
    * Returns a query object defined by queryStr asked in Microtheory ctxStr, with default inference
    * parameters.
    *
-   * @param queryStr The query string.
-   * @param ctxStr The Microtheory where the query is asked.
-   * @return 
-   *
-   * @throws QueryConstructionException
+   * @param   queryStr The query string
+   * @param   ctxStr The Microtheory where the query is asked
+   * @return  
+   * @throws  QueryConstructionException
    *
    */
-  public Query getQuery(String queryStr, String ctxStr) throws QueryConstructionException;
+  Query getQuery(String queryStr, String ctxStr) throws QueryConstructionException;
 
   /**
    * Returns a query object defined by queryStr asked in Microtheory ctxStr, with inference
    * parameters, queryParams.
    *
-   * @param queryStr The query string.
-   * @param ctxStr The Microtheory where the query is asked.
-   * @param queryParams The inference parameters to use for the query. This string should consist of
-   * a series of keywords followed by the values for those keywords. The keywords can be found by
-   * looking for the #$sublIdentifier for the desired instance of InferenceParameter in the Cyc KB.
-   * For example, to limit a query to single-depth transformation and to allow at most 5 seconds per
-   * query, use the string ":max-transformation-depth 1 :max-time 5".
-   * @return 
-   *
-   * @throws QueryConstructionException
-   *
+   * @param   queryStr     the query string.
+   * @param   ctxStr       the Microtheory where the query is asked
+   * @param   queryParams  the inference parameters to use for the query. This string should consist 
+   *                       of a series of keywords followed by the values for those keywords. The 
+   *                       keywords can be found by looking for the #$sublIdentifier for the desired
+   *                       instance of InferenceParameter in the Cyc KB. For example, to limit a
+   *                       query to single-depth transformation and to allow at most 5 seconds per 
+   *                       query, use the string ":max-transformation-depth 1 :max-time 5".
+   * @return  
+   * @throws  QueryConstructionException
    */
-  public Query getQuery(String queryStr, String ctxStr, String queryParams) 
+  Query getQuery(String queryStr, String ctxStr, String queryParams) 
           throws QueryConstructionException;
 
   /**
    *
-   * @param sent
-   * @param ctx
-   * @param params
-   * @return 
-   * @throws com.cyc.query.exception.QueryConstructionException 
+   * @param   sent
+   * @param   ctx
+   * @param   params
+   * @return  
+   * @throws  QueryConstructionException 
    */
-  public Query getQuery(Sentence sent, Context ctx, InferenceParameters params) 
+  Query getQuery(Sentence sent, Context ctx, InferenceParameters params) 
           throws QueryConstructionException;
 
   /**
    *
-   * @param sent
-   * @param ctx
-   * @return 
-   * @throws QueryConstructionException
+   * @param   sent
+   * @param   ctx
+   * @return  
+   * @throws  QueryConstructionException
    */
-  public Query getQuery(Sentence sent, Context ctx) throws QueryConstructionException;
+  Query getQuery(Sentence sent, Context ctx) throws QueryConstructionException;
 
   /**
    * Constructs a Query from a CycLQuerySpecification KbIndividual. Use of this constructor is
    * equivalent to calling {@link Query#load(com.cyc.kb.KbIndividual)}.
    *
-   * @param id
-   * @return 
-   * 
-   * @throws QueryConstructionException
-   * <p/>
-   * <b>Note:</b> {@link QueryConstructionException} is thrown if the specified query term has a
-   * sentence whose outermost operator is #$ist and the query is loaded from a Cyc server with a
-   * system level under 10.154917 (Nov. 2014). A workaround is to edit the query in the KB, removing
-   * the #$ist from the query's sentence, and specifying it as the query mt using
-   * #$microtheoryParameterValueInSpecification.
-   * 
-   * @throws KbException if <code>idStr</code> does not identify a KbIndividual.
-   *
-   * @throws UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier.
+   * @param   id
+   * @return  
+   * @throws  QueryConstructionException       if the specified query term has a sentence whose 
+   *                                           outermost operator is #$ist and the query is loaded
+   *                                           from a Cyc server with a system level under 10.154917
+   *                                           (Nov. 2014). A workaround is to edit the query in the
+   *                                           KB, removing the #$ist from the query's sentence, and
+   *                                           specifying it as the query mt using 
+   *                                           #$microtheoryParameterValueInSpecification.
+   * @throws  KbException                      if <code>idStr</code> does not identify a 
+   *                                           KbIndividual
+   * @throws  UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier
    */
-  public Query getQuery(final KbIndividual id) 
+  Query getQuery(final KbIndividual id) 
           throws QueryConstructionException, KbException, UnsupportedCycOperationException;
 
   /**
    * Returns a new Query loaded from a term in Cyc specifying its properties. Terms in the specified
    * query can be replaced with others by providing a non-empty <code>indexicals</code> map.
    *
-   * @param id the Cyc term
-   * @param indexicals A map of substitutions to be made.
-   * 
-   * @throws QueryConstructionException
-   * <p/>
-   * <b>Note:</b> {@link QueryConstructionException} is thrown if the specified query term has a
-   * sentence whose outermost operator is #$ist and the query is loaded from a Cyc server with a
-   * system level under 10.154917 (Nov. 2014). A workaround is to edit the query in the KB, removing
-   * the #$ist from the query's sentence, and specifying it as the query mt using
-   * #$microtheoryParameterValueInSpecification.
-   * 
-   * @throws KbException if <code>idStr</code> does not identify a KbIndividual.
-   *
-   * @throws UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier.
-   * 
-   * @return the Query specified by <code>id</code>
+   * @param   id          the Cyc term
+   * @param   indexicals  a map of substitutions to be made
+   * @return  the Query specified by <code>id</code>
+   * @throws  QueryConstructionException       if the specified query term has a sentence whose 
+   *                                           outermost operator is #$ist and the query is loaded
+   *                                           from a Cyc server with a system level under 10.154917
+   *                                           (Nov. 2014). A workaround is to edit the query in the
+   *                                           KB, removing the #$ist from the query's sentence, and
+   *                                           specifying it as the query mt using 
+   *                                           #$microtheoryParameterValueInSpecification.
+   * @throws  KbException                      if <code>idStr</code> does not identify a 
+   *                                           KbIndividual
+   * @throws  UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier
    */
-  public Query getQuery(KbIndividual id, Map<KbObject, Object> indexicals) 
+  Query getQuery(KbIndividual id, Map<KbObject, Object> indexicals) 
           throws QueryConstructionException, KbException, UnsupportedCycOperationException;
   
   /**
    * Returns a Query object defined by a CycLQuerySpecification term, and substitutes in relevant
    * values from the indexicals Map.
    *
-   * @param idStr The instance of CycLQuerySpecification
-   * @param indexicals A map from terms in the query (as loaded from the KB) to the actual values
-   * that should be queried with.
-   * @throws QueryConstructionException
-   * <p/>
-   * <b>Note:</b> {@link QueryConstructionException} is thrown if the specified query term has a
-   * sentence whose outermost operator is #$ist and the query is loaded from a Cyc server with a
-   * system level under 10.154917 (Nov. 2014). A workaround is to edit the query in the KB, removing
-   * the #$ist from the query's sentence, and specifying it as the query mt using
-   * #$microtheoryParameterValueInSpecification.
-   *
-   * @throws KbTypeException if <code>idStr</code> does not identify a KbIndividual.
-   *
-   * @throws UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier.
-   * 
-   * @return a Query object defined by idStr
+   * @param   idStr       The instance of CycLQuerySpecification
+   * @param   indexicals  A map from terms in the query (as loaded from the KB) to the actual values
+   *                      that should be queried with
+   * @return  a Query object defined by idStr
+   * @throws  QueryConstructionException       if the specified query term has a sentence whose 
+   *                                           outermost operator is #$ist and the query is loaded
+   *                                           from a Cyc server with a system level under 10.154917
+   *                                           (Nov. 2014). A workaround is to edit the query in the
+   *                                           KB, removing the #$ist from the query's sentence, and
+   *                                           specifying it as the query mt using 
+   *                                           #$microtheoryParameterValueInSpecification.
+   * @throws  KbTypeException                  if <code>idStr</code> does not identify a
+   *                                           KbIndividual
+   * @throws  UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier
    */
-  public Query getQuery(String idStr, Map<String, String> indexicals)
+  Query getQuery(String idStr, Map<String, String> indexicals)
           throws QueryConstructionException, KbTypeException, UnsupportedCycOperationException;
 
-  public int closeAllUnclosedQueries();
-
+  /**
+   * Closes all unclosed queries.
+   * 
+   * @return  the number of queries that were closed
+   */
+  int closeAllUnclosedQueries();
+  
 }

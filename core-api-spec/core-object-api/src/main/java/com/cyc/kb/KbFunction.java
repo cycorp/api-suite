@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: KbFunction.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,4 +231,9 @@ public interface KbFunction extends Relation {
   public KbFunction addResultGenl(KbCollection col, Context ctx)
           throws KbTypeException, CreateException;
 
+  /**
+   * @return is <code>this</code> an instance of <code>#$UnreifiableFunction.
+   */
+  public boolean isUnreifiable();
+  
 }

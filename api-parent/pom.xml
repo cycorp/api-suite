@@ -7,21 +7,23 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-default-config-parent</artifactId>
-    <version>1.0.0-rc1</version>
+    <version>1.0.0-rc6</version>
     <relativePath>../../maven-resources/parent-poms/default-config-parent</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-api-parent</artifactId>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0-rc6</version>
   <packaging>pom</packaging>
   
-  <!-- ====  Metadata & contact info  ========================================================== -->
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>API Parent</name>
+
   <description>
     Parent POM for all Cyc Java APIs.
   </description>
+  
   <url>http://dev.cyc.com/api/</url>
   
   <scm>
@@ -31,7 +33,7 @@
   </scm>
   
   <issueManagement>
-    <url>https://github.com/cycorp/api-suite/issues</url>
+    <url>http://dev.cyc.com/issues/</url>
     <system>GitHub Issues</system>
   </issueManagement>
   
@@ -65,17 +67,15 @@
     </site>
   </distributionManagement>
   
-  <!-- ====  Configuration  ==================================================================== -->
+  <!-- ====|    Configuration    |============================================================= -->
   
   <properties>
     <!--
     <maven-compiler-plugin.source>1.6</maven-compiler-plugin.source>
     <maven-compiler-plugin.target>1.6</maven-compiler-plugin.target>
     -->
-    <cyc-core-api.version>1.0.0-rc5</cyc-core-api.version>
+    <cyc-core-api.version>1.0.0-rc6</cyc-core-api.version>
     <cyc-core-client-impl.version>${cyc-core-api.version}</cyc-core-client-impl.version>
-    
-    <cyc-site-skin.version>1.0.0-rc2</cyc-site-skin.version>
     <stagingDirectory.default>/tmp/www/dev.cyc.com/api</stagingDirectory.default>
   </properties>
   

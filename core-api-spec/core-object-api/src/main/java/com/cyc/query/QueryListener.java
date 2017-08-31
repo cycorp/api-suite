@@ -1,4 +1,4 @@
-/* $Id: QueryListener.java 163206 2015-12-16 00:07:09Z nwinant $
+/* $Id: QueryListener.java 169908 2017-01-11 23:19:09Z nwinant $
  */
 
 package com.cyc.query;
@@ -8,7 +8,7 @@ package com.cyc.query;
  * File: QueryListener.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @see Query
  * @author tbrussea, zelal
- * @version $Id: QueryListener.java 163206 2015-12-16 00:07:09Z nwinant $
+ * @version $Id: QueryListener.java 169908 2017-01-11 23:19:09Z nwinant $
  */
 public interface QueryListener {
 

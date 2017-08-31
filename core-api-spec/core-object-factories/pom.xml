@@ -7,20 +7,22 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api-parent</artifactId>
-    <version>1.0.0-rc5</version>
+    <version>1.0.0-rc6</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-object-factories</artifactId>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0-rc6</version>
   <packaging>jar</packaging>
   
-  <!-- ====  Metadata & contact info  ========================================================== -->
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Object Factories</name>
+
   <description>
     Implementation-independent factory classes for Cyc Core API objects.
   </description>
+  
   <url>http://dev.cyc.com/api/core/</url>
   
   <scm>
@@ -30,7 +32,7 @@
   </scm>
   
   <issueManagement>
-    <url>https://github.com/cycorp/api-suite/issues</url>
+    <url>http://dev.cyc.com/issues/</url>
     <system>GitHub Issues</system>
   </issueManagement>
   
@@ -57,7 +59,7 @@
     </developer>
   </developers>
   
-  <!-- ====  Configuration  ==================================================================== -->
+  <!-- ====|    Configuration    |============================================================= -->
   
   <build>
     <plugins>
@@ -75,6 +77,15 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId> 
         <artifactId>license-maven-plugin</artifactId> 
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>

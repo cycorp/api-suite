@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: Rule.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ package com.cyc.kb;
  *
  *
  * @author vijay
- * @version $Id: Rule.java 163206 2015-12-16 00:07:09Z nwinant $
+ * @version $Id: Rule.java 169908 2017-01-11 23:19:09Z nwinant $
  * @since 1.0
  */
 public interface Rule extends Assertion {

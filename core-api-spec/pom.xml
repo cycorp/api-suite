@@ -7,23 +7,25 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-api-parent</artifactId>
-    <version>1.0.0-rc5</version>
+    <version>1.0.0-rc6</version>
     <relativePath>../api-parent</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-api-parent</artifactId>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0-rc6</version>
   <packaging>pom</packaging>
   
-  <!-- ====  Metadata & contact info  ========================================================== -->
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Parent</name>
+
   <description>
     The parent project which manages the configuration and build of the projects within 
     Cyc Core API Suite: the core Java APIs for interacting with the Cyc inference engine and 
     knowledge base.
   </description>
+  
   <url>http://dev.cyc.com/api/core/</url>
 
   <scm>
@@ -33,7 +35,7 @@
   </scm>
   
   <issueManagement>
-    <url>https://github.com/cycorp/api-suite/issues</url>
+    <url>http://dev.cyc.com/issues/</url>
     <system>GitHub Issues</system>
   </issueManagement>
   
@@ -60,7 +62,7 @@
     </developer>
   </developers>
   
-  <!-- ====  Configuration  ==================================================================== -->
+  <!-- ====|    Configuration    |============================================================= -->
   
   <properties>
     <maven-compiler-plugin.source>1.6</maven-compiler-plugin.source>

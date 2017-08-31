@@ -21,7 +21,7 @@ package com.cyc.query;
  * File: QueryResultSet.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public interface QueryResultSet extends Iterable<QueryAnswer> {
    * <code>type</code>.
    * @throws IllegalArgumentException if the binding for <code>variable</code>
    * cannot be converted to <code>type</code>.
-   * @throws com.cyc.kb.exception.KbException
+   * @throws KbException
    * @throws ArrayIndexOutOfBoundsException if columnIndex doesn't correspond to
    * a valid column in the result set.
    */
@@ -139,7 +139,7 @@ public interface QueryResultSet extends Iterable<QueryAnswer> {
    * @param type the expected type of the value.
    * @return the value at the current row for the specified column.
    * @throws IllegalArgumentException
-   * @throws com.cyc.kb.exception.KbException
+   * @throws KbException
    * @throws ArrayIndexOutOfBoundsException
    */
   public <T> T getKbObject(Variable columnVar, Class<T> type) 
@@ -155,7 +155,7 @@ public interface QueryResultSet extends Iterable<QueryAnswer> {
    * @param type
    * @return the value at the current row for the specified column.
    * @throws IllegalArgumentException
-   * @throws com.cyc.kb.exception.KbException
+   * @throws KbException
    * @throws ArrayIndexOutOfBoundsException
    */
   public <T> T getKbObject(String columnLabel, Class<T> type)

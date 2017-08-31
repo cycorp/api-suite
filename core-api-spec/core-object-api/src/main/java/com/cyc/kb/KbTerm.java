@@ -1,13 +1,16 @@
 package com.cyc.kb;
 
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KbTypeException;
 import java.util.Date;
+import java.util.Map;
 
 /*
  * #%L
  * File: KbTerm.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +45,7 @@ public interface KbTerm extends KbObject {
    * @return whether <code>this</code> is provably not an instance of
    * <code>col</code>
    */
-  public boolean provablyNotInstanceOf(KbCollection col, Context ctx);
+  boolean provablyNotInstanceOf(KbCollection col, Context ctx);
 
   /**
    * Determine whether <code>this</code> is provably not an instance of
@@ -57,15 +60,31 @@ public interface KbTerm extends KbObject {
    * @return whether <code>this</code> is provably not an instance
    * <code>col</code>
    */
-  public boolean provablyNotInstanceOf(String colStr, String ctxStr);
-
+  boolean provablyNotInstanceOf(String colStr, String ctxStr);
+  
+  /**
+   * Non-destructively replace a set of objects within a non-atomic term. This does not modify the 
+   * original term, but instead returns a new one. Any KBObject or Java 
+   * 
+   * <p>Note: a common use of this method is to replace indexical terms, so you may want to see
+   * {@link com.cyc.kb.KbObject#isIndexical() } for more details about them. However, this method
+   * can be used to replace <em>any</em> element within a term, not just indexicals. 
+   * 
+   * @param   <O>            the referent's expected type
+   * @param   substitutions  the replacement mapping
+   * @return  a new term with the replaced terms
+   * @throws  KbTypeException
+   * @throws  CreateException
+   */
+  <O> O replaceTerms(Map substitutions) throws KbTypeException, CreateException;
+  
   /**
    * Return the #$Cyclist (not necessarily #$HumanCyclist) who created this term. 
    * If not found or if there is an exception, return null.
    * 
    * @return the cyclist who created the term
    */
-  public KbIndividual getCreator();
+  KbIndividual getCreator();
   
   /**
    * Return the date and time at which this term was created. If not found or if
@@ -73,5 +92,5 @@ public interface KbTerm extends KbObject {
    * 
    * @return the date and time at which the term was created
    */
-  public Date getCreationDate();
+  Date getCreationDate();
 }

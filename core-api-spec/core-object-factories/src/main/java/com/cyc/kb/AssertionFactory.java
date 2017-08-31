@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: AssertionFactory.java
  * Project: Core API Object Factories
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,11 +62,12 @@ public class AssertionFactory {
   
   
   // Public
+  
   /**
    * Get the <code>Assertion</code> object that corresponds to <code>hlid</code>. Throws exceptions
    * if the <code>hlid</code> isn't in the KB, or if it's not already an assertion.
    *
-   * NOTE: The get (String ) factory methods in other classes find objects based on
+   * <p>NOTE: The #get(String) factory methods in other classes find objects based on
    * <code>hlid</code> or string representation of the object. They use nameOrId as the string
    * variable name. But this method finds objects based on <code>hlid</code> alone. This is because
    * it is much more common and easier to find assertions based on two strings, formula and context.
@@ -125,7 +126,7 @@ public class AssertionFactory {
    * in the default assertion context. Tries to assert if no such formula is found in the specified
    * context in the KB. Throws an exception if it is unable to make such an assertion.
    *
-   * Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
+   * <p>Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
    *
    * @param formulaStr the string representation of the formula to be found or created
    *
@@ -147,7 +148,7 @@ public class AssertionFactory {
    * found in the specified context in the KB. Throws an exception if it is unable to make such an
    * assertion.
    *
-   * Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
+   * <p>Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
    *
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
@@ -193,7 +194,7 @@ public class AssertionFactory {
    * the default assertion context (@link DefaultContext}. Tries to assert if no such formula is
    * found in the KB. Throws an exception if it is unable to make such an assertion.
    *
-   * NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
+   * <p>NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
    * object in the assertion because (most of) the CycObjects can only be built based on objects in
    * the KB. Some exceptions are Sentences, Variables and Symbols. NAUTs are also not in the KB, but
    * in the API they are effectively treated as being in the KB.
@@ -217,12 +218,23 @@ public class AssertionFactory {
    * <code>ctx</code>. Tries to assert if no such formula is found in the specified context in the
    * KB. Throws an exception if it is unable to make such an assertion.
    *
-   * NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
+   * <p>In some cases, the act of asserting a formula may be successful <em>without actually 
+   * creating an assertion in the KB.</em> For example, a <code>#$SKSIContentMicrotheory</code>
+   * provides a "window" into an external knowledge source, and any knowledge asserted into a
+   * #$SKSIContentMicrotheory will be stored in that external knowledge source. In other words, an 
+   * assertion into a particular Context may cause rows to be added to, e.g., a relational database
+   * where Cyc may have retrieve and incorporate them into query answers, but without any actual
+   * assertion object being created in Cyc's KB. In such cases -- where the asserted sentence has
+   * been successfully stored, but there is no Assertion object to return -- this method will return
+   * <code>null</code>.
+   * 
+   * <p>NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
    * object in the assertion because (most of) the CycObjects can only be built based on objects in
    * the KB. Some exceptions are Sentences, Variables and Symbols. NAUTs are also not in the KB, but
    * in the API they are effectively treated as being in the KB.
    *
-   * Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
+   * <p>Strength is set to Strength.DEFAULT by default
+   * Direction is set to Direction.FORWARD by default
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -243,7 +255,7 @@ public class AssertionFactory {
    * <code>ctx</code>. Tries to assert if no such formula is found in the specified context in the
    * KB. Throws an exception if it is unable to make such an assertion.
    *
-   * NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
+   * <p>NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
    * object in the assertion because (most of) the CycObjects can only be built based on objects in
    * the KB. Some exceptions are Sentences, Variables and Symbols. NAUTs are also not in the KB, but
    * in the API they are effectively treated as being in the KB.

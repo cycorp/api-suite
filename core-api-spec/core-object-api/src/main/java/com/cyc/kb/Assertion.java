@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: Assertion.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,9 +134,8 @@ public interface Assertion extends KbObject {
    * can be both a deduced assertion and an asserted assertion at the same time.
    *
    * @return true if this assertion is supported by other assertions
-   *
    */
-  public boolean isDeducedAssertion();
+  public Boolean isDeducedAssertion();
 
   /**
    * Is <code>this</code> a ground atomic formula? This will return true for
@@ -145,7 +144,7 @@ public interface Assertion extends KbObject {
    *
    * @return true if and only if this KbObject is a ground atomic formula
    */
-  public boolean isGroundAtomicFormula();
+  public Boolean isGroundAtomicFormula();
 
   /**
    * Returns true if this assertion is asserted directly in the KB (i.e.&nbsp;at
@@ -156,7 +155,7 @@ public interface Assertion extends KbObject {
    * @return true if this assertion is asserted directly in the KB
    *
    */
-  public boolean isAssertedAssertion();
+  public Boolean isAssertedAssertion();
 
   /**
    * the direction of the assertion.

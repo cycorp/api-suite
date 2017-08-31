@@ -5,7 +5,7 @@ package com.cyc.query;
  * File: QueryAnswer.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ package com.cyc.query;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.Variable;
-
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +37,8 @@ import java.util.Set;
  */
 public interface QueryAnswer {
 
+  Set<Variable> getVariables();
+  
   /**
    * Get the value to which the specified variable is bound.
    *
@@ -45,6 +47,14 @@ public interface QueryAnswer {
    * @return The value to which <code>var</code> is bound in this answer.
    */
   <T> T getBinding(Variable var);
+
+  /**
+   * Does the specified variable have a value in this query answer?
+   *
+   * @param var The variable for which the binding is sought.
+   * @return 
+   */
+  boolean hasBinding(Variable var);
 
   /**
    * Get the values to which the all variables are bound.
@@ -75,5 +85,7 @@ public interface QueryAnswer {
    * @return A set of KbTerms that are the attributed sources for this answer.
    */
   Set<KbTerm> getSources();
-
+    
+  List<String> toPrettyBindingsStrings();
+  
 }

@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: KbTermFactory.java
  * Project: Core API Object Factories
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,11 @@ public class KbTermFactory {
    * @throws CreateException
    */
   public static KbTerm get(String nameOrId) throws KbTypeException, CreateException {
+    try {
     return getInstance().getService().get(nameOrId);
+    } catch (ClassCastException ex) {
+     throw new ClassCastException("Unable to cast " + nameOrId);
+    }
   }
 
   /**

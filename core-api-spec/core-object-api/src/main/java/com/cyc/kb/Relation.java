@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: Relation.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -315,6 +315,14 @@ public interface Relation extends KbIndividual {
    * possible arity value (i.e. for instances of #$VariableArityRelation).
    */
   public Integer getArity() throws VariableArityException;
+
+  /**
+   * Returns true if <code>this</code> is a variable-arity relation. 
+   *
+   * @return whether or not <code>this</code> is a variable-arity relation. 
+   *
+   */
+  public boolean isVariableArity();
 
   /**
    * find the minimum number of arguments required for the relation

@@ -21,7 +21,7 @@ package com.cyc.core.service;
  * File: CoreServicesLoader.java
  * Project: Core API Object Factories
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,17 +38,18 @@ package com.cyc.core.service;
  */
 
 import com.cyc.kb.spi.KbFactoryServices;
-import com.cyc.query.QueryFactory;
+import com.cyc.query.ProofView;
+import com.cyc.query.spi.ProofViewFactoryService;
+import com.cyc.query.spi.QueryAnswerExplanationFactoryService;
 import com.cyc.query.spi.QueryFactoryService;
 import com.cyc.session.exception.SessionServiceException;
 import com.cyc.session.spi.SessionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is solely responsible for loading Core API services, such as 
@@ -64,13 +65,40 @@ public class CoreServicesLoader {
   
   // Fields
   
+  /**
+   * We do not require implementation for all services on the classpath. This allows e.g. the KB 
+   * Client (and its test suite) to be run without needing to load the Query Client.
+   */
+  private static final boolean ALLOW_MISSING_SERVICES = true;
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(CoreServicesLoader.class);
-  private static KbFactoryServices KB_FACTORY_SERVICES;
-  private static QueryFactoryService QUERY_FACTORY_SERVICE;
+  
+  private static final KbFactoryServices KB_FACTORY_SERVICES;
+  private static final QueryFactoryService QUERY_FACTORY_SERVICE;
+  private static final List<QueryAnswerExplanationFactoryService> QUERY_EXPLANATION_FACTORY_SERVICES;
+  private static final ProofViewFactoryService PROOF_VIEW_FACTORY_SERVICE;
+  
+  static {
+    try {
+      KB_FACTORY_SERVICES = loadFactoryServiceProvider(
+              KbFactoryServices.class,
+              ALLOW_MISSING_SERVICES);
+      QUERY_FACTORY_SERVICE = loadFactoryServiceProvider(
+              QueryFactoryService.class,
+              ALLOW_MISSING_SERVICES);
+      QUERY_EXPLANATION_FACTORY_SERVICES = loadFactoryServiceProviders(
+              QueryAnswerExplanationFactoryService.class,
+              ALLOW_MISSING_SERVICES);
+      PROOF_VIEW_FACTORY_SERVICE = findProofViewService(ALLOW_MISSING_SERVICES);
+    } catch (Throwable t) {
+      LOGGER.error(t.getMessage(), t);
+      throw new ExceptionInInitializerError(t);
+    }
+  }
   
   
   // Public
-
+  
   public static List<SessionManager> loadAllSessionManagers() throws SessionServiceException {
     final List<SessionManager> sessionMgrs = new ArrayList();
     final ServiceLoader<SessionManager> loader
@@ -85,26 +113,105 @@ public class CoreServicesLoader {
   
   public static synchronized KbFactoryServices getKbFactoryServices() {
     if (KB_FACTORY_SERVICES == null) {
-      final ServiceLoader<KbFactoryServices> kbServicesLoader = 
-              ServiceLoader.load(KbFactoryServices.class);
-      final Iterator<KbFactoryServices> kbServices = kbServicesLoader.iterator();
-      KB_FACTORY_SERVICES = kbServices.next();
-      LOGGER.info("Loaded KB service providers: {}", KB_FACTORY_SERVICES);
+      throw new RuntimeException("Could not find a service provider for " 
+              + KbFactoryServices.class.getCanonicalName());
     }
     return KB_FACTORY_SERVICES;
   }
   
   public static synchronized QueryFactoryService getQueryFactoryService() {
     if (QUERY_FACTORY_SERVICE == null) {
-      final ServiceLoader<QueryFactoryService> queryFactoryServiceLoader = 
-              ServiceLoader.load(QueryFactoryService.class);
-      final Iterator<QueryFactoryService> queryFactoryServices = 
-              queryFactoryServiceLoader.iterator();
-      QUERY_FACTORY_SERVICE = queryFactoryServices.next();
-      LOGGER.info("Loaded " + QueryFactory.class.getSimpleName() 
-              + " service provider: {}", QUERY_FACTORY_SERVICE);
+      throw new RuntimeException("Could not find a service provider for "
+              + QueryFactoryService.class.getCanonicalName());
     }
     return QUERY_FACTORY_SERVICE;
   }
   
+  public static List<QueryAnswerExplanationFactoryService> getQueryExplanationFactoryServices() {
+    if (QUERY_EXPLANATION_FACTORY_SERVICES == null) {
+      throw new RuntimeException("Could not find any service providers for " 
+              + QueryAnswerExplanationFactoryService.class.getCanonicalName());
+    }
+    return QUERY_EXPLANATION_FACTORY_SERVICES;
+  }
+  
+  public static ProofViewFactoryService getProofViewFactoryService() {
+    if (PROOF_VIEW_FACTORY_SERVICE == null) {
+      throw new RuntimeException("Could not find a service provider for " 
+              + ProofViewFactoryService.class.getCanonicalName());
+    }
+    return PROOF_VIEW_FACTORY_SERVICE;
+  }
+  
+  
+  // Private
+  
+  private static <T> List<T> loadFactoryServiceProviders(Class<T> clazz, boolean allowMissingServices) {
+    LOGGER.debug("Attempting to find {} service providers...", clazz.getCanonicalName());
+    final List<T> results = new ArrayList();
+    final String clazzName = clazz.getCanonicalName();
+    final ServiceLoader<T> factoryServiceLoader = ServiceLoader.load(clazz);
+    final Iterator<T> iter =  factoryServiceLoader.iterator();
+    while (iter.hasNext()) {
+      results.add(iter.next());
+    }
+    if (results.isEmpty()) {
+      final String errMsg = "No providers found for " + clazzName;
+      if (allowMissingServices) {
+        LOGGER.warn(errMsg);
+        return null;
+      } else {
+        throw new RuntimeException(errMsg);
+      }
+    }
+    if (results.size() > 1) {
+      LOGGER.warn("Loaded {} {} providers: {}", results.size(), clazzName, results);
+    } else {
+      LOGGER.debug("Loaded one {} provider: {}", clazzName, results.get(0));
+    }
+    return results;
+  }
+  
+  private static <T> T selectServiceProvider(List<T> providers, Class<T> clazz) {
+    if ((providers == null) || providers.isEmpty()) {
+      return null;
+    }
+    if (providers.size() > 1) {
+      throw new RuntimeException("Expected exactly one provider for " + clazz.getCanonicalName() 
+              + " but found " + providers.size() + ": " + providers);
+    }
+    return providers.get(0);
+  }
+  
+  private static <T> T loadFactoryServiceProvider(Class<T> clazz, boolean allowMissingServices) {
+    final List<T> providers = loadFactoryServiceProviders(clazz, allowMissingServices);
+    return selectServiceProvider(providers, clazz);
+  }
+  
+  private static ProofViewFactoryService findProofViewService(boolean allowMissingServices) {
+    final List<ProofViewFactoryService> pvServices = new ArrayList();
+    if ((QUERY_EXPLANATION_FACTORY_SERVICES != null) || !allowMissingServices) {
+      for (QueryAnswerExplanationFactoryService service : getQueryExplanationFactoryServices()) {
+        if (service instanceof ProofViewFactoryService) {
+          pvServices.add((ProofViewFactoryService) service);
+        }
+      }
+    }
+    if (pvServices.size() != 1) {
+      final String errMsg = "Expected exactly one provider for "
+              + QueryAnswerExplanationFactoryService.class.getCanonicalName()
+              + "<" + ProofView.class.getSimpleName() + ">"
+              + " but found " + pvServices.size() + ": " + pvServices;
+      if (pvServices.isEmpty() && allowMissingServices) {
+        LOGGER.warn(errMsg);
+      } else {
+        throw new RuntimeException(errMsg);
+      }
+    }
+    if (pvServices.isEmpty()) {
+      return null;
+    }
+    return pvServices.get(0);
+  }
+
 }

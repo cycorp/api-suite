@@ -5,7 +5,7 @@ package com.cyc.kb;
  * File: RuleFactory.java
  * Project: Core API Object Factories
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class RuleFactory {
    * <code>hlid</code> doesn't correspond to an object in the KB, or if the object identified by
    * <code>hlid</code> is not an assertion with an #$implies operator.
    *
-   * NOTE: Most of the get (String) factory methods in other classes find objects based on
+   * <p>NOTE: Most of the get (String) factory methods in other classes find objects based on
    * <code>hlid</code>s or string representations of the object. They use nameOrId as the string
    * variable name. This method finds objects based on <code>hlid</code> alone. If you want to find
    * a rule based on its string representation, try using
@@ -107,7 +107,7 @@ public class RuleFactory {
   /**
    * Get the <code>Rule</code> that corresponds to <code>formula</code> in the context
    * <code>ctx</code>. Throws exceptions if no such formula is found in the specified context in the
-   * KB, or if it's not an assertion with the #$imples operator.
+   * KB, or if it's not an assertion with the <code>#$implies</code> operator.
    *
    * @param formula formula to be found
    * @param ctx context of the formula
@@ -149,8 +149,8 @@ public class RuleFactory {
    * default assertion context. Tries to assert if no rule with that formula can be found in that
    * context. Throws an exception if it is unable to create the rule in the KB.
    *
-   * Strength is set to Strength.DEFAULT by default. Direction is set to Direction.BACKWARD by
-   * default.
+   * Strength is set to Strength.DEFAULT by default. 
+   * Direction is set to Direction.BACKWARD by default.
    *
    * @param formulaStr the string representation of the rule to be found or created
    *
@@ -171,8 +171,8 @@ public class RuleFactory {
    * context <code>ctxStr</code>. Tries to assert if no rule with that formula can be found in that
    * context. Throws an exception if it is unable to find or create the rule.
    *
-   * Strength is set to Strength.DEFAULT by default. Direction is set to Direction.BACKWARD by
-   * default.
+   * Strength is set to Strength.DEFAULT by default. 
+   * Direction is set to Direction.BACKWARD by default.
    *
    * @param formulaStr the string representation of the rule formula
    * @param ctxStr the string representation of the rule context
@@ -219,8 +219,8 @@ public class RuleFactory {
    * formula can be found in that context. Throws an exception if it is unable to find or create
    * such an assertion.
    *
-   * Strength is set to Strength.DEFAULT by default. Direction is set to Direction.BACKWARD by
-   * default.
+   * Strength is set to Strength.DEFAULT by default. 
+   * Direction is set to Direction.BACKWARD by default.
    *
    * @param formula the formula to be found or created
    *

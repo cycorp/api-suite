@@ -5,7 +5,7 @@ package com.cyc.session;
  * File: CycSessionConfiguration.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,6 +94,13 @@ public interface CycSessionConfiguration {
    */
   boolean isSessionCachingAllowed();
   
+  
+  
+  // TODO: add javadocs
+  boolean isServerReleasedWhenAllSessionsAreClosed();
+  
+  
+  
   /**
    * Are the APIs permitted to apply code patches to the Cyc server? Note that this setting only 
    * determines whether the rules of the <em>CycSession</em> will allow code patches; patches may 
@@ -105,7 +112,7 @@ public interface CycSessionConfiguration {
    * @return can code patches be applied to the Cyc server?
    */
   boolean isServerPatchingAllowed();
-  
+    
   /**
    * Returns an immutable set of options, which may provide the default values for 
    * {@link CycSession#getOptions() }.

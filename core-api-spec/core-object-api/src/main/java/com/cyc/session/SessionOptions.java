@@ -9,7 +9,7 @@ import com.cyc.session.exception.SessionConfigurationException;
  * File: SessionOptions.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,6 +107,20 @@ public interface SessionOptions {
   DefaultContext getDefaultContext();
 
   /**
+   * Sets the ThreadLocal that controls whether or not to convert CycL dates to Java dates
+   *
+   * @param performConversion
+   */
+  void setShouldConvertToJavaDates(boolean performConversion);
+
+  /**
+   * Returns the ThreadLocal that controls whether or not to convert CycL dates to Java dates
+   *
+   * @return the contents of the ThreadLocal that controls whether or not to convert CycL dates to Java dates
+   */
+  boolean getShouldConvertToJavaDates();
+  
+  /**
    * Resets the current cyclist value to the default specified in the current
    * CycSessionConfiguration.
    */
@@ -129,6 +143,12 @@ public interface SessionOptions {
    * CycSessionConfiguration.
    */
   void resetShouldTranscriptOperations();
+
+  /**
+   * Resets the current shouldConvertToJavaDates value to the default specified in the current
+   * CycSessionConfiguration.
+   */
+  void resetShouldConvertToJavaDates();
 
   /**
    * Clears all values, reverting to the defaults specified in CycSessionConfiguration.

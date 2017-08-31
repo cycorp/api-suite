@@ -9,6 +9,58 @@ follow. Until the final 1.0.0 release, it is expected that future release candid
 backwards compatibility.
 
 
+1.0.0-rc6 - 2017-07-19
+----------------------
+
+Adds assorted new functionality. 1.0.0-rc6 is _not backwards-compatible_ with earlier API releases.
+
+#### Query API
+
+Adds support for ProofViews. To generate a ProofView:
+
+1. Call `QueryFactory#getProofViewSpecification()` to retrieve a `ProofViewSpecification`.
+2. Configure the ProofViewSpecification via its setters.
+3. Then, call `QueryFactory#getProofView(QueryAnswer, ProofViewSpecification)`.
+
+Also:
+
+* Query now extends QuerySpecification, which solely represents the query itself; processing 
+  information is still represented by Query.
+* `Query#getAnswers()` now returns `QueryAnswers` instead of a raw `List<QueryAnswer>`. QueryAnswers
+  extends List<QueryAnswer>, but adds several convenience methods to retrieve all bindings for a
+  particular variable, get all bindings as a list for single-variable queries, get a single binding
+  from queries which should return exactly one binding, and to print answers in a formatted table.
+* Query rules can be retrieved via `QuerySpecification#getRules()`.
+* Query indexicals cans be retrieved via `QuerySpecification#getUnresolvedIndexicals()`.
+
+#### KB API
+
+Improves support for working with quoted terms:
+
+* KbObject#isQuoted()
+* KbObject#quote()
+* KbObject#unquote()
+* KbObject#toQuoted()
+* KbObject#toUnquoted()
+
+Improves support for working with indexicals and variables:
+
+* KbObject#isIndexical()
+* KbObject#possiblyResolveIndexical(Map)
+* KbObject#resolveIndexical()
+* Sentence#getIndexicals(boolean)
+* Sentence#getVariables(boolean)
+
+Improves support for performing substitutions:
+
+* KbTerm#replaceTerms(Map)
+* Sentence#replaceTerms(Map)
+
+#### Other changes
+
+* Assorted minor changes to API methods.
+
+
 1.0.0-rc5 - 2015-12-18
 ----------------------
 

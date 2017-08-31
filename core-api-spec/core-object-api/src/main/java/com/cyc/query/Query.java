@@ -5,7 +5,7 @@ package com.cyc.query;
  * File: Query.java
  * Project: Core API Object Specification
  * %%
- * Copyright (C) 2013 - 2015 Cycorp, Inc
+ * Copyright (C) 2013 - 2017 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,523 +21,557 @@ package com.cyc.query;
  * #L%
  */
 import com.cyc.kb.ArgPosition;
-import com.cyc.kb.Context;
 import com.cyc.kb.KbIndividual;
-import com.cyc.kb.KbObject;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.Variable;
 import com.cyc.kb.exception.KbException;
+import com.cyc.nl.Paraphraser;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.query.exception.QueryRuntimeException;
 import com.cyc.query.metrics.InferenceMetricsValues;
+import com.cyc.query.parameters.InferenceMode;
+import com.cyc.query.parameters.InferenceParameters;
 import com.cyc.session.CycSession;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import com.cyc.session.exception.SessionCommunicationException;
-
 import java.io.Closeable;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
- * <code>Query</code> is designed to represent queries posed to Cyc and provide
- * access to their results.
+ * <code>Query</code> extends {@link com.cyc.query.QuerySpecification} to represent queries posed to
+ * Cyc and provide access to their results.
  * <p>
  * In general, the process of getting an answer from Cyc is:
  * <ol>
  * <li> Create a <code>Query</code> object and set relevant fields on it.
- * <li> Access the answers via methods like
- * {@link #getAnswersCyc()}, {@link #getResultSet()}, or by adding a listener
- * via {@link #addListener(com.cyc.query.QueryListener)} and starting the query
+ * <li> Access the answers via methods like {@link #getAnswersCyc()}, {@link #getResultSet()}, or by
+ * adding a listener via {@link #addListener(com.cyc.query.QueryListener)} and starting the query
  * via {@link #performInference()}.
- * <li> To avoid filling up memory on the Cyc server, {@link #close()} the Query
- when you are done with it, which will free up any lingering associated
- inference resources on the Cyc image. Queries are also closed when their
- {@link #finalize()} method is invoked, notably when they are garbage
- * collected.
+ * <li> To avoid filling up memory on the Cyc server, {@link #close()} the Query when you are done
+ * with it, which will free up any lingering associated inference resources on the Cyc image.
+ * Queries are also closed when their {@link #finalize()} method is invoked, notably when they are
+ * garbage collected.
  * </ol>
  *
- * @author Vijay Raj
- * @author David Baxter
- *
+ * @author  Vijay Raj
+ * @author  David Baxter
  */
-public interface Query extends Closeable, InferenceParameterSetter, InferenceParameterGetter {
+public interface Query extends QuerySpecification<Query>, Closeable {
 
   /**
    * Run this query and return the results.
    *
-   * @return the results of running the query.
-   * @throws QueryRuntimeException if an exception is thrown during
-   * inference.
-   *
+   * @return  the results of running the query
+   * @throws  QueryRuntimeException  if an exception is thrown during inference
    */
-  public QueryResultSet performInference() throws QueryRuntimeException;
+  QueryResultSet performInference() throws QueryRuntimeException;
   
   /**
-   * Get the Cyc term that defines this query. To change the Id of an existing
-   * query, see {@link #saveAs(String)}
+   * Ensure that any required Semantic Knowledge Source removal modules for this query have been
+   * registered on the Cyc Server and made available for inference.
+   * <p>
+   * This should be done prior to running a query or set of queries that relies on real-time access
+   * to external knowledge sources.
+   * <p>
+   * Required knowledge sources are noted in the KB using the predicate sksiModulesNeeded.
    *
-   * @return the id term.
+   * @todo    can we figure out how to not require that this be done? It seems silly to not 
+   *          auto-register.
    */
-  public KbIndividual getId();
+  void registerRequiredSksModules();
 
-  /**
-   *
-   * @param indexicals
-   */
-  public void substituteTerms(Map<KbObject, Object> indexicals);
-
-
-  /**
-   * Ensure that any required Semantic Knowledge Source removal modules for this
-   * query have been registered on the Cyc Server and made available for
-   * inference.
-   * <p/>
-   * This should be done prior to running a query or set of queries that relies
-   * on real-time access to external knowledge sources.
-   * <p/>
-   * Required knowledge sources are noted in the KB using the predicate
-   * sksiModulesNeeded.
-   * 
-   * @todo can we figure out how to not require that this be done?  It seems silly to not 
-   * auto-register.
-   */
-  public void registerRequiredSksModules();
-  
   /**
    * Saves this Query as the term which is its current ID.
    *
-   * @see Query#saveAs(String)
-   * @see Query#getId()
+   * @see     Query#saveAs(String)
+   * @see     QuerySpecification#getId()
    */
-  public void save();
+  void save();
 
   /**
    * Saves this Query as a new query term with the specified name.
    *
    * @param name The name by which to save the query.
    *
-   * @return the new term
-   * @throws com.cyc.kb.exception.KbException
-   * @throws com.cyc.session.exception.SessionCommunicationException if there is a problem 
-   * communicating with Cyc.
-   * @throws com.cyc.query.exception.QueryConstructionException if there was a problem constructing 
-   * the new query.
-   * @see Query#save()
+   * @return  the new term
+   * @throws  KbException                    
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
+   * @throws  QueryConstructionException     if there was a problem constructing the new query
+   * @see     Query#save()
    */
-  public KbIndividual saveAs(String name) 
+  KbIndividual saveAs(String name)
           throws KbException, SessionCommunicationException, QueryConstructionException;
-          
+
   /**
-   * Returns the categories to which this query belongs. Categories are
-   * associated with queries via
+   * Returns the categories to which this query belongs. Categories are associated with queries via
    * {@link #addCategory()}.
    *
-   * @return the categories to which this query belongs.
-   * @todo move all this category stuff into another class??
+   * @todo    move all this category stuff into another class?
+   * @return  the categories to which this query belongs.
    */
-  public Collection<String> getCategories();
+  Collection<String> getCategories();
 
   /**
    * Add a new category to which this query belongs.
    *
-   * @param category
+   * @param   category
    */
-  public void addCategory(String category);
+  void addCategory(String category);
   
-  /**
-   * Get the inference identifier for this query.
-   *
-   * @return the identifier, or null if inference has not been started.
-   * @throws SessionCommunicationException if there is a problem communicating with
-   * Cyc.
-   */
-  public InferenceIdentifier getInferenceIdentifier() throws SessionCommunicationException; 
-
   /**
    * Get the metrics values for this Query.
    *
-   * @throws SessionCommunicationException if there is a problem communicating with
-   * Cyc.
-   * @return the metrics values.
+   * @return  the metrics values
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
    */
-  public InferenceMetricsValues getMetricsValues() throws SessionCommunicationException;
+  InferenceMetricsValues getMetricsValues() throws SessionCommunicationException;
+  
+  /**
+   * Get the inference mode to use. Inference modes are meant to be intuitive
+   * measures of how hard Cyc should work to answer a query. Setting the
+   * inference mode sets various other low-level parameters to appropriate
+   * values for that mode, but explictly setting values for such parameters
+   * overrides values set by the mode.
+   *
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#getInferenceMode()}.
+   * 
+   * @return  the <code>InferenceMode</code>
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
+   */
+  InferenceMode getInferenceMode();
 
   /**
-   * Return the inference parameters for this query.
+   * Returns the maximum number of answers (or sets of answers) that Cyc will
+   * attempt to find for the Query. In some cases (such as when a set of
+   * answers is retrieved in a batch), more answers than this may actually be
+   * returned. Once this number of answers has been reached, Cyc will not
+   * actively look for additional answers.
    *
-   * @return the inference parameters.
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#getMaxAnswerCount()}.
+   * 
+   * @return  the number cutoff for the Query
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
    */
-  public InferenceParameters getInferenceParameters();
+  Integer getMaxAnswerCount();
 
+  /**
+   * Returns the soft timeout for the Query in seconds.
+   *
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#getMaxTime()}.
+   * 
+   * @return  the soft timeout for the Query in seconds
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
+   */
+  Integer getMaxTime();
+  
+  /**
+   * Returns the max transformation depth value. Cyc will not reason using chains of rules longer
+   * than this number.
+   *
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#getMaxTransformationDepth()}.
+   * 
+   * @return  the max transformation depth.
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
+   */
+  Integer getMaxTransformationDepth();
+  
+  /**
+   * Check whether this Query is continuable. Queries that have not yet been run are considered
+   * continuable, as well as ones whose parameters have the continuable flag set to 
+   * <code>true</code>.
+   *
+   * @return  true iff it can be continued
+   * @see     InferenceParameters#setContinuable(boolean)
+   * @see     #continueQuery()
+   */
+  boolean isContinuable();
+  
   /**
    * Adds a listener to this query.
    *
-   * @param listener
-   * @return this query.
+   * @param   listener
+   * @return  this query
    */
-  public Query addListener(QueryListener listener);
+  Query addListener(QueryListener listener);
 
   /**
    * Designates var as a variable to return bindings for.
    *
-   * @param var
-   * @return this query.
-   * @throws IllegalArgumentException if var is not found in this query.
-   * @throws IllegalStateException if query has already been started.
+   * @param   var
+   * @return  this query
+   * @throws  IllegalArgumentException  if var is not found in this query
+   * @throws  IllegalStateException     if query has already been started
    */
-  public Query addQueryVariable(Variable var);
-
+  Query addQueryVariable(Variable var);
 
   /**
-   * Bind a query variable to a specified value. All occurrences of the variable
-   * in this query's sentence will be replaced with the specified value.
+   * Bind a query variable to a specified value. All occurrences of the variable in this query's
+   * sentence will be replaced with the specified value.
    *
-   * @param var must be a query variable in this query.
-   * @param replacement the value to substitute for var.
+   * @param  var          must be a query variable in this query
+   * @param  replacement  the value to substitute for var
    */
-  public void bindVariable(Variable var, Object replacement);
+  void bindVariable(Variable var, Object replacement);
 
   /**
    * Bind a query variable to a specified value.
    *
-   * @param varName The name of the variable, with or without the '?' prefix.
-   * @param replacement
+   * @param  varName      The name of the variable, with or without the '?' prefix
+   * @param  replacement  
    */
-  public void bindVariable(String varName, Object replacement);
+  void bindVariable(String varName, Object replacement);
 
   /**
    * Designates var as a variable to <i>not</i> return bindings for.
    *
-   * @param var
-   * @return this Query
-   * @throws IllegalArgumentException if var is not found in this query.
-   * @throws IllegalStateException if query has already been started.
+   * @param   var  
+   * @return  this Query
+   * @throws  IllegalArgumentException  if var is not found in this query
+   * @throws  IllegalStateException     if query has already been started
    */
-  public Query removeQueryVariable(Variable var);
-
+  Query removeQueryVariable(Variable var);
+  
   /**
-   * Return a Collection of the variables in this query for which bindings are
-   * sought. Note that this is a copy of the variables, and modification of the
-   * returned value will not result in modifications of the underlying Query.
-   *
-   * @return a Collection of the variables in this query for which bindings are
-   * to be sought.
-   * @throws KbException
-   */
-  public java.util.Collection<Variable> getQueryVariables() throws KbException;
-
-  /**
-   * Continues the query. Can be used if a query has not been started yet, has
-   * stopped due to reaching the specified number of answers, or has used its
-   * alloted time or other resources and is continuable.
+   * Continues the query. Can be used if a query has not been started yet, has stopped due to
+   * reaching the specified number of answers, or has used its alloted time or other resources and
+   * is continuable.
    * <p>
-   * Any resource constraints, e.g. time or number, get to "start over," so if
-   * the inference has already used its alloted 5 seconds, or found the
-   * specified three answers, continuing it will allow it to run for up to
+   * Any resource constraints, e.g. time or number, get to "start over," so if the inference has
+   * already used its alloted 5 seconds, or found the specified three answers, continuing it will
+   * allow it to run for up to
    * <i>another</i>
    * 5 seconds, or until it finds up to <i>another</i> three answers.
    * <p>
    * Returns when the inference has stopped running.
    *
-   * @see #setMaxNumber(Integer)
-   * @see #setMaxTime(Integer)
-   * @see #isContinuable()
-   * @see #setContinuable(boolean)
+   * @see     #setMaxNumber(Integer)
+   * @see     #setMaxTime(Integer)
+   * @see     #isContinuable()
+   * @see     #setContinuable(boolean)
    */
-  public void continueQuery();
+  void continueQuery();
 
   /**
    * Identifies redundant clauses in this query.
    *
-   * For instance, if one clause isa (isa ?X Dog) and another is (isa ?X
-   * GreatDane), that pair is considered redundant. This method provides no
-   * guidance as to what can or should be done to resolve the redundancy, and in
-   * fact it may be virtually harmless, as Cyc can often solve such a query
-   * almost as efficiently as it can solve the more specific clause of the pair.
+   * For instance, if one clause isa (isa ?X Dog) and another is (isa ?X GreatDane), that pair is
+   * considered redundant. This method provides no guidance as to what can or should be done to
+   * resolve the redundancy, and in fact it may be virtually harmless, as Cyc can often solve such a
+   * query almost as efficiently as it can solve the more specific clause of the pair.
    *
-   * @return a collection of pairs of any such clauses
-   * @throws KbException
-   * @throws com.cyc.session.exception.SessionCommunicationException
-   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an 
-   * OpenCyc server.
+   * @return  a collection of pairs of any such clauses
+   * @throws  KbException                         
+   * @throws  SessionCommunicationException       
+   * @throws  OpenCycUnsupportedFeatureException  when run against an OpenCyc server
    */
-  public Collection<Collection<Sentence>> findRedundantClauses() 
+  Collection<Collection<Sentence>> findRedundantClauses()
           throws KbException, SessionCommunicationException, OpenCycUnsupportedFeatureException;
 
   /**
-   * Identifies unconnected clauses in this query. Generally, all clauses of a
-   * query will be connected by a chain of variables that connect them together.
-   * Queries with unconnected clauses are effectively separate queries, and
-   * running queries with disconnected clauses generally results in a cartesian
-   * product of the answer sets of the two separate queries.
+   * Identifies unconnected clauses in this query. Generally, all clauses of a query will be
+   * connected by a chain of variables that connect them together. Queries with unconnected clauses
+   * are effectively separate queries, and running queries with disconnected clauses generally
+   * results in a cartesian product of the answer sets of the two separate queries.
    *
-   * @return a collection of the arg positions of any such clauses
-   * @throws com.cyc.session.exception.SessionCommunicationException if there is a problem
-   * communicating with Cyc.
-   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an 
-   * OpenCyc server.
+   * @return  a collection of the arg positions of any such clauses
+   * @throws  SessionCommunicationException       if there is a problem communicating with Cyc
+   * @throws  OpenCycUnsupportedFeatureException  when run against an OpenCyc server
    */
-  public Collection<ArgPosition> findUnconnectedClauses() 
+  Collection<ArgPosition> findUnconnectedClauses()
           throws SessionCommunicationException, OpenCycUnsupportedFeatureException;
 
   /**
-   * Conjoin this sentence with otherQuery, attempting to unify and rename
-   * variables. Typically, two different variables will unify into a single
-   * variable, causing all the uses of one of the variables to be renamed with
-   * the name of the other. In some cases, additional renaming may happen (e.g.
-   * if the queries contain mnemonic variables that become more tightly
-   * constrained as a result of the unification, a new mnemonic variable may be
-   * used in place of both of the original variables).
+   * Conjoin this sentence with otherQuery, attempting to unify and rename variables. Typically, two
+   * different variables will unify into a single variable, causing all the uses of one of the
+   * variables to be renamed with the name of the other. In some cases, additional renaming may
+   * happen (e.g. if the queries contain mnemonic variables that become more tightly constrained as
+   * a result of the unification, a new mnemonic variable may be used in place of both of the
+   * original variables).
    *
-   * @param otherQuery
-   * @return the new query
-   * @throws QueryConstructionException if there was a problem constructing the new query
-   * @throws com.cyc.session.exception.SessionCommunicationException
-   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an 
-   * OpenCyc server.
+   * @param   otherQuery  
+   * @return  the new query
+   * @throws  QueryConstructionException          if there was a problem constructing the new query
+   * @throws  SessionCommunicationException       if there is a problem communicating with Cyc
+   * @throws  OpenCycUnsupportedFeatureException  when run against an OpenCyc server
    */
-  public Query merge(Query otherQuery) throws 
+  Query merge(Query otherQuery) throws
           QueryConstructionException,
           SessionCommunicationException,
           OpenCycUnsupportedFeatureException;
   
   /**
-   * Set the Context of this Query.
-   *
-   * @param ctx
-   * @return this object.
+   * Set the inference mode. Inference modes are meant to be intuitive measures
+   * of how hard Cyc should work to answer a query. Setting the inference mode
+   * sets various other low-level parameters to appropriate values for that
+   * mode, but explictly setting values for such parameters overrides values set
+   * by the mode.
+   * 
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#setInferenceMode(com.cyc.query.parameters.InferenceMode)}.
+   * 
+   * @param   mode  
+   * @return  this object
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
    */
-  public Query setContext(final Context ctx);
+  Query setInferenceMode(InferenceMode mode);
   
   /**
-   * Set the inference parameters for this query.
+   * Set the maximum number of answers (or sets of answers) that Cyc will
+   * attempt to find for the Query. In some cases (such as when a set of
+   * answers is retrieved in a batch), more answers than this may actually be
+   * returned. Once this number of answers has been reached, Cyc will not
+   * actively look for additional answers.
    *
-   * @param params the inference parameters
-   * @return this Query object.
+   * <p> A value of <code>null</code> means the inference will continue until it
+   * exhausts or some other limit is reached.
+   * 
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#setMaxAnswerCount(java.lang.Integer)}.
+   * 
+   * @param   maxAnswers  number of answers
+   * @return  this object
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
    */
-  public Query setInferenceParameters(final InferenceParameters params);
-
-
+  Query setMaxAnswerCount(Integer maxAnswers);
+  
   /**
-   * Sets the hypothesized clause of this Query. When the query is run, Cyc will
-   * assume that this clause is true. If the clause is independently known to be
-   * false in the query context, the query will be considered tautologous, and
-   * will fail.
-   *
-   * @param sentence
-   * @return this Query.
-   * @see Query#getQuerySentenceHypothesizedClause()
-   * @throws IllegalStateException if query has already been started.
+   * Set the max time value (in seconds). Setting this parameter to some number
+   * licenses Cyc to stop work on an inference once it has been working on it
+   * for at least that many seconds.
+   * <p>
+   * A value of <code>null</code> means the inference will continue until it
+   * exhausts or some other limit is reached.
+   * 
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#setMaxTime(java.lang.Integer)}.
+   * 
+   * @param   maxSeconds timeout value in seconds
+   * @return  this object
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
    */
-  public Query setQuerySentenceHypothesizedClause(Sentence sentence);
-
+  Query setMaxTime(Integer maxSeconds);
+  
+  /**
+   * Set the max transformation depth value. Setting this parameter to some
+   * number prevents Cyc from reasoning using chains of rules longer than that
+   * number.
+   * 
+   * <p>This method is a trampoline to 
+   * {@link QuerySpecification#getInferenceParameters()#setMaxTransformationDepth(java.lang.Integer)}.
+   * 
+   * @param   depth
+   * @return  this object
+   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
+   */
+  Query setMaxTransformationDepth(Integer depth);
+   
+  /**
+   * Sets the hypothesized clause of this Query. When the query is run, Cyc will assume that this
+   * clause is true. If the clause is independently known to be false in the query context, the
+   * query will be considered tautologous, and will fail.
+   *
+   * @param   sentence
+   * @return  this Query
+   * @throws  IllegalStateException  if query has already been started
+   * @see     QuerySpecification#getQuerySentenceHypothesizedClause()
+   */
+  Query setQuerySentenceHypothesizedClause(Sentence sentence);
+  
   /**
    * Sets the main (i.e. non-hypothesized) clause of this Query
    *
-   * @param sentence
-   * @return this Query.
-   * @see Query#getQuerySentenceMainClause()
-   * @throws IllegalStateException if query has already been started.
+   * @param   sentence
+   * @return  this Query
+   * @throws  IllegalStateException  if query has already been started
+   * @see     QuerySpecification#getQuerySentenceMainClause()
    */
-  public Query setQuerySentenceMainClause(Sentence sentence);
-
+  Query setQuerySentenceMainClause(Sentence sentence);
+  
   /**
    * Designates vars as the variables to return bindings for.
    *
-   * @param vars
-   * @return this query.
-   * @throws IllegalArgumentException if any of vars is not found in this query.
-   * @throws IllegalStateException if query has already been started.
+   * @param   vars
+   * @return  this query
+   * @throws  IllegalArgumentException  if any of vars is not found in this query
+   * @throws  IllegalStateException     if query has already been started
    */
-  public Query setQueryVariables(Collection<Variable> vars);
-
+  Query setQueryVariables(Collection<Variable> vars);
+  
   /**
    * Starts the query.
    *
-   *
-   * @throws com.cyc.session.exception.SessionCommunicationException if there is a problem 
-   * communicating with Cyc.
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
    */
-  public void start() throws SessionCommunicationException;
+  void start() throws SessionCommunicationException;
 
   /**
    * Issues a request that the query stop immediately.
    *
-   * @param patience If non-null, the query will be forcibly aborted if it does
-   * not stop before this many seconds have elapsed.
+   * @param   patience  if non-null, the query will be forcibly aborted if it does not stop before 
+   *                    this many seconds have elapsed
    */
-  public void stop(final Integer patience);
+  void stop(final Integer patience);
 
   /**
    * Get the Cyc session to be used for this query.
    *
-   * @return a CycSession for this query.
+   * @return  a CycSession for this query
    */
-  public CycSession getCycSession();
+  CycSession getCycSession();
 
   /**
-   * Specify that this inference should be retained by Cyc until the Query is
- closed. This can be called before the query has been started, and must be
-   * called before the query has finished running.
+   * Specify that this inference should be retained by Cyc until the Query is closed. This can be
+   * called before the query has been started, and must be called before the query has finished
+   * running.
    *
-   * @see Query#close()
+   * @see     Query#close()
    */
-  public void retainInference();
- 
-  /**
-   * Returns the number of answers found for this query. For running queries,
-   * the value returned by this method may change as additional answers are
-   * found.
-   *
-   * @return the number of answers found for this query.
-   */
-  public int getAnswerCount();
+  void retainInference();
 
   /**
-   * Returns the list of answers for this query. For running queries, the value
-   * returned by this method may change as additional answers are found.
+   * Get the inference identifier for this query.
    *
-   * @return the list of answers
-   * @throws com.cyc.session.exception.SessionCommunicationException if there is a problem 
-   * communicating with Cyc.
+   * @return  the identifier, or null if inference has not been started
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
    */
-  public List<QueryAnswer> getAnswers() throws SessionCommunicationException;
+  InferenceIdentifier getInferenceIdentifier() throws SessionCommunicationException;
+  
+  /**
+   * Returns the number of answers found for this query. For running queries, the value returned by
+   * this method may change as additional answers are found.
+   *
+   * @return  the number of answers found for this query
+   */
+  int getAnswerCount();
+
+  /**
+   * Returns the list of answers for this query. For running queries, the value returned may change
+   * on subsequent calls to this method as additional answers are found.
+   *
+   * @return  the list of answers
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
+   */
+  QueryAnswers<QueryAnswer> getAnswers() throws SessionCommunicationException;
+
+  /**
+   * Returns the list of answers for this query. For running queries, the value returned by this
+   * method may change as additional answers are found.
+   *
+   * @param   paraphraser
+   * @return  the list of answers
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc.
+   */
+  QueryAnswers<ParaphrasedQueryAnswer> getAnswers(Paraphraser paraphraser)
+          throws SessionCommunicationException;
 
   /**
    * Returns the nth answer for this query. For the first answer, n == 0.
    *
-   * @param answerIndex
-   * @return the answer.
-   * @throws com.cyc.session.exception.SessionCommunicationException if there is a problem 
-   * communicating with Cyc.
+   * @param   answerIndex
+   * @return  the answer
+   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
    */
-  public QueryAnswer getAnswer(final int answerIndex) throws SessionCommunicationException;
+  QueryAnswer getAnswer(final int answerIndex) throws SessionCommunicationException;
 
   /**
-   * Returns the Context of this Query.
+   * Returns the nth answer for this query. For the first answer, n == 0.
    *
-   * @return the Context of this Query
+   * @param   answerIndex
+   * @param   paraphraser
+   * @return  the answer
+   * @throws  SessionCommunicationException if there is a problem communicating with Cyc
    */
-  public Context getContext();
-
-  /**
-   *
-   * @return @throws KbException
-   */
-  public Sentence getQuerySentence() throws KbException;
-
+  ParaphrasedQueryAnswer getAnswer(final int answerIndex, final Paraphraser paraphraser)
+          throws SessionCommunicationException;
   
   /**
+   * Get the CycL sentence from the specified answer to this query. Substitutes the set of bindings
+   * from answer into the query sentence.
    *
-   * @param querySentence
+   * @param   answer
+   * @return  the answer sentence
+   * @throws  KbException
    */
-  public void setQuerySentence(Sentence querySentence);
-
+  Sentence getAnswerSentence(QueryAnswer answer) throws KbException;
 
   /**
+   * Forget all results for this query. All settings on the Query are retained, including the query
+   * sentence, context, and inference parameters. After a Query has been cleared, it can be re-run,
+   * with possibly different results.
    *
-   * @return @throws KbException
+   * @return  this Query
    */
-  public Sentence getQuerySentenceMainClause() throws KbException;
-
-
-  /**
-   *
-   * @return @throws KbException
-   */
-  public Sentence getQuerySentenceHypothesizedClause() throws KbException;
-
-
-  /**
-   * Get the CycL sentence from the specified answer to this query. Substitutes
-   * the set of bindings from answer into the query sentence.
-   *
-   * @param answer
-   * @return the answer sentence
-   * @throws KbException
-   */
-  public Sentence getAnswerSentence(QueryAnswer answer) throws KbException;
-
-  /**
-   * Forget all results for this query. All settings on the Query are retained, 
-   * including the query sentence, context, and inference parameters. After a
-   * Query has been cleared, it can be re-run, with possibly different results.
-   *
-   * @return this Query
-   */
-  public Query clearResults();
+  Query clearResults();
 
   /**
    * Return the InferenceStatus for this Query.
    *
-   * @return the InferenceStatus for this Query.
+   * @return  the InferenceStatus for this Query.
    */
-  public InferenceStatus getStatus();
+  InferenceStatus getStatus();
 
   /**
    * Return the reason why this Query was suspended (if it was).
    *
-   * @return the reason, or null if this Query was not suspended.
-   * @see DefaultInferenceSuspendReason for examples.
+   * @return  the reason, or null if this Query was not suspended
+   * @see     DefaultInferenceSuspendReason for examples
    */
-  public InferenceSuspendReason getSuspendReason();
+  InferenceSuspendReason getSuspendReason();
 
   /**
    *
-   * @return true iff this query has been proven true.
-   * @throws RuntimeException if the query has open variables.
-   * @see com.cyc.query.QueryResultSet#getTruthValue()
+   * @return  true iff this query has been proven true
+   * @throws  RuntimeException if the query has open variables
+   * @see     com.cyc.query.QueryResultSet#getTruthValue()
    */
-  public boolean isTrue();
+  boolean isTrue();
 
   /**
-   * Is this query either True (if a boolean query) or does it have bindings (if
-   * non-boolean)
+   * Is this query either True (if a boolean query) or does it have bindings (if non-boolean)
    *
-   * @return True if there are bindings (or it's a true boolean query), false if
-   * there are no bindings (or it's a false boolean query).
-   *
+   * @return  True if there are bindings (or it's a true boolean query), false if there are no
+   *          bindings (or it's a false boolean query).
    */
-  public boolean isProvable();
+  boolean isProvable();
 
   /**
-   * Closes this query's result set, and releases resources on the Cyc server.
-   * See {@link com.cyc.query.QueryResultSet#close()} for more details on
-   * what happens when a query is closed.
-   * 
+   * Closes this query's result set, and releases resources on the Cyc server. See
+   * {@link com.cyc.query.QueryResultSet#close()} for more details on what happens when a query is
+   * closed.
+   *
    * <p>It is good practice to always invoke this method explicitly as soon as a Query is no longer
    * needed, as they can take up significant amounts of memory on the Cyc server.
    *
-   * @see com.cyc.query.QueryResultSet#close()
+   * @see     com.cyc.query.QueryResultSet#close()
    */
   @Override
-  public void close();
+  void close();
 
   /**
    * Returns the timeout for the {@link #close()} method.
    *
-   * @return timeout in milliseconds
+   * @return  timeout in milliseconds
    */
-  public long getCloseTimeout();
+  long getCloseTimeout();
 
   /**
    * Sets the timeout for the {@link #close()} method.
    *
-   * @param timeoutMs timeout in milliseconds
+   * @param   timeoutMs  timeout in milliseconds
    */
-  public void setCloseTimeout(long timeoutMs);
+  void setCloseTimeout(long timeoutMs);
 
   /**
    *
-   * @return this query's result set. The QueryResultSet is an object that
-   * may be updated dynamically for running queries. This contrasts with
-   * {@link #getAnswersCyc()} which returns a static list of the answers at the
-   * time is was called.
-   *
-   * @see com.cyc.query.QueryResultSet
+   * @return  this query's result set. The QueryResultSet is an object that may be updated 
+   *          dynamically for running queries. This contrasts with {@link #getAnswersCyc()} which
+   *          returns a static list of the answers at the time is was called.
+   * @see     com.cyc.query.QueryResultSet
    */
-  public QueryResultSet getResultSet();
-
-
+  QueryResultSet getResultSet();
+  
 }

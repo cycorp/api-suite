@@ -1,8 +1,7 @@
 Cyc Core API Specification
 ==========================
 
-**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-api-parent.svg)](https://github.com/cycorp/api-suite/releases/tag/core-api-spec-1.0.0-rc5)  
-**Current snapshot version:** 1.0.0-rc6-SNAPSHOT  
+**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-api-parent.svg)](https://github.com/cycorp/api-suite/releases/tag/core-api-spec-1.0.0-rc6)  
 **License:** [Apache 2.0](LICENSE)  
 **Changes:** See the [CHANGELOG](CHANGELOG.md)  
 **Documentation:** [Cyc Developer Center](http://dev.cyc.com/api/core/)  
@@ -30,7 +29,7 @@ Requirements
 * [Apache Maven](http://maven.apache.org/) version `3.2` or higher to build the sources. If you are
   new to Maven, you may wish to view the [quick start](http://maven.apache.org/run-maven/index.html).
 
-The APIs may be used without Maven via the `cyc-core-api-1.0.0-rc5-jar-with-dependencies.jar`.
+The APIs may be used without Maven via the `cyc-core-api-1.0.0-rc6-jar-with-dependencies.jar`.
 See [Standalone Bundle](#standalone-bundle), below.
 
 ### Cyc Server
@@ -69,7 +68,7 @@ To use the Cyc Core APIs in a Maven project, add the following dependency to you
     <dependency>
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-api</artifactId>
-      <version>1.0.0-rc5</version>
+      <version>1.0.0-rc6</version>
     </dependency>
 
 You'll normally want to also include the Core Client reference implementation:
@@ -77,7 +76,7 @@ You'll normally want to also include the Core Client reference implementation:
     <dependency>
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc5</version>
+      <version>1.0.0-rc6</version>
       <scope>runtime</scope>
     </dependency>
 

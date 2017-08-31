@@ -4,21 +4,74 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
+  <parent>
+    <groupId>com.cyc</groupId>
+    <artifactId>cyc-default-config-parent</artifactId>
+    <version>1.0.0-rc6</version>
+    <relativePath>../../maven-resources/parent-poms/default-config-parent</relativePath>
+  </parent>
+  
   <groupId>com.cyc.aggregate</groupId>
   <artifactId>cyc-api-suite</artifactId>
-  <version>0.1.0</version>
+  <version>1.0.0-rc6</version>
   <packaging>pom</packaging>
+
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>API Aggegrate</name>
+
   <description>
     Builds all Cyc Java API projects.
   </description>
+  
   <url>http://dev.cyc.com/</url>
+
+  <scm>
+    <connection>scm:git:git@github.com:cycorp/api-suite.git</connection>
+    <developerConnection>scm:git:git@github.com:cycorp/api-suite.git</developerConnection>
+    <url>https://github.com/cycorp/api-suite</url>
+  </scm>
+  
+  <issueManagement>
+    <url>http://dev.cyc.com/issues/</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  
+  <inceptionYear>2015</inceptionYear>
+  
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  
+  <organization>
+    <name>Cycorp, Inc.</name>
+    <url>http://www.cyc.com</url>
+  </organization>
+  
+  <developers>
+    <developer>
+      <name>Cycorp API Team</name>
+      <email>dev-team@cyc.com</email>
+      <organization>Cycorp, Inc.</organization>
+      <organizationUrl>http://www.cyc.com</organizationUrl>
+    </developer>
+  </developers>
+  
+  <distributionManagement> 
+    <site> 
+      <id>cyc-dev-center</id> 
+      <url>http://dev.cyc.com/api</url> 
+    </site>
+  </distributionManagement>
+
+  <!-- ====|    Configuration    |============================================================= -->
 
   <modules>
     <module>api-parent</module>
     <module>core-api-spec</module>
-    <module>core-client</module>
   </modules>
 
 </project>
