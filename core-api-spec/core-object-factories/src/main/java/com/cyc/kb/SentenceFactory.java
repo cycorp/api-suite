@@ -51,7 +51,7 @@ public class SentenceFactory {
   // Construction
   
   private SentenceFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getSentenceService();
+    service = CoreServicesLoader.getKbFactoryServices().sentence();
   }
 
   protected SentenceService getService() {

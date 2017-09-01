@@ -20,6 +20,9 @@ package com.cyc.kb;
  * limitations under the License.
  * #L%
  */
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.InvalidNameException;
+import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
 
 /**
@@ -64,5 +67,38 @@ public interface KbIndividual extends KbTerm {
    * belongs to.
    */
   public Collection<KbCollection> instanceOf(Context ctx);
-
+  
+  /* *
+   * {@inheritDoc}
+   * /
+  @Override
+  KbIndividual rename(String name) throws InvalidNameException;
+  
+  /**
+   * {@inheritDoc}
+   * /
+  @Override
+  KbIndividual addQuotedIsa(KbCollection collection, Context context) 
+         throws KbTypeException, CreateException;
+  
+  /**
+   * {@inheritDoc}
+   * /
+  @Override
+  KbIndividual instantiates(KbCollection collection, Context context) 
+          throws KbTypeException, CreateException;
+  
+  /**
+   * {@inheritDoc}
+   * /
+  @Override
+  KbIndividual instantiates(String collectionStr, String contextStr) 
+          throws KbTypeException, CreateException;
+  
+  /**
+   * {@inheritDoc}
+   * /
+  @Override
+  KbIndividual instantiates(KbCollection collection) throws KbTypeException, CreateException;
+  */
 }

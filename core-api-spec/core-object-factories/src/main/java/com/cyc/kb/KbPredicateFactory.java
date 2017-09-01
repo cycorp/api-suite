@@ -49,7 +49,7 @@ public class KbPredicateFactory {
   // Construction
   
   private KbPredicateFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getPredicateService();
+    service = CoreServicesLoader.getKbFactoryServices().predicate();
   }
 
   protected KbPredicateService getService() {

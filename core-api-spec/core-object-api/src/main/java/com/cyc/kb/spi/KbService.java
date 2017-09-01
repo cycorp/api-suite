@@ -18,7 +18,7 @@ package com.cyc.kb.spi;
 
 /*
  * #%L
- * File: ConvenienceService.java
+ * File: KbService.java
  * Project: Core API Object Specification
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc
@@ -41,64 +41,70 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides various methods which facilitate working with the Cyc KB.
+ * 
  * @author nwinant
- * @param <T>
  */
-public interface ConvenienceService<T extends Object> extends KbObjectService<T> {
+public interface KbService {
+  
+  
+  
+  // TODO: rename and/or reorganize w/ KbObjectService? - nwinant, 2017-07-27
+  
+  
   
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFactory#existsInKb(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFactory#has(java.lang.String)</tt>.
    * 
    * @param nameOrId
    * @return 
    */
-  boolean existsInKb(String nameOrId);
+  boolean has(String nameOrId);
   
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFactory#getKbObject(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFactory#kbObject(java.lang.String)</tt>.
    * 
    * @param cycLOrId
    * @return
    * @throws KbTypeException
    * @throws CreateException 
    */
-  T getKbObject(String cycLOrId) throws KbTypeException, CreateException;
+  Object kbObject(String cycLOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFactory#getApiObject(java.lang.Object) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFactory#apiObject(java.lang.Object)</tt>.
    * 
    * @param cycLOrId
    * @return
    * @throws KbTypeException
    * @throws CreateException 
    */
-  T getApiObject(Object cycLOrId) throws KbTypeException, CreateException;
+  Object apiObject(Object cycLOrId) throws KbTypeException, CreateException;
   
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFactory#getApiObject(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFactory#apiObject(java.lang.String)</tt>.
    * 
    * @param cycLOrId
    * @return
    * @throws KbTypeException
    * @throws CreateException 
    */
-  T getApiObject(String cycLOrId) throws KbTypeException, CreateException;
+  Object apiObject(String cycLOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFactory#getApiObjectDwim(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFactory#apiObjectDwim(java.lang.String)</tt>.
    * 
    * @param cycLOrId
    * @return
    * @throws KbTypeException
    * @throws CreateException 
    */
-  T getApiObjectDwim(String cycLOrId) throws KbTypeException, CreateException;
-    
+  Object apiObjectDwim(String cycLOrId) throws KbTypeException, CreateException;
+  
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFactory#clearCache() }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFactory#clearCache()</tt>.
    * 
    */
   void clearCache();
-
+  
 }

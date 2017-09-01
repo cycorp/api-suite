@@ -45,15 +45,15 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.SecondOrderCollection}.
+ * 
  * @author nwinant
  */
-public interface SecondOrderCollectionService<T extends SecondOrderCollection> 
-        extends KbCollectionService<T> {
+public interface SecondOrderCollectionService extends KbCollectionService {
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#get(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$SecondOrderCollection
    *
@@ -63,11 +63,11 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
    * @throws CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  SecondOrderCollection get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$SecondOrderCollection
    *
@@ -77,12 +77,12 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  SecondOrderCollection findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String, 
-   * java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String, 
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$SecondOrderCollection
    * @param constraintColStr the string representation of the collection that this
@@ -94,13 +94,13 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  SecondOrderCollection findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String,
-   * java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String,
+   * java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this
@@ -113,13 +113,13 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  SecondOrderCollection findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String, 
-   * com.cyc.kb.KbCollection) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String, 
+   * com.cyc.kb.KbCollection)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$SecondOrderCollection
    * @param constraintCol the collection that this #$SecondOrderCollection will instantiate
@@ -130,13 +130,13 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  SecondOrderCollection findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String, 
-   * com.cyc.kb.KbCollection, com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#findOrCreate(java.lang.String, 
+   * com.cyc.kb.KbCollection, com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$SecondOrderCollection
    * @param constraintCol the collection that this #$SecondOrderCollection will instantiate
@@ -148,12 +148,12 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  SecondOrderCollection findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$SecondOrderCollection
@@ -162,8 +162,8 @@ public interface SecondOrderCollectionService<T extends SecondOrderCollection>
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SecondOrderCollectionFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SecondOrderCollectionFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

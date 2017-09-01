@@ -49,7 +49,7 @@ public class BinaryPredicateFactory {
   // Construction
   
   private BinaryPredicateFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getBinaryPredicateService();
+    service = CoreServicesLoader.getKbFactoryServices().binaryPredicate();
   }
 
   protected BinaryPredicateService getService() {

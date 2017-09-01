@@ -36,8 +36,8 @@ package com.cyc.query;
  * #L%
  */
 
+import com.cyc.query.graph.GraphNodeAbsolutePath;
 import java.util.List;
-import com.cyc.query.graphs.GraphNodeAbsolutePath;
 
 /**
  *

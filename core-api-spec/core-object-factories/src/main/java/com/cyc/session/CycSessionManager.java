@@ -28,13 +28,12 @@ import com.cyc.session.exception.SessionException;
 import com.cyc.session.exception.SessionInitializationException;
 import com.cyc.session.exception.SessionServiceException;
 import com.cyc.session.spi.SessionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceConfigurationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The CycSessionManager provides singleton access to a SessionManager instance.
@@ -124,9 +123,8 @@ public class CycSessionManager {
   }
   
   /**
-   * Returns the CycSession currently assigned to this thread. If no CycSession
-   * object currently exists, one will be acquired via {@link #getSession()} and assigned to the
-   * local thread.
+   * Returns the CycSession currently assigned to this thread. If no CycSession object currently 
+   * exists, one will be created and assigned to the local thread.
    * 
    * <p>Note that this is a convenience method which simply trampolines to
    * {@link CycSessionManager#getInstance()#getCurrentSession() }.

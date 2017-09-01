@@ -45,17 +45,16 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
- * @author nwinant
+ * Provides implementations of {@link com.cyc.kb.Context}.
  * 
- * @param <T>
+ * @author nwinant
  */
-public interface ContextService<T extends Context> extends KbIndividualService<T> {
+public interface ContextService extends KbIndividualService {
   
   // TODO: add get(Context monad, TimeInterval time) - nwinant, 2015-11-18
   
   /**
-   * Provides implementation for {@link com.cyc.kb.ContextFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.ContextFactory#get(java.lang.String)</tt>.
    *
    * @param   nameOrId  the string representation or the HLID of the #$Microtheory
    * @return  a new Context
@@ -63,11 +62,11 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
    * @throws  CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  Context get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.ContextFactory#getDefaultContext(com.cyc.kb.Context, com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.ContextFactory#getDefaultContext(com.cyc.kb.Context, com.cyc.kb.Context)</tt>.
    * 
    * @param   assertionContext
    * @param   queryContext
@@ -76,8 +75,8 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
   DefaultContext getDefaultContext(Context assertionContext, Context queryContext);
   
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.ContextFactory#getDefaultContext(java.lang.String, java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.ContextFactory#getDefaultContext(java.lang.String, java.lang.String)</tt>.
    * 
    * @param   assertionCtxStr
    * @param   queryCtxStr
@@ -89,7 +88,7 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
           throws KbTypeException, CreateException;
   
   /**
-   * Provides implementation for {@link com.cyc.kb.ContextFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.ContextFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param   nameOrId  the string representation or the HLID of the #$Microtheory
    * @return  a new Context
@@ -97,11 +96,11 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
    * @throws  CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  Context findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param  nameOrId          the string representation or the HLID of the #$Microtheory
    * @param  constraintColStr  the string representation of the collection that this #$Microtheory
@@ -111,13 +110,13 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
    * @throws  CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  Context findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, java.lang.String,
-   * java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, java.lang.String,
+   * java.lang.String)</tt>.
    *
    * @param   nameOrId          the string representation or the HLID of the term
    * @param   constraintColStr  the string representation of the collection that this #$Microtheory
@@ -128,12 +127,12 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
    * @throws  CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  Context findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)</tt>.
    *
    * @param   nameOrId       the string representation or the HLID of the #$Microtheory
    * @param   constraintCol  the collection that this #$Microtheory will instantiate
@@ -142,13 +141,13 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
    * @throws  CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  Context findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.ContextFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
+   * com.cyc.kb.Context)</tt>.
    *
    * @param   nameOrId       the string representation or the HLID of the #$Microtheory
    * @param   constraintCol  the collection that this #$Microtheory will instantiate
@@ -159,11 +158,11 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
    * @throws  CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  Context findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.ContextFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.ContextFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param   nameOrId  either the name or HL ID of an entity in the KB
    * @return  <code>true</code> if entity exists in KB and is an instance of #$Microtheory
@@ -172,7 +171,7 @@ public interface ContextService<T extends Context> extends KbIndividualService<T
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for {@link com.cyc.kb.ContextFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.ContextFactory#getStatus(java.lang.String)</tt>.
    *
    * @param   nameOrId  either the name or HL ID of an entity in the KB
    * @return  an enum describing the existential status of the entity in the KB

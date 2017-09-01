@@ -31,9 +31,9 @@ package com.cyc.kb;
  * {@link com.cyc.kb.RuleFactory#findOrCreate(String)}, {@link com.cyc.kb.RuleFactory#get(String)}
  * and related methods.
  *
- *
+ * 
  * @author vijay
- * @version $Id: Rule.java 169908 2017-01-11 23:19:09Z nwinant $
+ * @version $Id: Rule.java 173072 2017-07-27 01:21:15Z nwinant $
  * @since 1.0
  */
 public interface Rule extends Assertion {

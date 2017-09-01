@@ -28,7 +28,7 @@ import com.cyc.kb.exception.KbTypeException;
  * The interface for {@link Assertion}s that relate {@link KbCollection}s and
  * {@link KbIndividual}s to each other and to primitive values such as numbers
  * and strings. The vast majority of {@link Assertion}s are of this type.
- *
+ * 
  * @author vijay
  */
 public interface Fact extends Assertion {

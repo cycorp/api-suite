@@ -6,23 +6,30 @@
   
   <parent>
     <groupId>com.cyc</groupId>
-    <artifactId>cyc-default-config-parent</artifactId>
-    <version>1.0.0-rc6</version>
-    <relativePath>../../maven-resources/parent-poms/default-config-parent</relativePath>
+    <artifactId>cyc-sonatype-oss-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../maven-resources/parent-poms/sonatype-oss-parent</relativePath>
   </parent>
   
   <groupId>com.cyc.aggregate</groupId>
   <artifactId>cyc-api-suite</artifactId>
-  <version>1.0.0-rc6</version>
+  <version>1.0.0-rc7.0</version>
   <packaging>pom</packaging>
-
-  <!-- ====|    Metadata & contact info    |=================================================== -->
   
-  <name>API Aggegrate</name>
-
+  <name>API Suite Aggegrate</name>
+  
   <description>
-    Builds all Cyc Java API projects.
+    Builds all Cyc Java APIs.
   </description>
+  
+  <!-- ====|    Configuration    |============================================================= -->
+  
+  <modules>
+    <module>api-parent</module>
+    <module>core-api-spec</module>
+  </modules>
+  
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <url>http://dev.cyc.com/</url>
 
@@ -66,12 +73,5 @@
       <url>http://dev.cyc.com/api</url> 
     </site>
   </distributionManagement>
-
-  <!-- ====|    Configuration    |============================================================= -->
-
-  <modules>
-    <module>api-parent</module>
-    <module>core-api-spec</module>
-  </modules>
-
+  
 </project>

@@ -20,6 +20,7 @@ package com.cyc.kb;
  * limitations under the License.
  * #L%
  */
+
 /**
  * The interface for symbols of the <code>SubL</code> language. Symbols are
  * occasionally referenced in <code>CycL</code> assertions, most notably those

@@ -34,7 +34,7 @@ import java.util.Set;
  * (in a {@link Query}) or claims (in an {@link Assertion}).
  *
  * @author   vijay
- * @version  $Id: Sentence.java 172768 2017-07-05 21:33:49Z nwinant $
+ * @version  $Id: Sentence.java 173072 2017-07-27 01:21:15Z nwinant $
  * @since    1.0
  */
 public interface Sentence extends KbObject {
@@ -204,5 +204,39 @@ public interface Sentence extends KbObject {
     public Sentence wrap(Sentence sent) throws KbTypeException, CreateException;
   }
   */
+  
+  /**
+   * Returns the syntactic arity of this object. If it has a relation applied to
+   * some arguments (i.e. it's a sentence, an assertion, or a functional term),
+   * the arity is the number of arguments. By convention, Cyc constants have a
+   * formula arity of 0.
+   *
+   * @return  the arity of this object, <tt>null</tt> if not a Cyc constant, functional term, 
+   *          sentence, or assertion
+   */
+  Integer getArity();
+  
+  /**
+   * gets the object in <code>argPosition</code> argument position of this KbObject
+   * as an object of type <code>O</code>. This method works for Sentences and
+   * Assertions, as well as non-atomic KbTerms. However, because a constant has
+   * no "arguments", calling this method on a KbObject representing a Cyc
+   * constant will result in a KbException.
+   * 
+   * @param   <O>          the object type
+   * @param   argPosition  the argument position of the object returned
+   * @return  the object at <code>getPos</code> as a <code>O</code>
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  <O> O getArgument(int argPosition) throws KbTypeException, CreateException;
+
+  /**
+   * Returns <tt>true</tt> if all of terms in the Sentence are valid per {@link KbTerm#isValid() }.
+   *
+   * @return  false if the KB object behind this object has been deleted or otherwise rendered
+   *          invalid on the Cyc server. Returns true otherwise
+   */
+  Boolean isValid();
   
 }

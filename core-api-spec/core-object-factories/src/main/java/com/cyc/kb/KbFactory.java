@@ -23,7 +23,7 @@ package com.cyc.kb;
 import com.cyc.core.service.CoreServicesLoader;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
-import com.cyc.kb.spi.KbFactoryServices;
+import com.cyc.kb.spi.KbApiService;
 
 /**
  *
@@ -32,7 +32,7 @@ import com.cyc.kb.spi.KbFactoryServices;
 public class KbFactory {
 
   // Initialization
-  private static final KbFactoryServices SERVICE;
+  private static final KbApiService SERVICE;
 
   static {
     SERVICE = CoreServicesLoader.getKbFactoryServices();
@@ -41,19 +41,19 @@ public class KbFactory {
   private KbFactory() {
   }
 
-  protected static KbFactoryServices getInstance() {
+  protected static KbApiService getInstance() {
     return SERVICE;
   }
 
   // General parsing methods
   /**
-   * Checks whether a given ID or Cycl term exists in the KB.
+   * Checks whether a given ID or Cycl term has in the KB.
    *
    * @param nameOrId
-   * @return
+   * @return whether a given ID or Cycl term has in the KB
    */
   public static boolean existsInKb(String nameOrId) {
-    return getInstance().getConvenienceService().existsInKb(nameOrId);
+    return getInstance().kb().has(nameOrId);
   }
 
   /**
@@ -100,12 +100,12 @@ public class KbFactory {
    * {@link com.cyc.kb.SymbolFactory#get(String)}.
    *
    * @param cycLOrId
-   * @return
+   * @return an Object (possibly a KbObject) which is the best representation for the given input
    * @throws KbTypeException
    * @throws CreateException
    */
   public static Object getApiObject(Object cycLOrId) throws KbTypeException, CreateException {
-    return getInstance().getConvenienceService().getApiObject(cycLOrId);
+    return getInstance().kb().apiObject(cycLOrId);
   }
 
   /**
@@ -149,12 +149,12 @@ public class KbFactory {
    * {@link com.cyc.kb.SymbolFactory#get(String)}.
    *
    * @param cycLOrId
-   * @return
+   * @return an Object (possibly a KbObject) which is the best representation for the given String
    * @throws KbTypeException
    * @throws CreateException
    */
   public static Object getApiObject(String cycLOrId) throws KbTypeException, CreateException {
-    return getInstance().getConvenienceService().getApiObject(cycLOrId);
+    return getInstance().kb().apiObject(cycLOrId);
   }
 
   /**
@@ -202,7 +202,7 @@ public class KbFactory {
    * {@link com.cyc.kb.SymbolFactory#get(String)}.
    *
    * @param cycLOrId
-   * @return
+   * @return an Object (possibly a KbObject) which is the best representation for the given input
    * @throws KbTypeException
    * @throws CreateException
    */
@@ -213,7 +213,7 @@ public class KbFactory {
     if (cycLOrId.startsWith("[") && cycLOrId.endsWith("]")) {
       cycLOrId = "(TheList " + cycLOrId.substring(1, cycLOrId.length() - 1) + ")";
     }
-    return getInstance().getConvenienceService().getApiObject(cycLOrId);
+    return getInstance().kb().apiObject(cycLOrId);
   }
 
   /**
@@ -253,12 +253,12 @@ public class KbFactory {
    * {@link com.cyc.kb.SymbolFactory#get(String)}.
    *
    * @param cycLOrId
-   * @return
+   * @return a KbObject which is the best representation for the given string
    * @throws KbTypeException
    * @throws CreateException
    */
   public static KbObject getKbObject(String cycLOrId) throws KbTypeException, CreateException {
-    return (KbObject) getInstance().getConvenienceService().getKbObject(cycLOrId);
+    return (KbObject) getInstance().kb().kbObject(cycLOrId);
   }
 
   // Sentences, symbols, and variables:
@@ -273,7 +273,7 @@ public class KbFactory {
    * @throws CreateException if the Sentence represented by sentStr could not be parsed.
    */
   public static Sentence getSentence(String sentStr) throws KbTypeException, CreateException {
-    return getInstance().getSentenceService().get(sentStr);
+    return getInstance().sentence().get(sentStr);
   }
 
   /**
@@ -294,7 +294,7 @@ public class KbFactory {
    */
   public static Sentence getSentence(Relation pred, Object... args)
           throws KbTypeException, CreateException {
-    return getInstance().getSentenceService().get(pred, args);
+    return getInstance().sentence().get(pred, args);
   }
 
   /**
@@ -310,7 +310,7 @@ public class KbFactory {
    * @throws com.cyc.kb.exception.CreateException
    */
   public static Sentence getSentence(Object... args) throws KbTypeException, CreateException {
-    return getInstance().getSentenceService().get(args);
+    return getInstance().sentence().get(args);
   }
 
   /**
@@ -323,7 +323,7 @@ public class KbFactory {
    * exception
    */
   public static Symbol getSymbol(String symStr) throws KbTypeException {
-    return getInstance().getSymbolService().get(symStr);
+    return getInstance().symbol().get(symStr);
   }
 
   /**
@@ -338,7 +338,7 @@ public class KbFactory {
    * Symbols are created on demand and are not expected to throw any exception
    */
   public static Variable getVariable(String varStr) throws KbTypeException {
-    return getInstance().getVariableService().get(varStr);
+    return getInstance().variable().get(varStr);
   }
 
   /**
@@ -350,7 +350,7 @@ public class KbFactory {
    * cache and allow the KB API to successfully retrieve the newly created constant.
    */
   public static void clearCache() {
-    getInstance().getConvenienceService().clearCache();
+    getInstance().kb().clearCache();
   }
 
 }

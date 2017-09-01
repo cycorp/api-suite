@@ -41,13 +41,14 @@ import com.cyc.kb.Variable;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.Variable}.
+ * 
  * @author nwinant
  */
-public interface VariableService<T extends Variable> extends KbObjectService<T> {
+public interface VariableService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.VariableFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.VariableFactory#get(java.lang.String)</tt>.
    *
    * @param varStr the string representing an #$CycLVariable in the KB
    * @return the Variable representing an #$CycLVariable in the KB
@@ -57,6 +58,6 @@ public interface VariableService<T extends Variable> extends KbObjectService<T> 
    *
    * Symbols are created on demand and are not expected to throw any exception
    */
-  T get(String varStr) throws KbTypeException;
+  Variable get(String varStr) throws KbTypeException;
 
 }

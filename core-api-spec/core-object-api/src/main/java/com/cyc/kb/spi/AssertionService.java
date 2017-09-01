@@ -48,13 +48,14 @@ import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.Assertion}.
+ * 
  * @author nwinant
  */
-public interface AssertionService<T extends Assertion> extends KbObjectService<T> {
+public interface AssertionService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.AssertionFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.AssertionFactory#get(java.lang.String)</tt>.
    *
    * @param hlid the <code>hlid</code> corresponding to the assertion in the KB
    *
@@ -63,11 +64,11 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws KbTypeException if assertion based on <code>hlid</code> is not an instance of assertion
    * @throws CreateException
    */
-  T get(String hlid) throws KbTypeException, CreateException;
+  Assertion get(String hlid) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.AssertionFactory#get(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.AssertionFactory#get(java.lang.String, java.lang.String)</tt>.
    *
    * @param formulaStr string representation of the formula to be found
    * @param ctxStr string representation of the context of the formula
@@ -78,12 +79,12 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws KbObjectNotFoundException if no Assertion with the given formula string is found in the
    * context
    */
-  T get(String formulaStr, String ctxStr)
+  Assertion get(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.AssertionFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.AssertionFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param formula formula to be found
    * @param ctx context of the formula
@@ -94,12 +95,12 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws KbObjectNotFoundException if no assertion with the given formula is found in the
    * context
    */
-  T get(Sentence formula, Context ctx)
+  Assertion get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.AssertionFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.AssertionFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    *
@@ -110,12 +111,12 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
    */
-  T findOrCreate(String formulaStr)
+  Assertion findOrCreate(String formulaStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.AssertionFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.AssertionFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
@@ -127,13 +128,13 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
    */
-  T findOrCreate(String formulaStr, String ctxStr)
+  Assertion findOrCreate(String formulaStr, String ctxStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.AssertionFactory#findOrCreate(java.lang.String, java.lang.String, 
-   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.AssertionFactory#findOrCreate(java.lang.String, java.lang.String, 
+   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
@@ -147,12 +148,12 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
    */
-  T findOrCreate(String formulaStr, String ctxStr, Strength strength, Direction direction)
+  Assertion findOrCreate(String formulaStr, String ctxStr, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.AssertionFactory#findOrCreate(com.cyc.kb.Sentence) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.AssertionFactory#findOrCreate(com.cyc.kb.Sentence)</tt>.
    *
    * @param formula the formula to be found or created
    *
@@ -161,12 +162,12 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws KbTypeException
    * @throws CreateException
    */
-  T findOrCreate(Sentence formula)
+  Assertion findOrCreate(Sentence formula)
           throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.AssertionFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.AssertionFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -177,13 +178,13 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
    */
-  T findOrCreate(Sentence formula, Context ctx)
+  Assertion findOrCreate(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.AssertionFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, 
-   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.AssertionFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, 
+   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction)</tt>.
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -198,7 +199,7 @@ public interface AssertionService<T extends Assertion> extends KbObjectService<T
    * or created in the context
    *
    */
-  T findOrCreate(Sentence formula, Context ctx, Strength strength, Direction direction)
+  Assertion findOrCreate(Sentence formula, Context ctx, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
 }

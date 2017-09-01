@@ -20,7 +20,6 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
-import com.cyc.query.parameters.InferenceParameters;
 import com.cyc.core.service.CoreServicesLoader;
 import static com.cyc.core.service.CoreServicesLoader.getQueryExplanationFactoryServices;
 import com.cyc.kb.Context;
@@ -30,13 +29,13 @@ import com.cyc.kb.Sentence;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeException;
 import com.cyc.query.exception.QueryConstructionException;
-import com.cyc.query.spi.ProofViewFactoryService;
-import com.cyc.query.spi.QueryAnswerExplanationFactoryService;
-import com.cyc.query.spi.QueryFactoryService;
+import com.cyc.query.parameters.InferenceParameters;
+import com.cyc.query.spi.ProofViewService;
+import com.cyc.query.spi.QueryAnswerExplanationService;
+import com.cyc.query.spi.QueryService;
 import com.cyc.session.exception.UnsupportedCycOperationException;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Map;
 
 /**
@@ -56,8 +55,8 @@ public class QueryFactory {
   
   // Fields
   
-  private final QueryFactoryService queryService;
-  private final ProofViewFactoryService proofViewService;
+  private final QueryService queryService;
+  private final ProofViewService proofViewService;
   
   
   // Construction
@@ -70,11 +69,11 @@ public class QueryFactory {
   
   // Instance methods
   
-  protected QueryFactoryService getQueryService() {
+  protected QueryService getQueryService() {
     return this.queryService;
   }
   
-  protected ProofViewFactoryService getProofViewService() {
+  protected ProofViewService getProofViewService() {
     return this.proofViewService;
   }
   
@@ -89,10 +88,10 @@ public class QueryFactory {
   }
   
   private <T extends QueryAnswerExplanation>
-          List<QueryAnswerExplanationFactoryService<T>> findExplanationServicesByExplanationType(
+          List<QueryAnswerExplanationService<T>> findExplanationServicesByExplanationType(
                   Class<T> explanationClazz) {
-    final List<QueryAnswerExplanationFactoryService<T>> results = new ArrayList();
-    for (QueryAnswerExplanationFactoryService service : getQueryExplanationFactoryServices()) {
+    final List<QueryAnswerExplanationService<T>> results = new ArrayList();
+    for (QueryAnswerExplanationService service : getQueryExplanationFactoryServices()) {
       if (explanationClazz.equals(service.forExplanationType())) {
         results.add(service);
       }
@@ -104,9 +103,9 @@ public class QueryFactory {
   // Public instance methods
   
   public <T extends QueryAnswerExplanation>
-          QueryAnswerExplanationFactoryService<T> findExplanationService(
+          QueryAnswerExplanationService<T> findExplanationService(
                   QueryAnswer answer, QueryAnswerExplanationSpecification<T> spec) {
-    for (QueryAnswerExplanationFactoryService<T> svc : findExplanationServicesByExplanationType(spec.forExplanationType())) {
+    for (QueryAnswerExplanationService<T> svc : findExplanationServicesByExplanationType(spec.forExplanationType())) {
       if (svc.isSuitableForSpecification(answer, spec)) {
         return svc;
       }
@@ -124,8 +123,7 @@ public class QueryFactory {
    * The query is executed in InferencePSC with a default timeout and default inference parameters.
    *
    * @param queryStr the string representing the CycL query
-   * @return 
-   * @see com.cyc.query.Query#TIMEOUT
+   * @return a new Query instance
    *
    * @throws QueryConstructionException
    */
@@ -139,7 +137,7 @@ public class QueryFactory {
    *
    * @param queryStr The query string.
    * @param ctxStr The Microtheory where the query is asked.
-   * @return 
+   * @return a new Query instance
    *
    * @throws QueryConstructionException
    *
@@ -159,7 +157,7 @@ public class QueryFactory {
    * looking for the #$sublIdentifier for the desired instance of InferenceParameter in the Cyc KB.
    * For example, to limit a query to single-depth transformation and to allow at most 5 seconds per
    * query, use the string ":max-transformation-depth 1 :max-time 5".
-   * @return 
+   * @return a new Query instance
    *
    * @throws QueryConstructionException
    *
@@ -174,7 +172,7 @@ public class QueryFactory {
    * @param sent
    * @param ctx
    * @param params
-   * @return 
+   * @return a new Query instance
    * @throws com.cyc.query.exception.QueryConstructionException
    */
   public static Query getQuery(Sentence sent, Context ctx, InferenceParameters params)
@@ -186,7 +184,7 @@ public class QueryFactory {
    *
    * @param sent
    * @param ctx
-   * @return 
+   * @return a new Query instance
    * @throws QueryConstructionException
    */
   public static Query getQuery(Sentence sent, Context ctx) throws QueryConstructionException {
@@ -197,7 +195,7 @@ public class QueryFactory {
    * Constructs a Query from a KbIndividual corresponding to #$CycLQuerySpecification.
    *
    * @param id
-   * @return 
+   * @return the Query specified by <code>id</code>
    * 
    * @throws QueryConstructionException
    * 

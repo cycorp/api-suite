@@ -45,13 +45,14 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.Relation}.
+ * 
  * @author nwinant
  */
-public interface RelationService<T extends Relation> extends KbIndividualService<T> {
+public interface RelationService extends KbIndividualService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RelationFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.RelationFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Relation
    *
@@ -61,10 +62,10 @@ public interface RelationService<T extends Relation> extends KbIndividualService
    * @throws CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  Relation get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RelationFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.RelationFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Relation
    *
@@ -74,11 +75,11 @@ public interface RelationService<T extends Relation> extends KbIndividualService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  Relation findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Relation
    * @param constraintColStr the string representation of the collection that this #$Relation will
@@ -90,13 +91,13 @@ public interface RelationService<T extends Relation> extends KbIndividualService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  Relation findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, java.lang.String,
-   * java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, java.lang.String,
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this #$Relation will
@@ -109,12 +110,12 @@ public interface RelationService<T extends Relation> extends KbIndividualService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  Relation findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Relation
    * @param constraintCol the collection that this #$Relation will instantiate
@@ -125,13 +126,13 @@ public interface RelationService<T extends Relation> extends KbIndividualService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  Relation findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RelationFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
+   * com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Relation
    * @param constraintCol the collection that this #$Relation will instantiate
@@ -143,11 +144,11 @@ public interface RelationService<T extends Relation> extends KbIndividualService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  Relation findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RelationFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.RelationFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$Relation
@@ -156,7 +157,7 @@ public interface RelationService<T extends Relation> extends KbIndividualService
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RelationFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.RelationFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

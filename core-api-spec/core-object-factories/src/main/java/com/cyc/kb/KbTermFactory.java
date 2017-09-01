@@ -49,7 +49,7 @@ public class KbTermFactory {
   // Construction
   
   private KbTermFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getTermService();
+    service = CoreServicesLoader.getKbFactoryServices().term();
   }
 
   protected KbTermService getService() {

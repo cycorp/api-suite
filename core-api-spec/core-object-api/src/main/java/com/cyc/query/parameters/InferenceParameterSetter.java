@@ -170,5 +170,13 @@ public interface InferenceParameterSetter<T extends InferenceParameterSetter> {
    * @return this object.
    */
   T setTransitiveClosureMode(TransitiveClosureMode mode);
-
+  
+  void clear();
+  
+  Object put(String parameterName, Object value);
+  
+  void putAll(InferenceParameterGetter properties);
+  
+  void remove(String parameterName);
+  
 }

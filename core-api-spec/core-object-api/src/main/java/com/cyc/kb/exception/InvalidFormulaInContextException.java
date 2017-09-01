@@ -22,12 +22,11 @@ package com.cyc.kb.exception;
  */
 
 /**
- * Thrown when the Cyc does not allow the specified
- * formula to be true in the specified context. It does not distinguish between
- * semantic and syntactic errors.
+ * Thrown when the Cyc does not allow the specified formula to be true in the specified context. 
+ * It does not distinguish between semantic and syntactic errors.
  *
  * @author Vijay Raj
- * @version $Id: InvalidFormulaInContextException.java 169908 2017-01-11 23:19:09Z nwinant $
+ * @version $Id: InvalidFormulaInContextException.java 173072 2017-07-27 01:21:15Z nwinant $
  */
 public class InvalidFormulaInContextException extends CreateException {
 

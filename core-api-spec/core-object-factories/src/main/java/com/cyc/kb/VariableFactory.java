@@ -48,7 +48,7 @@ public class VariableFactory {
   // Construction
   
   private VariableFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getVariableService();
+    service = CoreServicesLoader.getKbFactoryServices().variable();
   }
 
   protected VariableService getService() {

@@ -24,7 +24,6 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.DeleteException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeException;
-
 import java.util.Collection;
 
 /**
@@ -186,8 +185,9 @@ public interface Assertion extends KbObject {
    * asserted but also be easily inferable. In those cases, the Assertion will
    * no longer be represented in Cyc as a separate assertion, but Cyc's
    * inference system will continue to behave as if it were present in the KB
-   * because it is easily inferable.<p>
-   * There are also cases where <code>Assertions</code> can not be deleted. The
+   * because it is easily inferable.
+   * 
+   * <p>There are also cases where <code>Assertions</code> can not be deleted. The
    * most prominent of these cases is when the underlying assertion has been
    * forward deduced from some other assertion(s). In such cases, the only way
    * to remove the <code>Assertion</code> is to remove enough of the assertions
@@ -203,7 +203,120 @@ public interface Assertion extends KbObject {
    * @throws DeleteException when the underlying assertion can't be removed from
    * the KB.
    */
-  @Override
   public void delete() throws DeleteException;
-
+  
+  /**
+   * Returns false if the KB object behind this object has been deleted or
+   * otherwise rendered invalid on the Cyc server.
+   *
+   * @return  false if the KB object behind this object has been deleted or otherwise rendered
+   *          invalid on the Cyc server. Returns true otherwise
+   */
+  Boolean isValid();
+  
+  /**
+   * Returns the syntactic arity of this object. If it has a relation applied to
+   * some arguments (i.e. it's a sentence, an assertion, or a functional term),
+   * the arity is the number of arguments. By convention, Cyc constants have a
+   * formula arity of 0.
+   *
+   * @return  the arity of this object, <tt>null</tt> if not a Cyc constant, functional term, 
+   *          sentence, or assertion
+   */
+  Integer getArity();
+  
+  /**
+   * gets the object in <code>argPosition</code> argument position of this KbObject
+   * as an object of type <code>O</code>. This method works for Sentences and
+   * Assertions, as well as non-atomic KbTerms. However, because a constant has
+   * no "arguments", calling this method on a KbObject representing a Cyc
+   * constant will result in a KbException.
+   *
+   * @param   <O>     the object type
+   * @param   argPosition  the argument position of the object returned
+   * @return  the object at <code>getPos</code> as a <code>O</code>
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  <O> O getArgument(int argPosition) throws KbTypeException, CreateException;
+  
+  /**
+   * Gets all the comments for <code>this</code> visible from the default
+   * context {@link com.cyc.kb.DefaultContext#forQuery()}
+   * <p>
+   *
+   * @return  comment strings
+   */
+  Collection<String> getComments();
+  
+  /**
+   * Gets all the comments for <code>this</code> visible from the context
+   * <p>
+   *
+   * @param   ctx  the context of query
+   * @return  comment strings
+   */
+  Collection<String> getComments(Context ctx);
+  
+  /**
+   * Gets all the comments for <code>this</code> visible from the context
+   * <p>
+   *
+   * @param   ctxStr  the context of query
+   * @return  comment strings
+   */
+  Collection<String> getComments(String ctxStr);
+  
+  /**
+   * Add a new comment for <code>this</code> in the context specified
+   * <p>
+   *
+   * In the CycKB comments can be added only on <code>#$CycLIndexedTerm</code>s,
+   * which include <code>CycLReifiableDenotationalTerm</code> and
+   * <code>CycLAssertion</code>. An exception will be thrown if attempted to add
+   * a comment on Quoted terms, Sentence, Variable and Symbol. This means that
+   * only subclasses of KbTerm and Assertion can have comments.
+   *
+   * @param   ctx      the context where the comment is created. Cannot be null.
+   * @param   comment  the comment string
+   * @return  the fact created
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  Fact addComment(String comment, Context ctx) throws KbTypeException, CreateException;
+  
+  /**
+   * Add a new comment for <code>this</code> in the context specified
+   * <p>
+   *
+   * In the CycKB comments can be added only on <code>#$CycLIndexedTerm</code>s,
+   * which include <code>CycLReifiableDenotationalTerm</code> and
+   * <code>CycLAssertion</code>. An exception will be thrown if attempted to add
+   * a comment on Quoted terms, Sentence, Variable and Symbol. This means that
+   * only subclasses of KbTerm and Assertion can have comments.
+   *
+   * @param   ctx      the context where the comment is created. Cannot be null.
+   * @param   comment  the comment string
+   * @return  the fact created
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  Fact addComment(String comment, String ctx) throws KbTypeException, CreateException;
+  
+  /**
+   * A <code>quotedIsa</code> assertion relates CycL expression to <code>SubLExpressionType</code>.
+   * 
+   * <p>All subclasses of KbObject can be quoted. Refer to <code>#$NoteAboutQuotingInCycL</code> for
+   * a more detailed discussion of quoting.
+   *
+   * @param   collection  the instance of SubLExpressionType, the collection <code>this</code> is a 
+   *                      quoted instance of
+   * @param   context     the context where the fact is asserted.
+   * @return  this KbTerm, for method chaining
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  Assertion addQuotedIsa(KbCollection collection, Context context) 
+          throws KbTypeException, CreateException;
+  
 }

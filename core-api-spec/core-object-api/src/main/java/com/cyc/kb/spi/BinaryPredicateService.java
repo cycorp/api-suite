@@ -46,12 +46,14 @@ import com.cyc.kb.exception.KbTypeException;
 
 /**
  *
+ * Provides implementations of {@link com.cyc.kb.BinaryPredicate}.
+ * 
  * @author nwinant
  */
-public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPredicateService<T> {
+public interface BinaryPredicateService extends KbPredicateService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.BinaryPredicateFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.BinaryPredicateFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$BinaryPredicate
    *
@@ -61,11 +63,11 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
    * @throws CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  BinaryPredicate get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$BinaryPredicate
    *
@@ -75,11 +77,11 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  BinaryPredicate findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$BinaryPredicate
    * @param constraintColStr the string representation of the collection that this #$BinaryPredicate
@@ -91,13 +93,13 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  BinaryPredicate findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String, java.lang.String,
-   * java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String, java.lang.String,
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this #$BinaryPredicate
@@ -110,13 +112,13 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  BinaryPredicate findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String, 
-   * com.cyc.kb.KbCollection) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String, 
+   * com.cyc.kb.KbCollection)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$BinaryPredicate
    * @param constraintCol the collection that this #$BinaryPredicate will instantiate
@@ -127,13 +129,13 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  BinaryPredicate findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String,
-   * com.cyc.kb.KbCollection, com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.BinaryPredicateFactory#findOrCreate(java.lang.String,
+   * com.cyc.kb.KbCollection, com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$BinaryPredicate
    * @param constraintCol the collection that this #$BinaryPredicate will instantiate
@@ -145,12 +147,12 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  BinaryPredicate findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.BinaryPredicateFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.BinaryPredicateFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$BinaryPredicate
@@ -159,8 +161,8 @@ public interface BinaryPredicateService<T extends BinaryPredicate> extends KbPre
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.BinaryPredicateFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.BinaryPredicateFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

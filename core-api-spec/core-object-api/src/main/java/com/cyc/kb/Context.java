@@ -22,7 +22,6 @@ package com.cyc.kb;
  */
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
-
 import java.util.Collection;
 
 /**
@@ -147,5 +146,5 @@ public interface Context extends KbIndividual {
    * @return the monad of this context.
    */
   public Context getMonad();
-
+  
 }

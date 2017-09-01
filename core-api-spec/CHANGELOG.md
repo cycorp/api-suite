@@ -9,6 +9,69 @@ follow. Until the final 1.0.0 release, it is expected that future release candid
 backwards compatibility.
 
 
+1.0.0-rc7.0 - 2017-07-28
+------------------------
+
+Refactors a number of interfaces to improve clarity, particularly in the KB API. It is 
+_not backwards-compatible_ with earlier API releases.
+
+#### Java 1.7
+
+Now requires Java 7 or greater to run, and `JDK 1.7` or greater to build.
+
+#### KB API
+
+A number of methods on `com.cyc.kb.KbObject` have been moved to subtypes to better reflect their
+relevance within the type hierarchy, and some have been renamed for clarity or consistency. For
+example:
+
+    KbObject#addFact      -> KbPredicate#addFact
+	
+    KbObject#getValues    -> KbPredicate#getValuesForArgPosition
+                          -> KbPredicate#getValuesForArgPositionWithMatchArg
+						  
+    KbObject#formulaArity -> Assertion#getArity
+                          -> KbTerm#getArity
+                          -> Sentence#getArity
+
+A few methods have also had their arg signatures modified to reflect these changes. In particular,
+methods which had required a predicate for their first arg were moved to `KbPredicate` and their
+arg signatures were updated accordingly. For example:
+
+       KbObject    #addFact(Context ctx, KbPredicate pred, int thisArgPos, Object... otherArgs)
+    -> KbPredicate #addFact(Context ctx, Object... args)
+    
+       KbObject    #getFact(Context ctx, KbPredicate pred, int thisArgPos, Object... otherArgs)
+    -> KbPredicate #getFact(Context ctx, Object... args)
+   	
+       KbObject    #getFacts(KbPredicate pred, int thisArgPos, Context ctx)	 
+    -> KbPredicate #getFacts(Object arg, int argPosition, Context ctx)
+   	
+       KbObject    #getSentence(KbPredicate pred, int thisArgPos, Object... otherArgs)	 
+    -> KbPredicate #getSentence(Object... args)
+    
+       KbObject    #getValues(KbPredicate pred, int thisArgPos, int valuePosition, Context ctx)
+    -> KbPredicate #getValuesForArgPosition(Object arg, int argPosition, int valuePosition, Context ctx)
+
+This update also includes assorted refactorings which shouldn't impact existing application code: a 
+few service provider interfaces have been renamed, some unnecessary generics have been removed from 
+some SPIs, `com.cyc.query.graphs` is now `com.cyc.query.graph`, etc.
+
+#### Query API
+
+`com.cyc.query.QuerySpecification` no longer has any mutating methods on it; those are on the new 
+`com.cyc.query.QuerySpecification.MutableQuerySpecification`, which is extended by 
+`com.cyc.query.Query`. QuerySpecification is useful for cases where something wants to make the 
+details of a Query available to external processes (for reporting, etc.) in a read-only fashion,
+whereas MutableQuerySpecification can be used to create or modify queries & KBQs, and generally has
+a pretty bean-like interface.
+
+The map-like methods on `com.cyc.query.parameters.InferenceParameters` (`#keySet`, `#get`, 
+`#putAll`, etc.) have been moved to `InferenceParameterGetter` and `InferenceParameterSetter`, as 
+appropriate. `QuerySpecification#getInferenceParameters()` returns an InferenceParameterGetter, 
+whereas MutableQuerySpecification & Query return a full, mutable, InferenceParameters instance.
+
+
 1.0.0-rc6 - 2017-07-19
 ----------------------
 

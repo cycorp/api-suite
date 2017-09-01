@@ -46,12 +46,14 @@ import com.cyc.kb.exception.KbTypeException;
 
 /**
  *
+ * Provides implementations of {@link com.cyc.kb.KbTerm}.
+ * 
  * @author nwinant
  */
-public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
+public interface KbTermService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbTermFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbTermFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    *
@@ -60,10 +62,10 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
    * @throws KbTypeException
    * @throws CreateException
    */
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  KbTerm get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    *
@@ -72,11 +74,11 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
    * @throws KbTypeException
    * @throws CreateException
    */
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  KbTerm findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this term will
@@ -87,13 +89,13 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
    * @throws KbTypeException
    * @throws CreateException
    */
-  T findOrCreate(String nameOrId, String constraintColStr)
+  KbTerm findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, java.lang.String,
-   * java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, java.lang.String,
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this term will
@@ -106,12 +108,12 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
    * @throws KbTypeException
    * @throws CreateException
    */
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  KbTerm findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintCol the collection that this term will instantiate
@@ -121,13 +123,13 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
    * @throws KbTypeException
    * @throws CreateException
    */
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  KbTerm findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection,
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbTermFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection,
+   * com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintCol the collection that this term will instantiate
@@ -138,11 +140,11 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
    * @throws KbTypeException
    * @throws CreateException
    */
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  KbTerm findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbTermFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbTermFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$Thing
@@ -150,7 +152,7 @@ public interface KbTermService<T extends KbTerm> extends KbObjectService<T> {
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbTermFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbTermFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

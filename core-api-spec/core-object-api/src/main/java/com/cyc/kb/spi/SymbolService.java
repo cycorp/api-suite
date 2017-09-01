@@ -41,13 +41,14 @@ import com.cyc.kb.Symbol;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.Symbol}.
+ * 
  * @author nwinant
  */
-public interface SymbolService<T extends Symbol> extends KbObjectService<T> {
+public interface SymbolService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SymbolFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.SymbolFactory#get(java.lang.String)</tt>.
    *
    * @param symStr the string representing an #$CycLSubLSymbol in the KB
    * @return the Symbol representing an #$CycLSubLSymbol in the KB
@@ -55,6 +56,6 @@ public interface SymbolService<T extends Symbol> extends KbObjectService<T> {
    * @throws KbTypeException Symbols are created on demand and are not expected to throw any
    * exception
    */
-  T get(String symStr) throws KbTypeException;
+  Symbol get(String symStr) throws KbTypeException;
 
 }

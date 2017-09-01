@@ -23,7 +23,6 @@ package com.cyc.kb;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeException;
-
 import java.util.Collection;
 
 /**
@@ -70,7 +69,7 @@ public interface KbFunction extends Relation {
    * not happen with KB API objects.
    */
   // @todo remove passing in of retType
-  public <O> O findOrCreateFunctionalTerm(Class<O> retType, Object... args)
+  public <O extends KbObject> O findOrCreateFunctionalTerm(Class<O> retType, Object... args)
           throws KbTypeException, CreateException;
 
   /**

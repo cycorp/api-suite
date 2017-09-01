@@ -53,7 +53,7 @@ public class FactFactory {
   // Construction
   
   private FactFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getFactService();
+    service = CoreServicesLoader.getKbFactoryServices().fact();
   }
 
   protected FactService getService() {

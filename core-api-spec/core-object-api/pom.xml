@@ -7,21 +7,38 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api-parent</artifactId>
-    <version>1.0.0-rc6</version>
+    <version>1.0.0-rc7.0</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-object-api</artifactId>
-  <version>1.0.0-rc6</version>
+  <version>1.0.0-rc7.0</version>
   <packaging>jar</packaging>
-  
-  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Object Specification</name>
 
   <description>
     The interfaces which define the Cyc Core API.
   </description>
+  
+  <!-- ====|    Configuration    |============================================================= -->
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId> 
+        <artifactId>license-maven-plugin</artifactId> 
+      </plugin>
+    </plugins>
+  </build>
+  
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <url>http://dev.cyc.com/api/core/</url>
   
@@ -58,22 +75,5 @@
       <organizationUrl>http://www.cyc.com</organizationUrl>
     </developer>
   </developers>
-  
-  <!-- ====|    Configuration    |============================================================= -->
-  
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId> 
-        <artifactId>license-maven-plugin</artifactId> 
-      </plugin>
-    </plugins>
-  </build>
   
 </project>

@@ -17,7 +17,7 @@ package com.cyc.query.spi;
 
 /*
  * #%L
- * File: QueryAnswerExplanationFactoryService.java
+ * File: QueryAnswerExplanationService.java
  * Project: Core API Object Specification
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc
@@ -47,7 +47,7 @@ import com.cyc.query.QueryAnswerExplanationSpecification;
  * @author nwinant
  * @param <T> type of QueryAnswerExplanation
  */
-public interface QueryAnswerExplanationFactoryService 
+public interface QueryAnswerExplanationService 
         <T extends QueryAnswerExplanation> {
   
   /**

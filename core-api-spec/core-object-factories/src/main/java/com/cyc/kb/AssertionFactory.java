@@ -53,7 +53,7 @@ public class AssertionFactory {
   // Construction
   
   private AssertionFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getAssertionService();
+    service = CoreServicesLoader.getKbFactoryServices().assertion();
   }
 
   protected AssertionService getService() {
@@ -78,30 +78,14 @@ public class AssertionFactory {
    *
    * @throws KbTypeException if assertion based on <code>hlid</code> is not an instance of assertion
    * @throws CreateException
+   * 
+   * @see #get(com.cyc.kb.Sentence, com.cyc.kb.Context) 
+   * @see #get(java.lang.String, java.lang.String) 
    */
   public static Assertion get(String hlid) throws KbTypeException, CreateException {
     return getInstance().getService().get(hlid);
   }
-
-  /**
-   * Get the <code>Assertion</code> object that corresponds to <code>formulaStr</code> in the
-   * context corresponding to <code>ctxStr</code>. Throws exceptions if no such formula is found in
-   * the specified context in the KB, or if it's not already an assertion.
-   *
-   * @param formulaStr string representation of the formula to be found
-   * @param ctxStr string representation of the context of the formula
-   *
-   * @return an Assertion based on <code>formulaStr</code> and <code>ctxStr</code>
-   * @throws CreateException
-   * @throws KbTypeException
-   * @throws KbObjectNotFoundException if no Assertion with the given formula string is found in the
-   * context
-   */
-  public static Assertion get(String formulaStr, String ctxStr)
-          throws KbTypeException, CreateException, KbObjectNotFoundException {
-    return getInstance().getService().get(formulaStr, ctxStr);
-  }
-
+  
   /**
    * Get the <code>Assertion</code> object that corresponds to <code>formula</code> in the context
    * <code>ctx</code>. Throws exceptions if no such formula is found in the specified context in the
@@ -115,6 +99,8 @@ public class AssertionFactory {
    * @throws KbTypeException
    * @throws KbObjectNotFoundException if no assertion with the given formula is found in the
    * context
+   * 
+   * @see #get(java.lang.String) 
    */
   public static Assertion get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException {
@@ -122,55 +108,66 @@ public class AssertionFactory {
   }
 
   /**
-   * Finds or creates the <code>Assertion</code> object that corresponds to <code>formulaStr</code>
-   * in the default assertion context. Tries to assert if no such formula is found in the specified
-   * context in the KB. Throws an exception if it is unable to make such an assertion.
+   * Get the <code>Assertion</code> object that corresponds to <code>formulaStr</code> in the
+   * context corresponding to <code>ctxStr</code>. Throws exceptions if no such formula is found in
+   * the specified context in the KB, or if it's not already an assertion.
    *
-   * <p>Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
-   *
-   * @param formulaStr the string representation of the formula to be found or created
-   *
-   * @return an Assertion based on <code>formulaStr</code> and the default assertion context
-   *
-   * @throws CreateException
-   * @throws KbTypeException
-   * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
-   * or created in the context
-   */
-  public static Assertion findOrCreate(String formulaStr)
-          throws CreateException, KbTypeException, InvalidFormulaInContextException {
-    return getInstance().getService().findOrCreate(formulaStr);
-  }
-
-  /**
-   * Finds or creates the <code>Assertion</code> object that corresponds to <code>formulaStr</code>
-   * in the context corresponding to <code>ctxStr</code>. Tries to assert if no such formula is
-   * found in the specified context in the KB. Throws an exception if it is unable to make such an
-   * assertion.
-   *
-   * <p>Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
-   *
-   * @param formulaStr the string representation of the formula to be found or created
-   * @param ctxStr the string representation of the context of the formula
+   * <p>For more details, see {@link #get(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * 
+   * @param formulaStr string representation of the formula to be found
+   * @param ctxStr string representation of the context of the formula
    *
    * @return an Assertion based on <code>formulaStr</code> and <code>ctxStr</code>
-   *
    * @throws CreateException
    * @throws KbTypeException
+   * @throws KbObjectNotFoundException if no Assertion with the given formula string is found in the
+   * context
+   * 
+   * @see #get(java.lang.String) 
+   */
+  public static Assertion get(String formulaStr, String ctxStr)
+          throws KbTypeException, CreateException, KbObjectNotFoundException {
+    return getInstance().getService().get(formulaStr, ctxStr);
+  }
+  
+  /**
+   * Finds or creates the <code>Assertion</code> object that corresponds to <code>formula</code> in
+   * <code>ctx</code>. Tries to assert if no such formula is found in the specified context in the
+   * KB. Throws an exception if it is unable to make such an assertion.
+   *
+   * <p>NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
+   * object in the assertion because (most of) the CycObjects can only be built based on objects in
+   * the KB. Some exceptions are Sentences, Variables and Symbols. NAUTs are also not in the KB, but
+   * in the API they are effectively treated as being in the KB.
+   *
+   * @param formula the formula to be found or created
+   * @param ctx the context of the formula
+   * @param strength the strength of the assertion
+   * @param direction the direction of the assertion
+   *
+   * @return an Assertion based on formula and context
+   * @throws CreateException
+   * @throws KbTypeException
+   *
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
+   *
    */
-  public static Assertion findOrCreate(String formulaStr, String ctxStr)
+  public static Assertion findOrCreate(
+          Sentence formula, Context ctx, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException {
-    return getInstance().getService().findOrCreate(formulaStr, ctxStr);
+    return getInstance().getService().findOrCreate(formula, ctx, strength, direction);
   }
-
+  
   /**
    * Finds or creates the <code>Assertion</code> object that corresponds to <code>formulaStr</code>
    * in the context corresponding to <code>ctxStr</code>. Tries to assert if no such formula is
    * found in the specified context in the KB. Throws an exception if it is unable to make such an
    * assertion.
-   *
+   * 
+   * <p>For more details, see 
+   * {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * 
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
    * @param strength the strength of the assertion
@@ -183,36 +180,12 @@ public class AssertionFactory {
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
    */
-  public static Assertion findOrCreate(String formulaStr, String ctxStr, Strength strength,
-          Direction direction)
+  public static Assertion findOrCreate(
+          String formulaStr, String ctxStr, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException {
     return getInstance().getService().findOrCreate(formulaStr, ctxStr, strength, direction);
   }
-
-  /**
-   * Find or creates the <code>Assertion</code> object that corresponds to <code>formula</code> in
-   * the default assertion context (@link DefaultContext}. Tries to assert if no such formula is
-   * found in the KB. Throws an exception if it is unable to make such an assertion.
-   *
-   * <p>NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
-   * object in the assertion because (most of) the CycObjects can only be built based on objects in
-   * the KB. Some exceptions are Sentences, Variables and Symbols. NAUTs are also not in the KB, but
-   * in the API they are effectively treated as being in the KB.
-   *
-   * Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
-   *
-   * @param formula the formula to be found or created
-   *
-   * @return an Assertion based on the formula in the default assertion context
-   *
-   * @throws KbTypeException
-   * @throws CreateException
-   */
-  public static Assertion findOrCreate(Sentence formula)
-          throws KbTypeException, CreateException {
-    return getInstance().getService().findOrCreate(formula);
-  }
-
+  
   /**
    * Finds or creates the <code>Assertion</code> object that corresponds to <code>formula</code> in
    * <code>ctx</code>. Tries to assert if no such formula is found in the specified context in the
@@ -236,12 +209,15 @@ public class AssertionFactory {
    * <p>Strength is set to Strength.DEFAULT by default
    * Direction is set to Direction.FORWARD by default
    *
+   * <p>For more details, see 
+   * {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * 
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
    *
    * @return an Assertion based on formula and context
    * @throws CreateException
-   * @throws KbTypeException    *
+   * @throws KbTypeException    
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
    */
@@ -249,34 +225,80 @@ public class AssertionFactory {
           throws KbTypeException, CreateException, InvalidFormulaInContextException {
     return getInstance().getService().findOrCreate(formula, ctx);
   }
-
+  
   /**
-   * Finds or creates the <code>Assertion</code> object that corresponds to <code>formula</code> in
-   * <code>ctx</code>. Tries to assert if no such formula is found in the specified context in the
-   * KB. Throws an exception if it is unable to make such an assertion.
+   * Finds or creates the <code>Assertion</code> object that corresponds to <code>formulaStr</code>
+   * in the context corresponding to <code>ctxStr</code>. Tries to assert if no such formula is
+   * found in the specified context in the KB. Throws an exception if it is unable to make such an
+   * assertion.
+   *
+   * <p>Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
+   *
+   * <p>For more details, see {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context)  } and
+   * {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * 
+   * @param formulaStr the string representation of the formula to be found or created
+   * @param ctxStr the string representation of the context of the formula
+   *
+   * @return an Assertion based on <code>formulaStr</code> and <code>ctxStr</code>
+   *
+   * @throws CreateException
+   * @throws KbTypeException
+   * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
+   * or created in the context
+   */
+  public static Assertion findOrCreate(String formulaStr, String ctxStr)
+          throws CreateException, KbTypeException, InvalidFormulaInContextException {
+    return getInstance().getService().findOrCreate(formulaStr, ctxStr);
+  }
+  
+  /**
+   * Find or creates the <code>Assertion</code> object that corresponds to <code>formula</code> in
+   * the default assertion context (@link DefaultContext}. Tries to assert if no such formula is
+   * found in the KB. Throws an exception if it is unable to make such an assertion.
    *
    * <p>NOTE: All findOrCreate factory methods that take CycObject do not eventually create any new
    * object in the assertion because (most of) the CycObjects can only be built based on objects in
    * the KB. Some exceptions are Sentences, Variables and Symbols. NAUTs are also not in the KB, but
    * in the API they are effectively treated as being in the KB.
    *
-   * @param formula the formula to be found or created
-   * @param ctx the context of the formula
-   * @param strength the strength of the assertion
-   * @param direction the direction of the assertion
+   * <p>Strength is set to Strength.DEFAULT by default Direction is set to Direction.FORWARD by default
    *
-   * @return an Assertion based on formula and context
+   * <p>For more details, see {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context) } and
+   * {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * 
+   * @param formula the formula to be found or created
+   *
+   * @return an Assertion based on the formula in the default assertion context
+   *
+   * @throws KbTypeException
+   * @throws CreateException
+   */
+  public static Assertion findOrCreate(Sentence formula)
+          throws KbTypeException, CreateException {
+    return getInstance().getService().findOrCreate(formula);
+  }
+  
+  /**
+   * Finds or creates the <code>Assertion</code> object that corresponds to <code>formulaStr</code>
+   * in the default assertion context. Tries to assert if no such formula is found in the specified
+   * context in the KB.
+   * 
+   * <p>For more details, see {@link #findOrCreate(com.cyc.kb.Sentence) } and
+   * {@link #findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * 
+   * @param formulaStr the string representation of the formula to be found or created
+   *
+   * @return an Assertion based on <code>formulaStr</code> and the default assertion context
+   *
    * @throws CreateException
    * @throws KbTypeException
-   *
    * @throws InvalidFormulaInContextException if no assertion with the given formula string is found
    * or created in the context
-   *
    */
-  public static Assertion findOrCreate(Sentence formula, Context ctx, Strength strength,
-          Direction direction)
+  public static Assertion findOrCreate(String formulaStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException {
-    return getInstance().getService().findOrCreate(formula, ctx, strength, direction);
+    return getInstance().getService().findOrCreate(formulaStr);
   }
-
+  
 }

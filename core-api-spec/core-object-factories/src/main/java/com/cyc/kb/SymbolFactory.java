@@ -48,7 +48,7 @@ public class SymbolFactory {
   // Construction
   
   private SymbolFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getSymbolService();
+    service = CoreServicesLoader.getKbFactoryServices().symbol();
   }
 
   protected SymbolService getService() {

@@ -21,11 +21,10 @@ package com.cyc.query;
  * #L%
  */
 import com.cyc.kb.ArgPosition;
-import com.cyc.kb.KbIndividual;
 import com.cyc.kb.Sentence;
-import com.cyc.kb.Variable;
 import com.cyc.kb.exception.KbException;
 import com.cyc.nl.Paraphraser;
+import com.cyc.query.QuerySpecification.MutableQuerySpecification;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.query.exception.QueryRuntimeException;
 import com.cyc.query.metrics.InferenceMetricsValues;
@@ -55,8 +54,9 @@ import java.util.Collection;
  *
  * @author  Vijay Raj
  * @author  David Baxter
+ * @author  Nathan Winant
  */
-public interface Query extends QuerySpecification<Query>, Closeable {
+public interface Query extends MutableQuerySpecification<Query>, Closeable {
 
   /**
    * Run this query and return the results.
@@ -79,44 +79,6 @@ public interface Query extends QuerySpecification<Query>, Closeable {
    *          auto-register.
    */
   void registerRequiredSksModules();
-
-  /**
-   * Saves this Query as the term which is its current ID.
-   *
-   * @see     Query#saveAs(String)
-   * @see     QuerySpecification#getId()
-   */
-  void save();
-
-  /**
-   * Saves this Query as a new query term with the specified name.
-   *
-   * @param name The name by which to save the query.
-   *
-   * @return  the new term
-   * @throws  KbException                    
-   * @throws  SessionCommunicationException  if there is a problem communicating with Cyc
-   * @throws  QueryConstructionException     if there was a problem constructing the new query
-   * @see     Query#save()
-   */
-  KbIndividual saveAs(String name)
-          throws KbException, SessionCommunicationException, QueryConstructionException;
-
-  /**
-   * Returns the categories to which this query belongs. Categories are associated with queries via
-   * {@link #addCategory()}.
-   *
-   * @todo    move all this category stuff into another class?
-   * @return  the categories to which this query belongs.
-   */
-  Collection<String> getCategories();
-
-  /**
-   * Add a new category to which this query belongs.
-   *
-   * @param   category
-   */
-  void addCategory(String category);
   
   /**
    * Get the metrics values for this Query.
@@ -197,43 +159,6 @@ public interface Query extends QuerySpecification<Query>, Closeable {
    * @return  this query
    */
   Query addListener(QueryListener listener);
-
-  /**
-   * Designates var as a variable to return bindings for.
-   *
-   * @param   var
-   * @return  this query
-   * @throws  IllegalArgumentException  if var is not found in this query
-   * @throws  IllegalStateException     if query has already been started
-   */
-  Query addQueryVariable(Variable var);
-
-  /**
-   * Bind a query variable to a specified value. All occurrences of the variable in this query's
-   * sentence will be replaced with the specified value.
-   *
-   * @param  var          must be a query variable in this query
-   * @param  replacement  the value to substitute for var
-   */
-  void bindVariable(Variable var, Object replacement);
-
-  /**
-   * Bind a query variable to a specified value.
-   *
-   * @param  varName      The name of the variable, with or without the '?' prefix
-   * @param  replacement  
-   */
-  void bindVariable(String varName, Object replacement);
-
-  /**
-   * Designates var as a variable to <i>not</i> return bindings for.
-   *
-   * @param   var  
-   * @return  this Query
-   * @throws  IllegalArgumentException  if var is not found in this query
-   * @throws  IllegalStateException     if query has already been started
-   */
-  Query removeQueryVariable(Variable var);
   
   /**
    * Continues the query. Can be used if a query has not been started yet, has stopped due to
@@ -302,104 +227,6 @@ public interface Query extends QuerySpecification<Query>, Closeable {
           QueryConstructionException,
           SessionCommunicationException,
           OpenCycUnsupportedFeatureException;
-  
-  /**
-   * Set the inference mode. Inference modes are meant to be intuitive measures
-   * of how hard Cyc should work to answer a query. Setting the inference mode
-   * sets various other low-level parameters to appropriate values for that
-   * mode, but explictly setting values for such parameters overrides values set
-   * by the mode.
-   * 
-   * <p>This method is a trampoline to 
-   * {@link QuerySpecification#getInferenceParameters()#setInferenceMode(com.cyc.query.parameters.InferenceMode)}.
-   * 
-   * @param   mode  
-   * @return  this object
-   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
-   */
-  Query setInferenceMode(InferenceMode mode);
-  
-  /**
-   * Set the maximum number of answers (or sets of answers) that Cyc will
-   * attempt to find for the Query. In some cases (such as when a set of
-   * answers is retrieved in a batch), more answers than this may actually be
-   * returned. Once this number of answers has been reached, Cyc will not
-   * actively look for additional answers.
-   *
-   * <p> A value of <code>null</code> means the inference will continue until it
-   * exhausts or some other limit is reached.
-   * 
-   * <p>This method is a trampoline to 
-   * {@link QuerySpecification#getInferenceParameters()#setMaxAnswerCount(java.lang.Integer)}.
-   * 
-   * @param   maxAnswers  number of answers
-   * @return  this object
-   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
-   */
-  Query setMaxAnswerCount(Integer maxAnswers);
-  
-  /**
-   * Set the max time value (in seconds). Setting this parameter to some number
-   * licenses Cyc to stop work on an inference once it has been working on it
-   * for at least that many seconds.
-   * <p>
-   * A value of <code>null</code> means the inference will continue until it
-   * exhausts or some other limit is reached.
-   * 
-   * <p>This method is a trampoline to 
-   * {@link QuerySpecification#getInferenceParameters()#setMaxTime(java.lang.Integer)}.
-   * 
-   * @param   maxSeconds timeout value in seconds
-   * @return  this object
-   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
-   */
-  Query setMaxTime(Integer maxSeconds);
-  
-  /**
-   * Set the max transformation depth value. Setting this parameter to some
-   * number prevents Cyc from reasoning using chains of rules longer than that
-   * number.
-   * 
-   * <p>This method is a trampoline to 
-   * {@link QuerySpecification#getInferenceParameters()#setMaxTransformationDepth(java.lang.Integer)}.
-   * 
-   * @param   depth
-   * @return  this object
-   * @see     com.cyc.query.parameters.InferenceParameters for more parameters
-   */
-  Query setMaxTransformationDepth(Integer depth);
-   
-  /**
-   * Sets the hypothesized clause of this Query. When the query is run, Cyc will assume that this
-   * clause is true. If the clause is independently known to be false in the query context, the
-   * query will be considered tautologous, and will fail.
-   *
-   * @param   sentence
-   * @return  this Query
-   * @throws  IllegalStateException  if query has already been started
-   * @see     QuerySpecification#getQuerySentenceHypothesizedClause()
-   */
-  Query setQuerySentenceHypothesizedClause(Sentence sentence);
-  
-  /**
-   * Sets the main (i.e. non-hypothesized) clause of this Query
-   *
-   * @param   sentence
-   * @return  this Query
-   * @throws  IllegalStateException  if query has already been started
-   * @see     QuerySpecification#getQuerySentenceMainClause()
-   */
-  Query setQuerySentenceMainClause(Sentence sentence);
-  
-  /**
-   * Designates vars as the variables to return bindings for.
-   *
-   * @param   vars
-   * @return  this query
-   * @throws  IllegalArgumentException  if any of vars is not found in this query
-   * @throws  IllegalStateException     if query has already been started
-   */
-  Query setQueryVariables(Collection<Variable> vars);
   
   /**
    * Starts the query.
@@ -550,20 +377,6 @@ public interface Query extends QuerySpecification<Query>, Closeable {
    */
   @Override
   void close();
-
-  /**
-   * Returns the timeout for the {@link #close()} method.
-   *
-   * @return  timeout in milliseconds
-   */
-  long getCloseTimeout();
-
-  /**
-   * Sets the timeout for the {@link #close()} method.
-   *
-   * @param   timeoutMs  timeout in milliseconds
-   */
-  void setCloseTimeout(long timeoutMs);
 
   /**
    *

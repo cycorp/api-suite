@@ -41,19 +41,19 @@ public class KbObjectFactory {
     
   // Fields
     
-  private final KbObjectService service;
+  //private final KbObjectService service;
 
   
   // Construction
-  
+  /*
   private KbObjectFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getKbObjectService();
+    service = CoreServicesLoader.getKbFactoryServices().kbObject();
   }
-
+  
   protected KbObjectService getService() {
     return service;
   }
-  
+  */
   
   // Public
   

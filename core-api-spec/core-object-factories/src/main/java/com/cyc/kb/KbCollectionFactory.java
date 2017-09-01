@@ -49,7 +49,7 @@ public class KbCollectionFactory {
   // Construction
   
   private KbCollectionFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getCollectionService();
+    service = CoreServicesLoader.getKbFactoryServices().collection();
   }
 
   protected KbCollectionService getService() {

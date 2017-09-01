@@ -1,7 +1,10 @@
 package com.cyc.kb;
 
 import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.DeleteException;
+import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbTypeException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -93,4 +96,263 @@ public interface KbTerm extends KbObject {
    * @return the date and time at which the term was created
    */
   Date getCreationDate();
+  
+  /**
+   * Change the name of a non-atomic term to <code>name</code>. <strong>This method only applies to
+   * atomic terms (i.e., CycL constants).</strong>
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * Throws
+   * {@link InvalidNameException} in cases where the rename cannot be completed,
+   * for any reason, one of the reasons could be that the name does not conform
+   * to Cyc constant-naming conventions. Among objects that cannot be renamed
+   * 
+   * CLARIFY:
+   * 
+   * are non-atomic terms, assertions, and constant that are mentioned in server
+   * code. An {@link UnsupportedOperationException} will be thrown if attempted
+   * to rename Assertion or Non-atomic terms.
+   *
+   * @param   name   the new name
+   * @return  the renamed KbTerm
+   * @throws  InvalidNameException           if Cyc Server errors out for any reason, including 
+   *                                         invalid name
+   * @throws  UnsupportedOperationException  if the object being renamed is not {@link #isAtomic()}
+   */
+  // @todo how can this actually throw the exception? And it should throw a more informative 
+  // Exception.
+  KbTerm rename(String name) throws InvalidNameException;
+  
+  /**
+   * delete <code>this</code> term and all the facts using it in the KB.
+   * <p>
+   * This will irreversible modify the KB.
+   *
+   * @throws  DeleteException if the operation cannot be completed
+   */
+  void delete() throws DeleteException;
+  
+  /**
+   * Returns false if the KB object behind this object has been deleted or
+   * otherwise rendered invalid on the Cyc server.
+   *
+   * @return  false if the KB object behind this object has been deleted or otherwise rendered
+   *          invalid on the Cyc server. Returns true otherwise
+   */
+  Boolean isValid();
+  
+  /**
+   * Returns the syntactic arity of this object. If it has a relation applied to
+   * some arguments (i.e. it's a sentence, an assertion, or a functional term),
+   * the arity is the number of arguments. By convention, Cyc constants have a
+   * formula arity of 0.
+   *
+   * @return  the arity of this object, <tt>null</tt> if not a Cyc constant, functional term, 
+   *          sentence, or assertion
+   */
+  Integer getArity();
+  
+  /**
+   * gets the object in <code>argPosition</code> argument position of this KbObject
+   * as an object of type <code>O</code>. This method works for Sentences and
+   * Assertions, as well as non-atomic KbTerms. However, because a constant has
+   * no "arguments", calling this method on a KbObject representing a Cyc
+   * constant will result in a KbException.
+   *
+   * @param   <O>     the object type
+   * @param   argPosition  the argument position of the object returned
+   * @return  the object at <code>getPos</code> as a <code>O</code>
+   * @throws  CreateException
+   * @throws  KbTypeException
+   * @throws  UnsupportedOperationException  if getArgument is called on Atomic terms. Do not use
+   *                                         this to test for term atomicity, use
+   *                                         {@link #isAtomic()} instead.
+   */
+  <O> O getArgument(int argPosition) 
+          throws KbTypeException, CreateException, UnsupportedOperationException;
+  
+  /**
+   * Gets all the comments for <code>this</code> visible from the default
+   * context {@link com.cyc.kb.DefaultContext#forQuery()}
+   * <p>
+   *
+   * @return  comment strings
+   */
+  Collection<String> getComments();
+  
+  /**
+   * Gets all the comments for <code>this</code> visible from the context
+   * <p>
+   *
+   * @param   ctx  the context of query
+   * @return  comment strings
+   */
+  Collection<String> getComments(Context ctx);
+  
+  /**
+   * Gets all the comments for <code>this</code> visible from the context
+   * <p>
+   *
+   * @param   ctxStr  the context of query
+   * @return  comment strings
+   */
+  Collection<String> getComments(String ctxStr);
+  
+  /**
+   * Add a new comment for <code>this</code> in the context specified
+   * <p>
+   *
+   * In the CycKB comments can be added only on <code>#$CycLIndexedTerm</code>s,
+   * which include <code>CycLReifiableDenotationalTerm</code> and
+   * <code>CycLAssertion</code>. An exception will be thrown if attempted to add
+   * a comment on Quoted terms, Sentence, Variable and Symbol. This means that
+   * only subclasses of KbTerm and Assertion can have comments.
+   *
+   * @param   ctx      the context where the comment is created. Cannot be null.
+   * @param   comment  the comment string
+   * @return  the fact created
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  Fact addComment(String comment, Context ctx) throws KbTypeException, CreateException;
+  
+  /**
+   * Add a new comment for <code>this</code> in the context specified
+   * <p>
+   *
+   * In the CycKB comments can be added only on <code>#$CycLIndexedTerm</code>s,
+   * which include <code>CycLReifiableDenotationalTerm</code> and
+   * <code>CycLAssertion</code>. An exception will be thrown if attempted to add
+   * a comment on Quoted terms, Sentence, Variable and Symbol. This means that
+   * only subclasses of KbTerm and Assertion can have comments.
+   *
+   * @param   ctx      the context where the comment is created. Cannot be null.
+   * @param   comment  the comment string
+   * @return  the fact created
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  Fact addComment(String comment, String ctx) throws KbTypeException, CreateException;
+  
+  /**
+   * A <code>quotedIsa</code> assertion relates CycL expression to <code>SubLExpressionType</code>.
+   * 
+   * <p>All subclasses of KbObject can be quoted. Refer to <code>#$NoteAboutQuotingInCycL</code> for
+   * a more detailed discussion of quoting.
+   *
+   * @param   collection  the instance of SubLExpressionType, the collection <code>this</code> is a 
+   *                      quoted instance of
+   * @param   context     the context where the fact is asserted.
+   * @return  this object, for method chaining
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  KbTerm addQuotedIsa(KbCollection collection, Context context) 
+         throws KbTypeException, CreateException;
+  
+  /**
+   * Creates a new <code>Fact</code> stating that this <code>KbIndividual</code> instantiates the
+   * <code>collection</code> in <code>context</code>. Effectively, this asserts 
+   * <code>(#$isa this collection)</code>.
+   *
+   * @param   collection  the collection of which this KbIndividual is an instance
+   * @param   context     the context where the fact is to be asserted
+   * @return  this object, for method chaining
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  KbTerm instantiates(KbCollection collection, Context context) 
+          throws KbTypeException, CreateException;
+  
+  /**
+   * Creates a new <code>Fact</code> stating that <code>this</code> <code>KbIndividual</code>
+   * instantiates the <code>#$Collection</code> represented by <code>collection</code> in the 
+   * context represented by <code>context</code>. Effectively, this asserts 
+   * <code>(#$isa this collection)</code>.
+   *
+   * @param   collectionStr  string representing the KbCollection this individual is an instance of
+   * @param   contextStr     string representing the context where the fact is to be asserted
+   * @return  this object, for method chaining
+   * @throws  CreateException
+   * @throws  KbTypeException
+   */
+  KbTerm instantiates(String collectionStr, String contextStr) 
+          throws KbTypeException, CreateException;
+  
+  /**
+   * Creates a new <code>Fact</code> stating that this <code>KbIndividual</code> instantiates the
+   * <code>collection</code> in the default assertion context.
+   * 
+   * See {@link #instantiates(com.cyc.kb.KbCollection, com.cyc.kb.Context) } for more details.
+   * 
+   * @param   collection  the collection of which this KbIndividual is an instance
+   * @return  this object, for method chaining
+   * @throws  KbTypeException
+   * @throws  CreateException 
+   */
+  KbTerm instantiates(KbCollection collection) throws KbTypeException, CreateException;
+  
+  /**
+   * This method returns the Sentence <code>(#$isa this collection)</code>. The key difference 
+   * between this and {@link #instantiates(com.cyc.kb.KbCollection) } is that, this method does not 
+   * make any assertion in the KB. The sentence form of the assertion is generally useful when
+   * seeking user feedback before asserting into the KB. Use 
+   * {@link Sentence#assertIn(com.cyc.kb.Context) } to assert the sentence in a Context.
+   * 
+   * @param   collection  the collection of which <code>this</code> KbIndividual is an instance
+   * @return  the #$isa sentence between this and col
+   * @throws  KbTypeException 
+   */
+  Sentence instantiatesSentence(KbCollection collection) throws KbTypeException, CreateException;
+  
+  /**
+   * Is <code>this</code> an instance of <code>collection</code> in any context? This does not 
+   * require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
+   * inferable.
+   *
+   * @param   collection  the collection which <code>this</code> may or may not be an instance of
+   * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
+   */
+  boolean isInstanceOf(KbCollection collection);
+
+  /**
+   * Is <code>this</code> an instance of <code>collection</code> in any context? This does not 
+   * require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
+   * inferable.
+   *
+   * @param   collectionStr  the string representing the collection which <code>this</code> may or
+   *                         may not be an instance of
+   * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
+   */
+  boolean isInstanceOf(String collectionStr);
+
+  /**
+   * Is <code>this</code> an instance of <code>collection</code> in <code>context</code>? This does 
+   * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
+   * inferable.
+   *
+   * @param   collection  the collection which <code>this</code> may or may not be an instance of
+   * @param   context     the context where the instance relation holds.
+   * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
+   */
+  boolean isInstanceOf(KbCollection collection, Context context);
+
+  /**
+   * Is <code>this</code> an instance of <code>collection</code> in <code>context</code>? This does
+   * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially
+   * inferable.
+   *
+   * @param   collectionStr  string representation of the collection which <code>this</code> may or 
+   *                         may not be an instance of
+   * @param   contextStr     string representation of the context where the instance relation holds
+   * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
+   */
+  boolean isInstanceOf(String collectionStr, String contextStr);
+  
 }

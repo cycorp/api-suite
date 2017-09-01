@@ -49,7 +49,7 @@ public class FirstOrderCollectionFactory {
   // Construction
   
   private FirstOrderCollectionFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getFirstOrderCollectionService();
+    service = CoreServicesLoader.getKbFactoryServices().firstOrderCollection();
   }
 
   protected FirstOrderCollectionService getService() {

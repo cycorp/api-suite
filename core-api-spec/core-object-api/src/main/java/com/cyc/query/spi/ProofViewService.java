@@ -17,7 +17,7 @@ package com.cyc.query.spi;
 
 /*
  * #%L
- * File: ProofViewFactoryService.java
+ * File: ProofViewService.java
  * Project: Core API Object Specification
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc
@@ -47,8 +47,8 @@ import com.cyc.query.QueryAnswerExplanationSpecification;
  * 
  * @author nwinant
  */
-public interface ProofViewFactoryService 
-        extends QueryAnswerExplanationFactoryService<ProofView> {
+public interface ProofViewService 
+        extends QueryAnswerExplanationService<ProofView> {
   
   /**
    * Returns a new ProofViewSpecification object.

@@ -21,15 +21,13 @@ package com.cyc.kb.exception;
  * #L%
  */
 
-import com.cyc.kb.exception.KbException;
-
 /**
  * Thrown when code fails to find or create something from the Cyc KB. {@link KbTypeException} and
  * {@link KbTypeConflictException} are not subclasses because they do not indicate if the underlying
  * object is not in the KB.
  *
  * @author Vijay Raj
- * @version $Id: CreateException.java 169908 2017-01-11 23:19:09Z nwinant $
+ * @version $Id: CreateException.java 173072 2017-07-27 01:21:15Z nwinant $
  */
 public class CreateException extends KbException {
 

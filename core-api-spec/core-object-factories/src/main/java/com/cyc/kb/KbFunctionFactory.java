@@ -49,7 +49,7 @@ public class KbFunctionFactory {
   // Construction
   
   private KbFunctionFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getFunctionService();
+    service = CoreServicesLoader.getKbFactoryServices().function();
   }
 
   protected KbFunctionService getService() {

@@ -37,8 +37,8 @@
  * <p/>
  * The API provides many methods that take Strings as inputs. This leads to most methods having
  * CreateException and KbTypeException. To limit the types of exceptions in method signatures, we
- * wrap them in IllegalArgumentException. This is done only to the methods where to focus is not the
- * creation of a new term.
+ * wrap them in IllegalArgumentException. This is done only to the methods where the focus is not 
+ * the creation of a new term.
  *
  * <p/>
  * All factory methods throw exceptions as {@link com.cyc.kb.exception.CreateException},

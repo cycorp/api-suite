@@ -23,7 +23,7 @@ package com.cyc.kb.exception;
 import com.cyc.kb.Relation;
 
 /**
- * Thrown when the arity a Relation without a fixed arity is requested. For
+ * Thrown when the arity of a Relation without a fixed arity is requested. For
  * variable-arity relations, {@link Relation#getArityMin()} and
  * {@link Relation#getArityMax()} methods should be used.
  *

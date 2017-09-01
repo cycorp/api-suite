@@ -83,7 +83,7 @@ public class ContextFactory {
   // Construction
   
   private ContextFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getContextService();
+    service = CoreServicesLoader.getKbFactoryServices().context();
   }
 
   protected ContextService getService() {
@@ -112,7 +112,7 @@ public class ContextFactory {
    * Returns a DefaultContext for a given assertion and query Context.
    * @param assertionContext
    * @param queryContext
-   * @return 
+   * @return a DefaultContext instance
    */
   public static DefaultContext getDefaultContext(Context assertionContext, Context queryContext) {
     return getInstance().getService().getDefaultContext(assertionContext, queryContext);
@@ -124,7 +124,7 @@ public class ContextFactory {
    * 
    * @param assertionCtxStr
    * @param queryCtxStr
-   * @return 
+   * @return a DefaultContext instance
    * @throws com.cyc.kb.exception.KbTypeException 
    * @throws com.cyc.kb.exception.CreateException 
    */

@@ -24,8 +24,6 @@ package com.cyc.query.parameters;
 //// Internal Imports
 
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * <P>
@@ -34,7 +32,7 @@ import java.util.Set;
  *
  * @author zelal
  * @date August 14, 2005, 2:41 PM
- * @version $Id: InferenceParameters.java 171085 2017-03-28 00:58:20Z nwinant $
+ * @version $Id: InferenceParameters.java 173082 2017-07-28 15:36:55Z nwinant $
  */
 public interface InferenceParameters 
         extends Cloneable, InferenceParameterGetter, InferenceParameterSetter<InferenceParameters> {
@@ -137,6 +135,7 @@ public interface InferenceParameters
 
   /**
    * Specify the problem store in which to run the query. *
+   * @param id
    */
   public void setProblemStoreId(int id);
 
@@ -149,27 +148,5 @@ public interface InferenceParameters
    * @param newParams
    */
   public void makeAtLeastAsLooseAs(InferenceParameters newParams);
-  
-  void clear();
-
-  boolean containsKey(String key);
-  
-  Set<Entry<String, Object>> entrySet();
-  
-  boolean isEmpty();
-
-  Set<String> keySet();
-
-  Object get(String parameterName);
-
-  Object put(String parameterName, Object value);
-
-  void putAll(InferenceParameters properties);
-
-  void remove(String parameterName);
-
-  int size();
-  
-  Object clone();
   
 }

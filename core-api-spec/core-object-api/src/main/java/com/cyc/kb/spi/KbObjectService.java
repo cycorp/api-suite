@@ -37,12 +37,14 @@ package com.cyc.kb.spi;
  * #L%
  */
 
-import com.cyc.kb.KbObject;
-
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.KbObject}.
+ * 
  * @author nwinant
  */
-public interface KbObjectService<T extends Object> {
+@Deprecated
+public interface KbObjectService {
+  
+    // TODO: rename and/or reorganize w/ KbService? - nwinant, 2017-07-27
   
 }

@@ -7,65 +7,33 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api-parent</artifactId>
-    <version>1.0.0-rc6</version>
+    <version>1.0.0-rc7.0</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-api</artifactId>
-  <version>1.0.0-rc6</version>
+  <version>1.0.0-rc7.0</version>
   <packaging>jar</packaging>
-  
-  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Specification</name>
 
   <description>
     Packages the Cyc Core API Object Specification and Factories into one bundle.
   </description>
-  
-  <url>http://dev.cyc.com/api/core</url>
-  
-  <scm>
-    <connection>scm:git:git@github.com:cycorp/api-suite.git</connection>
-    <developerConnection>scm:git:git@github.com:cycorp/api-suite.git</developerConnection>
-    <url>https://github.com/cycorp/api-suite</url>
-  </scm>
-  
-  <issueManagement>
-    <url>http://dev.cyc.com/issues/</url>
-    <system>GitHub Issues</system>
-  </issueManagement>
-  
-  <licenses>
-    <license>
-      <name>The Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-  
-  <organization>
-    <name>Cycorp, Inc</name>
-    <url>http://www.cyc.com</url>
-  </organization>
-  
-  <developers>
-    <developer>
-      <name>Cycorp API Team</name>
-      <email>dev-team@cyc.com</email>
-      <organization>Cycorp, Inc.</organization>
-      <organizationUrl>http://www.cyc.com</organizationUrl>
-    </developer>
-  </developers>
-  
-  <distributionManagement> 
-    <site> 
-      <id>cyc-dev-center</id> 
-      <url>http://dev.cyc.com/api/core</url> 
-    </site>
-  </distributionManagement>
-  
+
   <!-- ====|    Configuration    |============================================================= -->
   
+  <dependencies>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-core-object-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-core-object-factories</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -90,17 +58,6 @@
       </plugin>
     </plugins>
   </build>
-  
-  <dependencies>
-    <dependency>
-      <groupId>com.cyc</groupId>
-      <artifactId>cyc-core-object-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.cyc</groupId>
-      <artifactId>cyc-core-object-factories</artifactId>
-    </dependency>
-  </dependencies>
   
   <reporting>
     <plugins>
@@ -159,5 +116,48 @@
       -->
     </plugins>
   </reporting>
+  
+  <!-- ====|    Metadata & contact info    |=================================================== -->
+
+  <url>http://dev.cyc.com/api/core</url>
+  
+  <scm>
+    <connection>scm:git:git@github.com:cycorp/api-suite.git</connection>
+    <developerConnection>scm:git:git@github.com:cycorp/api-suite.git</developerConnection>
+    <url>https://github.com/cycorp/api-suite</url>
+  </scm>
+  
+  <issueManagement>
+    <url>http://dev.cyc.com/issues/</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  
+  <organization>
+    <name>Cycorp, Inc</name>
+    <url>http://www.cyc.com</url>
+  </organization>
+  
+  <developers>
+    <developer>
+      <name>Cycorp API Team</name>
+      <email>dev-team@cyc.com</email>
+      <organization>Cycorp, Inc.</organization>
+      <organizationUrl>http://www.cyc.com</organizationUrl>
+    </developer>
+  </developers>
+  
+  <distributionManagement> 
+    <site> 
+      <id>cyc-dev-center</id> 
+      <url>http://dev.cyc.com/api/core</url> 
+    </site>
+  </distributionManagement>
   
 </project>

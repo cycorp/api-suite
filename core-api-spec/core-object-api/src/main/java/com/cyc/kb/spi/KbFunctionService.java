@@ -45,13 +45,14 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.KbFunction}.
+ * 
  * @author nwinant
  */
-public interface KbFunctionService<T extends KbFunction> extends RelationService<T> {
+public interface KbFunctionService extends RelationService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFunctionFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFunctionFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Function-Denotational
    *
@@ -61,11 +62,11 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
    * @throws CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  KbFunction get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Function-Denotational
    *
@@ -75,11 +76,11 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  KbFunction findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Function-Denotational
    * @param constraintColStr the string representation of the collection that this
@@ -91,13 +92,13 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  KbFunction findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, java.lang.String, 
-   * java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, java.lang.String, 
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this
@@ -110,12 +111,12 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  KbFunction findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Function-Denotational
    * @param constraintCol the collection that this #$Function-Denotational will instantiate
@@ -126,13 +127,13 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  KbFunction findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbFunctionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
+   * com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Function-Denotational
    * @param constraintCol the collection that this #$Function-Denotational will instantiate
@@ -144,12 +145,12 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  KbFunction findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbFunctionFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbFunctionFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$Function-Denotational
@@ -158,7 +159,7 @@ public interface KbFunctionService<T extends KbFunction> extends RelationService
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbFunctionFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbFunctionFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

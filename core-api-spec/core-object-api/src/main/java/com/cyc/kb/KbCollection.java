@@ -22,7 +22,6 @@ package com.cyc.kb;
  */
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
-
 import java.util.Collection;
 
 /**
@@ -415,6 +414,8 @@ public interface KbCollection extends KbTerm {
    */
   public Collection<KbCollection> instancesOf(Context ctx);
 
+  
+  
   /**
    * Creates a new Fact stating that <code>this</code> object is an instance of
    * the <code>#$Collection</code> represented by <code>col</code> in the
@@ -432,9 +433,12 @@ public interface KbCollection extends KbTerm {
    * @throws CreateException
    * @throws KbTypeException
    */
+  @Override
   public KbCollection instantiates(String colStr, String ctxStr)
           throws KbTypeException, CreateException;
 
+  
+  
   /**
    * Creates a new Fact stating that <code>this</code> object is an instance of
    * the <code>#$Collection</code> represented by <code>col</code> in the
@@ -451,6 +455,7 @@ public interface KbCollection extends KbTerm {
    * @throws CreateException
    * @throws KbTypeException
    */
+  @Override
   public KbCollection instantiates(KbCollection col, Context ctx)
           throws KbTypeException, CreateException;
 

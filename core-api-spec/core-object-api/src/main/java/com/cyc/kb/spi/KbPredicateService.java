@@ -45,13 +45,14 @@ import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.KbPredicate}.
+ * 
  * @author nwinant
  */
-public interface KbPredicateService<T extends KbPredicate> extends RelationService<T> {
+public interface KbPredicateService extends RelationService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbPredicateFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbPredicateFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Predicate
    *
@@ -61,11 +62,11 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
    * @throws CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  KbPredicate get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Predicate
    *
@@ -75,11 +76,11 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  KbPredicate findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Predicate
    * @param constraintColStr the string representation of the collection that this #$Predicate will
@@ -91,13 +92,13 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  KbPredicate findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, java.lang.String,
-   * java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, java.lang.String,
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that this #$Predicate will
@@ -110,12 +111,12 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  KbPredicate findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Predicate
    * @param constraintCol the collection that this #$Predicate will instantiate
@@ -126,13 +127,13 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  KbPredicate findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection,
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbPredicateFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection,
+   * com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Predicate
    * @param constraintCol the collection that this #$Predicate will instantiate
@@ -144,12 +145,12 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  KbPredicate findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbPredicateFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbPredicateFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$Predicate
@@ -158,7 +159,7 @@ public interface KbPredicateService<T extends KbPredicate> extends RelationServi
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbPredicateFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbPredicateFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

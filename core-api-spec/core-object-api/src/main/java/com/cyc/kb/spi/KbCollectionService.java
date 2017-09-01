@@ -45,12 +45,14 @@ import com.cyc.kb.exception.KbTypeException;
 
 /**
  *
+ * Provides implementations of {@link com.cyc.kb.KbCollection}.
+ * 
  * @author nwinant
  */
-public interface KbCollectionService<T extends KbCollection> extends KbTermService<T> {
+public interface KbCollectionService extends KbTermService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.KbCollectionFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.KbCollectionFactory#get(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Collection
    *
@@ -60,11 +62,11 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
    * @throws CreateException
    */
   @Override
-  T get(String nameOrId) throws KbTypeException, CreateException;
+  KbCollection get(String nameOrId) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Collection
    *
@@ -74,11 +76,11 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId) throws CreateException, KbTypeException;
+  KbCollection findOrCreate(String nameOrId) throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Collection
    * @param constraintColStr the string representation of the collection that <code>this</code>
@@ -90,13 +92,13 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr)
+  KbCollection findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, java.lang.String, 
-   * java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, java.lang.String, 
+   * java.lang.String)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the term
    * @param constraintColStr the string representation of the collection that <code>this</code>
@@ -109,12 +111,12 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
+  KbCollection findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)}.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection)}.
    *
    * @param nameOrId the string representation or the HLID of the #$Collection
    * @param constraintCol the collection that <code>this</code> #$Collection will instantiate
@@ -125,13 +127,13 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol)
+  KbCollection findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.KbCollectionFactory#findOrCreate(java.lang.String, com.cyc.kb.KbCollection, 
+   * com.cyc.kb.Context)</tt>.
    *
    * @param nameOrId the string representation or the HLID of the #$Collection
    * @param constraintCol the collection that <code>this</code> #$Collection will instantiate
@@ -143,12 +145,12 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
    * @throws CreateException
    */
   @Override
-  T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+  KbCollection findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbCollectionFactory#existsAsType(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbCollectionFactory#existsAsType(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return <code>true</code> if entity exists in KB and is an instance of #$Collection
@@ -157,8 +159,8 @@ public interface KbCollectionService<T extends KbCollection> extends KbTermServi
   boolean existsAsType(String nameOrId);
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.KbCollectionFactory#getStatus(java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.KbCollectionFactory#getStatus(java.lang.String)</tt>.
    *
    * @param nameOrId either the name or HL ID of an entity in the KB
    * @return an enum describing the existential status of the entity in the KB

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.cyc.query.graphs;
+package com.cyc.query.graph;
 
 /*
  * #%L
@@ -49,7 +49,8 @@ import java.util.List;
  * 
  * @author nwinant
  */
-public interface GraphNodeAbsolutePath<V, T extends GraphNodeAbsolutePath<V, T>> extends Comparable<T> {
+public interface GraphNodeAbsolutePath<V, T extends GraphNodeAbsolutePath<V, T>> 
+        extends Comparable<T> {
 
   /**
    * Returns the ID of current node. The type of the ID object is left entirely to the specific 
@@ -110,7 +111,8 @@ public interface GraphNodeAbsolutePath<V, T extends GraphNodeAbsolutePath<V, T>>
   /**
    * Returns a string representation of the node's absolute path. Because formatting rules for the
    * path (including node IDs) may be highly dependent on the particular type of graph, all 
-   * formatting decisions are left entirely to the particular <code>GraphNodeAbsolutePath</code> implementation.
+   * formatting decisions are left entirely to the particular <code>GraphNodeAbsolutePath</code>
+   * implementation.
    * 
    * @return a string representation of the node's absolute path.
    */
@@ -120,12 +122,12 @@ public interface GraphNodeAbsolutePath<V, T extends GraphNodeAbsolutePath<V, T>>
   /**
    * Returns a string representation of the node's absolute path, with each node ID padded out to a
    * minimum length (optional operation). As with {@link #toString()}, the formatting rules for the 
-   * path, including how nodes should be padded, are left entirely to the specific <code>GraphNodeAbsolutePath</code>
-   * implementations.
+   * path, including how nodes should be padded, are left entirely to the specific
+   * <code>GraphNodeAbsolutePath</code>implementations.
    * 
-   * <p>A <code>GraphNodeAbsolutePath</code> implementation is not required to provide any special behavior for this 
-   * method, but if it does not, this method should simply return the normal {@link #toString()} 
-   * value.
+   * <p>A <code>GraphNodeAbsolutePath</code> implementation is not required to provide any special
+   * behavior for this method, but if it does not, this method should simply return the normal
+   * {@link #toString()} value.
    * 
    * @param minIdLength the minimum length for each node ID.
    * @return a string representation of the node's absolute path, with each node ID padded out to a

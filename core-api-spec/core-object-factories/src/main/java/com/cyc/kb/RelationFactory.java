@@ -49,7 +49,7 @@ public class RelationFactory {
   // Construction
   
   private RelationFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getRelationService();
+    service = CoreServicesLoader.getKbFactoryServices().relation();
   }
 
   protected RelationService getService() {

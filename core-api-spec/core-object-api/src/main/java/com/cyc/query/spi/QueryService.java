@@ -2,7 +2,7 @@ package com.cyc.query.spi;
 
 /*
  * #%L
- * File: QueryFactoryService.java
+ * File: QueryService.java
  * Project: Core API Object Specification
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc
@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * @author daves
  */
-public interface QueryFactoryService {
+public interface QueryService {
 
   /**
    * constructs a Query working with the string queryStr.

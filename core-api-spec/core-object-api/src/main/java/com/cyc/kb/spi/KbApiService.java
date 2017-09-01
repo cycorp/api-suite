@@ -18,7 +18,7 @@ package com.cyc.kb.spi;
 
 /*
  * #%L
- * File: KbFactoryServices.java
+ * File: KbApiService.java
  * Project: Core API Object Specification
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc
@@ -41,42 +41,42 @@ package com.cyc.kb.spi;
  *
  * @author nwinant
  */
-public interface KbFactoryServices {
+public interface KbApiService {
+    
+  AssertionService assertion();
 
-  AssertionService getAssertionService();
+  BinaryPredicateService binaryPredicate();
 
-  BinaryPredicateService getBinaryPredicateService();
+  KbCollectionService collection();
 
-  KbCollectionService getCollectionService();
+  ContextService context();
 
-  ContextService getContextService();
+  FactService fact();
 
-  ConvenienceService getConvenienceService();
-
-  FactService getFactService();
-
-  FirstOrderCollectionService getFirstOrderCollectionService();
-
-  KbFunctionService getFunctionService();
-
-  KbIndividualService getIndividualService();
+  FirstOrderCollectionService firstOrderCollection();
   
-  KbObjectService getKbObjectService();
+  KbFunctionService function();
+  
+  KbIndividualService individual();
+  
+  KbService kb();    // TODO: rename and/or reorganize w/ KbObjectService? - nwinant, 2017-07-27
+  
+  //KbObjectService kbObject();
+  
+  KbPredicateService predicate();
+  
+  RelationService relation();
 
-  KbPredicateService getPredicateService();
+  RuleService rule();
 
-  RelationService getRelationService();
+  SecondOrderCollectionService secondOrderCollection();
 
-  RuleService getRuleService();
+  SentenceService sentence();
 
-  SecondOrderCollectionService getSecondOrderCollectionService();
+  SymbolService symbol();
 
-  SentenceService getSentenceService();
+  KbTermService term();
 
-  SymbolService getSymbolService();
-
-  KbTermService getTermService();
-
-  VariableService getVariableService();
+  VariableService variable();
 
 }

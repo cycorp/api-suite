@@ -1,6 +1,8 @@
 package com.cyc.query.parameters;
 
 import com.cyc.query.metrics.InferenceMetrics;
+import java.util.Map;
+import java.util.Set;
 
 /*
  * #%L
@@ -151,5 +153,19 @@ public interface InferenceParameterGetter {
    * @return true iff it can be continued.
    */
   Boolean isContinuable();
-
+  
+  boolean containsKey(String key);
+  
+  Set<Map.Entry<String, Object>> entrySet();
+  
+  boolean isEmpty();
+  
+  Set<String> keySet();
+  
+  Object get(String parameterName);
+  
+  int size();
+  
+  Object clone();
+  
 }

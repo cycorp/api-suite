@@ -53,7 +53,7 @@ public class RuleFactory {
   // Construction
   
   private RuleFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getRuleService();
+    service = CoreServicesLoader.getKbFactoryServices().rule();
   }
 
   protected RuleService getService() {

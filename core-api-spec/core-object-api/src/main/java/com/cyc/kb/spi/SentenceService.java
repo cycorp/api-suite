@@ -45,26 +45,25 @@ import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
 
 /**
- *
- * @author nwinant
+ * Provides implementations of {@link com.cyc.kb.Sentence}.
  * 
- * @param <T>
+ * @author nwinant
  */
-public interface SentenceService<T extends Sentence> extends KbObjectService<T> {
+public interface SentenceService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SentenceFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.SentenceFactory#get(java.lang.String)</tt>.
    *
    * @param   sentStr  the string representing a Sentence in the KB, a CycL sentence
    * @return  a Sentence object
    * @throws  KbTypeException
    * @throws  CreateException if the Sentence represented by sentStr could not be parsed.
    */
-  T get(String sentStr) throws KbTypeException, CreateException;
+  Sentence get(String sentStr) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.SentenceFactory#get(com.cyc.kb.Relation, java.lang.Object...) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.SentenceFactory#get(com.cyc.kb.Relation, java.lang.Object...)</tt>.
    *
    * @param   pred  the first argument of the formula
    * @param   args  the other arguments of the formula in the order they appear in the list
@@ -73,41 +72,41 @@ public interface SentenceService<T extends Sentence> extends KbObjectService<T> 
    *                           should never happen.
    * @throws  CreateException
    */
-  T get(Relation pred, Object... args) throws KbTypeException, CreateException;
+  Sentence get(Relation pred, Object... args) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SentenceFactory#get(java.lang.Object...) }.
+   * Implementation used by static method <tt>com.cyc.kb.SentenceFactory#get(java.lang.Object...)</tt>.
    *
    * @param   args  the arguments of the formula in order
    * @return  a Sentence object
    * @throws  KbTypeException never thrown
    * @throws  CreateException
    */
-  T get(Object... args) throws KbTypeException, CreateException;
+  Sentence get(Object... args) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SentenceFactory#and(com.cyc.kb.Sentence...) }.
+   * Implementation used by static method <tt>com.cyc.kb.SentenceFactory#and(com.cyc.kb.Sentence...)</tt>.
    *
    * @param   sentences  list of sentences to be conjoined
    * @return  a new conjoined sentence
    * @throws  KbTypeException
    * @throws  CreateException
    */
-  T and(Sentence... sentences) throws KbTypeException, CreateException;
+  Sentence and(Sentence... sentences) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SentenceFactory#and(java.lang.Iterable) }.
+   * Implementation used by static method <tt>com.cyc.kb.SentenceFactory#and(java.lang.Iterable)</tt>.
    *
    * @param   sentences list of sentences to be conjoined
    * @return  a new conjunction sentence
    * @throws  KbTypeException
    * @throws  CreateException
    */
-  T and(Iterable<Sentence> sentences) throws KbTypeException, CreateException;
+  Sentence and(Iterable<Sentence> sentences) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.SentenceFactory#implies(java.util.Collection, com.cyc.kb.Sentence) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.SentenceFactory#implies(java.util.Collection, com.cyc.kb.Sentence)</tt>.
    *
    * @param   antecedent
    * @param   consequent
@@ -115,12 +114,12 @@ public interface SentenceService<T extends Sentence> extends KbObjectService<T> 
    * @throws  KbTypeException
    * @throws  CreateException
    */
-  T implies(Collection<Sentence> antecedent, Sentence consequent) 
+  Sentence implies(Collection<Sentence> antecedent, Sentence consequent) 
           throws KbTypeException, CreateException;
   
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.SentenceFactory#implies(com.cyc.kb.Sentence, com.cyc.kb.Sentence) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.SentenceFactory#implies(com.cyc.kb.Sentence, com.cyc.kb.Sentence)</tt>.
    *
    * @param   antecedent
    * @param   consequent
@@ -128,26 +127,26 @@ public interface SentenceService<T extends Sentence> extends KbObjectService<T> 
    * @throws  KbTypeException
    * @throws  CreateException
    */
-  T implies(Sentence antecedent, Sentence consequent) throws KbTypeException, CreateException;
+  Sentence implies(Sentence antecedent, Sentence consequent) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SentenceFactory#or(com.cyc.kb.Sentence...) }.
+   * Implementation used by static method <tt>com.cyc.kb.SentenceFactory#or(com.cyc.kb.Sentence...)</tt>.
    *
    * @param   sentences  list of sentences to be disjoined
    * @return  a new disjunction sentence
    * @throws  KbTypeException
    * @throws  CreateException
    */
-  T or(Sentence... sentences) throws KbTypeException, CreateException;
+  Sentence or(Sentence... sentences) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.SentenceFactory#or(java.lang.Iterable) }.
+   * Implementation used by static method <tt>com.cyc.kb.SentenceFactory#or(java.lang.Iterable)</tt>.
    *
    * @param   sentences  list of sentences to be disjoined
    * @return  a new disjunction sentence
    * @throws  KbTypeException
    * @throws  CreateException
    */
-  T or(Iterable<Sentence> sentences) throws KbTypeException, CreateException;
+  Sentence or(Iterable<Sentence> sentences) throws KbTypeException, CreateException;
 
 }

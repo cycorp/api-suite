@@ -48,13 +48,14 @@ import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.Rule}.
+ * 
  * @author nwinant
  */
-public interface RuleService<T extends Rule> extends AssertionService<T> {
+public interface RuleService extends AssertionService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RuleFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.RuleFactory#get(java.lang.String)</tt>.
    *
    * @param hlid the <code>hlid</code> corresponding to the Rule in the KB
    *
@@ -65,11 +66,11 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * @throws CreateException
    */
   @Override
-  T get(String hlid) throws KbTypeException, CreateException;
+  Rule get(String hlid) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#get(java.lang.String, java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#get(java.lang.String, java.lang.String)</tt>.
    *
    * @param formulaStr string representation of the formula to be found
    * @param ctxStr string representation of the context of the formula
@@ -80,12 +81,12 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * @throws KbObjectNotFoundException if no Rule with the given formula is found in the context
    */
   @Override
-  T get(String formulaStr, String ctxStr)
+  Rule get(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param formula formula to be found
    * @param ctx context of the formula
@@ -97,13 +98,13 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * context
    */
   @Override
-  T get(Sentence formula, Context ctx)
+  Rule get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Sentence, 
-   * com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Sentence, 
+   * com.cyc.kb.Context)</tt>.
    *
    * @param antecedent the literal in the ANTECEDENT of the rule
    * @param consequent the literal in the CONSEQUENT of the rule
@@ -115,11 +116,11 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * @throws KbObjectNotFoundException if no assertion with the given formula is found in the
    * context
    */
-  T get(Sentence antecedent, Sentence consequent, Context ctx) 
+  Rule get(Sentence antecedent, Sentence consequent, Context ctx) 
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RuleFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.RuleFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param formulaStr the string representation of the rule to be found or created
    *
@@ -131,12 +132,12 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * created in the context
    */
   @Override
-  T findOrCreate(String formulaStr)
+  Rule findOrCreate(String formulaStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param formulaStr the string representation of the rule formula
    * @param ctxStr the string representation of the rule context
@@ -149,13 +150,13 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * be found or created in the context
    */
   @Override
-  T findOrCreate(String formulaStr, String ctxStr)
+  Rule findOrCreate(String formulaStr, String ctxStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#findOrCreate(java.lang.String, java.lang.String, 
-   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#findOrCreate(java.lang.String, java.lang.String, 
+   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
@@ -170,11 +171,11 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * or created in the context
    */
   @Override
-  T findOrCreate(String formulaStr, String ctxStr, Strength strength, Direction direction)
+  Rule findOrCreate(String formulaStr, String ctxStr, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence) }.
+   * Implementation used by static method <tt>com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence)</tt>.
    *
    * @param formula the formula to be found or created
    *
@@ -184,11 +185,11 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * @throws CreateException
    */
   @Override
-  T findOrCreate(Sentence formula) throws KbTypeException, CreateException;
+  Rule findOrCreate(Sentence formula) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -201,13 +202,13 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * or created in the context
    */
   @Override
-  T findOrCreate(Sentence formula, Context ctx)
+  Rule findOrCreate(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, 
-   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, 
+   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction)</tt>.
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -222,13 +223,13 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * or created in the context
    */
   @Override
-  T findOrCreate(Sentence formula, Context ctx, Strength strength, Direction direction)
+  Rule findOrCreate(Sentence formula, Context ctx, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence, 
-   * com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.RuleFactory#findOrCreate(com.cyc.kb.Sentence, 
+   * com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param antecedent the literal in the antecedent of the rule
    * @param consequent the literal in the antecedent of the rule
@@ -238,7 +239,7 @@ public interface RuleService<T extends Rule> extends AssertionService<T> {
    * @throws CreateException
    * @throws KbTypeException
    */
-  T findOrCreate(Sentence antecedent, Sentence consequent, Context ctx) 
+  Rule findOrCreate(Sentence antecedent, Sentence consequent, Context ctx) 
           throws KbTypeException, CreateException;
 
 }

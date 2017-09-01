@@ -7,21 +7,60 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-api-parent</artifactId>
-    <version>1.0.0-rc6</version>
+    <version>1.0.0-rc7.0</version>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-object-factories</artifactId>
-  <version>1.0.0-rc6</version>
+  <version>1.0.0-rc7.0</version>
   <packaging>jar</packaging>
-  
-  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <name>Core API Object Factories</name>
 
   <description>
     Implementation-independent factory classes for Cyc Core API objects.
   </description>
+
+  <!-- ====|    Configuration    |============================================================= -->
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-core-object-api</artifactId>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <!--
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+        -->
+      </plugin>
+      <!--
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      -->
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId> 
+        <artifactId>license-maven-plugin</artifactId> 
+      </plugin>
+    </plugins>
+  </build>
+  
+  <!-- ====|    Metadata & contact info    |=================================================== -->
   
   <url>http://dev.cyc.com/api/core/</url>
   
@@ -58,43 +97,5 @@
       <organizationUrl>http://www.cyc.com</organizationUrl>
     </developer>
   </developers>
-  
-  <!-- ====|    Configuration    |============================================================= -->
-  
-  <build>
-    <plugins>
-      <!--
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-      -->
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId> 
-        <artifactId>license-maven-plugin</artifactId> 
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  
-  <dependencies>
-    <dependency>
-      <groupId>com.cyc</groupId>
-      <artifactId>cyc-core-object-api</artifactId>
-    </dependency>
-  </dependencies>
   
 </project>

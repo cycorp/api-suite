@@ -48,13 +48,14 @@ import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbTypeException;
 
 /**
- *
+ * Provides implementations of {@link com.cyc.kb.Fact}.
+ * 
  * @author nwinant
  */
-public interface FactService<T extends Fact> extends AssertionService<T> {
+public interface FactService extends AssertionService {
 
   /**
-   * Provides implementation for {@link com.cyc.kb.FactFactory#get(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.FactFactory#get(java.lang.String)</tt>.
    *
    * @param hlid the <code>hlid</code> corresponding to the Fact in the KB
    *
@@ -65,11 +66,11 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * @throws CreateException
    */
   @Override
-  T get(String hlid) throws KbTypeException, CreateException;
+  Fact get(String hlid) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.FactFactory#get(java.lang.String, java.lang.String) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.FactFactory#get(java.lang.String, java.lang.String)</tt>.
    *
    * @param formulaStr string representation of the formula to be found
    * @param ctxStr string representation of the context of the formula
@@ -82,12 +83,12 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * context
    */
   @Override
-  T get(String formulaStr, String ctxStr)
+  Fact get(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.FactFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.FactFactory#get(com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param formula formula to be found
    * @param ctx context of the formula
@@ -100,11 +101,11 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * context
    */
   @Override
-  T get(Sentence formula, Context ctx)
+  Fact get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.FactFactory#findOrCreate(java.lang.String) }.
+   * Implementation used by static method <tt>com.cyc.kb.FactFactory#findOrCreate(java.lang.String)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    *
@@ -116,12 +117,12 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * created in the context
    */
   @Override
-  T findOrCreate(String formulaStr)
+  Fact findOrCreate(String formulaStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.FactFactory#findOrCreate(java.lang.String, java.lang.String) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.FactFactory#findOrCreate(java.lang.String, java.lang.String)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
@@ -134,13 +135,13 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * created in the context
    */
   @Override
-  T findOrCreate(String formulaStr, String ctxStr)
+  Fact findOrCreate(String formulaStr, String ctxStr)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.FactFactory#findOrCreate(java.lang.String, java.lang.String,
-   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.FactFactory#findOrCreate(java.lang.String, java.lang.String,
+   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction)</tt>.
    *
    * @param formulaStr the string representation of the formula to be found or created
    * @param ctxStr the string representation of the context of the formula
@@ -155,11 +156,11 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * created in the context
    */
   @Override
-  T findOrCreate(String formulaStr, String ctxStr, Strength strength, Direction direction)
+  Fact findOrCreate(String formulaStr, String ctxStr, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for {@link com.cyc.kb.FactFactory#findOrCreate(com.cyc.kb.Sentence) }.
+   * Implementation used by static method <tt>com.cyc.kb.FactFactory#findOrCreate(com.cyc.kb.Sentence)</tt>.
    *
    * @param formula the formula to be found or created
    *
@@ -172,11 +173,11 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * created in the context
    */
   @Override
-  T findOrCreate(Sentence formula) throws KbTypeException, CreateException;
+  Fact findOrCreate(Sentence formula) throws KbTypeException, CreateException;
 
   /**
-   * Provides implementation for
-   * {@link com.cyc.kb.FactFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context) }.
+   * Implementation used by static method
+   * <tt>com.cyc.kb.FactFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context)</tt>.
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -190,13 +191,13 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    * created in the context
    */
   @Override
-  T findOrCreate(Sentence formula, Context ctx)
+  Fact findOrCreate(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, InvalidFormulaInContextException;
 
   /**
-   * Provides implementation for 
-   * {@link com.cyc.kb.FactFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, 
-   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction) }.
+   * Implementation used by static method 
+   * <tt>com.cyc.kb.FactFactory#findOrCreate(com.cyc.kb.Sentence, com.cyc.kb.Context, 
+   * com.cyc.kb.Assertion.Strength, com.cyc.kb.Assertion.Direction)</tt>.
    *
    * @param formula the formula to be found or created
    * @param ctx the context of the formula
@@ -213,7 +214,7 @@ public interface FactService<T extends Fact> extends AssertionService<T> {
    *
    */
   @Override
-  T findOrCreate(Sentence formula, Context ctx, Strength strength, Direction direction)
+  Fact findOrCreate(Sentence formula, Context ctx, Strength strength, Direction direction)
           throws CreateException, KbTypeException, InvalidFormulaInContextException;
 
 }

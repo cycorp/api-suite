@@ -49,7 +49,7 @@ public class KbIndividualFactory {
   // Construction
   
   private KbIndividualFactory() {
-    service = CoreServicesLoader.getKbFactoryServices().getIndividualService();
+    service = CoreServicesLoader.getKbFactoryServices().individual();
   }
 
   protected KbIndividualService getService() {
