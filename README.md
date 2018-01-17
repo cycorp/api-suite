@@ -5,7 +5,7 @@ The Cyc Java API Suite comprises a set of Java APIs (and implementations) for de
 applications or otherwise accessing Cyc capabilities, and provides a layered suite of functionality.
 We have currently released the following Java libraries:
 
-* [Core API Specification](core-api-spec/README.md): Core set of APIs for interacting with the Cyc 
+* [Core API Specification](core-api/README.md): Core set of APIs for interacting with the Cyc 
   inference engine and knowledge base.
 * [Core Client Implementation](core-client/README.md): Reference implementation for the Core API 
   Specification.

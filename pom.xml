@@ -4,35 +4,162 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
+  <!-- 
+      When using a stable parent pom, set its relativePath to an empty string; 
+      this forces Maven to resolve the pom from the repositories instead of the filesystem.
+      See: http://maven.apache.org/ref/3.0.3/maven-model/maven.html#class_parent
+  -->
   <parent>
     <groupId>com.cyc</groupId>
-    <artifactId>cyc-sonatype-oss-parent</artifactId>
-    <version>1.0.0</version>
-    <relativePath>../maven-resources/parent-poms/sonatype-oss-parent</relativePath>
+    <artifactId>cyc-default-config-parent</artifactId>
+    <version>1.0.0-rc8.0</version>
+    <!--relativePath>../maven-resources/parent-poms/default-config-parent</relativePath-->
+    <relativePath></relativePath>
   </parent>
   
-  <groupId>com.cyc.aggregate</groupId>
-  <artifactId>cyc-api-suite</artifactId>
-  <version>1.0.0-rc7.0</version>
+  <groupId>com.cyc</groupId>
+  <artifactId>cyc-api-parent</artifactId>
+  <version>1.0.0-rc8.0</version>
   <packaging>pom</packaging>
   
-  <name>API Suite Aggegrate</name>
+  <name>API Suite Parent</name>
   
   <description>
-    Builds all Cyc Java APIs.
+    Parent POM for Cyc Java APIs.
   </description>
   
   <!-- ====|    Configuration    |============================================================= -->
   
   <modules>
-    <module>api-parent</module>
-    <module>core-api-spec</module>
+    <module>core-api</module>
   </modules>
   
-  <!-- ====|    Metadata & contact info    |=================================================== -->
+  <!--
+  <properties>
+    <cyc-core-api.version>1.0.0-rc8.0</cyc-core-api.version>
+    <cyc-core-client-impl.version>${cyc-core-api.version}</cyc-core-client-impl.version>
+    <maven-site-plugin.stagingDirectory>/tmp/www/dev.cyc.com/api</maven-site-plugin.stagingDirectory>
+  </properties>
   
-  <url>http://dev.cyc.com/</url>
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!- - 
+        Enables test-scope logging of Cyc APIs via SLF4J & Log4J. (Cyc APIs use
+        SLF4J, which must be bound to a logging framework at deployment time.)
+        
+        Note that each API project maintains its own log4j.properties file in
+        its src/test/resources directory.
+        
+        See:
+        * http://www.slf4j.org/manual.html
+        * [PROJECT]/src/test/resources/log4j.properties
+    - ->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
+  
+  <dependencyManagement>
+    <dependencies>
+      <!- -
+          Core API
+      - ->
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-api</artifactId>
+        <version>${cyc-core-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-api</artifactId>
+        <classifier>jar-with-dependencies</classifier>
+        <version>${cyc-core-api.version}</version>
+      </dependency>
+      <!- - 
+          Core Client Impl 
+      - ->
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-client-impl</artifactId>
+        <version>${cyc-core-client-impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-core-client-impl</artifactId>
+        <classifier>jar-with-dependencies</classifier>
+        <version>${cyc-core-client-impl.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+  <profiles>
+    <profile>
+      <id>default-config</id>
+      <activation>
+        <property>
+          <name>!sonatype-oss-release</name>
+        </property>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <configuration>
+                <author>false</author>
+                <version>false</version>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>default-cli</id>
+                  <phase>site</phase>
+                  <goals>
+                    <goal>aggregate</goal>
+                  </goals>
+                  <configuration>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>resource-bundles</id>
+                  <phase>package</phase>
+                  <goals>
+                    <!- - produce source artifact for main project sources - ->
+                    <goal>resource-bundle</goal>
+                  </goals>
+                  <configuration>
+                    <detectOfflineLinks>false</detectOfflineLinks>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <artifactId>maven-site-plugin</artifactId>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+  -->
+  <!-- ====|    Metadata & contact info    |=================================================== -->
 
+  <url>http://dev.cyc.com/api/</url>
+  
   <scm>
     <connection>scm:git:git@github.com:cycorp/api-suite.git</connection>
     <developerConnection>scm:git:git@github.com:cycorp/api-suite.git</developerConnection>
