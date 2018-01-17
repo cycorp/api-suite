@@ -1,6 +1,6 @@
 Cyc Core API Specification
 ==========================
-**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-api-parent.svg)](https://github.com/cycorp/api-suite/releases/)  
+**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-api.svg)](https://github.com/cycorp/api-suite/releases/)  
 **License:** [Apache 2.0](LICENSE)  
 **Changes:** See the [CHANGELOG](CHANGELOG.md)  
 **Documentation:** [Cyc Developer Center](http://dev.cyc.com/api/core/)  
