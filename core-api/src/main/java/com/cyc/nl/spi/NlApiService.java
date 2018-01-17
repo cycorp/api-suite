@@ -1,11 +1,8 @@
-/**
- * Provides an arbitrary set of criteria to select a subset of CycSession objects.
- */
-package com.cyc.session.selection;
+package com.cyc.nl.spi;
 
 /*
  * #%L
- * File: package-info.java
+ * File: NlApiService.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -23,3 +20,15 @@ package com.cyc.session.selection;
  * limitations under the License.
  * #L%
  */
+import com.cyc.CycApiEntryPoint;
+
+/**
+ * The primary entrypoint for an NL API implementation.
+ * 
+ * @author nwinant
+ */
+public interface NlApiService extends CycApiEntryPoint {
+  
+  ParaphraserFactory getParaphraserFactory();
+  
+}

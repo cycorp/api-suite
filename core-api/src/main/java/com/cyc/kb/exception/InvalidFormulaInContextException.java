@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: InvalidFormulaInContextException.java
@@ -26,11 +28,47 @@ package com.cyc.kb.exception;
  * It does not distinguish between semantic and syntactic errors.
  *
  * @author Vijay Raj
- * @version $Id: InvalidFormulaInContextException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: InvalidFormulaInContextException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class InvalidFormulaInContextException extends CreateException {
 
-  public InvalidFormulaInContextException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a InvalidFormulaInContextException. If the Throwable is a
+   * InvalidFormulaInContextException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new InvalidFormulaInContextException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a InvalidFormulaInContextException
+   */
+  public static InvalidFormulaInContextException fromThrowable(Throwable cause) {
+    return (cause instanceof InvalidFormulaInContextException)
+                   ? (InvalidFormulaInContextException) cause
+                   : new InvalidFormulaInContextException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a InvalidFormulaInContextException with the specified detail message. If the
+   * Throwable is a InvalidFormulaInContextException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new InvalidFormulaInContextException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a InvalidFormulaInContextException
+   */
+  public static InvalidFormulaInContextException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof InvalidFormulaInContextException && Objects.equals(message, cause.getMessage()))
+                   ? (InvalidFormulaInContextException) cause
+                   : new InvalidFormulaInContextException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected InvalidFormulaInContextException(Throwable cause) {
     super(cause);
   }
 
@@ -38,7 +76,7 @@ public class InvalidFormulaInContextException extends CreateException {
     super(msg);
   }
 
-  public InvalidFormulaInContextException(String msg, Throwable cause) {
+  protected InvalidFormulaInContextException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

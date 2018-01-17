@@ -57,7 +57,7 @@ public class QueryRuntimeException extends RuntimeException {
    *
    * @return a QueryRuntimeException
    */
-  public static QueryRuntimeException fromThrowable(Throwable t, String message) {
+  public static QueryRuntimeException fromThrowable(String message, Throwable t) {
     return (t instanceof QueryRuntimeException && Objects.equals(message, t.getMessage()))
                    ? (QueryRuntimeException) t
                    : new QueryRuntimeException(message, t);
@@ -69,11 +69,11 @@ public class QueryRuntimeException extends RuntimeException {
     super(message);
   }
 
-  public QueryRuntimeException(final String message, final Throwable cause) {
+  protected QueryRuntimeException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
-  public QueryRuntimeException(final Throwable cause) {
+  protected QueryRuntimeException(final Throwable cause) {
     super(cause);
   }
 

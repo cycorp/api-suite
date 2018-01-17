@@ -2,6 +2,7 @@ package com.cyc.kb.exception;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Objects;
 
 /*
  * #%L
@@ -36,7 +37,43 @@ import java.net.UnknownHostException;
  */
 public class KbRuntimeException extends RuntimeException {
 
-  public KbRuntimeException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a KbRuntimeException. If the Throwable is a
+   * KbRuntimeException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new KbRuntimeException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a KbRuntimeException
+   */
+  public static KbRuntimeException fromThrowable(Throwable cause) {
+    return (cause instanceof KbRuntimeException)
+                   ? (KbRuntimeException) cause
+                   : new KbRuntimeException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a KbRuntimeException with the specified detail message. If the
+   * Throwable is a KbRuntimeException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new KbRuntimeException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a KbRuntimeException
+   */
+  public static KbRuntimeException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof KbRuntimeException && Objects.equals(message, cause.getMessage()))
+                   ? (KbRuntimeException) cause
+                   : new KbRuntimeException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected KbRuntimeException(Throwable cause) {
     super(cause);
   }
 
@@ -44,7 +81,7 @@ public class KbRuntimeException extends RuntimeException {
     super(msg);
   }
 
-  public KbRuntimeException(String msg, Throwable cause) {
+  protected KbRuntimeException(String msg, Throwable cause) {
     super(msg, cause);
   }
   

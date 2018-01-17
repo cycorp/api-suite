@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: InvalidNameException.java
@@ -25,13 +27,49 @@ package com.cyc.kb.exception;
  * Thrown when code attempts to create a KB entity with an invalid name.
  * 
  * @author Nathan Winant
- * @version $Id: InvalidNameException.java 175435 2017-10-20 23:37:33Z nwinant $ 
+ * @version $Id: InvalidNameException.java 176267 2017-12-13 04:02:46Z nwinant $ 
  */
 // @todo specify what the requirements are for a Constant name.
 
 public class InvalidNameException extends CreateException {
   
-  public InvalidNameException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a InvalidNameException. If the Throwable is a
+   * InvalidNameException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new InvalidNameException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a InvalidNameException
+   */
+  public static InvalidNameException fromThrowable(Throwable cause) {
+    return (cause instanceof InvalidNameException)
+                   ? (InvalidNameException) cause
+                   : new InvalidNameException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a InvalidNameException with the specified detail message. If the
+   * Throwable is a InvalidNameException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new InvalidNameException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a InvalidNameException
+   */
+  public static InvalidNameException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof InvalidNameException && Objects.equals(message, cause.getMessage()))
+                   ? (InvalidNameException) cause
+                   : new InvalidNameException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected InvalidNameException(Throwable cause) {
     super(cause);
   }
 
@@ -39,7 +77,7 @@ public class InvalidNameException extends CreateException {
     super(msg);
   }
 
-  public InvalidNameException(String msg, Throwable cause) {
+  protected InvalidNameException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

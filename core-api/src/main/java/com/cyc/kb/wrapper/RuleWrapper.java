@@ -2,7 +2,7 @@ package com.cyc.kb.wrapper;
 
 /*
  * #%L
- * File: KbIndividualWrapper.java
+ * File: RuleWrapper.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -20,39 +20,32 @@ package com.cyc.kb.wrapper;
  * limitations under the License.
  * #L%
  */
-import com.cyc.kb.Context;
-import com.cyc.kb.KbCollection;
-import com.cyc.kb.KbIndividual;
-import java.util.Collection;
+import com.cyc.kb.Rule;
+import com.cyc.kb.Sentence;
 
 /**
- * An abstract base class for implementing KbIndividuals per the decorator pattern. To use, extend
- * this class and implement the {@link #wrapped() } method to return the wrapped object.
+ * An abstract base class for implementing Rules per the decorator pattern. To use, extend this
+ * class and implement the {@link #wrapped() } method to return the wrapped object.
  *
  * @author nwinant
  */
-public abstract class KbIndividualWrapper extends KbTermWrapper implements KbIndividual {
+public abstract class RuleWrapper extends AssertionWrapper implements Rule {
 
   //====|    Abstract methods    |================================================================//
   
   @Override
-  protected abstract KbIndividual wrapped();
+  protected abstract Rule wrapped();
 
   //====|    Public methods    |==================================================================//
   
   @Override
-  public Collection<KbCollection> instanceOf() {
-    return wrapped().instanceOf();
+  public Sentence getAntecedent() {
+    return wrapped().getAntecedent();
   }
-/*
+  
   @Override
-  public Collection<KbCollection> instanceOf(String ctxStr) {
-    return wrapped().instanceOf();
+  public Sentence getConsequent() {
+    return wrapped().getConsequent();
   }
-*/
-  @Override
-  public Collection<KbCollection> instanceOf(Context ctx) {
-    return wrapped().instanceOf();
-  }
-
+  
 }

@@ -116,22 +116,22 @@ public abstract class AssertionWrapper extends KbObjectWrapper implements Assert
   public Collection<String> getComments(Context ctx) {
     return wrapped().getComments(ctx);
   }
-
+/*
   @Override
   public Collection<String> getComments(String ctxStr) {
     return wrapped().getComments(ctxStr);
   }
-
+*/
   @Override
   public Fact addComment(String comment, Context ctx) throws KbTypeException, CreateException {
     return wrapped().addComment(comment, ctx);
   }
-
+/*
   @Override
   public Fact addComment(String comment, String ctx) throws KbTypeException, CreateException {
     return wrapped().addComment(comment, ctx);
   }
-
+*/
   @Override
   public Assertion addQuotedIsa(KbCollection collection, Context context)
           throws KbTypeException, CreateException {

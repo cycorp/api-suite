@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: KbTypeConflictException.java
@@ -31,11 +33,47 @@ package com.cyc.kb.exception;
  * simply adding more assertions will turn the KB entity into the desired type of entity.
  *
  * @author Nathan Winant
- * @version $Id: KbTypeConflictException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: KbTypeConflictException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbTypeConflictException extends KbTypeException {
 
-  public KbTypeConflictException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a KbTypeConflictException. If the Throwable is a
+   * KbTypeConflictException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new KbTypeConflictException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a KbTypeConflictException
+   */
+  public static KbTypeConflictException fromThrowable(Throwable cause) {
+    return (cause instanceof KbTypeConflictException)
+                   ? (KbTypeConflictException) cause
+                   : new KbTypeConflictException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a KbTypeConflictException with the specified detail message. If the
+   * Throwable is a KbTypeConflictException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new KbTypeConflictException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a KbTypeConflictException
+   */
+  public static KbTypeConflictException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof KbTypeConflictException && Objects.equals(message, cause.getMessage()))
+                   ? (KbTypeConflictException) cause
+                   : new KbTypeConflictException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected KbTypeConflictException(Throwable cause) {
     super(cause);
   }
 
@@ -43,7 +81,7 @@ public class KbTypeConflictException extends KbTypeException {
     super(msg);
   }
 
-  public KbTypeConflictException(String msg, Throwable cause) {
+  protected KbTypeConflictException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

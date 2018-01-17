@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: KbObjectNotFoundException.java
@@ -26,13 +28,49 @@ package com.cyc.kb.exception;
  * context.    
  * 
  * @author Vijay Raj
- * @version $Id: KbObjectNotFoundException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: KbObjectNotFoundException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 /*
 */
 public class KbObjectNotFoundException extends CreateException {
 
-  public KbObjectNotFoundException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a KbObjectNotFoundException. If the Throwable is a
+   * KbObjectNotFoundException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new KbObjectNotFoundException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a KbObjectNotFoundException
+   */
+  public static KbObjectNotFoundException fromThrowable(Throwable cause) {
+    return (cause instanceof KbObjectNotFoundException)
+                   ? (KbObjectNotFoundException) cause
+                   : new KbObjectNotFoundException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a KbObjectNotFoundException with the specified detail message. If the
+   * Throwable is a KbObjectNotFoundException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new KbObjectNotFoundException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a KbObjectNotFoundException
+   */
+  public static KbObjectNotFoundException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof KbObjectNotFoundException && Objects.equals(message, cause.getMessage()))
+                   ? (KbObjectNotFoundException) cause
+                   : new KbObjectNotFoundException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected KbObjectNotFoundException(Throwable cause) {
     super(cause);
   }
 
@@ -40,7 +78,7 @@ public class KbObjectNotFoundException extends CreateException {
     super(msg);
   }
 
-  public KbObjectNotFoundException(String msg, Throwable cause) {
+  protected KbObjectNotFoundException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

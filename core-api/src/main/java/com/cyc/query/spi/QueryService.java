@@ -128,7 +128,7 @@ public interface QueryService {
    * @throws KbException                      if <code>idStr</code> does not identify a KbIndividual
    * @throws UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier
    *
-   * @see com.cyc.kb.KbCollectionFactory#CYCL_QUERY_SPECIFICATION
+   * @see com.cyc.Cyc.Constants#CYCL_QUERY_SPECIFICATION
    */
   Query getQuery(final KbIndividual id)
           throws QueryConstructionException, KbException, UnsupportedCycOperationException;

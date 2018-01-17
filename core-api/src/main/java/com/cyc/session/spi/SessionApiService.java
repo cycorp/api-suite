@@ -21,13 +21,62 @@ package com.cyc.session.spi;
  * #L%
  */
 import com.cyc.CycApiEntryPoint;
+import com.cyc.session.SessionManager;
+import com.cyc.session.SessionManagerConfiguration;
+import com.cyc.session.exception.SessionManagerConfigurationException;
+import com.cyc.session.exception.SessionManagerException;
+import com.cyc.session.exception.SessionServiceException;
 
 /**
- *
+ * The primary entrypoint for a Session API implementation.
+ * 
  * @author nwinant
  */
 public interface SessionApiService extends CycApiEntryPoint {
   
+  /**
+   * Returns the current SessionManager instance.
+   * 
+   * @return 
+   */
   SessionManager getSessionManager();
   
+  /**
+   * Loads a new SessionManager, configured via the supplied SessionManagerConfiguration. The
+   * previous SessionManager will be closed if it has not been closed already.
+   *
+   * @param configuration
+   * 
+   * @return the new SessionManager
+   * 
+   * @throws SessionServiceException
+   * @throws SessionManagerException
+   * @throws SessionManagerConfigurationException
+   * 
+   * @see #reloadSessionManager() 
+   */
+  SessionManager reloadSessionManager(SessionManagerConfiguration configuration)
+          throws SessionServiceException, SessionManagerException, SessionManagerConfigurationException;
+  
+  /**
+   * Loads a new SessionManager with the default SessionManagerConfiguration. The previous
+   * SessionManager will be closed if it has not been closed already.
+   *
+   * @return the new SessionManager
+   * 
+   * @throws SessionServiceException
+   * @throws SessionManagerException
+   * 
+   * @see #reloadSessionManager(com.cyc.session.manager.SessionManagerConfiguration) 
+   */
+  SessionManager reloadSessionManager() 
+          throws SessionServiceException, SessionManagerException, SessionManagerConfigurationException;
+  
+  /* *
+   * Returns the configuration for the SessionManager.
+   * 
+   * @return 
+   * /
+  SessionManagerConfiguration getConfiguration();
+  */
 }

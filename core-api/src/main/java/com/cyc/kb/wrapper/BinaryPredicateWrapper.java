@@ -2,7 +2,7 @@ package com.cyc.kb.wrapper;
 
 /*
  * #%L
- * File: KbIndividualWrapper.java
+ * File: BinaryPredicateWrapper.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -20,39 +20,42 @@ package com.cyc.kb.wrapper;
  * limitations under the License.
  * #L%
  */
+import com.cyc.kb.BinaryPredicate;
 import com.cyc.kb.Context;
-import com.cyc.kb.KbCollection;
-import com.cyc.kb.KbIndividual;
+import com.cyc.kb.Fact;
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
 
 /**
- * An abstract base class for implementing KbIndividuals per the decorator pattern. To use, extend
- * this class and implement the {@link #wrapped() } method to return the wrapped object.
+ * An abstract base class for implementing BinaryPredicates per the decorator pattern. To use,
+ * extend this class and implement the {@link #wrapped() } method to return the wrapped object.
  *
  * @author nwinant
  */
-public abstract class KbIndividualWrapper extends KbTermWrapper implements KbIndividual {
+public abstract class BinaryPredicateWrapper extends KbPredicateWrapper implements BinaryPredicate {
 
   //====|    Abstract methods    |================================================================//
   
   @Override
-  protected abstract KbIndividual wrapped();
+  protected abstract BinaryPredicate wrapped();
 
   //====|    Public methods    |==================================================================//
-  
+
   @Override
-  public Collection<KbCollection> instanceOf() {
-    return wrapped().instanceOf();
+  public Fact addFact(Context ctx, Object arg1, Object arg2) 
+          throws KbTypeException, CreateException {
+    return wrapped().addFact(ctx, arg1, arg2);
   }
-/*
+
   @Override
-  public Collection<KbCollection> instanceOf(String ctxStr) {
-    return wrapped().instanceOf();
+  public <O> Collection<O> getValuesForArg(Object arg1, Object arg2, Context ctx) {
+    return wrapped().getValuesForArg(arg1, arg2, ctx);
   }
-*/
+
   @Override
-  public Collection<KbCollection> instanceOf(Context ctx) {
-    return wrapped().instanceOf();
+  public <O> Collection<O> getValuesForArg(Object arg1, Object arg2) {
+    return wrapped().getValuesForArg(arg1, arg2);
   }
 
 }

@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: SessionServiceException.java
@@ -28,8 +30,49 @@ package com.cyc.session.exception;
  */
 public class SessionServiceException extends SessionRuntimeException {
   
+  //====|    Factory methods    |=================================================================//
+  
   /**
-   * Construct a CycConfigurationException object with no specified message.
+   * Converts a Throwable to a SessionServiceException. If the Throwable is a
+   * SessionServiceException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new SessionServiceException.
+   *
+   * @param cause the Throwable to convert
+   * @param interfaceClass
+   * 
+   * @return a SessionServiceException
+   */
+  public static SessionServiceException fromThrowable(Class interfaceClass, Throwable cause) {
+    return (cause instanceof SessionServiceException
+            && Objects.equals(interfaceClass, ((SessionServiceException) cause).getInterfaceClass()))
+                   ? (SessionServiceException) cause
+                   : new SessionServiceException(interfaceClass, cause);
+  }
+
+  /**
+   * Converts a Throwable to a SessionServiceException with the specified detail message. If the
+   * Throwable is a SessionServiceException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new SessionServiceException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param interfaceClass
+   * @param message the specified detail message
+   *
+   * @return a SessionServiceException
+   */
+  public static SessionServiceException fromThrowable(Class interfaceClass, String message, Throwable cause) {
+    return (cause instanceof SessionServiceException 
+            && Objects.equals(interfaceClass, ((SessionServiceException) cause).getInterfaceClass())
+            && Objects.equals(message, cause.getMessage()))
+                   ? (SessionServiceException) cause
+                   : new SessionServiceException(interfaceClass, message, cause);
+  }
+  
+  //====|    Construction    |====================================================================//
+  
+  /**
+   * Construct a SessionServiceException object with no specified message.
    * @param interfaceClass
    */
   public SessionServiceException(Class interfaceClass) {
@@ -38,7 +81,7 @@ public class SessionServiceException extends SessionRuntimeException {
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message.
+   * Construct a SessionServiceException object with a specified message.
    * @param interfaceClass
    * @param msg a message describing the exception.
    */
@@ -48,27 +91,29 @@ public class SessionServiceException extends SessionRuntimeException {
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message
+   * Construct a SessionServiceException object with a specified message
    * and throwable.
    * @param interfaceClass
    * @param msg the message string
    * @param cause the throwable that caused this exception
    */
-  public SessionServiceException(Class interfaceClass, String msg, Throwable cause) {
+  protected SessionServiceException(Class interfaceClass, String msg, Throwable cause) {
     super(makeMsg(interfaceClass), cause);
     this.interfaceClass = interfaceClass;
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified throwable.
+   * Construct a SessionServiceException object with a specified throwable.
    * @param interfaceClass
    * @param cause the throwable that caused this exception
    */
-  public SessionServiceException(Class interfaceClass, Throwable cause) {
+  protected SessionServiceException(Class interfaceClass, Throwable cause) {
     super(makeMsg(interfaceClass), cause);
     this.interfaceClass = interfaceClass;
   }
   
+  //====|    Public methods    |==================================================================//
+
   /**
    * The interface for which the Session API expected an implementation to be provided by the 
    * service.
@@ -78,8 +123,7 @@ public class SessionServiceException extends SessionRuntimeException {
     return this.interfaceClass;
   }
   
-  
-  // Private
+  //====|    Internal    |========================================================================//
   
   private static String makeMsg(Class interfaceClass) {
     return "Exception loading implementation of " + interfaceClass.getName();
@@ -88,9 +132,6 @@ public class SessionServiceException extends SessionRuntimeException {
   private static String makeMsg(Class interfaceClass, String msg) {
     return makeMsg(interfaceClass) + ": " + msg;
   }
-  
-  
-  // Internal
   
   private final Class interfaceClass;
 }

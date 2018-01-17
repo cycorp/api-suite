@@ -15,22 +15,31 @@
  *
  * <p/>
  * The main uses of the KB API fall into two broad categories: (a) making terms and assertions, and
- * (b) running queries. In order to get the terms needed for making either assertions or queries,
- * you will need the Core API Factory project (<code>com.cyc:cyc-core-factory</code>), which
- * provides factory classes (<code>com.cyc.kb.TermFactory</code>, 
- * <code>com.cyc.kb.AssertionFactory</code>, etc.) with static <code>get</code> and 
- * <code>findOrCreate</code>) methods. These factory methods will retrieve the relevant object from
- * the KB, and can be set to create the object on the Cyc server if it doesn't already exist on the
- * server.
- *
- * <p/>
- * Once the objects exists, <code>get</code> and <code>findOrCreate</code> static factory methods in
- * {@link com.cyc.kb.FactFactory} and {@link com.cyc.kb.AssertionFactory} can be used to
+ * (b) running queries. You may get terms, assertions, and queries via the static {@code #get(...)}
+ * and {@code #findOrCreate(...)} factory methods on the interfaces themselves; sub-classes also
+ * have such factory methods. These factory methods will retrieve the relevant object from the KB,
+ * and can be set to create the object on the Cyc server if it doesn't already exist on the server.
+ * E.g.:
+ * <p>
+ * <pre>
+ * Context.get("SomeMt");
+ * 
+ * KbTerm.findOrCreate("SomeTerm");
+ * 
+ * Sentence.get(predicate, arg1, arg2);
+ * 
+ * Assertion.get("someassertionid");
+ * 
+ * Query.get(sentence, context);
+ * </pre>
+ * <p>
+ * Once the objects exists, the {@code #get(...)} and {@code #findOrCreate(...)} methods on
+ * {@link com.cyc.kb.Assertion}, {@link com.cyc.kb.Fact}, and {@link com.cyc.kb.Rule} can be used to
  * create the actual assertions. The KB API generally allows the creation and retrieval of Cyc KB
  * objects (KbIndividuals, KbCollections, Facts, etc.) from a variety of forms including their
  * string representations, their IDs, and from the objects that will comprise them. The string-based
- * factory methods in <code>AssertionFactory</code> and its sub-class factories are a convenient way
- * to create assertions without needing to first create the <code>KbCollection</code> and
+ * factory methods in <code>Assertion</code> and its sub-class factories are a convenient way to 
+ * create assertions without needing to first create the <code>KbCollection</code> and
  * <code>KbIndividual</code> objects, but they do require correct syntax, and the terms must already
  * exist on the Cyc server.
  *

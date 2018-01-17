@@ -53,12 +53,12 @@ public abstract class KbTermWrapper extends KbObjectWrapper implements KbTerm {
   public boolean provablyNotInstanceOf(KbCollection col, Context ctx) {
     return wrapped().provablyNotInstanceOf(col, ctx);
   }
-
+/*
   @Override
   public boolean provablyNotInstanceOf(String colStr, String ctxStr) {
     return wrapped().provablyNotInstanceOf(colStr, ctxStr);
   }
-
+*/
   @Override
   public <O> O replaceTerms(Map substitutions) throws KbTypeException, CreateException {
     return wrapped().replaceTerms(substitutions);
@@ -109,24 +109,24 @@ public abstract class KbTermWrapper extends KbObjectWrapper implements KbTerm {
   public Collection<String> getComments(Context ctx) {
     return wrapped().getComments(ctx);
   }
-
+/*
   @Override
   public Collection<String> getComments(String ctxStr) {
     return wrapped().getComments(ctxStr);
   }
-
+*/
   @Override
   public Fact addComment(String comment, Context ctx)
           throws KbTypeException, CreateException {
     return wrapped().addComment(comment, ctx);
   }
-
+/*
   @Override
   public Fact addComment(String comment, String ctx)
           throws KbTypeException, CreateException {
     return wrapped().addComment(comment, ctx);
   }
-
+*/
   @Override
   public KbTerm addQuotedIsa(KbCollection collection, Context context)
           throws KbTypeException, CreateException {
@@ -138,13 +138,13 @@ public abstract class KbTermWrapper extends KbObjectWrapper implements KbTerm {
           throws KbTypeException, CreateException {
     return wrapped().instantiates(collection, context);
   }
-
+/*
   @Override
   public KbTerm instantiates(String collectionStr, String contextStr)
           throws KbTypeException, CreateException {
     return wrapped().instantiates(collectionStr, contextStr);
   }
-
+*/
   @Override
   public KbTerm instantiates(KbCollection collection) throws KbTypeException, CreateException {
     return wrapped().instantiates(collection);
@@ -160,20 +160,20 @@ public abstract class KbTermWrapper extends KbObjectWrapper implements KbTerm {
   public boolean isInstanceOf(KbCollection collection) {
     return wrapped().isInstanceOf(collection);
   }
-
+/*
   @Override
   public boolean isInstanceOf(String collectionStr) {
     return wrapped().isInstanceOf(collectionStr);
   }
-
+*/
   @Override
   public boolean isInstanceOf(KbCollection collection, Context context) {
     return wrapped().isInstanceOf(collection, context);
   }
-
+/*
   @Override
   public boolean isInstanceOf(String collectionStr, String contextStr) {
     return wrapped().isInstanceOf(collectionStr, contextStr);
   }
-
+*/
 }

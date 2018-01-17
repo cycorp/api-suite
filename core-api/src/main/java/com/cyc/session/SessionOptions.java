@@ -154,4 +154,45 @@ public interface SessionOptions {
    * Clears all values, reverting to the defaults specified in CycSessionConfiguration.
    */
   void reset();
+  
+  //====|    DefaultSessionOptions    |===========================================================//
+  
+  /**
+   * An <b>immutable</b> set of options, including the name of the cyclist making assertions, and
+   * the project's KE purpose. This provides the defaults for the mutable SessionOptions interface.
+   *
+   * @author nwinant
+   */
+  public interface DefaultSessionOptions {
+
+    /**
+     * Returns the value of the Cyclist. If it has not been set, return null.
+     *
+     * @return the value of the Cyclist
+     */
+    String getCyclistName();
+
+    /**
+     * Returns the value of the project (KE purpose).
+     *
+     * @return the value of the project (KE purpose)
+     */
+    String getKePurposeName();
+
+    /**
+     * Will actions in the current thread that modify the KB be transcripted by the Cyc server?
+     *
+     * @return will KB operations from the current thread be transcripted?
+     */
+    boolean getShouldTranscriptOperations();
+
+    /**
+     * Returns the current default contexts
+     *
+     * @return the contents of the DefaultContest ThreadLocal
+     */
+    DefaultContext getDefaultContext();
+
+  }
+
 }

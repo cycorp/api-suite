@@ -2,7 +2,7 @@ package com.cyc.nl;
 
 /*
  * #%L
- * File: ParaphraserFactory.java
+ * File: DefaultParaphraserFactoryImpl.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -38,6 +38,8 @@ package com.cyc.nl;
 //import com.cyc.baseclient.inference.DefaultResultSet;
 //import com.cyc.baseclient.inference.ResultSetInferenceAnswer;
 //import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
+import com.cyc.nl.Paraphraser.ParaphrasableType;
+import com.cyc.nl.spi.ParaphraserFactory;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -46,24 +48,42 @@ import org.slf4j.LoggerFactory;
 /**
  * Interface for generating structured paraphrases of terms.
  *
- * ParaphraserFactory objects provide the ability to generate natural language strings for CycL
- * objects (e.g. sentences and terms). The basic ParaphraserFactory implementation available from
- * baseclient will provide very basic paraphrasing functionality. If the NL API is available on the
- * classpath, the <code>getInstance</code> methods of this class will return a paraphraser that is
- * more flexible. The <code>BasicParaphraser</code> (returned if only the baseclient is available)
- * is compatible with all versions of Cyc (including OpenCyc).
+ * DefaultParaphraserFactoryImpl objects provide the ability to generate natural language strings for CycL
+ objects (e.g. sentences and terms). The basic DefaultParaphraserFactoryImpl implementation available
+ from baseclient will provide very basic paraphrasing functionality. If the NL API is available on
+ the classpath, the <code>getParaphraser</code> methods of this class will return a paraphraser
+ * that is more flexible. The <code>BasicParaphraser</code> (returned if only the baseclient is
+ * available) is compatible with all versions of Cyc (including OpenCyc).
  *
  * @author baxter
  * @param <E>
  */
-public abstract class ParaphraserFactory<E> {
-
-  private static final Map<String, Boolean> classAvailability = new HashMap<String, Boolean>();
-  private static final Logger LOGGER = LoggerFactory.getLogger(ParaphraserFactory.class);
+class DefaultParaphraserFactoryImpl<E> implements ParaphraserFactory {
+  
+  //====|    Fields    |==========================================================================//
+  
   private static final String NL_API_IMPL_BASE_PATH = "com.cyc.nl"; // TODO: update? - nwinant, 2016-01-25
   private static final String BASIC_PARAPHRASER_CLASS = "com.cyc.nl.BasicParaphraser";
   
-  static public Paraphraser getInstance(final ParaphrasableType type) {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultParaphraserFactoryImpl.class);
+  
+  private static final DefaultParaphraserFactoryImpl INSTANCE = new DefaultParaphraserFactoryImpl();
+  
+  private final Map<String, Boolean> classAvailability = new HashMap<>();
+  
+  //====|    Fields    |==========================================================================//
+  
+  DefaultParaphraserFactoryImpl() {
+  }
+  
+  static DefaultParaphraserFactoryImpl getInstance() {
+    return INSTANCE;
+  }
+  
+  //====|    Public methods    |==================================================================//
+  
+  @Override
+  public Paraphraser getParaphraser(final ParaphrasableType type) {
     //this should only check once to see if these other classes are available...
     //if they're not there, it needs to give back some kind of stupid paraphrase that doesn't work well...
     try {
@@ -75,17 +95,22 @@ public abstract class ParaphraserFactory<E> {
         case DEFAULT:
           return getParaphraser(NL_API_IMPL_BASE_PATH + ".DefaultParaphraser");
       }
-    } catch (ClassNotFoundException ex) {
-      LOGGER.error(null, ex);
-    } catch (InstantiationException ex) {
-      LOGGER.error(null, ex);
-    } catch (IllegalAccessException ex) {
+    } catch (ClassNotFoundException
+            | InstantiationException
+            | IllegalAccessException ex) {
       LOGGER.error(null, ex);
     }
     throw new UnsupportedOperationException("Unable to produce a Paraphraser for " + type);
   }
   
-  private static Paraphraser getParaphraser(String binaryClassName)
+  @Override
+  public boolean isBasicParaphraser(Paraphraser paraphraser) {
+    return paraphraser.getClass().getCanonicalName().equals(BASIC_PARAPHRASER_CLASS);
+  }
+  
+  //====|    Internal methods    |================================================================//
+  
+  private Paraphraser getParaphraser(String binaryClassName)
           throws ClassNotFoundException, InstantiationException, IllegalAccessException {
     if (isClassAvailable(binaryClassName)) {
       return (Paraphraser) Class.forName(binaryClassName).newInstance();
@@ -94,10 +119,10 @@ public abstract class ParaphraserFactory<E> {
     }
   }
   
-  private static boolean isClassAvailable(String binaryClassName) {
+  private boolean isClassAvailable(String binaryClassName) {
     if (!classAvailability.containsKey(binaryClassName)) {
       try {
-        Class clazz = ParaphraserFactory.class.getClassLoader().loadClass(binaryClassName);
+        Class clazz = DefaultParaphraserFactoryImpl.class.getClassLoader().loadClass(binaryClassName);
         LOGGER.debug("Loaded external paraphraser: {}", clazz);
         classAvailability.put(binaryClassName, true);
       } catch (java.lang.ClassNotFoundException ex) {
@@ -108,14 +133,5 @@ public abstract class ParaphraserFactory<E> {
     }
     return classAvailability.get(binaryClassName);
   }
-
-  public enum ParaphrasableType {
-    QUERY, KBOBJECT, DEFAULT;
-  }
-  
-  public static boolean isBasicParaphraser(Paraphraser paraphraser) {
-    return paraphraser.getClass().getCanonicalName().equals(BASIC_PARAPHRASER_CLASS);
-  }
-
 
 }

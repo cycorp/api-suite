@@ -1,8 +1,8 @@
-package com.cyc.session;
+package com.cyc.kb.wrapper;
 
 /*
  * #%L
- * File: EnvironmentConfiguration.java
+ * File: FactWrapper.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -20,14 +20,21 @@ package com.cyc.session;
  * limitations under the License.
  * #L%
  */
+import com.cyc.kb.Fact;
+
 /**
- * A {@link CycSessionConfiguration} drawn specifically from the System properties. An instance of
- * EnvironmentConfiguration is a snapshot of the relevant System properties from the time at which
- * it was created. EnvironmentConfigurations always take precedence over all over configurations,
- * except to the extent that an EnvironmentConfiguration may specify another configuration.
+ * An abstract base class for implementing Facts per the decorator pattern. To use, extend this
+ * class and implement the {@link #wrapped() } method to return the wrapped object.
  *
  * @author nwinant
  */
-public interface EnvironmentConfiguration extends CycSessionConfiguration {
+public abstract class FactWrapper extends AssertionWrapper implements Fact {
+
+  //====|    Abstract methods    |================================================================//
+  
+  @Override
+  protected abstract Fact wrapped();
+
+  //====|    Public methods    |==================================================================//
 
 }

@@ -44,12 +44,12 @@ public abstract class ContextWrapper extends KbIndividualWrapper implements Cont
   public Collection<Context> getExtensions() {
     return wrapped().getExtensions();
   }
-
+/*
   @Override
   public Context addExtension(String moreSpecificStr) throws KbTypeException, CreateException {
     return wrapped().addExtension(moreSpecificStr);
   }
-
+*/
   @Override
   public Context addExtension(Context moreSpecific) throws KbTypeException, CreateException {
     return wrapped().addExtension(moreSpecific);
@@ -59,12 +59,12 @@ public abstract class ContextWrapper extends KbIndividualWrapper implements Cont
   public Collection<Context> getInheritsFrom() {
     return wrapped().getInheritsFrom();
   }
-
+/*
   @Override
   public Context addInheritsFrom(String moreGeneralStr) throws KbTypeException, CreateException {
     return wrapped().addInheritsFrom(moreGeneralStr);
   }
-
+*/
   @Override
   public Context addInheritsFrom(Context moreGeneral) throws KbTypeException, CreateException {
     return wrapped().addInheritsFrom(moreGeneral);

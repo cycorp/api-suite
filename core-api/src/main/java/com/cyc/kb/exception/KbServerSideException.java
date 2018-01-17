@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: KbServerSideException.java
@@ -25,11 +27,47 @@ package com.cyc.kb.exception;
  * Wraps all Cyc server errors, when a more specific semantic error can not be thrown.
  *
  * @author Vijay Raj
- * @version $Id: KbServerSideException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: KbServerSideException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbServerSideException extends KbRuntimeException{
   
-  public KbServerSideException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a KbServerSideException. If the Throwable is a
+   * KbServerSideException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new KbServerSideException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a KbServerSideException
+   */
+  public static KbServerSideException fromThrowable(Throwable cause) {
+    return (cause instanceof KbServerSideException)
+                   ? (KbServerSideException) cause
+                   : new KbServerSideException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a KbServerSideException with the specified detail message. If the
+   * Throwable is a KbServerSideException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new KbServerSideException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a KbServerSideException
+   */
+  public static KbServerSideException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof KbServerSideException && Objects.equals(message, cause.getMessage()))
+                   ? (KbServerSideException) cause
+                   : new KbServerSideException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected KbServerSideException(Throwable cause) {
     super(cause);
   }
 
@@ -37,7 +75,7 @@ public class KbServerSideException extends KbRuntimeException{
     super(msg);
   }
 
-  public KbServerSideException(String msg, Throwable cause) {
+  protected KbServerSideException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

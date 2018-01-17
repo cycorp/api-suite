@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: DeleteException.java
@@ -21,17 +23,51 @@ package com.cyc.kb.exception;
  * #L%
  */
 
-import com.cyc.kb.exception.KbException;
-
 /**
  * Thrown when code fails to delete something from the Cyc KB.
  * 
  * @author Nathan Winant
- * @version $Id: DeleteException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: DeleteException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class DeleteException extends KbException {
   
-  public DeleteException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a DeleteException. If the Throwable is a
+   * DeleteException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new DeleteException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a DeleteException
+   */
+  public static DeleteException fromThrowable(Throwable cause) {
+    return (cause instanceof DeleteException)
+                   ? (DeleteException) cause
+                   : new DeleteException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a DeleteException with the specified detail message. If the
+   * Throwable is a DeleteException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new DeleteException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a DeleteException
+   */
+  public static DeleteException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof DeleteException && Objects.equals(message, cause.getMessage()))
+                   ? (DeleteException) cause
+                   : new DeleteException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected DeleteException(Throwable cause) {
     super(cause);
   }
 
@@ -39,7 +75,7 @@ public class DeleteException extends KbException {
     super(msg);
   }
 
-  public DeleteException(String msg, Throwable cause) {
+  protected DeleteException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

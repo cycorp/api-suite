@@ -37,14 +37,14 @@ public class QueryConstructionException extends QueryException {
    * QueryConstructionException, it will be passed through unmodified; otherwise, it will be wrapped
    * in a new QueryConstructionException.
    *
-   * @param t the Throwable to convert
+   * @param cause the Throwable to convert
    *
    * @return a QueryConstructionException
    */
-  public static QueryConstructionException fromThrowable(Throwable t) {
-    return (t instanceof QueryConstructionException)
-                   ? (QueryConstructionException) t
-                   : new QueryConstructionException(t);
+  public static QueryConstructionException fromThrowable(Throwable cause) {
+    return (cause instanceof QueryConstructionException)
+                   ? (QueryConstructionException) cause
+                   : new QueryConstructionException(cause);
   }
 
   /**
@@ -53,24 +53,24 @@ public class QueryConstructionException extends QueryException {
    * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
    * a new QueryConstructionException with the detail message.
    *
-   * @param t       the Throwable to convert
+   * @param cause       the Throwable to convert
    * @param message the specified detail message
    *
    * @return a QueryConstructionException
    */
-  public static QueryConstructionException fromThrowable(Throwable t, String message) {
-    return (t instanceof QueryConstructionException && Objects.equals(message, t.getMessage()))
-                   ? (QueryConstructionException) t
-                   : new QueryConstructionException(message, t);
+  public static QueryConstructionException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof QueryConstructionException && Objects.equals(message, cause.getMessage()))
+                   ? (QueryConstructionException) cause
+                   : new QueryConstructionException(message, cause);
   }
 
   //====|    Construction    |====================================================================//
   
-  public QueryConstructionException(Throwable throwable) {
+  protected QueryConstructionException(Throwable throwable) {
     super(throwable);
   }
 
-  public QueryConstructionException(String message, Throwable throwable) {
+  protected QueryConstructionException(String message, Throwable throwable) {
     super(message, throwable);
   }
 

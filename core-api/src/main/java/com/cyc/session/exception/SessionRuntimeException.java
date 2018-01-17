@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: SessionRuntimeException.java
@@ -33,6 +35,42 @@ package com.cyc.session.exception;
  */
 public class SessionRuntimeException extends RuntimeException {
   
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a SessionRuntimeException. If the Throwable is a
+   * SessionRuntimeException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new SessionRuntimeException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a SessionRuntimeException
+   */
+  public static SessionRuntimeException fromThrowable(Throwable cause) {
+    return (cause instanceof SessionRuntimeException)
+                   ? (SessionRuntimeException) cause
+                   : new SessionRuntimeException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a SessionRuntimeException with the specified detail message. If the
+   * Throwable is a SessionRuntimeException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new SessionRuntimeException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a SessionRuntimeException
+   */
+  public static SessionRuntimeException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof SessionRuntimeException && Objects.equals(message, cause.getMessage()))
+                   ? (SessionRuntimeException) cause
+                   : new SessionRuntimeException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
   /**
    * Constructs a new exception with no specified message.
    */
@@ -53,7 +91,7 @@ public class SessionRuntimeException extends RuntimeException {
    * @param message the message string
    * @param cause the Throwable that caused this exception
    */
-  public SessionRuntimeException(String message, Throwable cause) {
+  protected SessionRuntimeException(String message, Throwable cause) {
     super(message, cause);
   }
   
@@ -61,7 +99,7 @@ public class SessionRuntimeException extends RuntimeException {
    * Constructs a new exception with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public SessionRuntimeException(Throwable cause) {
+  protected SessionRuntimeException(Throwable cause) {
     super(cause);
   }
 }

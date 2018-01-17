@@ -21,6 +21,7 @@ package com.cyc.kb.exception;
  * #L%
  */
 import com.cyc.kb.Relation;
+import java.util.Objects;
 
 /**
  * Thrown when the arity of a Relation without a fixed arity is requested. For
@@ -33,11 +34,32 @@ import com.cyc.kb.Relation;
  */
 public class VariableArityException extends KbRuntimeException {
 
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a VariableArityException with the specified detail message. If the
+   * Throwable is a VariableArityException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new VariableArityException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a VariableArityException
+   */
+  public static VariableArityException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof VariableArityException && Objects.equals(message, cause.getMessage()))
+                   ? (VariableArityException) cause
+                   : new VariableArityException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
   public VariableArityException(String message) {
     super(message);
   }
 
-  public VariableArityException(String message, Throwable cause) {
+  protected VariableArityException(String message, Throwable cause) {
     super(message, cause);
   }
 

@@ -29,7 +29,6 @@ import com.cyc.kb.Sentence;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeException;
 import com.cyc.nl.Paraphraser;
-import com.cyc.query.QuerySpecification.MutableQuerySpecification;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.query.exception.QueryRuntimeException;
 import com.cyc.query.metrics.InferenceMetricsValues;
@@ -42,7 +41,6 @@ import com.cyc.session.exception.UnsupportedCycOperationException;
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.Map;
-
 
 /**
  * <code>Query</code> extends {@link com.cyc.query.QuerySpecification} to represent queries posed to
@@ -64,7 +62,7 @@ import java.util.Map;
  * @author  David Baxter
  * @author  Nathan Winant
  */
-public interface Query extends MutableQuerySpecification<Query>, Closeable {
+public interface Query extends ModifiableQuerySpecification<Query>, Closeable {
 
   //====|    Factory methods    |=================================================================//
 
@@ -173,7 +171,7 @@ public interface Query extends MutableQuerySpecification<Query>, Closeable {
    *
    * @throws UnsupportedCycOperationException when run against ResearchCyc 4.0q and earlier.
    *
-   * @see com.cyc.kb.KbCollectionFactory#CYCL_QUERY_SPECIFICATION
+   * @see com.cyc.Cyc.Constants#CYCL_QUERY_SPECIFICATION
    */
   public static Query get(final KbIndividual id)
           throws QueryConstructionException, KbException, UnsupportedCycOperationException {
@@ -231,7 +229,7 @@ public interface Query extends MutableQuerySpecification<Query>, Closeable {
    *
    * @return a Query object defined by idStr
    *
-   * @see com.cyc.kb.KbCollectionFactory#CYCL_QUERY_SPECIFICATION
+   * @see com.cyc.Cyc.Constants#CYCL_QUERY_SPECIFICATION
    */
   public static Query get(String idStr, Map<String, String> indexicals)
           throws QueryConstructionException, KbTypeException, UnsupportedCycOperationException {

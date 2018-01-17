@@ -130,7 +130,7 @@ public interface Relation extends KbIndividual {
    */
   public Collection<KbCollection> getArgIsa(int argPos);
 
-  /**
+  /* *
    * gets the <code>KbCollection</code>s that all arguments in position
    * <code>argPos</code> of the relation most be instances of, as viewed from
    * the context <code>ctx</code>.
@@ -140,9 +140,10 @@ public interface Relation extends KbIndividual {
    * @param ctxStr the string representing the context of the query
    *
    * @return the constraining getArgIsa <code>KbCollection</code>s
-   */
+   * /
   public Collection<KbCollection> getArgIsa(int argPos, String ctxStr);
-
+  */
+  
   /**
    * gets the <code>KbCollection</code>s that all arguments in position
    * <code>argPos</code> of the relation most be instances of, as viewed from
@@ -156,7 +157,7 @@ public interface Relation extends KbIndividual {
    */
   public Collection<KbCollection> getArgIsa(int argPos, Context ctx);
 
-  /**
+  /* *
    * creates a new Fact stating that any object in the <code>argPos</code>
    * position of <code>this</code> relation should be an instance of
    * the Collection <code>col</code>, in the context <code>ctx</code>.
@@ -173,10 +174,11 @@ public interface Relation extends KbIndividual {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   public Relation addArgIsa(int argPos, String colStr, String ctxStr)
           throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * creates a new Fact stating that any object in the <code>argPos</code>
    * position of <code>this</code> relation should be an instance of
@@ -248,7 +250,7 @@ public interface Relation extends KbIndividual {
    */
   public Collection<KbCollection> getArgGenl(int argPos);
 
-  /**
+  /* *
    * gets the <code>KbCollection</code>s that all arguments in position
    * <code>argPos</code> of the relation must be specializations of, as viewed
    * from the context <code>ctx</code>.
@@ -259,9 +261,10 @@ public interface Relation extends KbIndividual {
    *
    * @return the relevant argGenl constraints on <code>this</code> at position
    * <code>argPos</code>
-   */
+   * /
   public Collection<KbCollection> getArgGenl(int argPos, String ctxStr);
-
+  */
+  
   /**
    * gets the <code>KbCollection</code>s that all arguments in position
    * <code>argPos</code> of the relation must be specializations of, as viewed
@@ -276,7 +279,7 @@ public interface Relation extends KbIndividual {
    */
   public Collection<KbCollection> getArgGenl(int argPos, Context ctx);
 
-  /**
+  /* *
    * creates a new Fact stating that <code>col</code> must be a generalization
    * of any object in the <code>argPos</code> position of <code>this</code> relation, in the context
    * <code>ctx</code>.
@@ -293,10 +296,11 @@ public interface Relation extends KbIndividual {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   public Relation addArgGenl(int argPos, String colStr, String ctxStr)
           throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * creates a new Fact stating that <code>col</code> must be a generalization
    * of any object in the <code>argPos</code> position of <code>this</code> relation, in the 
@@ -316,7 +320,6 @@ public interface Relation extends KbIndividual {
    */
   public Relation addArgGenl(int argPos, KbCollection col, Context ctx)
           throws KbTypeException, CreateException;
-
   
   /**
    * Returns a list of argument positions that should have explicitly different

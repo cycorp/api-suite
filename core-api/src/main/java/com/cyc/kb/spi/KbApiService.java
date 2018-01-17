@@ -23,7 +23,8 @@ package com.cyc.kb.spi;
 import com.cyc.CycApiEntryPoint;
 
 /**
- *
+ * The primary entrypoint for a KB API implementation.
+ * 
  * @author nwinant
  */
 public interface KbApiService extends CycApiEntryPoint {

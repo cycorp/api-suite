@@ -20,13 +20,18 @@ package com.cyc.session;
  * limitations under the License.
  * #L%
  */
-import com.cyc.kb.DefaultContext;
 import java.util.Properties;
 
 /**
- * This interface defines the set of configuration parameters used by the Session API to establish a
- * new {@link CycSession}.
- *
+ * Configuration parameters used by the Session API to establish a new {@link CycSession}. 
+ * Similarly, a {@link SessionManagerConfiguration} configures the {@link SessionManager} which
+ * produces and manages CycSessions.
+ * <p>
+ * CycSessionConfiguration implementations should be immutable, or at least unmodifiable, and a
+ * CycSession should receive exactly one instance, during its creation.
+ * 
+ * @see CycSessionConfigurationProperties
+ * 
  * @author nwinant
  */
 public interface CycSessionConfiguration {
@@ -34,7 +39,7 @@ public interface CycSessionConfiguration {
   /**
    * Returns the address of the Cyc server to be connected to.
    *
-   * @see SessionConfigurationProperties#SERVER_KEY
+   * @see CycSessionConfigurationProperties#SERVER_KEY
    *
    * @return a CycAddress address.
    */
@@ -45,10 +50,7 @@ public interface CycSessionConfiguration {
    * CycSessionConfiguration. In this way, one could specifically ask for a configuration to be
    * loaded by, say, interactively prompting the user.
    *
-   * A SessionConfigurationLoader's name may be determined via
-   * {@link SessionConfigurationLoader#getName()}.
-   *
-   * @see SessionConfigurationProperties#CONFIGURATION_LOADER_KEY
+   * @see CycSessionConfigurationProperties#CONFIGURATION_LOADER_KEY
    *
    * @return the name of the requested SessionConfigurationLoader.
    */
@@ -57,64 +59,12 @@ public interface CycSessionConfiguration {
   /**
    * Returns the name of a file from which to load configuration information.
    *
-   * @see SessionConfigurationProperties#CONFIGURATION_FILE_KEY
+   * @see CycSessionConfigurationProperties#CONFIGURATION_FILE_KEY
    *
    * @return the configuration file name.
    */
   String getConfigurationFileName();
-
-  /**
-   * Does this configuration allow for the end-user to be prompted for configuration properties via
-   * GUI elements?
-   *
-   * If so, <em>and</em> if no other sufficient configuration has specified, <em>and</em> if the
-   * application is not running in a headless environment, the Session API may prompt the end-user
-   * for configuration information.
-   *
-   * @return is system allowed to prompt end-user for configuration properties via GUI elements?
-   */
-  boolean isGuiInteractionAllowed();
-
-  /**
-   * Is the SessionManager permitted to cache configurations? This is useful when loading
-   * configurations is expensive or annoying. If this option is set to false, the SessionManager
-   * will attempt to load a configuration for each and every session it creates, which can be
-   * fantastically annoying if it is doing so by interactively prompting the user.
-   *
-   * @return can configurations be cached?
-   */
-  boolean isConfigurationCachingAllowed();
-
-  /**
-   * Is the SessionManager permitted to cache sessions?
-   *
-   * @return can sessions be cached?
-   */
-  boolean isSessionCachingAllowed();
-
-  // TODO: add javadocs
-  boolean isServerReleasedWhenAllSessionsAreClosed();
-
-  /**
-   * Are the APIs permitted to apply code patches to the Cyc server? Note that this setting only
-   * determines whether the rules of the <em>CycSession</em> will allow code patches; patches may
-   * still be prohibited by the Cyc server or the API implementation, regardless of this setting.
-   * Defaults to false.
-   *
-   * @see SessionConfigurationProperties#SERVER_PATCHING_ALLOWED_KEY
-   *
-   * @return can code patches be applied to the Cyc server?
-   */
-  boolean isServerPatchingAllowed();
-
-  /**
-   * Returns an immutable set of options, which may provide the default values for 
-   * {@link CycSession#getOptions() }.
-   *
-   * @return An immutable set of default options
-   */
-  DefaultSessionOptions getDefaultSessionOptions();
-
+  
   /**
    * Does this configuration share the same field values with another? Weaker than #equals, as it
    * ignores things like Class and loader Class.
@@ -157,44 +107,5 @@ public interface CycSessionConfiguration {
    * @return a non-null Properties object.
    */
   Properties getRawProperties();
-
-  //====|    DefaultSessionOptions    |===========================================================//
-  
-  /**
-   * An <b>immutable</b> set of options, including the name of the cyclist making assertions, and
-   * the project's KE purpose. This provides the defaults for the mutable SessionOptions interface.
-   *
-   * @author nwinant
-   */
-  public interface DefaultSessionOptions {
-
-    /**
-     * Returns the value of the Cyclist. If it has not been set, return null.
-     *
-     * @return the value of the Cyclist
-     */
-    String getCyclistName();
-
-    /**
-     * Returns the value of the project (KE purpose).
-     *
-     * @return the value of the project (KE purpose)
-     */
-    String getKePurposeName();
-
-    /**
-     * Will actions in the current thread that modify the KB be transcripted by the Cyc server?
-     *
-     * @return will KB operations from the current thread be transcripted?
-     */
-    boolean getShouldTranscriptOperations();
-
-    /**
-     * Returns the current default contexts
-     *
-     * @return the contents of the DefaultContest ThreadLocal
-     */
-    DefaultContext getDefaultContext();
-  }
   
 }

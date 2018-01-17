@@ -1,4 +1,4 @@
-package com.cyc.session.spi;
+package com.cyc.session;
 
 /*
  * #%L
@@ -20,13 +20,10 @@ package com.cyc.session.spi;
  * limitations under the License.
  * #L%
  */
-import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionConfiguration;
-import com.cyc.session.EnvironmentConfiguration;
+import com.cyc.Cyc;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
-
 import java.io.Closeable;
 
 /**
@@ -37,12 +34,20 @@ import java.io.Closeable;
  * @author nwinant
  * @param <T>
  */
-public interface SessionManager<T extends CycSession> 
-        extends Closeable, Comparable<SessionManager<T>> {
+public interface SessionManager<T extends CycSession> extends Closeable {
 
   /**
+   * Returns the current SessionManager instance.
+   * 
+   * @return the current SessionManager
+   */
+  public static SessionManager getInstance() {
+    return Cyc.getSessionManager();
+  }
+  
+  /**
    * Returns the CycSession currently assigned to this thread. If no CycSession object currently
-   * exists, one will be created from a configuration drawn from {@link #getConfiguration()} and
+   * exists, one will be created from a configuration drawn from {@link #getSessionConfiguration()} and
    * assigned to the local thread.
    *
    * @return a (possibly new) CycSession object for the current thread.
@@ -57,7 +62,35 @@ public interface SessionManager<T extends CycSession>
   T getCurrentSession()
           throws SessionConfigurationException, SessionCommunicationException,
                  SessionInitializationException;
-
+  
+  /**
+   * Returns a CycSessionConfiguration, suitable for creating a new CycSession. The SessionManager
+   * will first retrieve an {@link EnvironmentConfiguration} based on the System properties, and
+   * then expanding any configuration directives it might contain; the result is returned by this
+   * method. The SessionManager <em>may</em> cache CycSessionConfigurations if it believes there is
+   * no possibility that they would have changed: for example, if the EnvironmentConfiguration
+   * directly specifies a CycAddress, and the relevant System properties have not changed.
+   *
+   * @return a new CycSessionConfiguration
+   *
+   * @throws SessionConfigurationException
+   */
+  CycSessionConfiguration getSessionConfiguration() throws SessionConfigurationException;
+  
+  /**
+   * Returns the configuration for the current SessionManager.
+   * 
+   * @return the configuration for the current SessionManager
+   */
+  SessionManagerConfiguration getManagerConfiguration();
+  
+  /**
+   * Returns whether the SessionManager is closed.
+   *
+   * @return whether SessionManager is closed
+   */
+  boolean isClosed();
+  
   /* *
    * Returns the CycSession currently assigned to this thread. If no CycSession object currently
    * exists, one will be acquired via {@link #getSession(SessionCriteria)} and assigned to the local
@@ -78,7 +111,7 @@ public interface SessionManager<T extends CycSession>
 
   /* *
    * Returns a new CycSession object, creating one if necessary. If no CycSession object currently
-   * exists, one will be created from a configuration drawn from {@link #getConfiguration()}.
+   * exists, one will be created from a configuration drawn from {@link #getSessionConfiguration()}.
    *
    * @return a new CycSession object.
    * @throws SessionConfigurationException if the application is not sufficiently configured for the
@@ -94,7 +127,7 @@ public interface SessionManager<T extends CycSession>
 
   /* *
    * Returns a CycSession object, creating one if necessary. If no CycSession object currently
-   * exists, one will be created from a configuration drawn from {@link #getConfiguration()}.
+   * exists, one will be created from a configuration drawn from {@link #getSessionConfiguration()}.
    *
    * @param criteria The criteria for selecting the session.
    * @return a (possibly) new CycSession object.
@@ -109,21 +142,7 @@ public interface SessionManager<T extends CycSession>
   //        throws SessionConfigurationException, SessionCommunicationException, 
   //        SessionInitializationException;
   
-  /**
-   * Returns a CycSessionConfiguration, suitable for creating a new CycSession. The SessionManager
-   * will first retrieve an {@link EnvironmentConfiguration} based on the System properties, and
-   * then expanding any configuration directives it might contain; the result is returned by this
-   * method. The SessionManager <em>may</em> cache CycSessionConfigurations if it believes there is
-   * no possibility that they would have changed: for example, if the EnvironmentConfiguration
-   * directly specifies a CycAddress, and the relevant System properties have not changed.
-   *
-   * @return a new CycSessionConfiguration
-   *
-   * @throws SessionConfigurationException
-   */
-  CycSessionConfiguration getConfiguration() throws SessionConfigurationException;
-
-  /**
+  /* *
    * Returns an EnvironmentConfiguration, drawn from the System properties. The resulting
    * EnvironmentConfiguration instance is a snapshot of the relevant System properties from the time
    * at which it was created.
@@ -131,9 +150,10 @@ public interface SessionManager<T extends CycSession>
    * @return
    *
    * @throws SessionConfigurationException
-   */
+   * /
   EnvironmentConfiguration getEnvironmentConfiguration() throws SessionConfigurationException;
-
+  */
+  
   /* *
    * Retrieves all sessions matching a SessionCriteria object.
    * 
@@ -149,11 +169,4 @@ public interface SessionManager<T extends CycSession>
    */
   //Collection<T> releaseSessions(SessionCriteria criteria);
   
-  /**
-   * Returns whether the SessionManager is closed.
-   *
-   * @return whether SessionManager is closed
-   */
-  public boolean isClosed();
-
 }

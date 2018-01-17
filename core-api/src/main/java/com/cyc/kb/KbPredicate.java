@@ -99,7 +99,7 @@ public interface KbPredicate extends Relation {
    */
   public Collection<KbPredicate> getSpecializations();
 
-  /**
+  /* *
    * finds the asserted specializations of <code>this</code>
    * <code>KbPredicate</code>, from the context <code>ctx</code>.
    *
@@ -107,9 +107,10 @@ public interface KbPredicate extends Relation {
    *
    * @return the <code>KbPredicate</code>s that are specializations of
    * <code>this</code> <code>KbPredicate</code>
-   */
+   * /
   public Collection<KbPredicate> getSpecializations(String ctxStr);
-
+  */
+  
   /**
    * finds the asserted specializations of <code>this</code>
    * <code>KbPredicate</code>, from the context <code>ctx</code>
@@ -119,10 +120,9 @@ public interface KbPredicate extends Relation {
    * @return the <code>KbPredicate</code>s that are specializations of
    * <code>this</code> <code>KbPredicate</code>
    */
-  public Collection<KbPredicate> getSpecializations(
-          Context ctx);
+  public Collection<KbPredicate> getSpecializations(Context ctx);
 
-  /**
+  /* *
    * creates a new <code>Fact</code> stating that <code>this</code> is a more
    * specific predicate than <code>moreSpecific</code> in the specified context.
    * Essentially, it asserts <code>(#$genlPreds moreSpecific this)</code>
@@ -140,10 +140,11 @@ public interface KbPredicate extends Relation {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   public KbPredicate addSpecialization(String moreSpecificStr, String ctxStr)
           throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * creates a new <code>Fact</code> stating that <code>this</code> is a more
    * specific predicate than <code>moreSpecific</code> in the specified context.
@@ -161,8 +162,8 @@ public interface KbPredicate extends Relation {
    * @throws CreateException
    * @throws KbTypeException
    */
-  public KbPredicate addSpecialization(KbPredicate moreSpecific,
-          Context ctx) throws KbTypeException, CreateException;
+  public KbPredicate addSpecialization(KbPredicate moreSpecific, Context ctx) 
+          throws KbTypeException, CreateException;
 
   /**
    * finds the asserted generalizations of <code>this</code>, from the default
@@ -175,7 +176,7 @@ public interface KbPredicate extends Relation {
   // @todo throw more specific exception
   public Collection<KbPredicate> getGeneralizations() throws KbException;
   
-  /**
+  /* *
    * finds the asserted generalizations of <code>this</code>, from a context
    * <code>ctx</code>.
    *
@@ -183,8 +184,9 @@ public interface KbPredicate extends Relation {
    *
    * @return the <code>KbPredicate</code>s that are generalizations of this
    * <code>KbPredicate</code>
-   */
+   * /
   public Collection<KbPredicate> getGeneralizations(String ctxStr);
+  */
   
   /**
    * finds the asserted generalizations of <code>this</code>, from the context
@@ -229,7 +231,7 @@ public interface KbPredicate extends Relation {
   public Sentence getInverseGeneralizationSentence(KbPredicate moreGeneral) 
           throws KbTypeException, CreateException;
 
-  /**
+  /* *
    * creates a new <code>Fact</code> stating that <code>moreGeneral</code> is a
    * more general predicate than <code>this</code> in the context
    * <code>ctx</code>. Essentially, this asserts
@@ -248,10 +250,11 @@ public interface KbPredicate extends Relation {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   public KbPredicate addGeneralization(String moreGeneralStr, String ctxStr)
           throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * creates a new <code>Fact</code> stating that <code>moreGeneral</code> is a
    * more general predicate than <code>this</code> in the context. Essentially,
@@ -267,8 +270,8 @@ public interface KbPredicate extends Relation {
    * @throws CreateException
    * @throws KbTypeException
    */
-  public KbPredicate addGeneralization(KbPredicate moreGeneral,
-          Context ctx) throws KbTypeException, CreateException;
+  public KbPredicate addGeneralization(KbPredicate moreGeneral, Context ctx) 
+          throws KbTypeException, CreateException;
 
   /**
    * Determine whether <code>this</code> is a generalization of
@@ -284,8 +287,7 @@ public interface KbPredicate extends Relation {
    * @return true if (#$genlPreds moreSpecific this) is true
    *
    */
-  public boolean isGeneralizationOf(KbPredicate moreSpecific,
-          Context ctx);
+  public boolean isGeneralizationOf(KbPredicate moreSpecific, Context ctx);
 
   public List<Fact> getExtent();
   

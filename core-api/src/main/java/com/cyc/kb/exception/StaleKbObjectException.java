@@ -20,20 +20,23 @@ package com.cyc.kb.exception;
  * limitations under the License.
  * #L%
  */
+import com.cyc.kb.Assertion;
 import com.cyc.kb.KbObject;
+import com.cyc.kb.KbTerm;
+import com.cyc.kb.spi.KbService;
+import java.util.Objects;
 
 /**
  * Thrown when a stale {@link KbObject} is passed to a method.
- *
- * The KB API factory methods that find or create terms and assertions cache the
- * KB Object they return. Multiple get/findOrCreate requests to the same object
- * will be return the identical underlying object from the cache. The cache can
- * be cleared using {@link KbObjectFactory#clearKbObjectCache()}.
- *
- * When an object is deleted using {@link KbObject#delete()}, the object is
- * marked "invalid". The validity of the object can be checked using
- * {@link KbObject#isValid()}.
- *
+ * <p>
+ * The KB API factory methods that find or create terms and assertions cache the KB Object they 
+ * return. Multiple get/findOrCreate requests to the same object will be return the identical 
+ * underlying object from the cache. The cache can be cleared using {@link KbService#clearCache()},
+ * which can be called like so: {@code Cyc.getKbService().clearCache(); }
+ * <p>
+ * When an object is deleted using {@link Assertion#delete()} or {@link KbTerm#delete()}, the object
+ * is marked "invalid". The validity of the object can be checked using {@link Assertion#isValid()}
+ * or {@link KbTerm#isValid()}, respectively.
  *
  * @author Vijay Raj
  * @version $Id: StaleKbObjectException.java 151668 2014-06-03 21:46:52Z jmoszko
@@ -41,15 +44,51 @@ import com.cyc.kb.KbObject;
  */
 public class StaleKbObjectException extends KbRuntimeException {
 
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a StaleKbObjectException. If the Throwable is a
+   * StaleKbObjectException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new StaleKbObjectException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a StaleKbObjectException
+   */
+  public static StaleKbObjectException fromThrowable(Throwable cause) {
+    return (cause instanceof StaleKbObjectException)
+                   ? (StaleKbObjectException) cause
+                   : new StaleKbObjectException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a StaleKbObjectException with the specified detail message. If the
+   * Throwable is a StaleKbObjectException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new StaleKbObjectException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a StaleKbObjectException
+   */
+  public static StaleKbObjectException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof StaleKbObjectException && Objects.equals(message, cause.getMessage()))
+                   ? (StaleKbObjectException) cause
+                   : new StaleKbObjectException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
   public StaleKbObjectException(String msg) {
     super(msg);
   }
 
-  public StaleKbObjectException(Throwable cause) {
+  protected StaleKbObjectException(Throwable cause) {
     super(cause);
   }
 
-  public StaleKbObjectException(String msg, Throwable cause) {
+  protected StaleKbObjectException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

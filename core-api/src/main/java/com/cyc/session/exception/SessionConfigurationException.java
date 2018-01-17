@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: SessionConfigurationException.java
@@ -28,15 +30,53 @@ package com.cyc.session.exception;
  * @author nwinant
  */
 public class SessionConfigurationException extends SessionException {
+  
+  //====|    Factory methods    |=================================================================//
+  
   /**
-   * Construct a CycConfigurationException object with no specified message.
+   * Converts a Throwable to a SessionConfigurationException. If the Throwable is a
+   * SessionConfigurationException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new SessionConfigurationException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a SessionConfigurationException
+   */
+  public static SessionConfigurationException fromThrowable(Throwable cause) {
+    return (cause instanceof SessionConfigurationException)
+                   ? (SessionConfigurationException) cause
+                   : new SessionConfigurationException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a SessionConfigurationException with the specified detail message. If the
+   * Throwable is a SessionConfigurationException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new SessionConfigurationException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a SessionConfigurationException
+   */
+  public static SessionConfigurationException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof SessionConfigurationException && Objects.equals(message, cause.getMessage()))
+                   ? (SessionConfigurationException) cause
+                   : new SessionConfigurationException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  
+  /**
+   * Construct a SessionConfigurationException object with no specified message.
    */
   public SessionConfigurationException() {
     super();
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message.
+   * Construct a SessionConfigurationException object with a specified message.
    * @param msg a message describing the exception.
    */
   public SessionConfigurationException(String msg) {
@@ -44,20 +84,20 @@ public class SessionConfigurationException extends SessionException {
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message
+   * Construct a SessionConfigurationException object with a specified message
    * and throwable.
    * @param msg the message string
    * @param cause the throwable that caused this exception
    */
-  public SessionConfigurationException(String msg, Throwable cause) {
+  protected SessionConfigurationException(String msg, Throwable cause) {
     super(msg, cause);
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified throwable.
+   * Construct a SessionConfigurationException object with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public SessionConfigurationException(Throwable cause) {
+  protected SessionConfigurationException(Throwable cause) {
     super(cause);
   }
 }

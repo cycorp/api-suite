@@ -66,6 +66,7 @@ public abstract class KbObjectWrapper implements KbObject {
     return wrapped().isAtomic();
   }
 
+  /*
   @Override
   public Boolean isAssertion() {
     return wrapped().isAssertion();
@@ -115,6 +116,7 @@ public abstract class KbObjectWrapper implements KbObject {
   public Boolean isVariable() {
     return wrapped().isVariable();
   }
+  */
 
   @Override
   public boolean isIndexical() throws SessionCommunicationException {
@@ -131,21 +133,23 @@ public abstract class KbObjectWrapper implements KbObject {
     return wrapped().isQuotedInstanceOf(col);
   }
 
+  /*
   @Override
   public boolean isQuotedInstanceOf(String colStr) {
     return wrapped().isQuotedInstanceOf(colStr);
   }
-
+*/
+  
   @Override
   public boolean isQuotedInstanceOf(KbCollection col, Context ctx) {
     return wrapped().isQuotedInstanceOf(col, ctx);
   }
-
+/*
   @Override
   public boolean isQuotedInstanceOf(String colStr, String ctxStr) {
     return wrapped().isQuotedInstanceOf(colStr, ctxStr);
   }
-
+*/
   @Override
   public boolean isQuoted() throws KbTypeException, CreateException {
     return wrapped().isQuoted();

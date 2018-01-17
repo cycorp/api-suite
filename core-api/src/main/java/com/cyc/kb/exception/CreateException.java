@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: CreateException.java
@@ -27,11 +29,47 @@ package com.cyc.kb.exception;
  * object is not in the KB.
  *
  * @author Vijay Raj
- * @version $Id: CreateException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: CreateException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class CreateException extends KbException {
 
-  public CreateException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a CreateException. If the Throwable is a
+   * CreateException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new CreateException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a CreateException
+   */
+  public static CreateException fromThrowable(Throwable cause) {
+    return (cause instanceof CreateException)
+                   ? (CreateException) cause
+                   : new CreateException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a CreateException with the specified detail message. If the
+   * Throwable is a CreateException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new CreateException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a CreateException
+   */
+  public static CreateException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof CreateException && Objects.equals(message, cause.getMessage()))
+                   ? (CreateException) cause
+                   : new CreateException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected CreateException(Throwable cause) {
     super(cause);
   }
 
@@ -39,7 +77,7 @@ public class CreateException extends KbException {
     super(msg);
   }
 
-  public CreateException(String msg, Throwable cause) {
+  protected CreateException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

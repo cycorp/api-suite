@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: KbTypeException.java
@@ -26,11 +28,47 @@ package com.cyc.kb.exception;
  * requirements of a particular semantic object type.
  * 
  * @author Nathan Winant
- * @version $Id: KbTypeException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: KbTypeException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbTypeException extends KbException {
   
-  public KbTypeException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a KbTypeException. If the Throwable is a
+   * KbTypeException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new KbTypeException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a KbTypeException
+   */
+  public static KbTypeException fromThrowable(Throwable cause) {
+    return (cause instanceof KbTypeException)
+                   ? (KbTypeException) cause
+                   : new KbTypeException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a KbTypeException with the specified detail message. If the
+   * Throwable is a KbTypeException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new KbTypeException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a KbTypeException
+   */
+  public static KbTypeException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof KbTypeException && Objects.equals(message, cause.getMessage()))
+                   ? (KbTypeException) cause
+                   : new KbTypeException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected KbTypeException(Throwable cause) {
     super(cause);
   }
 
@@ -38,7 +76,7 @@ public class KbTypeException extends KbException {
     super(msg);
   }
 
-  public KbTypeException(String msg, Throwable cause) {
+  protected KbTypeException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

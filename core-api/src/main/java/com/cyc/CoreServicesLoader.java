@@ -23,9 +23,9 @@ package com.cyc;
 
 import com.cyc.kb.spi.KbApiService;
 import com.cyc.query.spi.QueryApiService;
+import com.cyc.session.SessionManager;
 import com.cyc.session.exception.SessionServiceException;
 import com.cyc.session.spi.SessionApiService;
-import com.cyc.session.spi.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -105,10 +105,21 @@ public class CoreServicesLoader extends CycServicesLoader {
   
   //====|    Public    |==========================================================================//
   
+  /*
   public static List<SessionManager> loadAllSessionManagers() throws SessionServiceException {
     final List<SessionManager> sessionMgrs = new ArrayList();
-    final ServiceLoader<SessionManager> loader
-            = ServiceLoader.load(SessionManager.class);
+    final ServiceLoader<SessionManager> loader = ServiceLoader.load(SessionManager.class);
+    for (SessionManager sessionMgr : loader) {
+      if (!sessionMgr.isClosed()) {
+        sessionMgrs.add(sessionMgr);
+      }
+    }
+    return sessionMgrs;
+  }
+  */
+  public static List<SessionManager> loadAllSessionManagerFactories() throws SessionServiceException {
+    final List<SessionManager> sessionMgrs = new ArrayList();
+    final ServiceLoader<SessionManager> loader = ServiceLoader.load(SessionManager.class);
     for (SessionManager sessionMgr : loader) {
       if (!sessionMgr.isClosed()) {
         sessionMgrs.add(sessionMgr);

@@ -64,7 +64,7 @@ public class ServerAddress implements Serializable, Comparable {
    * @param hostName
    * @param port
    */
-  public ServerAddress(String hostName, Integer port) {
+  protected ServerAddress(String hostName, Integer port) {
     setHostName(hostName);
     setPort(port);
   }
@@ -265,7 +265,7 @@ public class ServerAddress implements Serializable, Comparable {
    *
    * @return <code>String</code> the resolved hostname.
    */
-  static public String resolveHostName(String hostName) {
+  public static String resolveHostName(String hostName) {
     Boolean knownLoopback = null;
     try {
       knownLoopback = InetAddress.getByName(hostName).isLoopbackAddress();

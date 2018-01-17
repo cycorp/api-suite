@@ -183,7 +183,7 @@ public interface Context extends KbIndividual {
    */
   Collection<Context> getExtensions();
 
-  /**
+  /* *
    * Creates a new <code>Fact</code> stating that the <code>#$Microtheory</code> represented by
    * moreSpecificStr is a specialization (an extension) of this context. Essentially, this asserts
    * <code>(#$genlMt moreSpecific this)</code>
@@ -200,9 +200,10 @@ public interface Context extends KbIndividual {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   Context addExtension(String moreSpecificStr) throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * Creates a new <code>Fact</code> stating that the <code>#$Microtheory</code> represented by
    * <code>moreSpecific</code> is a specialization (i.e.&nbsp;an extension) of this context.
@@ -232,7 +233,7 @@ public interface Context extends KbIndividual {
    */
   Collection<Context> getInheritsFrom();
 
-  /**
+  /* *
    * Creates a new Fact stating that this context inherits from <code>moreGeneral</code>.
    * Effectively, this asserts <code>(#$genlMt this moreGeneral)</code>
    * <p>
@@ -247,9 +248,10 @@ public interface Context extends KbIndividual {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   Context addInheritsFrom(String moreGeneralStr) throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * Creates a new Fact stating that this context inherits from <code>moreGeneral</code>.
    * Effectively, this asserts <code>(#$genlMt this moreGeneral)</code>

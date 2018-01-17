@@ -23,15 +23,40 @@ package com.cyc.nl;
 
 import com.cyc.kb.Context;
 import com.cyc.kb.KbPredicate;
-
 import java.util.List;
 
 /**
+ * Interface for generating structured paraphrases of terms.
+ * 
+ * Paraphraser objects provide the ability to generate natural language strings for CycL objects
+ * (e.g. sentences and terms). The basic Paraphraser implementation available from baseclient will
+ * provide very basic paraphrasing functionality. If the NL API is available on the classpath, the
+ * <code>getParaphraser</code> methods of this class will return a paraphraser that is more
+ * flexible. The <code>BasicParaphraser</code> (returned if only the baseclient is available) is
+ * compatible with all versions of Cyc (including OpenCyc).
  *
  * @author daves
  * @param <C> The CycL we're paraphrasing.
  */
 public interface Paraphraser<C> {
+  
+  //====|    ParaphrasableType    |===============================================================//
+  
+  public enum ParaphrasableType {
+    QUERY, KBOBJECT, DEFAULT;
+  }
+  
+  //====|    Factory methods    |=================================================================//
+  
+  public static Paraphraser get(ParaphrasableType type) {
+    return DefaultParaphraserFactoryImpl.getInstance().getParaphraser(type);
+  }
+  
+  public static boolean isBasicParaphraser(Paraphraser paraphraser) {
+    return DefaultParaphraserFactoryImpl.getInstance().isBasicParaphraser(paraphraser);
+  }
+  
+  //====|    Interface methods    |===============================================================//
   
   /**
    * Returns a paraphrase of the specified object.

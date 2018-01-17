@@ -105,8 +105,29 @@ public interface FirstOrderCollection extends KbCollection {
    * <code>FirstOrderCollection</code>.
    */
   @Override
+  public Collection<FirstOrderCollection> getGeneralizations(Context ctx);
+  
+  /* *
+   * {@inheritDoc}
+   *
+   * The only difference is that it is known that any generalization of
+   * <code>FirstOrderCollection</code> is itself a
+   * <code>FirstOrderCollection</code>.
+   * /
+  @Override
   public Collection<FirstOrderCollection> getGeneralizations(String ctxStr);
-
+  */
+  
+  /* *
+   * {@inheritDoc}
+   *
+   * @throws KbTypeException
+   * @throws CreateException
+   * /
+  @Override
+  public FirstOrderCollection addGeneralization(String moreGeneralStr, String ctxStr)
+          throws KbTypeException, CreateException;
+  */
   /**
    * {@inheritDoc}
    *
@@ -114,17 +135,7 @@ public interface FirstOrderCollection extends KbCollection {
    * @throws CreateException
    */
   @Override
-  public FirstOrderCollection addGeneralization(String moreGeneralStr,
-          String ctxStr) throws KbTypeException, CreateException;
-
-  /**
-   * {@inheritDoc}
-   *
-   * @throws KbTypeException
-   * @throws CreateException
-   */
-  @Override
-  public FirstOrderCollection addGeneralization(KbCollection moreGeneral,
-          Context ctx) throws KbTypeException, CreateException;
+  public FirstOrderCollection addGeneralization(KbCollection moreGeneral, Context ctx)
+          throws KbTypeException, CreateException;
 
 }

@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: SessionCommunicationException.java
@@ -28,15 +30,53 @@ package com.cyc.session.exception;
  * @author nwinant
  */
 public class SessionCommunicationException extends SessionRuntimeException {
+  
+  //====|    Factory methods    |=================================================================//
+  
   /**
-   * Construct a CycConfigurationException object with no specified message.
+   * Converts a Throwable to a SessionCommunicationException. If the Throwable is a
+   * SessionCommunicationException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new SessionCommunicationException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a SessionCommunicationException
+   */
+  public static SessionCommunicationException fromThrowable(Throwable cause) {
+    return (cause instanceof SessionCommunicationException)
+                   ? (SessionCommunicationException) cause
+                   : new SessionCommunicationException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a SessionCommunicationException with the specified detail message. If the
+   * Throwable is a SessionCommunicationException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new SessionCommunicationException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a SessionCommunicationException
+   */
+  public static SessionCommunicationException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof SessionCommunicationException && Objects.equals(message, cause.getMessage()))
+                   ? (SessionCommunicationException) cause
+                   : new SessionCommunicationException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  
+  /**
+   * Construct a SessionCommunicationException object with no specified message.
    */
   public SessionCommunicationException() {
     super();
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message.
+   * Construct a SessionCommunicationException object with a specified message.
    * @param msg a message describing the exception.
    */
   public SessionCommunicationException(String msg) {
@@ -44,20 +84,20 @@ public class SessionCommunicationException extends SessionRuntimeException {
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified message
+   * Construct a SessionCommunicationException object with a specified message
    * and throwable.
    * @param msg the message string
    * @param cause the throwable that caused this exception
    */
-  public SessionCommunicationException(String msg, Throwable cause) {
+  protected SessionCommunicationException(String msg, Throwable cause) {
     super(msg, cause);
   }
   
   /**
-   * Construct a CycConfigurationException object with a specified throwable.
+   * Construct a SessionCommunicationException object with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public SessionCommunicationException(Throwable cause) {
+  protected SessionCommunicationException(Throwable cause) {
     super(cause);
   }
 }

@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: SessionInitializationException.java
@@ -29,6 +31,42 @@ package com.cyc.session.exception;
  */
 public class SessionInitializationException extends SessionException {
   
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a SessionInitializationException. If the Throwable is a
+   * SessionInitializationException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new SessionInitializationException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a SessionInitializationException
+   */
+  public static SessionInitializationException fromThrowable(Throwable cause) {
+    return (cause instanceof SessionInitializationException)
+                   ? (SessionInitializationException) cause
+                   : new SessionInitializationException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a SessionInitializationException with the specified detail message. If the
+   * Throwable is a SessionInitializationException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new SessionInitializationException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a SessionInitializationException
+   */
+  public static SessionInitializationException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof SessionInitializationException && Objects.equals(message, cause.getMessage()))
+                   ? (SessionInitializationException) cause
+                   : new SessionInitializationException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
   /**
    * Construct a SessionInitializationException object with no specified message.
    */
@@ -50,7 +88,7 @@ public class SessionInitializationException extends SessionException {
    * @param msg the message string
    * @param cause the throwable that caused this exception
    */
-  public SessionInitializationException(String msg ,Throwable cause) {
+  protected SessionInitializationException(String msg, Throwable cause) {
     super(msg, cause);
   }
   
@@ -58,7 +96,7 @@ public class SessionInitializationException extends SessionException {
    * Construct a SessionInitializationException object with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public SessionInitializationException(Throwable cause) {
+  protected SessionInitializationException(Throwable cause) {
     super(cause);
   }
 }

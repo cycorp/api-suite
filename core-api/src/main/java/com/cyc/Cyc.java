@@ -65,7 +65,8 @@ import com.cyc.query.QueryAnswerExplanationSpecification;
 import com.cyc.query.spi.ProofViewService;
 import com.cyc.query.spi.QueryAnswerExplanationService;
 import com.cyc.query.spi.QueryService;
-import com.cyc.session.spi.SessionManager;
+import com.cyc.session.SessionManager;
+import com.cyc.session.spi.SessionApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,14 +89,23 @@ public class Cyc {
   //====|    Service accessors    |===============================================================//
   
   /**
-   * Returns the Cyc {@link SessionManager}.
+   * Returns the {@link SessionApiService}.
+   * 
+   * @return the SessionApiService
+   */
+  public static SessionApiService getSessionManagerService() {
+    return getLoader().getSessionApiService();
+  }
+  
+  /**
+   * Returns the current Cyc {@link SessionManager}.
    *
    * @return the SessionManager
    */
   public static SessionManager getSessionManager() {
     return getLoader().getSessionApiService().getSessionManager();
   }
-
+  
   /**
    * Returns a {@link Assertion} factory service.
    *

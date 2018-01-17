@@ -2,7 +2,7 @@ package com.cyc.kb.wrapper;
 
 /*
  * #%L
- * File: KbIndividualWrapper.java
+ * File: FirstOrderCollectionWrapper.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -21,38 +21,43 @@ package com.cyc.kb.wrapper;
  * #L%
  */
 import com.cyc.kb.Context;
+import com.cyc.kb.FirstOrderCollection;
 import com.cyc.kb.KbCollection;
-import com.cyc.kb.KbIndividual;
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
 
 /**
- * An abstract base class for implementing KbIndividuals per the decorator pattern. To use, extend
- * this class and implement the {@link #wrapped() } method to return the wrapped object.
+ * An abstract base class for implementing FirstOrderCollections per the decorator pattern. To use,
+ * extend this class and implement the {@link #wrapped() } method to return the wrapped object.
  *
  * @author nwinant
  */
-public abstract class KbIndividualWrapper extends KbTermWrapper implements KbIndividual {
+public abstract class FirstOrderCollectionWrapper
+        extends KbCollectionWrapper
+        implements FirstOrderCollection {
 
   //====|    Abstract methods    |================================================================//
   
   @Override
-  protected abstract KbIndividual wrapped();
+  protected abstract FirstOrderCollection wrapped();
 
   //====|    Public methods    |==================================================================//
-  
+
   @Override
-  public Collection<KbCollection> instanceOf() {
-    return wrapped().instanceOf();
+  public Collection<FirstOrderCollection> getGeneralizations() {
+    return wrapped().getGeneralizations();
   }
-/*
+
   @Override
-  public Collection<KbCollection> instanceOf(String ctxStr) {
-    return wrapped().instanceOf();
+  public Collection<FirstOrderCollection> getGeneralizations(Context ctx) {
+    return wrapped().getGeneralizations(ctx);
   }
-*/
+
   @Override
-  public Collection<KbCollection> instanceOf(Context ctx) {
-    return wrapped().instanceOf();
+  public FirstOrderCollection addGeneralization(KbCollection moreGeneral, Context ctx) 
+          throws KbTypeException, CreateException {
+    return wrapped().addGeneralization(moreGeneral, ctx);
   }
 
 }

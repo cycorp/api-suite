@@ -140,7 +140,7 @@ public interface KbFunction extends Relation {
    */
   public Collection<KbCollection> getResultIsa();
 
-  /**
+  /* *
    * Returns the <code>#$resultIsa</code>as of this <code>KbFunction</code> from
    * the context <code>ctx</code>. Any functional term using this
    * <code>KbFunction</code> will be an instance of each of these Collections.
@@ -151,9 +151,10 @@ public interface KbFunction extends Relation {
    *
    * @return the relevant <code>#$resultIsa</code> collections for this
    * <code>KbFunction</code>.
-   */
+   * /
   public Collection<KbCollection> getResultIsa(String ctxStr);
-
+  */
+  
   /**
    * Returns the <code>#$resultIsa</code>s of this <code>KbFunction</code> from
    * the context. Any functional term using this <code>KbFunction</code> will be
@@ -168,7 +169,7 @@ public interface KbFunction extends Relation {
    */
   public Collection<KbCollection> getResultIsa(Context ctx);
 
-  /**
+  /* *
    * creates a new <code>#$resultIsa</code> {@link Fact} in the supplied
    * context.
    * <p>
@@ -183,10 +184,11 @@ public interface KbFunction extends Relation {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   public KbFunction addResultIsa(String colStr, String ctxStr)
           throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * creates a new <code>#$resultIsa</code> {@link Fact} in the supplied
    * context.
@@ -219,7 +221,7 @@ public interface KbFunction extends Relation {
   // @todo Check if we can throw a better exception
   public Collection<KbCollection> getResultGenl() throws KbException;
 
-  /**
+  /* *
    * Returns the <code>#$resultGenl</code>s of this <code>KbFunction</code> from
    * the context. Any functional term using this <code>KbFunction</code> will be
    * a specialization of each of these <code>KbCollection</code>s. The set of
@@ -230,9 +232,10 @@ public interface KbFunction extends Relation {
    *
    * @return all <code>#$resultGenl</code> collections for this function that
    * are visible from the context
-   */
+   * /
   public Collection<KbCollection> getResultGenl(String ctxStr);
-
+  */
+  
   /**
    * Returns the <code>#$resultGenl</code>s of this <code>KbFunction</code> from
    * the context. Any functional term using this <code>KbFunction</code> will be
@@ -247,7 +250,7 @@ public interface KbFunction extends Relation {
    */
   public Collection<KbCollection> getResultGenl(Context ctx);
 
-  /**
+  /* *
    * creates a new <code>#$resultGenl</code> {@link Fact} in the specified
    * context.
    * <p>
@@ -263,10 +266,11 @@ public interface KbFunction extends Relation {
    *
    * @throws CreateException
    * @throws KbTypeException
-   */
+   * /
   public KbFunction addResultGenl(String colStr, String ctxStr)
           throws KbTypeException, CreateException;
-
+  */
+  
   /**
    * creates a new <code>#$resultGenl</code> {@link Fact} in the specified
    * context.

@@ -177,7 +177,7 @@ class CycAddressImpl extends ServerAddress implements CycAddress {
   protected CycAddressImpl() {
   }
 
-  //====|    Protected    |=======================================================================//
+  //====|    Public methods    |==================================================================//
   
   @Override
   public Integer getBasePort() {

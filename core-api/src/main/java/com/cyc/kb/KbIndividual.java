@@ -175,7 +175,7 @@ public interface KbIndividual extends KbTerm {
    */
   public Collection<KbCollection> instanceOf();
 
-  /**
+  /* *
    * finds the types this KbIndividual is an instance of to, from a getContextService.
    * Essentially, this returns the asserted bindings for <code>?X</code> from
    * <code>(#$isa this ?X)</code>.
@@ -184,8 +184,9 @@ public interface KbIndividual extends KbTerm {
    *
    * @return the <code>KbCollection</code>s this <code>KbIndividual</code>
    * belongs to
-   */
+   * /
   public Collection<KbCollection> instanceOf(String ctxStr);
+  */
   
   /**
    * finds the types this KbIndividual is an instance of to, from a getContextService.

@@ -105,7 +105,7 @@ public interface KbTerm extends KbObjectWithArity {
    */
   boolean provablyNotInstanceOf(KbCollection col, Context ctx);
 
-  /**
+  /* *
    * Determine whether <code>this</code> is provably not an instance of
    * <code>col</code>. This means that there is no way to convert
    * <code>this</code> into an instance of the collection without editing or
@@ -117,8 +117,9 @@ public interface KbTerm extends KbObjectWithArity {
    *
    * @return whether <code>this</code> is provably not an instance
    * <code>col</code>
-   */
+   * /
   boolean provablyNotInstanceOf(String colStr, String ctxStr);
+  */
   
   /**
    * Non-destructively replace a set of objects within a non-atomic term. This does not modify the 
@@ -153,39 +154,24 @@ public interface KbTerm extends KbObjectWithArity {
   Date getCreationDate();
   
   /**
-   * Change the name of a non-atomic term to <code>name</code>. <strong>This method only applies to
-   * atomic terms (i.e., CycL constants).</strong>
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * Throws
-   * {@link InvalidNameException} in cases where the rename cannot be completed,
-   * for any reason, one of the reasons could be that the name does not conform
-   * to Cyc constant-naming conventions. Among objects that cannot be renamed
-   * 
-   * CLARIFY:
-   * 
-   * are non-atomic terms, assertions, and constant that are mentioned in server
-   * code. An {@link UnsupportedOperationException} will be thrown if attempted
-   * to rename Assertion or Non-atomic terms.
+   * Change the name of an atomic term to <code>nameString</code>. This method only applies to
+   * <em>atomic</em> terms (i.e., CycL constants); attempts to rename non-atomic terms will result
+   * in an exception, as will attempts to rename constants that are mentioned in server code.
    *
-   * @param   name   the new name
-   * @return  the renamed KbTerm
-   * @throws  InvalidNameException           if Cyc Server errors out for any reason, including 
-   *                                         invalid name
-   * @throws  UnsupportedOperationException  if the object being renamed is not {@link #isAtomic()}
+   * @param nameString the new name
+   *
+   * @return the renamed KbTerm
+   *
+   * @throws InvalidNameException          in cases where the rename cannot be completed; e.g. the
+   *                                       name does not conform to Cyc constant-naming conventions
+   * @throws UnsupportedOperationException if the object being renamed is not {@link #isAtomic()}
+   *
+   * @see KbObject#isAtomic()
    */
-  // @todo how can this actually throw the exception? And it should throw a more informative 
-  // Exception.
-  KbTerm rename(String name) throws InvalidNameException;
+  KbTerm rename(String nameString) throws InvalidNameException;
   
   /**
-   * delete <code>this</code> term and all the facts using it in the KB.
+   * Delete <code>this</code> term and all the facts using it in the KB.
    * <p>
    * This will irreversible modify the KB.
    *
@@ -203,9 +189,8 @@ public interface KbTerm extends KbObjectWithArity {
   Boolean isValid();
   
   /**
-   * Gets all the comments for <code>this</code> visible from the default
- getContextService {@link com.cyc.kb.DefaultContext#forQuery()}
-   * <p>
+   * Gets all the comments for <code>this</code> visible from the default Context 
+   * {@link com.cyc.kb.DefaultContext#forQuery()}.
    *
    * @return  comment strings
    */
@@ -220,14 +205,15 @@ public interface KbTerm extends KbObjectWithArity {
    */
   Collection<String> getComments(Context ctx);
   
-  /**
+  /* *
    * Gets all the comments for <code>this</code> visible from the getContextService
    * <p>
    *
    * @param   ctxStr  the getContextService of getQueryService
    * @return  comment strings
-   */
+   * /
   Collection<String> getComments(String ctxStr);
+  */
   
   /**
    * Add a new comment for <code>this</code> in the getContextService specified
@@ -247,7 +233,7 @@ public interface KbTerm extends KbObjectWithArity {
    */
   Fact addComment(String comment, Context ctx) throws KbTypeException, CreateException;
   
-  /**
+  /* *
    * Add a new comment for <code>this</code> in the getContextService specified
    * <p>
    *
@@ -262,8 +248,9 @@ public interface KbTerm extends KbObjectWithArity {
    * @return  the getFactService created
    * @throws  CreateException
    * @throws  KbTypeException
-   */
+   * /
   Fact addComment(String comment, String ctx) throws KbTypeException, CreateException;
+  */
   
   /**
    * A <code>quotedIsa</code> getAssertionService relates CycL expression to <code>SubLExpressionType</code>.
@@ -295,7 +282,7 @@ public interface KbTerm extends KbObjectWithArity {
   KbTerm instantiates(KbCollection collection, Context context) 
           throws KbTypeException, CreateException;
   
-  /**
+  /* *
    * Creates a new <code>Fact</code> stating that <code>this</code> <code>KbIndividual</code>
    * instantiates the <code>#$Collection</code> represented by <code>collection</code> in the 
  getContextService represented by <code>getContextService</code>. Effectively, this asserts 
@@ -306,9 +293,10 @@ public interface KbTerm extends KbObjectWithArity {
    * @return  this object, for method chaining
    * @throws  CreateException
    * @throws  KbTypeException
-   */
+   * /
   KbTerm instantiates(String collectionStr, String contextStr) 
           throws KbTypeException, CreateException;
+  */
   
   /**
    * Creates a new <code>Fact</code> stating that this <code>KbIndividual</code> instantiates the
@@ -346,17 +334,18 @@ public interface KbTerm extends KbObjectWithArity {
    */
   boolean isInstanceOf(KbCollection collection);
 
-  /**
-   * Is <code>this</code> an instance of <code>collection</code> in any getContextService? This does not 
- require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
+  /* *
+   * Is <code>this</code> an instance of <code>collection</code> in any getContextService? This does
+   * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
    * inferable.
    *
    * @param   collectionStr  the string representing the collection which <code>this</code> may or
    *                         may not be an instance of
    * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
-   */
+   * /
   boolean isInstanceOf(String collectionStr);
-
+  */
+  
   /**
    * Is <code>this</code> an instance of <code>collection</code> in <code>getContextService</code>? This does 
    * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
@@ -368,7 +357,7 @@ public interface KbTerm extends KbObjectWithArity {
    */
   boolean isInstanceOf(KbCollection collection, Context context);
 
-  /**
+  /* *
    * Is <code>this</code> an instance of <code>collection</code> in <code>getContextService</code>? This does
    * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially
    * inferable.
@@ -377,7 +366,8 @@ public interface KbTerm extends KbObjectWithArity {
    *                         may not be an instance of
    * @param   contextStr     string representation of the getContextService where the instance getRelation holds
    * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
-   */
+   * /
   boolean isInstanceOf(String collectionStr, String contextStr);
+  */
   
 }

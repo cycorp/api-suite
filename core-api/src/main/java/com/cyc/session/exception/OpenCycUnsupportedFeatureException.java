@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: OpenCycUnsupportedFeatureException.java
@@ -30,13 +32,46 @@ package com.cyc.session.exception;
  */
 public class OpenCycUnsupportedFeatureException extends UnsupportedCycOperationException {
   
-  // Fields
+  //====|    Factory methods    |=================================================================//
   
+  /**
+   * Converts a Throwable to a OpenCycUnsupportedFeatureException. If the Throwable is a
+   * OpenCycUnsupportedFeatureException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new OpenCycUnsupportedFeatureException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a OpenCycUnsupportedFeatureException
+   */
+  public static OpenCycUnsupportedFeatureException fromThrowable(Throwable cause) {
+    return (cause instanceof OpenCycUnsupportedFeatureException)
+                   ? (OpenCycUnsupportedFeatureException) cause
+                   : new OpenCycUnsupportedFeatureException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a OpenCycUnsupportedFeatureException with the specified detail message. If the
+   * Throwable is a OpenCycUnsupportedFeatureException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new OpenCycUnsupportedFeatureException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a OpenCycUnsupportedFeatureException
+   */
+  public static OpenCycUnsupportedFeatureException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof OpenCycUnsupportedFeatureException && Objects.equals(message, cause.getMessage()))
+                   ? (OpenCycUnsupportedFeatureException) cause
+                   : new OpenCycUnsupportedFeatureException(message, cause);
+  }
+  
+  //====|    Fields    |====================================================================//  
+    
   public static final String DEFAULT_MSG = 
           "This functionality is not supported by OpenCyc servers.";
           
-  
-  // Constructors
+  //====|    Construction    |====================================================================//
   
   /**
    * Constructs a new exception with a specified message.
@@ -58,7 +93,7 @@ public class OpenCycUnsupportedFeatureException extends UnsupportedCycOperationE
    * @param message the message string
    * @param cause the throwable that caused this exception
    */
-  public OpenCycUnsupportedFeatureException(String message, Throwable cause) {
+  protected OpenCycUnsupportedFeatureException(String message, Throwable cause) {
     super(message, cause);
   }
   
@@ -66,7 +101,7 @@ public class OpenCycUnsupportedFeatureException extends UnsupportedCycOperationE
    * Constructs a new exception with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public OpenCycUnsupportedFeatureException(Throwable cause) {
+  protected OpenCycUnsupportedFeatureException(Throwable cause) {
     this(DEFAULT_MSG, cause);
   }
 }

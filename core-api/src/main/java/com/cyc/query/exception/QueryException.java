@@ -35,14 +35,14 @@ public class QueryException extends Exception {
    * Converts a Throwable to a QueryException. If the Throwable is a QueryException, it will be
    * passed through unmodified; otherwise, it will be wrapped in a new QueryException.
    *
-   * @param t the Throwable to convert
+   * @param cause the Throwable to convert
    *
    * @return a QueryException
    */
-  public static QueryException fromThrowable(Throwable t) {
-    return (t instanceof QueryException)
-                   ? (QueryException) t
-                   : new QueryException(t);
+  public static QueryException fromThrowable(Throwable cause) {
+    return (cause instanceof QueryException)
+                   ? (QueryException) cause
+                   : new QueryException(cause);
   }
 
   /**
@@ -51,15 +51,15 @@ public class QueryException extends Exception {
    * will be passed through unmodified; otherwise, it will be wrapped in a new QueryException with
    * the detail message.
    *
-   * @param t       the Throwable to convert
+   * @param cause       the Throwable to convert
    * @param message the specified detail message
    *
    * @return a QueryException
    */
-  public static QueryException fromThrowable(Throwable t, String message) {
-    return (t instanceof QueryException && Objects.equals(message, t.getMessage()))
-                   ? (QueryException) t
-                   : new QueryException(message, t);
+  public static QueryException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof QueryException && Objects.equals(message, cause.getMessage()))
+                   ? (QueryException) cause
+                   : new QueryException(message, cause);
   }
   
   //====|    Construction    |====================================================================//
@@ -68,11 +68,11 @@ public class QueryException extends Exception {
     super(message);
   }
 
-  public QueryException(final String message, final Throwable cause) {
+  protected QueryException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
-  public QueryException(final Throwable cause) {
+  protected QueryException(final Throwable cause) {
     super(cause);
   }
 

@@ -335,14 +335,15 @@ public interface Assertion extends KbObjectWithArity {
    */
   Collection<String> getComments(Context ctx);
   
-  /**
+  /* *
    * Gets all the comments for <code>this</code> visible from the context
    * <p>
    *
    * @param   ctxStr  the context of query
    * @return  comment strings
-   */
+   * /
   Collection<String> getComments(String ctxStr);
+  */
   
   /**
    * Add a new comment for <code>this</code> in the context specified
@@ -362,7 +363,7 @@ public interface Assertion extends KbObjectWithArity {
    */
   Fact addComment(String comment, Context ctx) throws KbTypeException, CreateException;
   
-  /**
+  /* *
    * Add a new comment for <code>this</code> in the context specified
    * <p>
    *
@@ -377,8 +378,9 @@ public interface Assertion extends KbObjectWithArity {
    * @return  the fact created
    * @throws  CreateException
    * @throws  KbTypeException
-   */
+   * /
   Fact addComment(String comment, String ctx) throws KbTypeException, CreateException;
+  */
   
   /**
    * A <code>quotedIsa</code> assertion relates CycL expression to <code>SubLExpressionType</code>.

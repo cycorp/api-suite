@@ -2,7 +2,7 @@ package com.cyc.session;
 
 /*
  * #%L
- * File: SessionConfigurationProperties.java
+ * File: CycSessionConfigurationProperties.java
  * Project: Core API
  * %%
  * Copyright (C) 2015 - 2017 Cycorp, Inc
@@ -20,16 +20,24 @@ package com.cyc.session;
  * limitations under the License.
  * #L%
  */
+
 /**
- * This defines the canonical set of names for all CycSessionConfiguration properties. Although some
- * implementation of the CycSessionConfiguration interface may not require these keys, they should
- * be used in any implementation backed by {@link java.util.Properties} or any form of map with
- * String-based keys.
+ * This defines the canonical set of names for all {@link CycSessionConfiguration} properties.
+ * Although some implementations of the CycSessionConfiguration interface may not require these 
+ * keys, they should be used in any implementation backed by {@link java.util.Properties} or any
+ * form of map with String-based keys.
  *
  * @author nwinant
  */
-public interface SessionConfigurationProperties {
-
+public interface CycSessionConfigurationProperties {
+  
+  /**
+   * The name of a configuration file to be loaded.
+   *
+   * @see CycSessionConfiguration#getConfigurationFileName()
+   */
+  public static final String CONFIGURATION_FILE_KEY = "cyc.session.configurationFile";
+  
   /**
    * A requested {@link SessionConfigurationLoader}, as either the loader class's canonical name or
    * convenience name (i.e., matching {@link SessionConfigurationLoader#getName()}).
@@ -37,14 +45,7 @@ public interface SessionConfigurationProperties {
    * @see CycSessionConfiguration#getConfigurationLoaderName()
    */
   public static final String CONFIGURATION_LOADER_KEY = "cyc.session.configurationLoader";
-
-  /**
-   * The name of a configuration file to be loaded.
-   *
-   * @see CycSessionConfiguration#getConfigurationFileName()
-   */
-  public static final String CONFIGURATION_FILE_KEY = "cyc.session.configurationFile";
-
+  
   /**
    * The address of Cyc server to be connected to, as a serialized {@link CycAddress} object; e.g.
    * <code>localhost:3600</code>.
@@ -52,27 +53,14 @@ public interface SessionConfigurationProperties {
    * @see CycSessionConfiguration#getCycAddress()
    */
   public static final String SERVER_KEY = "cyc.session.server";
-
-  // TODO: add javadocs
-  public static final String SERVER_RELEASED_WHEN_ALL_SESSIONS_CLOSED
-          = "cyc.session.server.releaseWhenAllSessionsAreClosed";
-
-  /**
-   * Whether the APIs permitted to apply code patches to the Cyc server.
-   *
-   * @see CycSessionConfiguration#isServerPatchingAllowed()
-   */
-  public static final String SERVER_PATCHING_ALLOWED_KEY = "cyc.session.server.patchingAllowed";
-
+  
   /**
    * Returns an array of all property names.
    */
   public static final String[] ALL_KEYS = {
-    CONFIGURATION_LOADER_KEY,
     CONFIGURATION_FILE_KEY,
-    SERVER_KEY,
-    SERVER_RELEASED_WHEN_ALL_SESSIONS_CLOSED,
-    SERVER_PATCHING_ALLOWED_KEY
+    CONFIGURATION_LOADER_KEY,
+    SERVER_KEY
   };
   
 }

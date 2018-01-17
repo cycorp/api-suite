@@ -43,8 +43,8 @@ import java.util.Objects;
  */
 public interface KbObject {
   
-  //====|    Factory methods    |=================================================================//
-
+  //====|    KbObjectWithArity    |===============================================================//
+  
   /**
    * A KbObject which may potentially be non-atomic; ie., a Sentence, an Assertion, or a functional
    * KbTerm. Because a constant has no "arguments", an atomic KbTerm will have a formula arity of 0.
@@ -167,75 +167,76 @@ public interface KbObject {
    */
   Boolean isAtomic();
   
-  /**
+  /* *
    * Is this object any kind of {@link Assertion}?
    *
    * @return true if and only if this object represents a <tt>#$CycLAssertion</tt>
-   */ 
+   * / 
   Boolean isAssertion();
-  
-  /**
+  */
+  /* *
    * Is this object any kind of {@link KbCollection}?
    *
    * @return true if and only if this object represents a <tt>#$Collection</tt>
-   */
+   * /
   Boolean isCollection();
-  
-  /**
+  */
+  /* *
    * Is this object a {@link Context}?
    *
    * @return true if and only if this object represents a <tt>#$Microtheory</tt>
-   */
+   * /
   Boolean isContext();
-  
-  /**
+  */
+  /* *
    * Is this object a {@link KbFunction}?
    *
    * @return true if and only if this object represents a <tt>#$Function-Denotational</tt>
-   */
+   * /
   Boolean isFunction();
-  
-  /**
+  */
+  /* *
    * Is this object any kind of {@link KbIndividual}?
    *
    * @return true if and only if this object represents a <tt>#$Individual</tt>
-   */
+   * /
   Boolean isIndividual();
-  
-  /**
+  */
+  /* *
    * Is this object any kind of {@link KbPredicate}?
    *
    * @return true if and only if this object represents a <tt>#$Predicate</tt>
-   */
+   * /
   Boolean isPredicate();
-  
-  /**
+  */
+  /* *
    * Is this object a {@link Sentence}?
    *
    * @return true if and only if this object represents a <tt>#$CycLSentence</tt>
-   */
+   * /
   Boolean isSentence();
-  
-  /**
+  */
+  /* *
    * Is this object a {@link Symbol}?
    *
    * @return true if and only if this object represents a <tt>#$CycLSubLSymbol</tt>
-   */
+   * /
   Boolean isSymbol();
-  
-  /**
+  */
+  /* *
    * Is this object any kind of {@link KbTerm}?
    *
    * @return true if and only if this object represents a <tt>#$CycLDenotationalTerm</tt>
-   */
+   * /
   Boolean isTerm();
-  
-  /**
+  */
+  /* *
    * Is this object a {@link Variable}?
    *
    * @return true if and only if this object represents a <tt>#$CycLVariable</tt>
-   */
+   * /
   Boolean isVariable();
+  */
   
   /**
    * Is this object an indexical? I.e., it is an instance of <tt>#$IndexicalConcept</tt>?
@@ -311,7 +312,7 @@ public interface KbObject {
    */
   boolean isQuotedInstanceOf(KbCollection col);
 
-  /**
+  /* *
    * Is <code>this</code> a quoted instance of <code>col</code> in any getContextService?
    * Essentially this verifies that <code>(#$quotedIsa this col)</code> is true in some
    * getContextService.
@@ -323,9 +324,10 @@ public interface KbObject {
    *               not be a quoted instance of
    *
    * @return whether <code>this</code> is provable to be a quoted instance of <code>col</code>
-   */
+   * /
   boolean isQuotedInstanceOf(String colStr);
-
+  */
+  
   /**
    * Is <code>this</code> a quoted instance of <code>col</code>? Essentially this verifies that
    * <code>(#$quotedIsa this col)</code> is true in the getContextService <code>ctx</code>.
@@ -337,7 +339,7 @@ public interface KbObject {
    */
   boolean isQuotedInstanceOf(KbCollection col, Context ctx);
 
-  /**
+  /* *
    * Is <code>this</code> a quoted instance of <code>col</code>? Essentially this verifies that
    * <code>(#$quotedIsa this col)</code> is true in the getContextService <code>ctx</code>.
    *
@@ -346,9 +348,10 @@ public interface KbObject {
    * @param ctxStr the string representation of the getContextService
    *
    * @return whether <code>this</code> is provable to be a quoted instance of <code>col</code>
-   */
+   * /
   boolean isQuotedInstanceOf(String colStr, String ctxStr);
-
+  */
+  
   /**
    * Returns whether this is a quoted object; i.e., if it refers to the CycL object <em>itself</em>
    * and not its meaning. For example, <tt>(#$Quote #$Plato)</tt> refers to the term

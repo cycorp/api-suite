@@ -65,8 +65,7 @@ public interface QueryResultSet extends Iterable<QueryAnswer> {
    *         more rows
    */
   public boolean next();
-
-  //public Object getObject(String coll) throws KbException;
+  
   /**
    * Return the binding for variable as an instance of type.
    *

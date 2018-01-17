@@ -28,7 +28,8 @@ import com.cyc.query.QueryAnswerExplanationSpecification;
 import java.util.List;
 
 /**
- *
+ * The primary entrypoint for a Query API implementation.
+ * 
  * @author nwinant
  */
 public interface QueryApiService extends CycApiEntryPoint {

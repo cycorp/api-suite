@@ -68,12 +68,12 @@ public interface KbService {
    * be aware that some strings may have multiple possible representations as KbObjects. For
    * example, this method will return a Variable for "?X", but that string could also be represented
    * as a KbIndividual; if you want "?X" as a KbIndividual, you could accomplish this via a call to
-   * {@link com.cyc.kb.KbTermFactory#get(String)} or
-   * {@link com.cyc.kb.KbIndividualFactory#get(String)}. Similarly, almost any string can be a
+   * {@link com.cyc.kb.KbTerm#get(String)} or
+   * {@link com.cyc.kb.KbIndividual#get(String)}. Similarly, almost any string can be a
    * symbol, but the most common type of symbols are <em>keywords,</em> which are prefixed with ":".
    * This method would return a symbol for the string ":SYMBOL", but if you wanted a (non-keyword)
    * symbol for the (un-prefixed) string "SYMBOL", you would need to request it from
-   * {@link com.cyc.kb.SymbolFactory#get(String)}.
+   * {@link com.cyc.kb.Symbol#get(String)}.
    *
    * @param cycLOrId
    *
@@ -120,12 +120,12 @@ public interface KbService {
    * be aware that some strings may have multiple possible representations as KbObjects. For
    * example, this method will return a Variable for "?X", but that string could also be represented
    * as a KbIndividual; if you want "?X" as a KbIndividual, you could accomplish this via a call to
-   * {@link com.cyc.kb.KbTermFactory#get(String)} or
-   * {@link com.cyc.kb.KbIndividualFactory#get(String)}. Similarly, almost any string can be a
+   * {@link com.cyc.kb.KbTerm#get(String)} or
+   * {@link com.cyc.kb.KbIndividual#get(String)}. Similarly, almost any string can be a
    * symbol, but the most common type of symbols are <em>keywords,</em> which are prefixed with ":".
    * This method would return a symbol for the string ":SYMBOL", but if you wanted a (non-keyword)
    * symbol for the (un-prefixed) string "SYMBOL", you would need to request it from
-   * {@link com.cyc.kb.SymbolFactory#get(String)}.
+   * {@link com.cyc.kb.Symbol#get(String)}.
    *
    * @param cycLOrId
    *
@@ -169,12 +169,12 @@ public interface KbService {
    * be aware that some strings may have multiple possible representations as KbObjects. For
    * example, this method will return a Variable for "?X", but that string could also be represented
    * as a KbIndividual; if you want "?X" as a KbIndividual, you could accomplish this via a call to
-   * {@link com.cyc.kb.KbTermFactory#get(String)} or
-   * {@link com.cyc.kb.KbIndividualFactory#get(String)}. Similarly, almost any string can be a
+   * {@link com.cyc.kb.KbTerm#get(String)} or
+   * {@link com.cyc.kb.KbIndividual#get(String)}. Similarly, almost any string can be a
    * symbol, but the most common type of symbols are <em>keywords,</em> which are prefixed with ":".
    * This method would return a symbol for the string ":SYMBOL", but if you wanted a (non-keyword)
    * symbol for the (un-prefixed) string "SYMBOL", you would need to request it from
-   * {@link com.cyc.kb.SymbolFactory#get(String)}.
+   * {@link com.cyc.kb.Symbol#get(String)}.
    *
    * @param cycLOrId
    *
@@ -222,12 +222,12 @@ public interface KbService {
    * be aware that some strings may have multiple possible representations as KbObjects. For
    * example, this method will return a Variable for "?X", but that string could also be represented
    * as a KbIndividual; if you want "?X" as a KbIndividual, you could accomplish this via a call to
-   * {@link com.cyc.kb.KbTermFactory#get(String)} or
-   * {@link com.cyc.kb.KbIndividualFactory#get(String)}. Similarly, almost any string can be a
+   * {@link com.cyc.kb.KbTerm#get(String)} or
+   * {@link com.cyc.kb.KbIndividual#get(String)}. Similarly, almost any string can be a
    * symbol, but the most common type of symbols are <em>keywords,</em> which are prefixed with ":".
    * This method would return a symbol for the string ":SYMBOL", but if you wanted a (non-keyword)
    * symbol for the (un-prefixed) string "SYMBOL", you would need to request it from
-   * {@link com.cyc.kb.SymbolFactory#get(String)}.
+   * {@link com.cyc.kb.Symbol#get(String)}.
    *
    * @param cycLOrId
    *

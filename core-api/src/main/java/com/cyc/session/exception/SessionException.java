@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: SessionException.java
@@ -32,6 +34,42 @@ package com.cyc.session.exception;
  */
 public class SessionException extends Exception {
   
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a SessionException. If the Throwable is a
+   * SessionException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new SessionException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a SessionException
+   */
+  public static SessionException fromThrowable(Throwable cause) {
+    return (cause instanceof SessionException)
+                   ? (SessionException) cause
+                   : new SessionException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a SessionException with the specified detail message. If the
+   * Throwable is a SessionException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new SessionException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a SessionException
+   */
+  public static SessionException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof SessionException && Objects.equals(message, cause.getMessage()))
+                   ? (SessionException) cause
+                   : new SessionException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
   /**
    * Constructs a new exception with no specified message.
    */
@@ -52,7 +90,7 @@ public class SessionException extends Exception {
    * @param message the message string
    * @param cause the Throwable that caused this exception
    */
-  public SessionException(String message, Throwable cause) {
+  protected SessionException(String message, Throwable cause) {
     super(message, cause);
   }
   
@@ -60,7 +98,7 @@ public class SessionException extends Exception {
    * Constructs a new exception with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public SessionException(Throwable cause) {
+  protected SessionException(Throwable cause) {
     super(cause);
   }
 }

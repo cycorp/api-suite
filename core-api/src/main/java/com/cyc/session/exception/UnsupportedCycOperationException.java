@@ -1,5 +1,7 @@
 package com.cyc.session.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: UnsupportedCycOperationException.java
@@ -28,6 +30,42 @@ package com.cyc.session.exception;
  */
 public class UnsupportedCycOperationException extends SessionRuntimeException {
   
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a UnsupportedCycOperationException. If the Throwable is a
+   * UnsupportedCycOperationException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new UnsupportedCycOperationException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a UnsupportedCycOperationException
+   */
+  public static UnsupportedCycOperationException fromThrowable(Throwable cause) {
+    return (cause instanceof UnsupportedCycOperationException)
+                   ? (UnsupportedCycOperationException) cause
+                   : new UnsupportedCycOperationException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a UnsupportedCycOperationException with the specified detail message. If the
+   * Throwable is a UnsupportedCycOperationException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new UnsupportedCycOperationException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a UnsupportedCycOperationException
+   */
+  public static UnsupportedCycOperationException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof UnsupportedCycOperationException && Objects.equals(message, cause.getMessage()))
+                   ? (UnsupportedCycOperationException) cause
+                   : new UnsupportedCycOperationException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
   /**
    * Constructs a new exception with no specified message.
    */
@@ -48,7 +86,7 @@ public class UnsupportedCycOperationException extends SessionRuntimeException {
    * @param message the message string
    * @param cause the throwable that caused this exception
    */
-  public UnsupportedCycOperationException(String message, Throwable cause) {
+  protected UnsupportedCycOperationException(String message, Throwable cause) {
     super(message, cause);
   }
   
@@ -56,7 +94,7 @@ public class UnsupportedCycOperationException extends SessionRuntimeException {
    * Constructs a new exception with a specified throwable.
    * @param cause the throwable that caused this exception
    */
-  public UnsupportedCycOperationException(Throwable cause) {
+  protected UnsupportedCycOperationException(Throwable cause) {
     super(cause);
   }
 }

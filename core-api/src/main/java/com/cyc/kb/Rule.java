@@ -35,12 +35,12 @@ import com.cyc.kb.spi.RuleService;
  * existentially quantified.
  *
  * To create a Rule, see the
- * {@link com.cyc.kb.RuleFactory#findOrCreate(String)}, {@link com.cyc.kb.RuleFactory#get(String)}
+ * {@link com.cyc.kb.Rule#findOrCreate(String)}, {@link com.cyc.kb.Rule#get(String)}
  * and related methods.
  *
  * 
  * @author vijay
- * @version $Id: Rule.java 175669 2017-11-01 23:47:32Z nwinant $
+ * @version $Id: Rule.java 176267 2017-12-13 04:02:46Z nwinant $
  * @since 1.0
  */
 public interface Rule extends Assertion {

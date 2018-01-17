@@ -1,5 +1,7 @@
 package com.cyc.kb.exception;
 
+import java.util.Objects;
+
 /*
  * #%L
  * File: KbException.java
@@ -25,11 +27,47 @@ package com.cyc.kb.exception;
  * Root class for exceptions thrown by the KB API.
  *
  * @author David Baxter
- * @version $Id: KbException.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: KbException.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbException extends Exception {
 
-  public KbException(Throwable cause) {
+  //====|    Factory methods    |=================================================================//
+  
+  /**
+   * Converts a Throwable to a KbException. If the Throwable is a
+   * KbException, it will be passed through unmodified; otherwise, it will be wrapped
+   * in a new KbException.
+   *
+   * @param cause the Throwable to convert
+   *
+   * @return a KbException
+   */
+  public static KbException fromThrowable(Throwable cause) {
+    return (cause instanceof KbException)
+                   ? (KbException) cause
+                   : new KbException(cause);
+  }
+
+  /**
+   * Converts a Throwable to a KbException with the specified detail message. If the
+   * Throwable is a KbException and if the Throwable's message is identical to the
+   * one supplied, the Throwable will be passed through unmodified; otherwise, it will be wrapped in
+   * a new KbException with the detail message.
+   *
+   * @param cause       the Throwable to convert
+   * @param message the specified detail message
+   *
+   * @return a KbException
+   */
+  public static KbException fromThrowable(String message, Throwable cause) {
+    return (cause instanceof KbException && Objects.equals(message, cause.getMessage()))
+                   ? (KbException) cause
+                   : new KbException(message, cause);
+  }
+
+  //====|    Construction    |====================================================================//
+  
+  protected KbException(Throwable cause) {
     super(cause);
   }
 
@@ -37,7 +75,7 @@ public class KbException extends Exception {
     super(msg);
   }
 
-  public KbException(String msg, Throwable cause) {
+  protected KbException(String msg, Throwable cause) {
     super(msg, cause);
   }
 }

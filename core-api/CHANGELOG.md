@@ -9,6 +9,15 @@ follow. Until the final 1.0.0 release, it is expected that future release candid
 backwards compatibility.
 
 
+1.0.0-rc9.0 - 2017-12-12
+------------------------
+
+Consolidates and streamlines factory methods, in addition to other assorted improvements. It is 
+_not backwards-compatible_ with earlier API releases.
+
+This release contains numerous minor improvements and cleanup in preparation for 1.0.0. 
+
+
 1.0.0-rc8.0 - 2017-12-11
 ------------------------
 

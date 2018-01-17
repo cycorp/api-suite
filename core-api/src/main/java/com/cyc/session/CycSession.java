@@ -20,10 +20,10 @@ package com.cyc.session;
  * limitations under the License.
  * #L%
  */
+import com.cyc.Cyc;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
-import com.cyc.session.spi.SessionManager;
 import java.io.Closeable;
 
 /**
@@ -49,10 +49,10 @@ public interface CycSession extends Closeable {
    * @throws SessionInitializationException if the application encounters problems initializing the
    *                                        CycSession.
    */
-  public static CycSession getCurrentSession()
+  public static CycSession getCurrent()
           throws SessionConfigurationException, SessionCommunicationException,
                  SessionInitializationException {
-    return CycSessionManager.getInstance().getCurrentSession();
+    return Cyc.getSessionManager().getCurrentSession();
   }
 
   //====|    ConnectionStatus enum    |===========================================================//

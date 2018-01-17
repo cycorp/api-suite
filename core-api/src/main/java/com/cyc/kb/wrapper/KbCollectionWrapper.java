@@ -46,12 +46,12 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public Collection<KbCollection> allSpecializations() {
     return wrapped().allSpecializations();
   }
-
+/*
   @Override
   public Collection<KbCollection> allSpecializations(String ctxStr) {
     return wrapped().allSpecializations(ctxStr);
   }
-
+*/
   @Override
   public Collection<KbCollection> allSpecializations(Context ctx) {
     return wrapped().allSpecializations(ctx);
@@ -61,29 +61,30 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public Collection<KbCollection> getSpecializations() {
     return wrapped().getSpecializations();
   }
-
+/*
   @Override
   public Collection<KbCollection> getSpecializations(String ctxStr) {
     return wrapped().getSpecializations(ctxStr);
   }
-
+*/
   @Override
   public Collection<KbCollection> getSpecializations(Context ctx) {
     return wrapped().getSpecializations(ctx);
   }
-
+/*
   @Override
   public KbCollection addSpecialization(String moreSpecificStr)
           throws KbTypeException, CreateException {
     return wrapped().addSpecialization(moreSpecificStr);
   }
-
+*/
+  /*
   @Override
   public KbCollection addSpecialization(String moreSpecificStr, String ctxStr)
           throws KbTypeException, CreateException {
     return wrapped().addSpecialization(moreSpecificStr, ctxStr);
   }
-
+*/
   @Override
   public KbCollection addSpecialization(KbCollection moreSpecific)
           throws KbTypeException, CreateException {
@@ -100,12 +101,12 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public Collection<KbCollection> allGeneralizations() {
     return wrapped().allGeneralizations();
   }
-
+/*
   @Override
   public Collection<KbCollection> allGeneralizations(String ctxStr) {
     return wrapped().allGeneralizations(ctxStr);
   }
-
+*/
   @Override
   public Collection<KbCollection> allGeneralizations(Context ctx) {
     return wrapped().allGeneralizations(ctx);
@@ -115,17 +116,17 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public Collection<? extends KbCollection> getGeneralizations() {
     return wrapped().getGeneralizations();
   }
-
+/*
   @Override
   public Collection<? extends KbCollection> getGeneralizations(String ctxStr) {
     return wrapped().getGeneralizations(ctxStr);
   }
-
+*/
   @Override
   public Collection<? extends KbCollection> getGeneralizations(Context ctx) {
     return wrapped().getGeneralizations(ctx);
   }
-
+/*
   @Override
   public KbCollection addGeneralization(String moreGeneralStr)
           throws KbTypeException, CreateException {
@@ -137,7 +138,7 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
           throws KbTypeException, CreateException {
     return wrapped().addGeneralization(moreGeneralStr, ctxStr);
   }
-
+*/
   @Override
   public KbCollection addGeneralization(KbCollection moreGeneral)
           throws KbTypeException, CreateException {
@@ -160,12 +161,12 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public <O> Collection<? extends O> getInstances() {
     return wrapped().getInstances();
   }
-
+/*
   @Override
   public <O> Collection<O> getInstances(String ctxStr) {
     return wrapped().getInstances(ctxStr);
   }
-
+*/
   @Override
   public <O> Collection<O> getInstances(Context ctx) {
     return wrapped().getInstances(ctx);
@@ -175,23 +176,23 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public Collection<KbCollection> instancesOf() {
     return wrapped().instancesOf();
   }
-
+/*
   @Override
   public Collection<KbCollection> instancesOf(String ctxStr) {
     return wrapped().instancesOf(ctxStr);
   }
-
+*/
   @Override
   public Collection<KbCollection> instancesOf(Context ctx) {
     return wrapped().instancesOf(ctx);
   }
-
+/*
   @Override
   public KbCollection instantiates(String colStr, String ctxStr)
           throws KbTypeException, CreateException {
     return wrapped().instantiates(colStr, ctxStr);
   }
-
+*/
   @Override
   public KbCollection instantiates(KbCollection col, Context ctx)
           throws KbTypeException, CreateException {
@@ -202,12 +203,12 @@ public abstract class KbCollectionWrapper extends KbTermWrapper implements KbCol
   public boolean isGeneralizationOf(KbCollection moreSpecific, Context ctx) {
     return wrapped().isGeneralizationOf(moreSpecific, ctx);
   }
-
+/*
   @Override
   public boolean isGeneralizationOf(String moreSpecificStr) {
     return wrapped().isGeneralizationOf(moreSpecificStr);
   }
-
+*/
   @Override
   public boolean isGeneralizationOf(KbCollection moreSpecific) {
     return wrapped().isGeneralizationOf(moreSpecific);
