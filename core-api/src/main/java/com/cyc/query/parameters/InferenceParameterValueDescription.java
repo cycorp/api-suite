@@ -5,7 +5,7 @@ package com.cyc.query.parameters;
  * File: InferenceParameterValueDescription.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2017 Cycorp, Inc
+ * Copyright (C) 2015 - 2018 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ package com.cyc.query.parameters;
  *
  * @author zelal
  * @date August 14, 2005, 12:47 PM
- * @version $Id: InferenceParameterValueDescription.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: InferenceParameterValueDescription.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public interface InferenceParameterValueDescription {
 

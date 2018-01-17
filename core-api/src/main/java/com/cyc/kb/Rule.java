@@ -12,7 +12,7 @@ import com.cyc.kb.spi.RuleService;
  * File: Rule.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2017 Cycorp, Inc
+ * Copyright (C) 2015 - 2018 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import com.cyc.kb.spi.RuleService;
  *
  * 
  * @author vijay
- * @version $Id: Rule.java 176345 2017-12-19 01:10:26Z nwinant $
+ * @version $Id: Rule.java 176591 2018-01-09 17:27:27Z nwinant $
  * @since 1.0
  */
 public interface Rule extends Assertion {

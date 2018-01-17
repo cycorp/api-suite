@@ -5,6 +5,12 @@ For more information, view the [README](README.md) bundled with this release or 
 [Cyc Developer Center](http://dev.cyc.com/api/core/).
 
 
+1.1.1 - 2018-01-12
+------------------
+
+Version number incremented to reflect core client implementation update.
+
+
 1.1.0 - 2017-12-18
 ------------------
 

@@ -20,7 +20,7 @@ import java.util.Set;
  * File: Sentence.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2017 Cycorp, Inc
+ * Copyright (C) 2015 - 2018 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import java.util.Set;
  * (in a {@link Query}) or claims (in an {@link Assertion}).
  *
  * @author   vijay
- * @version  $Id: Sentence.java 176345 2017-12-19 01:10:26Z nwinant $
+ * @version  $Id: Sentence.java 176591 2018-01-09 17:27:27Z nwinant $
  * @since    1.0
  */
 public interface Sentence extends KbObjectWithArity {

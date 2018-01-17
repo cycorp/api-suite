@@ -7,7 +7,7 @@ import java.util.Objects;
  * File: DeleteException.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2017 Cycorp, Inc
+ * Copyright (C) 2015 - 2018 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Objects;
  * Thrown when code fails to delete something from the Cyc KB.
  * 
  * @author Nathan Winant
- * @version $Id: DeleteException.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: DeleteException.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class DeleteException extends KbException {
   
