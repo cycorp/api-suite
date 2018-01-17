@@ -12,14 +12,14 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-default-config-parent</artifactId>
-    <version>1.0.0-rc9.0</version>
+    <version>1.0.0</version>
     <!--relativePath>../maven-resources/parent-poms/default-config-parent</relativePath-->
     <relativePath></relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-api-parent</artifactId>
-  <version>1.0.0-rc9.0</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   
   <name>API Suite Parent</name>
@@ -36,7 +36,7 @@
   
   <!--
   <properties>
-    <cyc-core-api.version>1.0.0-rc9.0</cyc-core-api.version>
+    <cyc-core-api.version>1.0.0</cyc-core-api.version>
     <cyc-core-client-impl.version>${cyc-core-api.version}</cyc-core-client-impl.version>
     <maven-site-plugin.stagingDirectory>/tmp/www/dev.cyc.com/api</maven-site-plugin.stagingDirectory>
   </properties>

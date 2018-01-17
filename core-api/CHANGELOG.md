@@ -4,9 +4,12 @@ Cyc Core API CHANGELOG
 For more information, view the [README](README.md) bundled with this release or visit the
 [Cyc Developer Center](http://dev.cyc.com/api/core/).
 
-**Important note about _backwards-compatibility:_** It is expected that more release candidates will
-follow. Until the final 1.0.0 release, it is expected that future release candidates will break
-backwards compatibility.
+
+1.0.0 - 2017-12-12
+------------------
+
+1.0.0 release. Future 1.x releases will be backwards-compatible, per the
+[Semantic Versioning 2.0.0](https://semver.org/) specification.
 
 
 1.0.0-rc9.0 - 2017-12-12
