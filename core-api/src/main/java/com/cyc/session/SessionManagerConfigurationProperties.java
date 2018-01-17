@@ -49,7 +49,7 @@ public interface SessionManagerConfigurationProperties {
   
   /**
    * Does this configuration allow for the end-user to be prompted for configuration properties via
-   * GUI elements?
+   * GUI elements in windowed environments?
    * 
    * @see SessionManagerConfiguration#isGuiInteractionAllowed()
    * @see #GUI_INTERACTION_ALLOWED_DEFAULT_VALUE
@@ -57,7 +57,7 @@ public interface SessionManagerConfigurationProperties {
   public static final String GUI_INTERACTION_ALLOWED_KEY
           = "cyc.session.guiInteractionAllowed";
   
-  public static final boolean GUI_INTERACTION_ALLOWED_DEFAULT_VALUE = false;
+  public static final boolean GUI_INTERACTION_ALLOWED_DEFAULT_VALUE = true;
   
   /**
    * Whether the APIs permitted to apply code patches to the Cyc server.

@@ -251,7 +251,7 @@ public interface KbObject {
    * <p>
    * An entity which is referenced by an indexical is known as a <em>referent</em>. For example, the
    * referent of "Here" could be France, the City of Austin, the room that we're currently in, or
-   * whatever else the geographical getContextService might be when the word is used. (See
+   * whatever else the geographical context might be when the word is used. (See
    * <code>#$indexicalReferent</code> in the Cyc KB.) The process of determining the referent for an
    * indexical is known as <em>resolving</em> the indexical.
    *
@@ -264,8 +264,8 @@ public interface KbObject {
    * rules for resolving an indexical like <code>(TheNamedFn InformationStore "data source")</code>.
    *
    * <p>
-   * In the case of queries, <em>all</em> of the indexicals in a getQueryService's
-   * getSentenceService and getContextService must be resolved in order for the getQueryService to
+   * In the case of queries, <em>all</em> of the indexicals in a query's
+   * sentence and context must be resolved in order for the query to
    * be run. Cyc will handle any automatically resolvable indexicals (such as
    * <code>#$Now-Indexical</code>), but all other indexicals must be resolved by the application;
    * for example, <code>(TheNamedFn InformationStore "data source")</code> would need to be replaced
@@ -299,9 +299,9 @@ public interface KbObject {
   Collection<KbCollection> getQuotedIsa();
 
   /**
-   * Is <code>this</code> a quoted instance of <code>col</code> in any getContextService?
+   * Is <code>this</code> a quoted instance of <code>col</code> in any context?
    * Essentially this verifies that <code>(#$quotedIsa this col)</code> is true in some
-   * getContextService.
+   * context.
    *
    * <p>
    * Refer to <code>#$NoteAboutQuotingInCycL</code> for a more detailed discussion of quoting.
@@ -313,9 +313,9 @@ public interface KbObject {
   boolean isQuotedInstanceOf(KbCollection col);
 
   /* *
-   * Is <code>this</code> a quoted instance of <code>col</code> in any getContextService?
+   * Is <code>this</code> a quoted instance of <code>col</code> in any context?
    * Essentially this verifies that <code>(#$quotedIsa this col)</code> is true in some
-   * getContextService.
+   * context.
    *
    * <p>
    * Refer to <code>#$NoteAboutQuotingInCycL</code> for a more detailed discussion of quoting.
@@ -330,10 +330,10 @@ public interface KbObject {
   
   /**
    * Is <code>this</code> a quoted instance of <code>col</code>? Essentially this verifies that
-   * <code>(#$quotedIsa this col)</code> is true in the getContextService <code>ctx</code>.
+   * <code>(#$quotedIsa this col)</code> is true in the context <code>ctx</code>.
    *
    * @param col the collection which <code>this</code> may or may not be a quoted instance of
-   * @param ctx the getContextService
+   * @param ctx the context
    *
    * @return whether <code>this</code> is provable to be a quoted instance of <code>col</code>
    */
@@ -341,11 +341,11 @@ public interface KbObject {
 
   /* *
    * Is <code>this</code> a quoted instance of <code>col</code>? Essentially this verifies that
-   * <code>(#$quotedIsa this col)</code> is true in the getContextService <code>ctx</code>.
+   * <code>(#$quotedIsa this col)</code> is true in the context <code>ctx</code>.
    *
    * @param colStr the string representation of the collection which <code>this</code> may or may
    *               not be a quoted instance of
-   * @param ctxStr the string representation of the getContextService
+   * @param ctxStr the string representation of the context
    *
    * @return whether <code>this</code> is provable to be a quoted instance of <code>col</code>
    * /
@@ -515,7 +515,7 @@ public interface KbObject {
    *
    * @param <O> the referent's expected type
    *
-   * @return the indexical's referent for the current getContextService
+   * @return the indexical's referent for the current context
    *
    * @throws SessionCommunicationException if there is a problem communicating with Cyc
    * @throws KbTypeException               if the object is not an indexical

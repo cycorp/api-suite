@@ -40,7 +40,7 @@ import java.util.Set;
  * (in a {@link Query}) or claims (in an {@link Assertion}).
  *
  * @author   vijay
- * @version  $Id: Sentence.java 175762 2017-11-07 01:01:11Z nwinant $
+ * @version  $Id: Sentence.java 176345 2017-12-19 01:10:26Z nwinant $
  * @since    1.0
  */
 public interface Sentence extends KbObjectWithArity {
@@ -52,7 +52,7 @@ public interface Sentence extends KbObjectWithArity {
    * This static method wraps a call to {@link SentenceService#get(java.lang.String) }; see that
    * method's documentation for more details.
    *
-   * @param sentStr the string representing a Sentence in the KB, a CycL getSentenceService
+   * @param sentStr the string representing a Sentence in the KB, a CycL sentence
    *
    * @return a Sentence object
    *
@@ -66,7 +66,7 @@ public interface Sentence extends KbObjectWithArity {
   }
 
   /**
-   * Builds a getSentenceService based on <code>pred</code> and other <code>args</code>. This static
+   * Builds a sentence based on <code>pred</code> and other <code>args</code>. This static
    * method wraps a call to {@link SentenceService#get(com.cyc.kb.Relation, java.lang.Object...) };
    * see that method's documentation for more details.
    *
@@ -85,7 +85,7 @@ public interface Sentence extends KbObjectWithArity {
   }
 
   /**
-   * Builds an arbitrary getSentenceService based on the <code>args</code> provided. This static
+   * Builds an arbitrary sentence based on the <code>args</code> provided. This static
    * method wraps a call to {@link SentenceService#get(java.lang.Object...) }; see that method's
    * documentation for more details.
    *
@@ -205,42 +205,42 @@ public interface Sentence extends KbObjectWithArity {
   //====|    Interface methods    |===============================================================//
   
   /**
-   * Assert <code>this</code> getSentenceService in the getContextService <code>ctx</code>.
+   * Assert <code>this</code> sentence in the context <code>ctx</code>.
    *
    * In many cases, it will be useful to call
-   * {@link #isAssertible(com.cyc.kb.Context)} before asserting a getSentenceService.
+   * {@link #isAssertible(com.cyc.kb.Context)} before asserting a sentence.
    *
-   * @param   ctx  getContextService where <tt>this</tt> getSentenceService will be asserted
+   * @param   ctx  context where <tt>this</tt> sentence will be asserted
    * @return  the {@link Assertion} object, either a {@link Fact} or a {@link Rule}
-   * @throws  KbException  if the getAssertionService fails for any reason, include being syntactically
+   * @throws  KbException  if the assertion fails for any reason, include being syntactically
                        invalid
    */
   Assertion assertIn(Context ctx) throws KbException;
 
   /**
-   * Checks if a given getSentenceService meets the constraints necessary to be assertible in
- <code>ctx</code>. In particular, returns true if the arguments of the getSentenceService are compatible 
+   * Checks if a given sentence meets the constraints necessary to be assertible in
+ <code>ctx</code>. In particular, returns true if the arguments of the sentence are compatible 
  with the argument constraints of the operator (i.e. could be made to actually meet the 
  constraints without removing any existing assertions). For sentences with predicate operators, 
  the arguments must also be compatible with all relevant interArg* constraints. In some cases,
  additional requirements are imposed (e.g. the constraints must actually be known to be met, not
- just not be known to be incompatible). For an explanation of why a particular getSentenceService is not
+ just not be known to be incompatible). For an explanation of why a particular sentence is not
  assertible, check {@link #notAssertibleExplanation(com.cyc.kb.Context)}
    *
-   * @param   ctx  the getContextService where semantic constraints are checked
-   * @return  whether the getSentenceService is compatible with all relevant syntactic and semantic 
+   * @param   ctx  the context where semantic constraints are checked
+   * @return  whether the sentence is compatible with all relevant syntactic and semantic 
           constraints, and is therefore assertible
    * @throws  CycApiException  if unable to determine whether constraints are met
    */
   boolean isAssertible(Context ctx);
 
   /**
-   * Return an explanation of why the getSentenceService is not assertible. Note that this reason may not be
+   * Return an explanation of why the sentence is not assertible. Note that this reason may not be
    * exhaustive; once the problems mentioned in the reason are fixed, additional calls to this
    * method may turn up additional problems.
    *
-   * @param   ctx  getContextService where semantic constraints are checked
-   * @return  a detailed explanation of why a getSentenceService is not assertible. Returns null if it 
+   * @param   ctx  context where semantic constraints are checked
+   * @return  a detailed explanation of why a sentence is not assertible. Returns null if it 
           encounters an internal error.
    */
   String notAssertibleExplanation(Context ctx);
@@ -253,19 +253,19 @@ public interface Sentence extends KbObjectWithArity {
   Sentence performUpdates(List<ArgUpdate> updates);
   
   /**
-   * Returns a list of the Variables in the getSentenceService. Note that this is a copy of the variables, and
+   * Returns a list of the Variables in the sentence. Note that this is a copy of the variables, and
    * modification of the returned value will not result in modifications of the Sentence.
    *
-   * @param   includeQueryable  should this return the variables for which a getQueryService would return
+   * @param   includeQueryable  should this return the variables for which aquery would return
                             bindings, or all free variables?
-   * @return  a list of the variables in this getSentenceService.
+   * @return  a list of the variables in this sentence.
    * @throws  KbException
    * @see     com.cyc.query.QuerySpecification#getQueryVariables() 
    */
   List<Variable> getVariables(boolean includeQueryable) throws KbException;
   
   /**
-   * Returns any <tt>#$IndexicalConcept</tt>s within the getSentenceService. This method takes a boolean 
+   * Returns any <tt>#$IndexicalConcept</tt>s within the sentence. This method takes a boolean 
    * argument (<tt>includeAllIndexicals</tt>) which specifies whether it should return all of
    * the indexical terms within the Sentence, or only those terms which must be resolved by the
    * application. In other words, automatically-resolvable indexicals such as 
@@ -276,7 +276,7 @@ public interface Sentence extends KbObjectWithArity {
    * 
    * @param   includeAllIndexicals  whether to include all indexicals, or only those which must be
    *                                resolved by the application
-   * @return  the indexicals within the getSentenceService
+   * @return  the indexicals within the sentence
    * @throws  KbException
    * @throws  SessionCommunicationException 
    * @see     com.cyc.kb.KbObject#isIndexical() 
@@ -291,7 +291,7 @@ public interface Sentence extends KbObjectWithArity {
           throws KbException, SessionCommunicationException;
   
   /**
-   * Returns any <code>#$IndexicalConcept</code>s within the getSentenceService which <em>cannot</em> be 
+   * Returns any <code>#$IndexicalConcept</code>s within the sentence which <em>cannot</em> be 
    * automatically resolved by Cyc. For example, <code>#$Now-Indexical</code> would not be included
    * in the results (because Cyc can automatically resolve it to the current time) but a term like
    * <code>(TheNamedFn InformationStore "data source")</code> <em>would</em> be included, because 
@@ -308,7 +308,7 @@ public interface Sentence extends KbObjectWithArity {
   
   /**
    * Non-destructively replace a set of objects within a Sentence. This does not modify the original
- Sentence, but instead returns a new one. To replace terms in a Query getSentenceService, use 
+ Sentence, but instead returns a new one. To replace terms in a Query sentence, use 
  {@link com.cyc.query.QuerySpecification#setSubstitutions(java.util.Map)} instead.
    * 
    * <p>Note: a common use of this method is to replace indexical terms, particularly in Query 
@@ -329,7 +329,7 @@ public interface Sentence extends KbObjectWithArity {
    * the same index. This does not modify the original Sentence, but instead returns a new one.
    * 
    * @param   from  a list of objects that will be replaced if found
-   * @param   to    a list of objects that will be in the new modified getSentenceService
+   * @param   to    a list of objects that will be in the new modified sentence
    * @return  a new Sentence with the replaced terms
    * @throws  KbTypeException
    * @throws  CreateException
@@ -339,7 +339,7 @@ public interface Sentence extends KbObjectWithArity {
   Sentence replaceTerms(List<Object> from, List<Object> to) throws KbTypeException, CreateException;
   
   /**
-   * Set the value with getSentenceService at pos to be value.  Returns a new Sentence.
+   * Set the value with sentence at pos to be value.  Returns a new Sentence.
    * 
    * @param   pos    
    * @param   value  
@@ -361,10 +361,10 @@ public interface Sentence extends KbObjectWithArity {
   Set<ArgPosition> getArgPositionsForTerm(final Object term);
   
   /*
-  // A ENUM interface that returns modified sentences for commonly used getSentenceService operators,
+  // A ENUM interface that returns modified sentences for commonly used sentence operators,
   // such as #$not and #$assertedSentence.
   public interface SentenceOperator {
-    // Return a new getSentenceService with <code>sent</code> getSentenceService wrapped with <code>this</code>
+    // Return a new sentence with <code>sent</code> sentence wrapped with <code>this</code>
     // enumerator.
     public Sentence wrap(Sentence sent) throws KbTypeException, CreateException;
   }

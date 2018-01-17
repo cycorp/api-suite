@@ -66,7 +66,7 @@ public interface SessionManagerConfiguration {
   
   /**
    * Does this configuration allow for the end-user to be prompted for configuration properties via
-   * GUI elements?
+   * GUI elements in windowed environments?
    *
    * If so, <em>and</em> if no other sufficient configuration has specified, <em>and</em> if the
    * application is not running in a headless environment, the Session API may prompt the end-user

@@ -41,9 +41,11 @@ public interface QueryRules {
    * Relevant only for queries loaded from the KB (instances of CycLQuerySpecification), this loads
    * all of the rules specified on the query and only allows Cyc to use those rules when running
    * this query.
-   *
+   * <p>
+   * This is normally performed automatically by Cyc, but some older releases may not do so.
+   * 
    * @param includePracticeRules whether to include queryPracticeRules
-   *
+   * 
    * @throws QueryConstructionException
    * @throws SessionCommunicationException
    */

@@ -24,7 +24,7 @@ import com.cyc.Cyc;
 import com.cyc.kb.Context;
 
 /**
- * The configuration parameters which determine how a ProofView should be generated.
+ * The configuration parameters which determine how a {@link ProofView} should be generated.
  *
  * @author daves
  */

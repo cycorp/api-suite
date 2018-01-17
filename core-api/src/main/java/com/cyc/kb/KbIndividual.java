@@ -166,7 +166,7 @@ public interface KbIndividual extends KbTerm {
   
   /**
    * finds the types this KbIndividual is asserted to be an instance of, from
- the default getContextService specified by {@link com.cyc.kb.DefaultContext#forQuery()}.
+ the default context specified by {@link com.cyc.kb.DefaultContext#forQuery()}.
    * Essentially, this returns the asserted bindings for <code>?X</code> from
    * <code>(#$isa this ?X)</code>.
    *
@@ -176,11 +176,11 @@ public interface KbIndividual extends KbTerm {
   public Collection<KbCollection> instanceOf();
 
   /* *
-   * finds the types this KbIndividual is an instance of to, from a getContextService.
+   * finds the types this KbIndividual is an instance of to, from a context.
    * Essentially, this returns the asserted bindings for <code>?X</code> from
    * <code>(#$isa this ?X)</code>.
    *
-   * @param ctxStr the string representing the getContextService
+   * @param ctxStr the string representing the context
    *
    * @return the <code>KbCollection</code>s this <code>KbIndividual</code>
    * belongs to
@@ -189,11 +189,11 @@ public interface KbIndividual extends KbTerm {
   */
   
   /**
-   * finds the types this KbIndividual is an instance of to, from a getContextService.
+   * finds the types this KbIndividual is an instance of to, from a context.
    * Essentially, this returns the asserted bindings for <code>?X</code> from
    * <code>(#$isa this ?X)</code>.
    *
-   * @param ctx the getContextService of getQueryService
+   * @param ctx the context of query
    *
    * @return the <code>KbCollection</code>s this <code>KbIndividual</code>
    * belongs to.
@@ -210,14 +210,14 @@ public interface KbIndividual extends KbTerm {
    * {@inheritDoc}
    * /
   @Override
-  KbIndividual addQuotedIsa(KbCollection collection, Context getContextService) 
+  KbIndividual addQuotedIsa(KbCollection collection, Context context) 
          throws KbTypeException, CreateException;
   
   /**
    * {@inheritDoc}
    * /
   @Override
-  KbIndividual instantiates(KbCollection collection, Context getContextService) 
+  KbIndividual instantiates(KbCollection collection, Context context) 
           throws KbTypeException, CreateException;
   
   /**

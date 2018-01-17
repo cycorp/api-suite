@@ -98,7 +98,7 @@ public interface KbTerm extends KbObjectWithArity {
    * removing current KB assertions.
    *
    * @param col the collection which <code>this</code> is to be tested against
-   * @param ctx the getContextService in which the semantic test should be performed
+   * @param ctx the context in which the semantic test should be performed
    *
    * @return whether <code>this</code> is provably not an instance of
    * <code>col</code>
@@ -113,7 +113,7 @@ public interface KbTerm extends KbObjectWithArity {
    *
    * @param colStr the string representing the collection which
    * <code>this</code> is to be tested against
-   * @param ctxStr the getContextService in which the semantic test should be performed
+   * @param ctxStr the context in which the semantic test should be performed
    *
    * @return whether <code>this</code> is provably not an instance
    * <code>col</code>
@@ -197,26 +197,26 @@ public interface KbTerm extends KbObjectWithArity {
   Collection<String> getComments();
   
   /**
-   * Gets all the comments for <code>this</code> visible from the getContextService
+   * Gets all the comments for <code>this</code> visible from the context
    * <p>
    *
-   * @param   ctx  the getContextService of getQueryService
+   * @param   ctx  the context of query
    * @return  comment strings
    */
   Collection<String> getComments(Context ctx);
   
   /* *
-   * Gets all the comments for <code>this</code> visible from the getContextService
+   * Gets all the comments for <code>this</code> visible from the context
    * <p>
    *
-   * @param   ctxStr  the getContextService of getQueryService
+   * @param   ctxStr  the context of query
    * @return  comment strings
    * /
   Collection<String> getComments(String ctxStr);
   */
   
   /**
-   * Add a new comment for <code>this</code> in the getContextService specified
+   * Add a new comment for <code>this</code> in the context specified
    * <p>
    *
    * In the CycKB comments can be added only on <code>#$CycLIndexedTerm</code>s,
@@ -225,16 +225,16 @@ public interface KbTerm extends KbObjectWithArity {
    * a comment on Quoted terms, Sentence, Variable and Symbol. This means that
    * only subclasses of KbTerm and Assertion can have comments.
    *
-   * @param   ctx      the getContextService where the comment is created. Cannot be null.
+   * @param   ctx      the context where the comment is created. Cannot be null.
    * @param   comment  the comment string
-   * @return  the getFactService created
+   * @return  the fact created
    * @throws  CreateException
    * @throws  KbTypeException
    */
   Fact addComment(String comment, Context ctx) throws KbTypeException, CreateException;
   
   /* *
-   * Add a new comment for <code>this</code> in the getContextService specified
+   * Add a new comment for <code>this</code> in the context specified
    * <p>
    *
    * In the CycKB comments can be added only on <code>#$CycLIndexedTerm</code>s,
@@ -243,9 +243,9 @@ public interface KbTerm extends KbObjectWithArity {
    * a comment on Quoted terms, Sentence, Variable and Symbol. This means that
    * only subclasses of KbTerm and Assertion can have comments.
    *
-   * @param   ctx      the getContextService where the comment is created. Cannot be null.
+   * @param   ctx      the context where the comment is created. Cannot be null.
    * @param   comment  the comment string
-   * @return  the getFactService created
+   * @return  the fact created
    * @throws  CreateException
    * @throws  KbTypeException
    * /
@@ -253,14 +253,14 @@ public interface KbTerm extends KbObjectWithArity {
   */
   
   /**
-   * A <code>quotedIsa</code> getAssertionService relates CycL expression to <code>SubLExpressionType</code>.
+   * A <code>quotedIsa</code> assertion relates CycL expression to <code>SubLExpressionType</code>.
    * 
    * <p>All subclasses of KbObject can be quoted. Refer to <code>#$NoteAboutQuotingInCycL</code> for
    * a more detailed discussion of quoting.
    *
    * @param   collection  the instance of SubLExpressionType, the collection <code>this</code> is a 
    *                      quoted instance of
-   * @param   context     the getContextService where the getFactService is asserted.
+   * @param   context     the context where the fact is asserted.
    * @return  this object, for method chaining
    * @throws  CreateException
    * @throws  KbTypeException
@@ -270,11 +270,11 @@ public interface KbTerm extends KbObjectWithArity {
   
   /**
    * Creates a new <code>Fact</code> stating that this <code>KbIndividual</code> instantiates the
-   * <code>collection</code> in <code>getContextService</code>. Effectively, this asserts 
+   * <code>collection</code> in <codecontext/code>. Effectively, this asserts 
    * <code>(#$isa this collection)</code>.
    *
    * @param   collection  the collection of which this KbIndividual is an instance
-   * @param   context     the getContextService where the getFactService is to be asserted
+   * @param   context     the context where the fact is to be asserted
    * @return  this object, for method chaining
    * @throws  CreateException
    * @throws  KbTypeException
@@ -285,11 +285,11 @@ public interface KbTerm extends KbObjectWithArity {
   /* *
    * Creates a new <code>Fact</code> stating that <code>this</code> <code>KbIndividual</code>
    * instantiates the <code>#$Collection</code> represented by <code>collection</code> in the 
- getContextService represented by <code>getContextService</code>. Effectively, this asserts 
+ context represented by <codecontext/code>. Effectively, this asserts 
    * <code>(#$isa this collection)</code>.
    *
    * @param   collectionStr  string representing the KbCollection this individual is an instance of
-   * @param   contextStr     string representing the getContextService where the getFactService is to be asserted
+   * @param   contextStr     string representing the context where the fact is to be asserted
    * @return  this object, for method chaining
    * @throws  CreateException
    * @throws  KbTypeException
@@ -300,7 +300,7 @@ public interface KbTerm extends KbObjectWithArity {
   
   /**
    * Creates a new <code>Fact</code> stating that this <code>KbIndividual</code> instantiates the
-   * <code>collection</code> in the default getAssertionService getContextService.
+   * <code>collection</code> in the default assertion context.
    * 
    * See {@link #instantiates(com.cyc.kb.KbCollection, com.cyc.kb.Context) } for more details.
    * 
@@ -314,18 +314,18 @@ public interface KbTerm extends KbObjectWithArity {
   /**
    * This method returns the Sentence <code>(#$isa this collection)</code>. The key difference 
    * between this and {@link #instantiates(com.cyc.kb.KbCollection) } is that, this method does not 
- make any getAssertionService in the KB. The getSentenceService form of the getAssertionService is generally useful when
+ make any assertion in the KB. The sentence form of the assertion is generally useful when
  seeking user feedback before asserting into the KB. Use 
- {@link Sentence#assertIn(com.cyc.kb.Context) } to assert the getSentenceService in a Context.
+ {@link Sentence#assertIn(com.cyc.kb.Context) } to assert the sentence in a Context.
    * 
    * @param   collection  the collection of which <code>this</code> KbIndividual is an instance
-   * @return  the #$isa getSentenceService between this and col
+   * @return  the #$isa sentence between this and col
    * @throws  KbTypeException 
    */
   Sentence instantiatesSentence(KbCollection collection) throws KbTypeException, CreateException;
   
   /**
-   * Is <code>this</code> an instance of <code>collection</code> in any getContextService? This does not 
+   * Is <code>this</code> an instance of <code>collection</code> in any context? This does not 
  require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
    * inferable.
    *
@@ -335,7 +335,7 @@ public interface KbTerm extends KbObjectWithArity {
   boolean isInstanceOf(KbCollection collection);
 
   /* *
-   * Is <code>this</code> an instance of <code>collection</code> in any getContextService? This does
+   * Is <code>this</code> an instance of <code>collection</code> in any context? This does
    * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
    * inferable.
    *
@@ -347,24 +347,24 @@ public interface KbTerm extends KbObjectWithArity {
   */
   
   /**
-   * Is <code>this</code> an instance of <code>collection</code> in <code>getContextService</code>? This does 
+   * Is <code>this</code> an instance of <code>collection</code> in <codecontext/code>? This does 
    * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially 
    * inferable.
    *
    * @param   collection  the collection which <code>this</code> may or may not be an instance of
-   * @param   context     the getContextService where the instance getRelation holds.
+   * @param   context     the context where the instance getRelation holds.
    * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
    */
   boolean isInstanceOf(KbCollection collection, Context context);
 
   /* *
-   * Is <code>this</code> an instance of <code>collection</code> in <code>getContextService</code>? This does
+   * Is <code>this</code> an instance of <code>collection</code> in <codecontext/code>? This does
    * not require that <code>(#$isa this collection)</code> be asserted, merely that it be trivially
    * inferable.
    *
    * @param   collectionStr  string representation of the collection which <code>this</code> may or 
    *                         may not be an instance of
-   * @param   contextStr     string representation of the getContextService where the instance getRelation holds
+   * @param   contextStr     string representation of the context where the instance getRelation holds
    * @return  whether <tt>this</tt> is trivially provable to be an instance of <tt>collection</tt>
    * /
   boolean isInstanceOf(String collectionStr, String contextStr);

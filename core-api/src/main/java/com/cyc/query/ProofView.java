@@ -21,6 +21,10 @@ package com.cyc.query;
  * #L%
  */
 import com.cyc.Cyc;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * An explanation for a specific answer to a query, expressed as a tree of {@link ProofViewNode}s.
@@ -51,7 +55,30 @@ public interface ProofView extends ProofViewNode, QueryAnswerExplanation {
   public static ProofView getProofView(QueryAnswer answer, ProofViewSpecification spec) {
     return Cyc.getProofViewService().getExplanation(answer, spec);
   }
-
+  
   //====|    Methods    |=========================================================================//
+  
+  default Iterator<ProofViewNode> toDepthFirstIterator() {
+    final Deque<ProofViewNode> queue = new ArrayDeque<>();
+    queue.add(this);
+    final Iterator<ProofViewNode> result = new Iterator<ProofViewNode>() {
+      @Override
+      public boolean hasNext() {
+        return !queue.isEmpty();
+      }
+      @Override
+      public ProofViewNode next() {
+        final ProofViewNode node = queue.remove();
+        final List<? extends ProofViewNode> children = node.getChildren();
+        //Add children to front of queue for depth-first traversal:
+        for (final Iterator<ProofViewNode> it = new ArrayDeque<ProofViewNode>(children)
+                .descendingIterator() ; it.hasNext() ;) {
+          queue.addFirst(it.next());
+        }
+        return node;
+      }
+    };
+    return result;
+  }
   
 }

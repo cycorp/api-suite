@@ -40,7 +40,7 @@ import com.cyc.kb.spi.RuleService;
  *
  * 
  * @author vijay
- * @version $Id: Rule.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: Rule.java 176345 2017-12-19 01:10:26Z nwinant $
  * @since 1.0
  */
 public interface Rule extends Assertion {
@@ -56,8 +56,8 @@ public interface Rule extends Assertion {
    *
    * @return a Rule based on <code>hlid</code>
    *
-   * @throws KbTypeException if getAssertionService based on <code>hlid</code> is not an instance of
-   *                         getAssertionService with #$implies operator
+   * @throws KbTypeException if assertion based on <code>hlid</code> is not an instance of
+   *                         assertion with #$implies operator
    * @throws CreateException
    */
   public static Rule get(String hlid) throws KbTypeException, CreateException {
@@ -65,20 +65,20 @@ public interface Rule extends Assertion {
   }
 
   /**
-   * Get the <code>Rule</code> that corresponds to <code>formula</code> in the getContextService
+   * Get the <code>Rule</code> that corresponds to <code>formula</code> in the context
    * <code>ctx</code>. This static method wraps a call to
    * {@link RuleService#get(com.cyc.kb.Sentence, com.cyc.kb.Context)}; see that method's
    * documentation for more details.
    *
    * @param formula formula to be found
-   * @param ctx     getContextService of the formula
+   * @param ctx     context of the formula
    *
-   * @return an Rule based on formula and getContextService
+   * @return an Rule based on formula and context
    *
    * @throws CreateException
    * @throws KbTypeException
-   * @throws KbObjectNotFoundException if no getAssertionService with the given formula is found in
-   *                                   the getContextService
+   * @throws KbObjectNotFoundException if no assertion with the given formula is found in
+   *                                   the context
    */
   public static Rule get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException {
@@ -86,20 +86,20 @@ public interface Rule extends Assertion {
   }
 
   /**
-   * Get the <code>Rule</code> for <code>formulaStr</code> in the getContextService
+   * Get the <code>Rule</code> for <code>formulaStr</code> in the context
    * <code>ctxStr</code>. This static method wraps a call to
    * {@link RuleService#get(java.lang.String, java.lang.String)}; see that method's documentation 
    * for more details.
    *
    * @param formulaStr string representation of the formula to be found
-   * @param ctxStr     string representation of the getContextService of the formula
+   * @param ctxStr     string representation of the context of the formula
    *
    * @return a Rule based on <code>formulaStr</code> and <code>ctxStr</code>
    *
    * @throws CreateException
    * @throws KbTypeException
    * @throws KbObjectNotFoundException if no Rule with the given formula is found in the
-   *                                   getContextService
+   *                                   context
    */
   public static Rule get(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException, KbObjectNotFoundException {
@@ -108,21 +108,21 @@ public interface Rule extends Assertion {
 
   /**
    * Get the <code>Rule</code> that corresponds to a formula with <code>antecedent</code> as its
-   * antecedent and <code>consequent</code> as its consequent in the getContextService
+   * antecedent and <code>consequent</code> as its consequent in the context
    * <code>ctx</code>. This static method wraps a call to
    * {@link RuleService#get(com.cyc.kb.Sentence, com.cyc.kb.Sentence, com.cyc.kb.Context)}; see that
    * method's documentation for more details.
    *
-   * @param antecedent the literal in the ANTECEDENT of the getRuleService
-   * @param consequent the literal in the CONSEQUENT of the getRuleService
-   * @param ctx        getContextService of the formula
+   * @param antecedent the literal in the ANTECEDENT of the rule
+   * @param consequent the literal in the CONSEQUENT of the rule
+   * @param ctx        context of the formula
    *
    * @return a Rule based on antecedent and consequent is ctx
    *
    * @throws CreateException
    * @throws KbTypeException
-   * @throws KbObjectNotFoundException if no getAssertionService with the given formula is found in
-   *                                   the getContextService
+   * @throws KbObjectNotFoundException if no assertion with the given formula is found in
+   *                                   the context
    */
   public static Rule get(Sentence antecedent, Sentence consequent, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException {

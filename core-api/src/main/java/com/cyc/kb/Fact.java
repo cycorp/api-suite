@@ -47,8 +47,8 @@ public interface Fact extends Assertion {
    *
    * @return a Fact based on <code>hlid</code>
    *
-   * @throws KbTypeException if getFactService based on <code>hlid</code> is not an instance of
-   *                         getAssertionService
+   * @throws KbTypeException if fact based on <code>hlid</code> is not an instance of
+   *                         assertion
    *
    * @throws CreateException
    */
@@ -58,20 +58,20 @@ public interface Fact extends Assertion {
 
   /**
    * Get the <code>Fact</code> object that corresponds to <code>formula</code> in the
-   * getContextService
+   * context
    * <code>ctx</code>. This static method wraps a call to
    * {@link FactService#get(com.cyc.kb.Sentence, com.cyc.kb.Context)}; see that method's
    * documentation for more details.
    *
    * @param formula formula to be found
-   * @param ctx     getContextService of the formula
+   * @param ctx     context of the formula
    *
-   * @return a Fact based on formula and getContextService
+   * @return a Fact based on formula and context
    *
    * @throws CreateException
    * @throws KbTypeException
-   * @throws KbObjectNotFoundException if no getFactService with the given formula string is found
-   *                                   in the getContextService
+   * @throws KbObjectNotFoundException if no fact with the given formula string is found
+   *                                   in the context
    */
   public static Fact get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException {
@@ -80,19 +80,19 @@ public interface Fact extends Assertion {
 
   /**
    * Get the <code>Fact</code> object that corresponds to <code>formulaStr</code> in the
-   * getContextService corresponding to <code>ctxStr</code>. This static method wraps a call to
+   * context corresponding to <code>ctxStr</code>. This static method wraps a call to
    * {@link FactService#get(java.lang.String, java.lang.String)}; see that method's documentation
    * for more details.
    *
    * @param formulaStr string representation of the formula to be found
-   * @param ctxStr     string representation of the getContextService of the formula
+   * @param ctxStr     string representation of the context of the formula
    *
    * @return a Fact based on <code>formulaStr</code> and <code>ctxStr</code>
    *
    * @throws CreateException
    * @throws KbTypeException
-   * @throws KbObjectNotFoundException if no getFactService with the given formula string is found
-   *                                   in the getContextService
+   * @throws KbObjectNotFoundException if no fact with the given formula string is found
+   *                                   in the context
    */
   public static Fact get(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException, KbObjectNotFoundException {

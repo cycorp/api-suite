@@ -21,10 +21,11 @@ package com.cyc.query;
  * #L%
  */
 import com.cyc.Cyc;
+import com.cyc.query.exception.ProofViewException;
 
 /**
- * The configuration parameters which determine how a ProofView should be generated.
- *
+ * Generates a {@link ProofView} for a specific answer to a query.
+ * 
  * @author nwinant
  */
 public interface ProofViewGenerator extends QueryAnswerExplanationGenerator<ProofView> {
@@ -37,7 +38,7 @@ public interface ProofViewGenerator extends QueryAnswerExplanationGenerator<Proo
    * @param answer the answer for which to generate a ProofView.
    * @param spec   the configuration parameters for ProofView generation.
    *
-   * @return a ProofViewGenerator.
+   * @return a ProofViewGenerator
    */
   public static ProofViewGenerator get(QueryAnswer answer, ProofViewSpecification spec) {
     return Cyc.getProofViewService().getExplanationGenerator(answer, spec);
@@ -51,5 +52,7 @@ public interface ProofViewGenerator extends QueryAnswerExplanationGenerator<Proo
    * @param destination
    */
   void marshal(org.w3c.dom.Node destination);
-
+  
+  ProofViewMarshaller getMarshaller() throws ProofViewException;
+  
 }

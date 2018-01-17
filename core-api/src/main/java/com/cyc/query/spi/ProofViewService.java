@@ -22,6 +22,7 @@ package com.cyc.query.spi;
  */
 import com.cyc.query.ProofView;
 import com.cyc.query.ProofViewGenerator;
+import com.cyc.query.ProofViewMarshaller;
 import com.cyc.query.ProofViewSpecification;
 import com.cyc.query.QueryAnswer;
 import com.cyc.query.QueryAnswerExplanationSpecification;
@@ -63,5 +64,5 @@ public interface ProofViewService extends QueryAnswerExplanationService<ProofVie
    */
   @Override
   ProofView getExplanation(QueryAnswer answer, QueryAnswerExplanationSpecification<ProofView> spec);
-
+  
 }

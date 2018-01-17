@@ -98,12 +98,12 @@ public interface Assertion extends KbObjectWithArity {
    * wraps a call to {@link AssertionService#get(java.lang.String) }; see that method's
    * documentation for more details.
    *
-   * @param hlid the <code>hlid</code> corresponding to the getAssertionService in the KB
+   * @param hlid the <code>hlid</code> corresponding to the assertion in the KB
    *
    * @return an Assertion based on <code>hlid</code>
    *
-   * @throws KbTypeException if getAssertionService based on <code>hlid</code> is not an instance of
-   *                         getAssertionService
+   * @throws KbTypeException if assertion based on <code>hlid</code> is not an instance of
+   *                         assertion
    * @throws CreateException
    */
   public static Assertion get(String hlid) throws KbTypeException, CreateException {
@@ -112,20 +112,20 @@ public interface Assertion extends KbObjectWithArity {
 
   /**
    * Get the <code>Assertion</code> object that corresponds to <code>formula</code> in the
-   * getContextService
+   * context
    * <code>ctx</code>. This static method wraps a call to 
    * {@link AssertionService#get(com.cyc.kb.Sentence, com.cyc.kb.Context) }; see that method's
    * documentation for more details.
    *
    * @param formula formula to be found
-   * @param ctx     getContextService of the formula
+   * @param ctx     context of the formula
    *
-   * @return an Assertion based on formula and getContextService
+   * @return an Assertion based on formula and context
    *
    * @throws CreateException
    * @throws KbTypeException
-   * @throws KbObjectNotFoundException if no getAssertionService with the given formula is found in
-   *                                   the getContextService
+   * @throws KbObjectNotFoundException if no getAssertion with the given formula is found in
+   *                                   the context
    */
   public static Assertion get(Sentence formula, Context ctx)
           throws KbTypeException, CreateException, KbObjectNotFoundException {
@@ -134,19 +134,19 @@ public interface Assertion extends KbObjectWithArity {
 
   /**
    * Get the <code>Assertion</code> object that corresponds to <code>formulaStr</code> in the
-   * getContextService corresponding to <code>ctxStr</code>. This static method wraps a call to
+   * context corresponding to <code>ctxStr</code>. This static method wraps a call to
    * {@link AssertionService#get(java.lang.String, java.lang.String)}; see that method's
    * documentation for more details.
    *
    * @param formulaStr string representation of the formula to be found
-   * @param ctxStr     string representation of the getContextService of the formula
+   * @param ctxStr     string representation of the context of the formula
    *
    * @return an Assertion based on <code>formulaStr</code> and <code>ctxStr</code>
    *
    * @throws CreateException
    * @throws KbTypeException
    * @throws KbObjectNotFoundException if no Assertion with the given formula string is found in the
-   *                                   getContextService
+   *                                   context
    */
   public static Assertion get(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException, KbObjectNotFoundException {
