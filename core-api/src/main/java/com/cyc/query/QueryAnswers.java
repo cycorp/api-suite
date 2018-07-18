@@ -23,6 +23,7 @@ package com.cyc.query;
 import com.cyc.kb.Variable;
 import com.cyc.query.exception.QueryRuntimeException;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,8 +41,35 @@ import java.util.Set;
 public interface QueryAnswers<E extends QueryAnswer> extends List<E> {
 
   /**
+   * For a boolean Query (i.e., its query sentence has no open variables), has it been proven true?
+   * <p>
+   * Unlike {@link #isProvable()}, this method is only intended for boolean queries and will throw a
+   * QueryRuntimeException if the Query sentence has any open variables.
+   *
+   * @return true iff this Query has been proven true
+   *
+   * @throws QueryRuntimeException if not a boolean Query
+   *
+   * @see #isProvable()
+   * @see Query#isTrue()
+   * @see QueryResultSet#getTruthValue()
+   */
+  boolean isTrue() throws QueryRuntimeException;
+
+  /**
+   * Is this Query is either True (if a boolean Query) or has bindings (if non-boolean)
+   *
+   * @return True if there are bindings (or it's a true boolean Query), false if there are no
+   *         bindings (or it's a false boolean Query).
+   *
+   * @see #isTrue()
+   * @see Query#isProvable()
+   */
+  boolean isProvable();
+
+  /**
    * Returns a List of all the values for one variable from all the answers to a query. If the query
-   * has only one variable, it may be more convenient to call {@link #getBindingsForOnlyVariable() }.
+   * has only one variable, it may be more convenient to call {@link #getBindingsForOnlyVariable()}.
    *
    * @param <O> The expected class of the value
    * @param var The variable for which the bindings are sought
@@ -97,7 +125,7 @@ public interface QueryAnswers<E extends QueryAnswer> extends List<E> {
    * @see #getOnlyBindingForOnlyVariable()
    */
   <O> Set<O> getUniqueBindingsForVariable(Variable var);
-  
+
   /**
    * Returns a Set of all unique values from all the answers to a single-variable query.
    * <p>
@@ -142,7 +170,7 @@ public interface QueryAnswers<E extends QueryAnswer> extends List<E> {
    * @see #getOnlyBindingForVariable(com.cyc.kb.Variable)
    */
   Optional<E> getOnlyAnswer() throws QueryRuntimeException;
-  
+
   /**
    * Returns an Optional containing the single value for a single variable from the sole answer (if
    * present) to a query.
@@ -165,7 +193,7 @@ public interface QueryAnswers<E extends QueryAnswer> extends List<E> {
    * @see #getOnlyBindingForOnlyVariable()
    */
   <O> Optional<O> getOnlyBindingForVariable(Variable var) throws QueryRuntimeException;
-  
+
   /**
    * Returns an Optional containing the single value from the sole answer (if present) to a
    * single-variable query.
@@ -193,6 +221,28 @@ public interface QueryAnswers<E extends QueryAnswer> extends List<E> {
    */
   <O> Optional<O> getOnlyBindingForOnlyVariable() throws QueryRuntimeException;
   
+  /**
+   * Similar to {@link #containsAll(java.util.Collection)}, but only compares the bindings
+   * contained in each QueryAnswer, and does not compare the QueryAnswer objects themselves.
+   * <p>
+   * This method only considers bindings for the {@link com.cyc.kb.Variable}s present in the
+   * {@code answers} argument; a binding set is considered to be contained by any superset. E.g., a
+   * QueryAnswer with the binding set {@code ?X=Foo, ?Y=Bar} would be considered to contain another 
+   * QueryAnswer with binding set {@code ?X=Foo} or {@code ?Y=Bar}, but would not be considered to
+   * contain a QueryAnswer with binding set {@code ?X=Foo, ?Z=Baz} or  
+   * {@code ?X=Foo, ?Y=Bar, ?Z=Baz}.
+   * <p>
+   * The QueryAnswers in the {@code answers} Collection do not need to have bindings for the same
+   * variables, or even the same number of variables. E.g., one QueryAnswer could have only the
+   * binding {@code ?X=Foo}, while another could have bindings {@code ?Y=Bar, ?Z=Baz}; both would
+   * be considered to be contained by a QueryAnswer with bindings {@code ?X=Foo, ?Y=Bar, ?Z=Baz}.
+   *
+   * @param answers
+   *
+   * @return whether this QueryAnswers object contains all of the supplied bindings
+   */
+  boolean containsAllBindings(Collection<QueryAnswer> answers);
+  
   List<String> toAnswersTableStrings(boolean includeOuterBorder,
                                      String colBorder,
                                      String colPadding);
@@ -200,8 +250,8 @@ public interface QueryAnswers<E extends QueryAnswer> extends List<E> {
   List<String> toAnswersTableStrings(boolean includeOuterBorder);
 
   void printAnswersTable(PrintStream out,
-                         boolean includeOuterBorder, 
-                         String colBorder, 
+                         boolean includeOuterBorder,
+                         String colBorder,
                          String colPadding);
 
   void printAnswersTable(PrintStream out, boolean includeOuterBorder);

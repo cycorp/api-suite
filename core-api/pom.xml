@@ -12,14 +12,14 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-default-config-parent</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <!--relativePath>../../maven-resources/parent-poms/default-config-parent</relativePath-->
     <relativePath></relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-api</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
   
   <name>Core API</name>
@@ -28,11 +28,13 @@
     The interfaces which define the Cyc Core API,
     and implementation-independent factories for them.
   </description>
-
+  
+  <url>http://dev.cyc.com/api/core</url>
+  
   <!-- ====|    Configuration    |============================================================= -->
   
   <properties>
-    <cyc-core-api.version>1.1.1</cyc-core-api.version>
+    <!--cyc-core-api.version>${project.version}</cyc-core-api.version-->
     <!--maven.compiler.debug>true</maven.compiler.debug-->
     <!--maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel-->
     <!--maven.compiler.verbose>true</maven.compiler.verbose-->
@@ -40,7 +42,7 @@
     <!--maven-compiler-plugin.Xlint>deprecation</maven-compiler-plugin.Xlint-->
     <!--maven-compiler-plugin.Xlint>unchecked</maven-compiler-plugin.Xlint-->
     <!--maven-javadoc-plugin.Xdoclint>all</maven-javadoc-plugin.Xdoclint-->
-    <maven-site-plugin.stagingDirectory>/tmp/www/dev.cyc.com/api/core</maven-site-plugin.stagingDirectory>
+    <maven-site-plugin.stagingDirectory>/var/www/html/dev.cyc.com/api/core</maven-site-plugin.stagingDirectory>
   </properties>
   
   <dependencies>
@@ -142,7 +144,7 @@
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
      </plugin>
-      -->
+     -->
     </plugins>
     <resources>
       <resource>
@@ -266,9 +268,7 @@
   </profiles>
   
   <!-- ====|    Metadata & contact info    |=================================================== -->
-
-  <url>http://dev.cyc.com/api/core</url>
-  
+    
   <scm>
     <connection>scm:git:git@github.com:cycorp/api-suite.git</connection>
     <developerConnection>scm:git:git@github.com:cycorp/api-suite.git</developerConnection>

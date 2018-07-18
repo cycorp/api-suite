@@ -22,6 +22,7 @@ package com.cyc;
  */
 
 import com.cyc.kb.spi.KbApiService;
+import com.cyc.nl.spi.NlApiService;
 import com.cyc.query.spi.QueryApiService;
 import com.cyc.session.SessionManager;
 import com.cyc.session.exception.SessionServiceException;
@@ -64,9 +65,10 @@ public class CoreServicesLoader extends CycServicesLoader {
    */
   private final boolean allowMissingServices = true;
   
-  private final KbApiService KbApiService;
-  private final QueryApiService queryApiService;
+  private final KbApiService      KbApiService;
+  private final QueryApiService   queryApiService;
   private final SessionApiService sessionApiService;
+  private final NlApiService      nlApiService;
   //private final List<QueryAnswerExplanationService> queryExplanationServices;
   
   //private static final ProofViewService PROOF_VIEW_FACTORY_SERVICE;
@@ -95,6 +97,7 @@ public class CoreServicesLoader extends CycServicesLoader {
     KbApiService = getApiEntryPoint(KbApiService.class, allowMissingServices);
     queryApiService = getApiEntryPoint(QueryApiService.class, allowMissingServices);
     sessionApiService = getApiEntryPoint(SessionApiService.class, allowMissingServices);
+    nlApiService = getApiEntryPoint(NlApiService.class, DefaultNlApiServiceImpl.class);
     //queryExplanationServices = loadServiceProviders(QueryAnswerExplanationService.class, allowMissingServices);
     //PROOF_VIEW_FACTORY_SERVICE = findProofViewService(ALLOW_MISSING_SERVICES);
   }
@@ -162,6 +165,18 @@ public class CoreServicesLoader extends CycServicesLoader {
   
   public SessionApiService getSessionApiService() {
     return getSessionApiService(false);
+  }
+  
+  public NlApiService getNlApiServices(boolean allowMissingServices) {
+    if (!allowMissingServices && nlApiService == null) {
+      throw new RuntimeException("Could not find a service provider for " 
+              + NlApiService.class.getCanonicalName());
+    }
+    return nlApiService;
+  }
+  
+  public NlApiService getNlApiServices() {
+    return getNlApiServices(false);
   }
   
   @Override

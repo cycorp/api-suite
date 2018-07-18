@@ -5,6 +5,12 @@ For more information, view the [README](README.md) bundled with this release or 
 [Cyc Developer Center](http://dev.cyc.com/api/core/).
 
 
+1.2.0 - 2018-07-17
+------------------
+
+Additions to the QueryAnswers interface.
+
+
 1.1.1 - 2018-01-12
 ------------------
 
@@ -202,7 +208,7 @@ Also:
 * Query now extends QuerySpecification, which solely represents the query itself; processing 
   information is still represented by Query.
 * `Query#getAnswers()` now returns `QueryAnswers` instead of a raw `List<QueryAnswer>`. QueryAnswers
-  extends List<QueryAnswer>, but adds several convenience methods to retrieve all bindings for a
+  extends `List<QueryAnswer>`, but adds several convenience methods to retrieve all bindings for a
   particular variable, get all bindings as a list for single-variable queries, get a single binding
   from queries which should return exactly one binding, and to print answers in a formatted table.
 * Query rules can be retrieved via `QuerySpecification#getRules()`.

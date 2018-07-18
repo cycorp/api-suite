@@ -29,6 +29,8 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * This class is solely responsible for loading Cyc API services, such as
  * {@link com.cyc.kb.spi.KbApiService}.
@@ -57,8 +59,15 @@ public class CycServicesLoader {
   protected synchronized <T extends CycApiEntryPoint> T getApiEntryPoint(
           Class<T> clazz, boolean allowMissingServices) {
     if (!entryPointServices.containsKey(clazz)) {
-      final CycApiEntryPoint provider = loadApiEntryPoint(clazz, allowMissingServices);
-      entryPointServices.put(clazz, provider);
+      entryPointServices.put(clazz, loadApiEntryPoint(clazz, allowMissingServices));
+    }
+    return (T) entryPointServices.get(clazz);
+  }
+  
+  protected synchronized <T extends CycApiEntryPoint> T getApiEntryPoint(
+          Class<T> clazz, Class<? extends T> defaultImplementation) {
+    if (!entryPointServices.containsKey(clazz)) {
+      entryPointServices.put(clazz, loadApiEntryPoint(clazz, defaultImplementation));
     }
     return (T) entryPointServices.get(clazz);
   }
@@ -69,10 +78,22 @@ public class CycServicesLoader {
     return selectServiceProvider(providers, clazz);
   }
   
+  private <T extends CycApiEntryPoint> T loadApiEntryPoint(Class<T> clazz, 
+                                                           Class<? extends T> defaultImplementation) {
+    final List<T> providers = loadServiceProviders(clazz, true);
+    final T result = selectServiceProvider(providers, clazz, defaultImplementation);
+    if (result != null) {
+      return result;
+    }
+    throw new RuntimeException(
+            "No providers found for " + clazz.getCanonicalName()
+                    + " and could not find default implementation " + defaultImplementation);
+  }
+  
   protected <T> List<T> loadServiceProviders(Class<T> clazz, boolean allowMissingServices) {
-    LOG.debug("Attempting to find {} service providers...", clazz.getCanonicalName());
-    final List<T> results = new ArrayList();
     final String clazzName = clazz.getCanonicalName();
+    LOG.debug("Attempting to find {} service providers...", clazzName);
+    final List<T> results = new ArrayList();
     final ServiceLoader<T> svcLoader = ServiceLoader.load(clazz);
     final Iterator<T> iter =  svcLoader.iterator();
     while (iter.hasNext()) {
@@ -82,12 +103,10 @@ public class CycServicesLoader {
       final String errMsg = "No providers found for " + clazzName;
       if (allowMissingServices) {
         LOG.warn(errMsg);
-        return null;
       } else {
         throw new RuntimeException(errMsg);
       }
-    }
-    if (results.size() > 1) {
+    } else if (results.size() > 1) {
       LOG.warn("Loaded {} {} providers: {}", results.size(), clazzName, results);
     } else {
       LOG.debug("Loaded one {} provider: {}", clazzName, results.get(0));
@@ -104,6 +123,34 @@ public class CycServicesLoader {
               + " but found " + providers.size() + ": " + providers);
     }
     return providers.get(0);
+  }
+  
+  protected <T> T selectServiceProvider(List<T> allProviders, 
+                                        Class<T> clazz, 
+                                        Class<? extends T> defaultImplementation) {
+    if (allProviders != null) {
+      {
+        final List<T> providers = allProviders.stream()
+                .filter(p -> !p.getClass().equals(defaultImplementation))
+                .collect(toList());
+        final T result = selectServiceProvider(providers, clazz);
+        if (result != null) {
+          return result;
+        }
+      }
+      final T defaultResult = allProviders.stream()
+              .filter(p -> p.getClass().equals(defaultImplementation))
+              .findFirst()
+              .orElse(null);
+      if (defaultResult != null) {
+        return defaultResult;
+      }
+    }
+    try {
+      return defaultImplementation.newInstance();
+    } catch (InstantiationException | IllegalAccessException ex) {
+      throw new RuntimeException("Could not instantiate provider " + defaultImplementation, ex);
+    }
   }
   
 }

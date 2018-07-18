@@ -57,6 +57,7 @@ import com.cyc.kb.spi.SecondOrderCollectionService;
 import com.cyc.kb.spi.SentenceService;
 import com.cyc.kb.spi.SymbolService;
 import com.cyc.kb.spi.VariableService;
+import com.cyc.nl.spi.ParaphraserFactory;
 import com.cyc.query.ProofView;
 import com.cyc.query.Query;
 import com.cyc.query.QueryAnswer;
@@ -276,7 +277,16 @@ public class Cyc {
   public static ProofViewService getProofViewService() {
     return getLoader().getQueryApiService().getProofViewService();
   }
-
+  
+  /**
+   * Returns the {@link ParaphraserFactory}.
+   * 
+   * @return the ParaphraserFactory
+   */
+  public static ParaphraserFactory getParaphraserFactory() {
+    return getLoader().getNlApiServices().getParaphraserFactory();
+  }
+  
   //====|    KbService-specific accessors    |====================================================//
   
   /**
@@ -388,7 +398,7 @@ public class Cyc {
     //return getLoader().findExplanationService(answer, spec);
     return getLoader().getQueryApiService().findExplanationService(getLoader(), answer, spec);
   }
-
+  
   //====|    Constants    |=======================================================================//
           
   public static class Constants {

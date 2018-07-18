@@ -20,7 +20,6 @@ package com.cyc.query;
  * limitations under the License.
  * #L%
  */
-import com.cyc.kb.KbObject;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.Variable;
 import com.cyc.query.exception.QueryRuntimeException;
@@ -29,22 +28,24 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Encodes one answer to a {@link Query}.
- * <p/>
- * Unlike {@link InferenceAnswer}, this class is designed to use KB API classes, so variables are
- * {@link Variable}s, and bindings are returned as {@link KbObject}s where possible.
- *
+ * Encodes one complete answer to a {@link Query}. 
+ * <p>
+ * Each {@link Variable}/value pair is known as a <em>binding</em>, and the set of Variable/value 
+ * pairs represented by a QueryAnswer is known as a <em>binding set</em>. Binding sets can be 
+ * expressed in CycL as {@code #$ELInferenceBindingSet}s.
+ * 
  * @author baxter
  */
 public interface QueryAnswer {
 
   Set<Variable> getVariables();
-  
+
   /**
    * Get the value to which the specified variable is bound.
    *
    * @param <O> The expected class of the value.
    * @param var The variable for which the binding is sought.
+   *
    * @return The value to which <code>var</code> is bound in this answer.
    */
   <O> O getBinding(Variable var);
@@ -53,14 +54,15 @@ public interface QueryAnswer {
    * Does the specified variable have a value in this query answer?
    *
    * @param var The variable for which the binding is sought.
-   * @return 
+   *
+   * @return
    */
   boolean hasBinding(Variable var);
-  
+
   /**
    * Returns the value for a single-variable query.
    * <p>
-   * This method specifically expects the query to return bindings for <em>exactly one 
+   * This method specifically expects the query to return bindings for <em>exactly one
    * variable;</em> the existence of more than variable will be interpreted as an error which will
    * result in a {@link QueryRuntimeException}. If the query has more than one variable, use
    * {@link #getBinding(com.cyc.kb.Variable)} instead.
@@ -69,10 +71,10 @@ public interface QueryAnswer {
    *
    * @return The value which is bound to the only variable for this answer
    *
-   * @see #getBinding(com.cyc.kb.Variable) 
+   * @see #getBinding(com.cyc.kb.Variable)
    */
   <O> O getOnlyBinding() throws QueryRuntimeException;
-  
+
   /**
    * Get the values to which the all variables are bound.
    *
@@ -93,16 +95,16 @@ public interface QueryAnswer {
    * sources, or terms used in meta-assertions using sourceOfTerm-NonTrivial or its specializations.
    * Note that this method works by introspecting on the inference object, and will not work if the
    * inference has already been destroyed when this is called. The canonical way of ensuring that
-   * the inference is not destroyed immediately is to call 
-   * {@link com.cyc.query.Query#retainInference()}, though there are other ways of ensuring the 
-   * inference is not immediately destroyed, such as 
-   * {@link com.cyc.query.Query#setBrowsable(boolean)} and 
+   * the inference is not destroyed immediately is to call
+   * {@link com.cyc.query.Query#retainInference()}, though there are other ways of ensuring the
+   * inference is not immediately destroyed, such as
+   * {@link com.cyc.query.Query#setBrowsable(boolean)} and
    * {@link com.cyc.query.Query#setContinuable(boolean)}.
    *
    * @return A set of KbTerms that are the attributed sources for this answer.
    */
   Set<KbTerm> getSources();
-  
+
   List<String> toPrettyBindingsStrings();
-  
+
 }

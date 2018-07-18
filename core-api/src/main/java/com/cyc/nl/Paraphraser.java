@@ -21,6 +21,7 @@ package com.cyc.nl;
  * #L%
  */
 
+import com.cyc.Cyc;
 import com.cyc.kb.Context;
 import com.cyc.kb.KbPredicate;
 import java.util.List;
@@ -49,11 +50,11 @@ public interface Paraphraser<C> {
   //====|    Factory methods    |=================================================================//
   
   public static Paraphraser get(ParaphrasableType type) {
-    return DefaultParaphraserFactoryImpl.getInstance().getParaphraser(type);
+    return Cyc.getParaphraserFactory().getParaphraser(type);
   }
   
   public static boolean isBasicParaphraser(Paraphraser paraphraser) {
-    return DefaultParaphraserFactoryImpl.getInstance().isBasicParaphraser(paraphraser);
+    return Cyc.getParaphraserFactory().isBasicParaphraser(paraphraser);
   }
   
   //====|    Interface methods    |===============================================================//
