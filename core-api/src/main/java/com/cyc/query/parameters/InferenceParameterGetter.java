@@ -9,7 +9,7 @@ import java.util.Set;
  * File: InferenceParameterGetter.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2018 Cycorp, Inc
+ * Copyright (C) 2015 - 2019 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,14 +134,21 @@ public interface InferenceParameterGetter {
    * @return the <code>TransitiveClosureMode</code>
    */
   TransitiveClosureMode getTransitiveClosureMode();
-
+  
   /**
    * Check whether the Query (once run) is browsable.
    *
    * @return true iff it is so specified.
    */
   Boolean isBrowsable();
-  
+
+  /**
+   * Check whether the Query (once run) will be browsable.
+   *
+   * @return the <code>Browsable</code>
+   */
+  Browsable getBrowsable();
+
   /**
    * Check whether the Query is continuable. Queries that have not yet been run
    * are considered continuable, as well as ones whose parameters have the

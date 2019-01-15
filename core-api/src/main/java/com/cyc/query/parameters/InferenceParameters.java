@@ -5,7 +5,7 @@ package com.cyc.query.parameters;
  * File: InferenceParameters.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2018 Cycorp, Inc
+ * Copyright (C) 2015 - 2019 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author zelal
  * @date August 14, 2005, 2:41 PM
- * @version $Id: InferenceParameters.java 176591 2018-01-09 17:27:27Z nwinant $
+ * @version $Id: InferenceParameters.java 185299 2019-01-14 16:15:35Z daves $
  */
 public interface InferenceParameters 
         extends Cloneable, InferenceParameterGetter, InferenceParameterSetter<InferenceParameters> {

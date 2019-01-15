@@ -5,6 +5,18 @@ For more information, view the [README](README.md) bundled with this release or 
 [Cyc Developer Center](http://dev.cyc.com/api/core/).
 
 
+1.2.2 - 2019-01-15
+------------------
+
+Ensure that queries run successfully for any value of Browsable.
+
+
+1.2.1 - 2019-01-14
+------------------
+
+Added support for the Browsable query parameter.
+
+
 1.2.0 - 2018-07-17
 ------------------
 

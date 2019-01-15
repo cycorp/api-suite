@@ -7,7 +7,7 @@ import java.util.Objects;
  * File: KbServerSideException.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2018 Cycorp, Inc
+ * Copyright (C) 2015 - 2019 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Objects;
  * Wraps all Cyc server errors, when a more specific semantic error can not be thrown.
  *
  * @author Vijay Raj
- * @version $Id: KbServerSideException.java 176591 2018-01-09 17:27:27Z nwinant $
+ * @version $Id: KbServerSideException.java 185299 2019-01-14 16:15:35Z daves $
  */
 public class KbServerSideException extends KbRuntimeException{
   

@@ -12,14 +12,14 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-default-config-parent</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.2</version>
     <!--relativePath>../../maven-resources/parent-poms/default-config-parent</relativePath-->
     <relativePath></relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-api</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.2</version>
   <packaging>jar</packaging>
   
   <name>Core API</name>
@@ -99,14 +99,13 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <!--
-        <version>2.3.2</version>
+        <version>3.8.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
-        -->
       </plugin>
       <!--
       <plugin>

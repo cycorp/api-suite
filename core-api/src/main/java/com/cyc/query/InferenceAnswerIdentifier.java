@@ -7,7 +7,7 @@ import com.cyc.session.CycSession;
  * File: InferenceAnswerIdentifier.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2018 Cycorp, Inc
+ * Copyright (C) 2015 - 2019 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import com.cyc.session.CycSession;
  * <P>InferenceAnswerIdentifier is designed to...
  *
  * @author jmoszko, May 13, 2014, 5:54:59 PM
- * @version $Id: InferenceAnswerIdentifier.java 176591 2018-01-09 17:27:27Z nwinant $
+ * @version $Id: InferenceAnswerIdentifier.java 185299 2019-01-14 16:15:35Z daves $
  */
 public interface InferenceAnswerIdentifier {
 

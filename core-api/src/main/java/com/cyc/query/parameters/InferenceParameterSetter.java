@@ -7,7 +7,7 @@ import com.cyc.query.metrics.InferenceMetrics;
  * File: InferenceParameterSetter.java
  * Project: Core API
  * %%
- * Copyright (C) 2015 - 2018 Cycorp, Inc
+ * Copyright (C) 2015 - 2019 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,19 @@ public interface InferenceParameterSetter<T extends InferenceParameterSetter> {
    *
    * @param browsable
    * @return this object
+   * @deprecated see #setBrowsable(Browsable).
    */
   T setBrowsable(boolean browsable);
+
+  /**
+   * Specify whether inferences should be browsable. Browsable inferences can be
+   * inspected using the Cyc Browser, and may require more resources during
+   * inference.
+   *
+   * @param browsable
+   * @return this object
+   */
+  T setBrowsable(Browsable browsable);
 
   /**
    * Specify whether inferences should be continuable. Continuable inferences

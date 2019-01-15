@@ -40,7 +40,9 @@ public enum Browsable implements InferenceParameterValue {
    */
   ALWAYS, /**
    * If the inference engine chooses to create a browsable object, it will be browsable.  But it might choose to not create one,
-   * and it will therefore not be browsable.
+   * and it will therefore not be browsable.  Use of this value via the Query API is not advised, as it may leave inference objects
+   * on the Cyc server that are not cleaned up with the close() method is called on the inference.  @todo Ensure that
+   * maybe-browsable inferences do get cleaned up when close() is called.
    */
   MAYBE, /**
    * This inference will not be browsable.
